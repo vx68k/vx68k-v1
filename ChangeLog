@@ -1,3 +1,8 @@
+2000-09-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_contrast): New function.
+	(initialize_iocs_functions): Add new handler.
+
 2000-09-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68kgtk/gtkconsole.cc: Change timeout parameters.

@@ -538,6 +538,20 @@ namespace
     c.regs.d[0] = 0x90;
   }
 
+  /* Handles a _CONTRAST IOCS call.  */
+  void
+  iocs_contrast(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _CONTRAST; %%d1:b=0x%02x\n", byte_size::uget(c.regs.d[1]));
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_contrast: FIXME: not implemented\n");
+
+    long_word_size::put(c.regs.d[0], 14);
+  }
+
   /* Handles a _CRTMOD call.  */
   void
   iocs_crtmod(context &c, unsigned long data)
@@ -1046,6 +1060,7 @@ namespace
     rom->set_iocs_function(0x0d, iocs_function_type(&iocs_ledmod, 0));
     rom->set_iocs_function(0x0e, iocs_function_type(&iocs_tgusemd, 0));
     rom->set_iocs_function(0x10, iocs_function_type(&iocs_crtmod, 0));
+    rom->set_iocs_function(0x11, make_pair(&iocs_contrast, 0));
     rom->set_iocs_function(0x13, iocs_function_type(&iocs_tpalet, 0));
     rom->set_iocs_function(0x15, iocs_function_type(&iocs_tcolor, 0));
     rom->set_iocs_function(0x1d, iocs_function_type(&iocs_scroll, 0));
