@@ -65,12 +65,14 @@ public:
   void run ();
   void set_interrupt_listener (interrupt_listener *);
 protected:
-  void set_handler (int code, int mask, void (*) (cpu_regs *, memory *));
+  typedef void (*insn_handler) (int, cpu_regs *, memory *);
+  void set_handler (int code, int mask, insn_handler);
+  static void undefined_insn (int, cpu_regs *, memory *);
 private:
   cpu_regs regs;
   memory *mem;
-  void (*insn[0x10000]) (cpu_regs *, memory *);
   interrupt_listener *interrupt;
+  insn_handler insn[0x10000];
 };
 
 #endif
