@@ -30,12 +30,20 @@ namespace vx68k
   {
     class dos;			// Forward declaration.
 
-    struct dos_exec_context
-      : execution_context
+    class dos_exec_context
+      : public execution_context
     {
+      friend class dos;		// FIXME.
+    private:
       class dos *dos;
+    public:
       dos_exec_context(exec_unit *e, address_space *m, class dos *d)
 	: execution_context(e, m), dos(d) {}
+    public:
+      int open(const char *, unsigned int);
+      int close(int);
+      int32 read(int, uint32, uint32);
+      int32 write(int, uint32, uint32);
     };
 
     class dos

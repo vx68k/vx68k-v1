@@ -1,5 +1,10 @@
 1999-03-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/human.h (class dos_exec_context): Changed from
+	struct.
+	(class dos_exec_context): Add member functions: open, close, read,
+	and write.
+
 	* include/vm68k/cpu.h (class cpu): Removed.  Also remove member
 	functions.
 
