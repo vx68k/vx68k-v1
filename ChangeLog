@@ -1,5 +1,10 @@
 2000-08-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/gtkconwin.cc (new_tearoff_item): New function.
+	(gtk_console_window): Add tearoff item to Eject Floppy menu.
+	(gtk_console_window): Set focus to the content widget.
+	(gtk_console_window): Fix a label text.
+
 	* bin/main.cc (class gtk_app): Use gtk_console_window.
 	(main): Likewise.
 

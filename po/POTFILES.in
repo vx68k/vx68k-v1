@@ -1,2 +1,3 @@
 bin/getopt.c
+bin/gtkconwin.cc
 bin/main.cc

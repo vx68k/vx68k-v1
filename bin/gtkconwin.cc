@@ -90,6 +90,16 @@ namespace
     return mi;
   }
 
+  GtkWidget *
+  new_tearoff_item(GtkMenuShell *msh)
+  {
+    GtkWidget *tmi = gtk_tearoff_menu_item_new();
+    gtk_menu_shell_append(msh, tmi);
+    gtk_widget_show(tmi);
+
+    return tmi;
+  }
+
   void
   handle_window_destroy(gpointer data)
   {
@@ -135,6 +145,7 @@ gtk_console_window::gtk_console_window(GtkWidget *w)
       /* Drawing area.  */
       gtk_widget_show(content);
       gtk_box_pack_start(GTK_BOX(box1), content, true, true, 0);
+      gtk_window_set_focus(GTK_WINDOW(window), content);
 
       /* Menu bar items.  */
       file_item = new_item(GTK_MENU_SHELL(menu_bar), _("_File"), window_ag,
@@ -159,7 +170,7 @@ gtk_console_window::gtk_console_window(GtkWidget *w)
 			  _("_Run..."), file_menu_ag);
       new_separator_item(GTK_MENU_SHELL(file_menu));
       exit_item = new_item(GTK_MENU_SHELL(file_menu),
-			   _("_E_xit"), file_menu_ag);
+			   _("E_xit"), file_menu_ag);
 
       /* Help menu.  */
       GtkWidget *help_menu = gtk_menu_new();
@@ -181,6 +192,7 @@ gtk_console_window::gtk_console_window(GtkWidget *w)
 	= gtk_menu_ensure_uline_accel_group(GTK_MENU(eject_floppy_menu));
 
       /* Eject Floppy menu items.  */
+      new_tearoff_item(GTK_MENU_SHELL(eject_floppy_menu));
       eject_floppy_0_item
 	= new_item(GTK_MENU_SHELL(eject_floppy_menu),
 		   _("Unit _0"), eject_floppy_menu_ag);
