@@ -5,9 +5,9 @@
 @synindex vr fn
 @set VERSION 1.1
 @c $Format: "@set REVISION $Revision$" $
-@set REVISION 1.23
+@set REVISION 1.24
 @c $Format: "@set DATE $Date$" $
-@set DATE Sat, 23 Dec 2000 22:49:30 +0900
+@set DATE Sun, 24 Dec 2000 00:13:58 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -94,13 +94,14 @@ Virtual X68000 Coding Conventions
 
 General Purpose Components
 
-* Memory and I/O::              
+* Memory Interface::            Basics of the memory subsystem.
 * Processor::                   How is a processor constructed?
 
-Memory and I/O
+Memory Interface
 
+* Memory Exceptions::           
 * Memory::                      
-* Class memory_map::            
+* Memory Map::                  
 
 Processor
 
@@ -257,12 +258,12 @@ General purpose components are provided by the library libvm68k.
 These components are declared in the namespace vm68k.
 
 @menu
-* Memory and I/O::              
+* Memory Interface::            Basics of the memory subsystem.
 * Processor::                   How is a processor constructed?
 @end menu
 
-@node Memory and I/O, Processor, General Purpose Components, General Purpose Components
-@section Memory and I/O
+@node Memory Interface, Processor, General Purpose Components, General Purpose Components
+@section Memory Interface
 
 @cindex memory
 Memory is an object that can be mapped in an address space.
@@ -273,11 +274,24 @@ Virtual X68000 uses a single address space to access memory
 and peripheral devices.
 
 @menu
+* Memory Exceptions::           
 * Memory::                      
-* Class memory_map::            
+* Memory Map::                  
 @end menu
 
-@node Memory, Class memory_map, Memory and I/O, Memory and I/O
+@node Memory Exceptions, Memory, Memory Interface, Memory Interface
+@subsection Memory Exceptions
+
+@deftp {Abstract Class} memory_exception
+@end deftp
+
+@deftp Class bus_error_exception
+@end deftp
+
+@deftp Class address_error_exception
+@end deftp
+
+@node Memory, Memory Map, Memory Exceptions, Memory Interface
 @subsection Memory
 
 @deftp {Abstract Class} memory
@@ -345,8 +359,8 @@ convenience, but can be overridden by a derived class for a slightly
 better performance.
 @end deftypemethod
 
-@node Class memory_map,  , Memory, Memory and I/O
-@subsection Class @code{memory_map}
+@node Memory Map,  , Memory, Memory Interface
+@subsection Memory Map
 
 @deftp Class memory_map
 This is a class of address spaces for memory.
@@ -380,7 +394,7 @@ Alias of @code{memory::function_code}.
 @deftypemethod memory_map void put_32 (uint32_type @var{address}, uint32_type @var{value}, function_code @var{fc})
 @end deftypemethod
 
-@node Processor,  , Memory and I/O, General Purpose Components
+@node Processor,  , Memory Interface, General Purpose Components
 @section Processor
 @cindex processor
 

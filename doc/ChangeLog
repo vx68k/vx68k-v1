@@ -1,3 +1,9 @@
+2000-12-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* vx68k.texi (Memory Exceptions): New node.
+	(Memory Interface): Rename the title.
+	(Memory Map): Rename the title.
+
 2000-12-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* vx68k.texi (Memory): Remove the description of class
