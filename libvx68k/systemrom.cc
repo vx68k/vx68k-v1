@@ -40,7 +40,7 @@ uint_type
 system_rom::getw(int, uint32_type) const
 {
 #ifdef HAVE_NANA_H
-  L("system_rom: `getw' not implemented\n");
+  L("system_rom: FIXME: `getw' not implemented\n");
 #endif
   return 0;
 }
@@ -49,7 +49,7 @@ uint_type
 system_rom::getb(int, uint32_type) const
 {
 #ifdef HAVE_NANA_H
-  L("system_rom: `getb' not implemented\n");
+  L("system_rom: FIXME: `getb' not implemented\n");
 #endif
   return 0;
 }
@@ -58,7 +58,7 @@ size_t
 system_rom::read(int, uint32_type, void *, size_t) const
 {
 #ifdef HAVE_NANA_H
-  L("system_rom: `read' not implemented\n");
+  L("system_rom: FIXME: `read' not implemented\n");
 #endif
   return 0;
 }
@@ -67,7 +67,7 @@ void
 system_rom::putw(int, uint32_type, uint_type)
 {
 #ifdef HAVE_NANA_H
-  L("system_rom: `putw' not implemented\n");
+  L("system_rom: FIXME: `putw' not implemented\n");
 #endif
 }
 
@@ -75,7 +75,7 @@ void
 system_rom::putb(int, uint32_type, uint_type)
 {
 #ifdef HAVE_NANA_H
-  L("system_rom: `putb' not implemented\n");
+  L("system_rom: FIXME: `putb' not implemented\n");
 #endif
 }
 
@@ -83,7 +83,7 @@ size_t
 system_rom::write(int, uint32_type, const void *, size_t)
 {
 #ifdef HAVE_NANA_H
-  L("system_rom: `write' not implemented\n");
+  L("system_rom: FIXME: `write' not implemented\n");
 #endif
   return 0;
 }
@@ -106,6 +106,7 @@ system_rom::dispatch_iocs_function(context &c)
 
 namespace
 {
+  /* Handles an IOCS trap.  This function is an instruction handler.  */
   void
   iocs_trap(uint_type, context &c, instruction_data *data)
   {
@@ -133,7 +134,7 @@ system_rom::detach(exec_unit *eu)
   if (attached_eu != NULL)
     {
 #ifdef HAVE_NANA_H
-      L("system_rom: `detach' not implemented\n");
+      L("system_rom: FIXME: `detach' not implemented\n");
 #endif
       attached_eu = NULL;
     }
@@ -143,7 +144,7 @@ void
 system_rom::initialize(address_space &)
 {
 #ifdef HAVE_NANA_H
-  L("system_rom: `initialize' not implemented\n");
+  L("system_rom: FIXME: `initialize' not implemented\n");
 #endif
 }
 
