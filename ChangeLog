@@ -1,5 +1,9 @@
 1999-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/context.cc: Renamed from cpu.cc.
+	* lib/vm68k/Makefile.am (libvm68k_a_SOURCES): Update the file
+	name.
+
 	* configure.in: Add check for -lpthread.
 
 	* include/vx68k/human.h (class dos): Remove members
