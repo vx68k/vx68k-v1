@@ -4,6 +4,7 @@
 	(close, open): Add test code.
 
 	* configure.in: Add checks for <fcntl.h> and <unistd.h>.
+	Check also for CPP.
 
 	* lib/vm68k/execunit.cc (pea_absl): Fix address register.
 
