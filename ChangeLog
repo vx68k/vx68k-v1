@@ -1,3 +1,7 @@
+2000-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vx68k/machine.h (class graphics_vram): Removed.
+
 2000-08-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/machine.cc (read_disk): Remove debug message.

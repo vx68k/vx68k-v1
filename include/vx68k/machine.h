@@ -104,32 +104,6 @@ namespace vx68k
 
   const size_t GRAPHICS_VRAM_SIZE = 2 * 1024 * 1024;
 
-  /* Graphics VRAM.  */
-  class graphics_vram
-    : public memory
-  {
-  private:
-    unsigned short *base;
-    console *connected_console;
-
-  public:
-    graphics_vram();
-    ~graphics_vram();
-
-  public:
-    size_t read(int, uint32_type, void *, size_t) const;
-    uint_type getb(int, uint32_type) const;
-    uint_type getw(int, uint32_type) const;
-
-  public:
-    size_t write(int, uint32_type, const void *, size_t);
-    void putb(int, uint32_type, uint_type);
-    void putw(int, uint32_type, uint_type);
-
-  public:
-    void connect(console *);
-  };
-
   /* Machine of X68000.  */
   class machine
   {
