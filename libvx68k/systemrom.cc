@@ -183,7 +183,7 @@ namespace
 #endif
     uint32_type address = c.regs.a[1];
 
-    x68k_address_space *as = static_cast<x68k_address_space *>(c.mem);
+    x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
     as->machine()->b_print(c.mem, address);
   }
 
@@ -196,7 +196,7 @@ namespace
       c.regs.d[1], c.regs.d[2], c.regs.d[3], c.regs.a[1]);
 #endif
 
-    x68k_address_space *as = static_cast<x68k_address_space *>(c.mem);
+    x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
     c.regs.d[0] = as->machine()->read_disk(*c.mem,
 					   c.regs.d[1] & 0xffffu, c.regs.d[2],
 					   c.regs.a[1], c.regs.d[3]);

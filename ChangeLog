@@ -1,5 +1,9 @@
 2000-05-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_b_print, iocs_b_read): Use
+	dynamic_cast for the address space.
+	* libvx68k/dos.cc (dos_super_jsr): Likewise.
+
 	* include/vm68k/memory.h (class address_space): Add a virtual
 	destructor.
 

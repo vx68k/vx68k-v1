@@ -493,7 +493,7 @@ namespace
     try
       {
 	vx68k::x68k_address_space *as
-	  = static_cast<vx68k::x68k_address_space *>(c.mem);
+	  = dynamic_cast<vx68k::x68k_address_space *>(c.mem);
 	I(as != NULL);
 
 	as->machine()->exec_unit()->run(c);
