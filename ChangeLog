@@ -1,5 +1,8 @@
 1999-03-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/cpu.cc: Remove `#include <algorithm>'.
+	(run): Use fprintf instead of iostream functions.
+
 	* TODO: Modified.
 
 	* NEWS: Modified.

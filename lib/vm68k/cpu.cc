@@ -24,8 +24,7 @@
 
 #include "vm68k/cpu.h"
 
-#include <iostream>
-#include <algorithm>
+#include <cstdio>
 #include <cassert>
 
 using namespace vm68k;
@@ -72,8 +71,8 @@ cpu::run (execution_context *ec)
   catch (bus_error &e)
     {
       // We should handle this in a callback function.
-      cerr << hex << "vm68k bus error: status = 0x" << e.status
-	   << ", address = 0x" << e.address << "\n" << dec;
+      fprintf(stderr, "vm68k bus error: status = 0x%x, address = 0x%lx\n",
+	      e.status, (unsigned long) e.address);
       abort ();
     }
 }
