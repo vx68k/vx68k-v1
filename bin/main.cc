@@ -140,15 +140,24 @@ main (int argc, char **argv)
       const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
       machine vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE);
 
-      pthread_t vm_thread;
+#ifdef USE_THREAD
       machine_data *md = new machine_data;
       md->vm = &vm;
       md->argv = argv + optind;
+
+      pthread_t vm_thread;
       pthread_create(&vm_thread, NULL, &run_machine, md);
 
       pthread_join(vm_thread, NULL);
       int status = md->status;
       delete md;
+#else
+      human::dos env(&vm);
+      if (opt_debug)
+	env.set_debug_level(1);
+
+      int status = env.execute(argv[optind], argv + optind + 1);
+#endif
       return status;
     }
   catch (exception &x)

@@ -45,7 +45,11 @@ dos::execute (const char *name, const char *const *argv)
 {
   dos_exec_context ec(vm->address_space(), vm->exec_unit(), &allocator);
   ec.set_debug_level(debug_level);
-  ec.setpdb(ec.load(name, 0x7000, 0x7800));
+
+  uint32_type pdb_base = ec.getpdb() - 0x10;
+  uint32_type env = ec.mem->getl(SUPER_DATA, pdb_base + 0x10);
+  ec.setpdb(ec.load(name, 0x7000, env));
+
   ec.regs.a[7] = ec.regs.a[0];	// FIXME
   uint_type st = ec.start(ec.regs.a[4], argv);
   return st;

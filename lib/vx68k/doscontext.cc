@@ -333,5 +333,15 @@ dos_exec_context::dos_exec_context(address_space *m, exec_unit *eu,
     current_pdb(0),
     debug_level(0)
 {
+  const size_t ENV_SIZE = 512;
+  uint32_type env = malloc(ENV_SIZE);
+  mem->putl(SUPER_DATA, env, ENV_SIZE);
+
+  uint32_type shell = malloc(512);
+
+  uint32_type shell_base = shell - 0x10;
+  mem->putl(SUPER_DATA, shell_base + 0x10, env);
+
+  current_pdb = shell;
 }
 

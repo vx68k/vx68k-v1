@@ -1,5 +1,12 @@
 1999-07-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/dos.cc (execute): Get environment address from ec.
+
+	* lib/vx68k/doscontext.cc (dos_exec_context): Make a shell
+	process.
+
+	* bin/main.cc (main) [!USE_THREAD]: Run without thread.
+
 	* lib/vx68k/dos.cc (load): Removed.
 	(execute): Use dos_exec_context::load.
 
