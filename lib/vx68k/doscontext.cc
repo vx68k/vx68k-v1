@@ -28,6 +28,7 @@
 # include <unistd.h>
 #endif
 #include <fstream>
+#include <cstdlib>
 #include <cstdio>
 
 #ifdef HAVE_NANA_H
