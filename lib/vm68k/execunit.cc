@@ -811,7 +811,7 @@ namespace
 #endif
 
     sint_type value1 = extsw(ec.regs.d[reg1]);
-    sint_type value = extsw(uint_type(value1) >> count);
+    sint_type value = extsw((uint_type(value1) & 0xffffu) >> count);
     const uint32_type MASK = (uint32_type(1) << 16) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
     ec.regs.sr.set_cc_lsr(value, value1, count);
@@ -833,7 +833,7 @@ namespace
 #endif
 
     sint32_type value1 = extsl(ec.regs.d[reg1]);
-    sint32_type value = extsl(uint32_type(value1) >> count);
+    sint32_type value = extsl((uint32_type(value1) & 0xffffffffu) >> count);
     ec.regs.d[reg1] = value;
     ec.regs.sr.set_cc_lsr(value, value1, count);
 
@@ -1214,7 +1214,7 @@ namespace
     sint_type value = extsb(value2 - value1);
     const uint32_type MASK = 0xff;
     ec.regs.d[reg2] = ec.regs.d[reg2] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.sr.set_cc(value); // FIXME.
+    ec.regs.sr.set_cc_sub(value, value2, value1);
     ea1.finishb(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -1255,7 +1255,7 @@ namespace
       int32 value = extsl(value2 - value1);
       ec.regs.d[reg2] = value;
       ea1.finishl(ec);
-      ec.regs.sr.set_cc(value); // FIXME.
+      ec.regs.sr.set_cc_sub(value, value2, value1);
 
       ec.regs.pc += 2 + ea1.isize(4);
     }
@@ -1275,7 +1275,7 @@ namespace
     sint32_type value1 = ea1.getl(ec);
     sint32_type value = extsl(value1 - value2);
     ea1.putl(ec, value);
-    ec.regs.sr.set_cc(value); // FIXME.
+    ec.regs.sr.set_cc_sub(value, value1, value2);
     ea1.finishl(ec);
 
     ec.regs.pc += 2 + ea1.isize(4);
@@ -1296,7 +1296,7 @@ namespace
       int value = extsb(value1 - value2);
       ea1.putb(ec, value);
       ea1.finishb(ec);
-      ec.regs.sr.set_cc(value); // FIXME.
+      ec.regs.sr.set_cc_sub(value, value1, value2);
 
       ec.regs.pc += 2 + 2 + ea1.isize(2);
     }
@@ -1305,7 +1305,7 @@ namespace
   subqw(unsigned int op, context &ec)
   {
     Destination ea1(op & 0x7, 2);
-    unsigned int value2 = op >> 9 & 0x7;
+    int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
 #ifdef L
@@ -1317,7 +1317,7 @@ namespace
     sint_type value1 = ea1.getw(ec);
     sint_type value = extsw(value1 - value2);
     ea1.putw(ec, value);
-    ec.regs.sr.set_cc(value); // FIXME.
+    ec.regs.sr.set_cc_sub(value, value1, value2);
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -1327,7 +1327,7 @@ namespace
   subqw<address_register>(unsigned int op, context &ec)
   {
     address_register ea1(op & 0x7, 2);
-    unsigned int value2 = op >> 9 & 0x7;
+    int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
 #ifdef L
@@ -1356,7 +1356,7 @@ namespace
       int32 val1 = extsl(ec.regs.d[reg1]);
       int32 val = extsl(val1 - val2);
       ec.regs.d[reg1] = val;
-      ec.regs.sr.set_cc(val); // FIXME.
+      ec.regs.sr.set_cc_sub(val, val1, val2);
 
       ec.regs.pc += 2;
     }

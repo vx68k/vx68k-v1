@@ -1,5 +1,9 @@
 1999-06-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (lsrw, lsrw): Apply masks before shifts.
+	(subb, subl, subl_r, subib, subqw, subql_d): Use set_cc_sub to
+	update the condition code.
+
 	* lib/vm68k/statusreg.cc (set_cc_sub): New function.  Also add to
 	the class definition.
 
