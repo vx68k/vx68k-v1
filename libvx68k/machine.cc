@@ -269,6 +269,32 @@ machine::queue_key(uint_type key)
 }
 
 uint_type
+machine::peek_key()
+{
+  if (key_queue.empty())
+    sched_yield();
+
+  uint_type key = 0;
+
+  pthread_mutex_lock(&key_queue_mutex);
+
+  try
+    {
+      if (!key_queue.empty())
+	key = key_queue.front();
+    }
+  catch (...)
+    {
+      pthread_mutex_unlock(&key_queue_mutex);
+      throw;
+    }
+
+  pthread_mutex_unlock(&key_queue_mutex);
+
+  return key;
+}
+
+uint_type
 machine::get_key()
 {
   uint_type key;

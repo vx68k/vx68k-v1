@@ -28,7 +28,6 @@
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
-# include <cstdio>
 #else
 # include <cassert>
 # define I assert
@@ -282,14 +281,37 @@ namespace
     long_word_size::put(c.regs.d[0], oaddr);
   }
 
+  /* Handles a _B_KEYINP call.  */
+  void
+  iocs_b_keyinp(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _B_KEYINP\n");
+#endif
+    
+    x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
+    I(as != NULL);
+
+    uint_type key = as->machine()->get_key();
+    long_word_size::put(c.regs.d[0], key);
+  }
+
   /* Handles a _B_KEYSNS call.  */
   void
   iocs_b_keysns(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    L("system_rom: _B_KEYSNS\n");
+    L("IOCS _B_KEYSNS\n");
 #endif
-    long_word_size::put(c.regs.d[0], 0);
+    
+    x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
+    I(as != NULL);
+
+    uint_type key = as->machine()->peek_key();
+    if (key == 0)
+      long_word_size::put(c.regs.d[0], 0);
+    else
+      long_word_size::put(c.regs.d[0], 0x10000 | key);
   }
 
   /* Handles a _B_LPEEK call.  */
@@ -496,6 +518,18 @@ namespace
 #endif
     fprintf(stderr, "iocs_init_prn: FIXME: not implemented\n");
     c.regs.d[0] = 0;
+  }
+
+  /* Handles a _LEDMOD call.  */
+  void
+  iocs_ledmod(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _LEDMOD %%d1=%#010lx %%d2:b=%#04x\n",
+      (unsigned long) long_word_size::get(c.regs.d[1]),
+      byte_size::get(c.regs.d[2]));
+#endif
+    fprintf(stderr, "iocs_ledmod: FIXME: not implemented\n");
   }
 
   /* Handles a _ONTIME call.  */
@@ -732,8 +766,10 @@ namespace
   {
     typedef system_rom::iocs_function_type iocs_function_type;
 
+    rom->set_iocs_function(0x00, iocs_function_type(&iocs_b_keyinp, 0));
     rom->set_iocs_function(0x01, iocs_function_type(&iocs_b_keysns, 0));
     rom->set_iocs_function(0x02, iocs_function_type(&iocs_b_sftsns, 0));
+    rom->set_iocs_function(0x0d, iocs_function_type(&iocs_ledmod, 0));
     rom->set_iocs_function(0x0f, iocs_function_type(&iocs_defchr, 0));
     rom->set_iocs_function(0x10, iocs_function_type(&iocs_crtmod, 0));
     rom->set_iocs_function(0x13, iocs_function_type(&iocs_tpalet, 0));

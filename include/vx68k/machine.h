@@ -307,6 +307,9 @@ namespace vx68k
     /* Queues a key input.  */
     void queue_key(uint_type key);
 
+    /* Peeks a key input.  */
+    uint_type peek_key();
+
     /* Gets a key input from the queue.  */
     uint_type get_key();
 
