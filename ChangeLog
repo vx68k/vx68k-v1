@@ -1,5 +1,13 @@
 1999-03-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/dos.cc: Use I and VL instead of assert and fprintf.
+
+	* configure.in: Add checks for Nana.
+
+	* include/debug.h: New file.
+	* include/Makefile.am: Add comments.
+	(noinst_HEADERS): Add the new file.
+
 	* lib/vm68k/execunit.cc (unlk_a): New function.
 	(install_instructions): Set operation words to the new function.
 

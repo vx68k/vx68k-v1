@@ -28,7 +28,8 @@
 #include <fstream>
 #include <cstdlib>
 #include <cstdio>
-#include <cassert>
+
+#include "debug.h"
 
 using namespace vx68k::human;
 using namespace vm68k;
@@ -157,9 +158,9 @@ namespace
 {
   void close(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
 #ifdef TRACE_STEPS
-      fprintf(stderr, " DOS _CLOSE\n");
+      VL((" DOS _CLOSE\n"));
 #endif
 
       ec->regs.d0 = 0u;		// FIXME.
@@ -169,9 +170,9 @@ namespace
 
   void open(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
 #ifdef TRACE_STEPS
-      fprintf(stderr, " DOS _OPEN\n");
+      VL((" DOS _OPEN\n"));
 #endif
 
       ec->regs.d0 = -2u;	// FIXME.
@@ -181,9 +182,9 @@ namespace
 
   void print(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
 #ifdef TRACE_STEPS
-      fprintf(stderr, " DOS _PRINT\n");
+      VL((" DOS _PRINT\n"));
 #endif
 
       uint32 address = ec->mem->getl(SUPER_DATA, ec->regs.a7);
