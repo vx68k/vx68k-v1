@@ -2,12 +2,12 @@
 
 INCLUDES = -I${top_srcdir}/include
 
-bin_PROGRAMS = x68k
+bin_PROGRAMS = vx68k
 
-x68k_SOURCES = main.cc
-x68k_LDADD = vx68k/libvx68k.a vm68k/libvm68k.a
+vx68k_SOURCES = main.cc
+vx68k_LDADD = libvx68k/libvx68k.a libvm68k/libvm68k.a
 
-SUBDIRS = include vm68k vx68k
+SUBDIRS = include libvm68k libvx68k
 
 dist-snapshot:
 	${MAKE} VERSION=${VERSION}x.`date +%Y%m%d` dist

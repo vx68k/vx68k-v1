@@ -1,5 +1,13 @@
 1999-03-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/Makefile.am: Add comments.
+
+	* Makefile.am (vx68k_SOURCES): Renamed from x68v_SOURCES.
+	(vx68k_LDADD): Likewise.
+
+	* Rename the vx68k and vm68k directories to libvx68k and libvm68k
+	respectively.  Update all refs.
+	
 	* configure.in: Change the AC_INIT test file.
 
 	* main.cc: Moved from vx68v/main.cc.
