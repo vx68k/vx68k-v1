@@ -582,8 +582,7 @@ dos_exec_context *
 dos::create_context()
 {
   dos_exec_context *c
-    = new dos_exec_context(vm->address_space(), vm->exec_unit(),
-			   &allocator, &_fs);
+    = new dos_exec_context(vm, vm->exec_unit(), &allocator, &_fs);
   c->set_debug_level(debug_level);
 
   return c;
@@ -591,17 +590,16 @@ dos::create_context()
 
 dos::dos(class machine *m)
   : vm(m),
-    allocator(vm->address_space(), 0x8000u, vm->memory_size()),
+    allocator(vm, 0x8000u, vm->memory_size()),
     _fs(vm),
     debug_level(0)
 {
   add_instructions(*vm->exec_unit(), this);
 
   // Dummy NUL device.  LHA scans this for TwentyOne?
-  vm->address_space()->putl(SUPER_DATA, 0x6900 +  0, 0x6a00);
-  vm->address_space()->putl(SUPER_DATA, 0x6900 + 14, 0x4e554c20);
-  vm->address_space()->putl(SUPER_DATA, 0x6900 + 18, 0x20202020);
+  vm->putl(SUPER_DATA, 0x6900 +  0, 0x6a00);
+  vm->putl(SUPER_DATA, 0x6900 + 14, 0x4e554c20);
+  vm->putl(SUPER_DATA, 0x6900 + 18, 0x20202020);
 
-  vm->address_space()->putl(SUPER_DATA, 0x6a00 +  0, 0xffffffff);
+  vm->putl(SUPER_DATA, 0x6a00 +  0, 0xffffffff);
 }
-

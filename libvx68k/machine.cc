@@ -111,7 +111,7 @@ machine::b_putc(uint_type code)
 void
 machine::b_print(uint32_type strptr)
 {
-  const string str = as.gets(SUPER_DATA, strptr);
+  const string str = gets(SUPER_DATA, strptr);
 
   for (string::const_iterator i = str.begin();
        i != str.end();
@@ -204,14 +204,14 @@ machine::machine(size_t memory_size)
 
   fill(fd + 0, fd + NFDS, (iocs::disk *) NULL);
 
-  as.set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &mem);
+  set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &mem);
 #if 0
-  as.set_pages(0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &graphic_vram);
+  set_pages(0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &graphic_vram);
 #endif
-  as.set_pages(0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &tvram);
-  as.set_pages(0xfc0000 >> PAGE_SHIFT, 0x1000000 >> PAGE_SHIFT, &rom);
+  set_pages(0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &tvram);
+  set_pages(0xfc0000 >> PAGE_SHIFT, 0x1000000 >> PAGE_SHIFT, &rom);
 
-  rom.initialize(as);
+  rom.initialize(*this);
 
   rom.attach(&eu);
 }

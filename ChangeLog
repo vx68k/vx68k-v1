@@ -1,5 +1,15 @@
 2000-05-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/filesystem.cc (write): Remove the use of
+	machine::address_space.
+	* libvx68k/dos.cc (create_context, dos): Likewise.
+
+	* libvx68k/machine.cc (b_print, machine): Remove the reference to
+	member as.
+
+	* include/vx68k/machine.h (class machine): Change the base class
+	to address_space.  Remove member as and address_space.
+
 	* libvx68k/systemrom.cc (iocs_b_lpeek, invalid_iocs_function):
 	Modify the debug message.
 	(iocs_b_read, iocs_b_write): New functions.

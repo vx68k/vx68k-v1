@@ -229,14 +229,13 @@ namespace vx68k
   };
 
   /* Virtual machine of X68000.  */
-  class machine: public instruction_data
+  class machine: public address_space
   {
   private:
     size_t _memory_size;
     main_memory mem;
     text_vram tvram;
     system_rom rom;
-    class address_space as;
     class exec_unit eu;
 
     /* Cursor position.  */
@@ -264,8 +263,6 @@ namespace vx68k
   public:
     size_t memory_size() const
       {return _memory_size;}
-    class address_space *address_space()
-      {return &as;}
     class exec_unit *exec_unit()
       {return &eu;}
 

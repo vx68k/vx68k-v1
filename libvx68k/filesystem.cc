@@ -179,7 +179,7 @@ con_device_file::write(const address_space *,
 {
   // FIXME.
   unsigned char *data = new unsigned char [size];
-  _m->address_space()->read(SUPER_DATA, dataptr, data, size);
+  _m->read(SUPER_DATA, dataptr, data, size);
 
   for (unsigned char *i = data + 0;
        i != data + size;
