@@ -33,7 +33,9 @@
 # define I assert
 #endif
 
-using namespace vm68k;
+using vm68k::memory_address_space;
+using vm68k::default_memory;
+using namespace vm68k::types;
 using namespace std;
 
 namespace
@@ -43,8 +45,8 @@ namespace
 
 /* Read a block of data from memory.  */
 void
-address_space::read(int fc, uint32_type address,
-		    void *data, size_t size) const
+memory_address_space::read(int fc, uint32_type address,
+			   void *data, size_t size) const
 {
   unsigned char *i = static_cast<unsigned char *>(data);
   unsigned char *last = i + size;
@@ -54,7 +56,7 @@ address_space::read(int fc, uint32_type address,
 }
 
 uint_type
-address_space::getw(int fc, uint32_type address) const
+memory_address_space::getw(int fc, uint32_type address) const
 {
   if (address & 0x1)
     throw address_error_exception(true, fc, address);
@@ -63,7 +65,7 @@ address_space::getw(int fc, uint32_type address) const
 }
 
 uint32_type
-address_space::getl(int fc, uint32_type address) const
+memory_address_space::getl(int fc, uint32_type address) const
 {
   if (address % 2 != 0)
     throw address_error_exception(true, fc, address);
@@ -84,7 +86,7 @@ address_space::getl(int fc, uint32_type address) const
 }
 
 string
-address_space::gets(int fc, uint32_type address) const
+memory_address_space::gets(int fc, uint32_type address) const
 {
   address = canonical_address(address);
   string s;
@@ -101,8 +103,8 @@ address_space::gets(int fc, uint32_type address) const
 
 /* Write a block of data to memory.  */
 void
-address_space::write(int fc, uint32_type address,
-		     const void *data, size_t size)
+memory_address_space::write(int fc, uint32_type address,
+			    const void *data, size_t size)
 {
   unsigned char *i = static_cast<unsigned char *>(data);
   unsigned char *last = i + size;
@@ -112,7 +114,7 @@ address_space::write(int fc, uint32_type address,
 }
 
 void
-address_space::putw(int fc, uint32_type address, uint_type value)
+memory_address_space::putw(int fc, uint32_type address, uint_type value)
 {
   if (address & 0x1)
     throw address_error_exception(false, fc, address);
@@ -121,7 +123,7 @@ address_space::putw(int fc, uint32_type address, uint_type value)
 }
 
 void
-address_space::putl(int fc, uint32_type address, uint32_type value)
+memory_address_space::putl(int fc, uint32_type address, uint32_type value)
 {
   if (address % 2 != 0)
     throw address_error_exception(false, fc, address);
@@ -140,7 +142,7 @@ address_space::putl(int fc, uint32_type address, uint32_type value)
 }
 
 void
-address_space::puts(int fc, uint32_type address, const string &s)
+memory_address_space::puts(int fc, uint32_type address, const string &s)
 {
   for (string::const_iterator i = s.begin();
        i != s.end();
@@ -151,14 +153,14 @@ address_space::puts(int fc, uint32_type address, const string &s)
 }
 
 void
-address_space::set_pages(size_t first, size_t last, memory *p)
+memory_address_space::set_pages(size_t first, size_t last, memory *p)
 {
   I(first <= last);
   I(last <= NPAGES);
   fill(page_table + first, page_table + last, p);
 }
 
-address_space::address_space()
+memory_address_space::memory_address_space()
 {
   fill(page_table + 0, page_table + NPAGES, &null_memory);
 }

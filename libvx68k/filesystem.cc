@@ -51,7 +51,8 @@ namespace
 } // (unnamed namespace)
 
 sint32_type
-regular_file::read(address_space *as, uint32_type dataptr, uint32_type size)
+regular_file::read(memory_address_space *as,
+		   uint32_type dataptr, uint32_type size)
 {
   // FIXME.
   unsigned char *data = new unsigned char [size];
@@ -69,7 +70,7 @@ regular_file::read(address_space *as, uint32_type dataptr, uint32_type size)
 }
 
 sint32_type
-regular_file::write(const address_space *as, uint32_type dataptr,
+regular_file::write(const memory_address_space *as, uint32_type dataptr,
 		    uint32_type size)
 {
   // FIXME.
@@ -110,7 +111,7 @@ regular_file::fputc(sint_type code)
 }
 
 sint32_type
-regular_file::fputs(const address_space *as, uint32_type mesptr)
+regular_file::fputs(const memory_address_space *as, uint32_type mesptr)
 {
   string mes = as->gets(SUPER_DATA, mesptr);
 
@@ -158,23 +159,23 @@ namespace
     explicit con_device_file(machine *m);
 
   public:
-    sint32_type read(address_space *, uint32_type, uint32_type);
-    sint32_type write(const address_space *, uint32_type, uint32_type);
+    sint32_type read(memory_address_space *, uint32_type, uint32_type);
+    sint32_type write(const memory_address_space *, uint32_type, uint32_type);
     sint_type fgetc();
     sint_type fputc(sint_type);
-    sint32_type fputs(const address_space *, uint32_type);
+    sint32_type fputs(const memory_address_space *, uint32_type);
   };
 } // (unnamed namespace)
 
 sint32_type
-con_device_file::read(address_space *, uint32_type, uint32_type)
+con_device_file::read(memory_address_space *, uint32_type, uint32_type)
 {
   // FIXME not implemented
   return -1;
 }
 
 sint32_type
-con_device_file::write(const address_space *as,
+con_device_file::write(const memory_address_space *as,
 		       uint32_type dataptr, uint32_type size)
 {
   // FIXME.
@@ -209,7 +210,7 @@ con_device_file::fputc(sint_type code)
 }
 
 sint32_type
-con_device_file::fputs(const address_space *as, uint32_type str)
+con_device_file::fputs(const memory_address_space *as, uint32_type str)
 {
   _m->b_print(as, str);
   return 0;			// FIXME
@@ -357,7 +358,8 @@ file_system::open(file *&ret, const string &name, uint_type mode)
 }
 
 sint_type
-file_system::open(file *&ret, const address_space *as, uint32_type nameptr,
+file_system::open(file *&ret, const memory_address_space *as,
+		  uint32_type nameptr,
 		  sint_type mode)
 {
   string name = as->gets(SUPER_DATA, nameptr);
@@ -366,8 +368,8 @@ file_system::open(file *&ret, const address_space *as, uint32_type nameptr,
 }
 
 sint_type
-file_system::create(file *&ret, const address_space *as, uint32_type nameptr,
-		    sint_type atr)
+file_system::create(file *&ret, const memory_address_space *as,
+		    uint32_type nameptr, sint_type atr)
 {
   string name = export_file_name(as->gets(SUPER_DATA, nameptr));
 
@@ -389,7 +391,8 @@ file_system::create(file *&ret, const address_space *as, uint32_type nameptr,
 }
 
 sint_type
-file_system::chmod(const address_space *as, uint32_type nameptr, sint_type atr)
+file_system::chmod(const memory_address_space *as,
+		   uint32_type nameptr, sint_type atr)
 {
   string name = export_file_name(as->gets(SUPER_DATA, nameptr));
 

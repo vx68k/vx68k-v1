@@ -1,4 +1,11 @@
+2000-08-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Modified.
+
 2000-08-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/memory.h (class memory_address_space): Renamed
+	from address_space.  Also change all users.
 
 	* TODO: Modified.
 

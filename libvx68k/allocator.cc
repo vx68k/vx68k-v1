@@ -254,7 +254,7 @@ memory_allocator::alloc_largest(uint32_type parent)
   return long_word_size::svalue(best_candidate + 0x10);
 }
 
-memory_allocator::memory_allocator(address_space *as,
+memory_allocator::memory_allocator(memory_address_space *as,
 				   uint32_type address, uint32_type lim)
   : _as(as),
     limit(lim & ~0xf),

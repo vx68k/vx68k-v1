@@ -32,13 +32,13 @@ namespace vx68k
     class memory_allocator
     {
     private:
-      address_space *_as;
+      memory_address_space *_as;
       uint32_type limit;
       uint32_type root_block;
       uint32_type last_block;
 
     public:
-      memory_allocator(address_space *, uint32_type, uint32_type);
+      memory_allocator(memory_address_space *, uint32_type, uint32_type);
 
     public:
       uint32_type root() const
@@ -70,13 +70,15 @@ namespace vx68k
 
     public:
       string export_file_name(const string &);
-      sint_type chmod(const address_space *, uint32_type, sint_type);
+      sint_type chmod(const memory_address_space *, uint32_type, sint_type);
 
     public:
-      sint_type create(file *&, const address_space *, uint32_type, sint_type);
+      sint_type create(file *&, const memory_address_space *,
+		       uint32_type, sint_type);
       void open(file *&, int);
       sint_type open(file *&, const string &, uint_type);
-      sint_type open(file *&, const address_space *, uint32_type, sint_type);
+      sint_type open(file *&, const memory_address_space *,
+		     uint32_type, sint_type);
       file *ref(file *);
       void unref(file *);
     };
@@ -89,12 +91,13 @@ namespace vx68k
       virtual ~file() {}
     public:
       virtual sint32_type seek(sint32_type, uint_type) {return -1;}
-      virtual sint32_type read(address_space *, uint32_type, uint32_type) = 0;
-      virtual sint32_type write(const address_space *,
+      virtual sint32_type read(memory_address_space *,
+			       uint32_type, uint32_type) = 0;
+      virtual sint32_type write(const memory_address_space *,
 				uint32_type, uint32_type) = 0;
       virtual sint_type fgetc() = 0;
       virtual sint_type fputc(sint_type) = 0;
-      virtual sint32_type fputs(const address_space *, uint32_type) = 0;
+      virtual sint32_type fputs(const memory_address_space *, uint32_type) = 0;
     };
 
     /* Regular file that maps onto a POSIX file.  */
@@ -109,11 +112,12 @@ namespace vx68k
       ~regular_file();
     public:
       sint32_type seek(sint32_type, uint_type);
-      sint32_type read(address_space *, uint32_type, uint32_type);
-      sint32_type write(const address_space *, uint32_type, uint32_type);
+      sint32_type read(memory_address_space *, uint32_type, uint32_type);
+      sint32_type write(const memory_address_space *,
+			uint32_type, uint32_type);
       sint_type fgetc();
       sint_type fputc(sint_type);
-      sint32_type fputs(const address_space *, uint32_type);
+      sint32_type fputs(const memory_address_space *, uint32_type);
     };
 
     const size_t NFILES = 96;
@@ -133,7 +137,7 @@ namespace vx68k
       int debug_level;
 
     public:
-      dos_exec_context(address_space *, exec_unit *,
+      dos_exec_context(memory_address_space *, exec_unit *,
 		       memory_allocator *, file_system *);
       ~dos_exec_context();
 

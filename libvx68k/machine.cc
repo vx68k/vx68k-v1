@@ -111,7 +111,7 @@ machine::b_putc(uint_type code)
 }
 
 void
-machine::b_print(const address_space *as, uint32_type strptr)
+machine::b_print(const memory_address_space *as, uint32_type strptr)
 {
   const string str = as->gets(SUPER_DATA, strptr);
 
@@ -124,7 +124,7 @@ machine::b_print(const address_space *as, uint32_type strptr)
 }
 
 sint32_type
-machine::read_disk(address_space &as, uint_type mode, uint32_type pos,
+machine::read_disk(memory_address_space &as, uint_type mode, uint32_type pos,
 		   uint32_type buf, uint32_type nbytes)
 {
   uint_type u = mode >> 8 & 0xf;
@@ -146,7 +146,8 @@ machine::read_disk(address_space &as, uint_type mode, uint32_type pos,
 }
 
 sint32_type
-machine::write_disk(const address_space &as, uint_type mode, uint32_type pos,
+machine::write_disk(const memory_address_space &as,
+		    uint_type mode, uint32_type pos,
 		    uint32_type buf, uint32_type nbytes) const
 {
   uint_type u = mode >> 8 & 0xf;
@@ -400,7 +401,7 @@ machine::connect(console *c)
 }
 
 void
-machine::configure(address_space &as)
+machine::configure(memory_address_space &as)
 {
   as.set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &mem);
 #if 0

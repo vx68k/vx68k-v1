@@ -43,7 +43,7 @@ opm_memory::reset(console::time_type t)
 }
 
 void
-opm_memory::check_timeout(console::time_type t, context &c)
+opm_memory::check_timeouts(console::time_type t, context &c)
 {
   last_check_time = t;
 

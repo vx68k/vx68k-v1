@@ -26,7 +26,7 @@ namespace vx68k
 {
   namespace iocs
   {
-    using vm68k::address_space;
+    using vm68k::memory_address_space;
     using namespace vm68k::types;
 
     /* Abstract disk in the view of the IOCS.  This class is not that
@@ -38,15 +38,17 @@ namespace vx68k
 
     public:
       /* Reads records.  */
-      virtual sint32_type read(uint_type, uint32_type, address_space &,
+      virtual sint32_type read(uint_type, uint32_type, memory_address_space &,
 			       uint32_type, uint32_type) = 0;
 
       /* Writes records.  */
-      virtual sint32_type write(uint_type, uint32_type, const address_space &,
+      virtual sint32_type write(uint_type, uint32_type,
+				const memory_address_space &,
 				uint32_type, uint32_type) = 0;
 
       /* Verifies records by comparing the contents.  */
-      virtual sint32_type verify(uint_type, uint32_type, const address_space &,
+      virtual sint32_type verify(uint_type, uint32_type,
+				 const memory_address_space &,
 				 uint32_type, uint32_type) = 0;
     };
 
@@ -65,11 +67,11 @@ namespace vx68k
       virtual off_t record_offset(uint32_type);
 
     public:
-      sint32_type read(uint_type, uint32_type, address_space &,
+      sint32_type read(uint_type, uint32_type, memory_address_space &,
 		       uint32_type, uint32_type);
-      sint32_type write(uint_type, uint32_type, const address_space &,
+      sint32_type write(uint_type, uint32_type, const memory_address_space &,
 			uint32_type, uint32_type);
-      sint32_type verify(uint_type, uint32_type, const address_space &,
+      sint32_type verify(uint_type, uint32_type, const memory_address_space &,
 			 uint32_type, uint32_type);
     };
   } // namespace iocs

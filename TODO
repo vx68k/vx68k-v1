@@ -1,8 +1,6 @@
 To-Do List for Virtual X68000
 
-$Date: Wed, 09 Aug 2000 23:42:52 +0900 $
-
-* Rename class address_space to memory_address_space.
+$Date: Thu, 10 Aug 2000 00:10:52 +0900 $
 
 * Make class machine a subclass of memory_address_space.
 

@@ -189,7 +189,7 @@ system_rom::detach(exec_unit *eu)
 }
 
 void
-system_rom::initialize(address_space &as)
+system_rom::initialize(memory_address_space &as)
 {
 #ifdef HAVE_NANA_H
   L("system_rom: FIXME: `initialize' not fully implemented\n");

@@ -42,7 +42,7 @@ crtc_memory::reset(console::time_type t)
 }
 
 void
-crtc_memory::check_timeout(console::time_type t, context &c)
+crtc_memory::check_timeouts(console::time_type t, context &c)
 {
   if (t - vdisp_start_time >= vdisp_interval)
     {

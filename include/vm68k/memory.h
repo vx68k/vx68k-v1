@@ -79,9 +79,9 @@ namespace vm68k
     void put_8(int, uint32_type, uint_type);
   };
 
-  /* Address space.  An address space is a software view of a target
-     machine.  */
-  class address_space
+  /* Address space for memories.  An address space is a software view
+     of a target machine.  */
+  class memory_address_space
   {
   protected:
     /* Returns the canonical address for ADDRESS.  */
@@ -97,8 +97,8 @@ namespace vm68k
     {
     };
 #endif
-    virtual ~address_space() {}
-    address_space();
+    virtual ~memory_address_space() {}
+    memory_address_space();
 
   protected:
     /* Finds a page that contains canonical address ADDRESS.  */

@@ -127,7 +127,7 @@ context::set_sr(uint_type value)
   regs.ccr = value;
 }
 
-context::context(address_space *m)
+context::context(memory_address_space *m)
   : mem(m),
     pfc_cache(regs.ccr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM),
     dfc_cache(regs.ccr.supervisor_state() ? SUPER_DATA : USER_DATA),

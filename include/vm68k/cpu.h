@@ -51,12 +51,12 @@ namespace vm68k
       }
 
     static unsigned int get(uint32_type value) {return value & value_mask();}
-    static unsigned int get(const address_space &a, int fc,
+    static unsigned int get(const memory_address_space &a, int fc,
 			    uint32_type address)
       {return a.getb(fc, address);}
     static void put(uint32_type &dest, unsigned int value)
       {dest = dest & ~uint32_type(value_mask()) | value & value_mask();}
-    static void put(address_space &a, int fc,
+    static void put(memory_address_space &a, int fc,
 		    uint32_type address, unsigned int value)
       {a.putb(fc, address, value & value_mask());}
 
@@ -84,11 +84,12 @@ namespace vm68k
       }
 
     static uint_type get(uint32_type value) {return value & value_mask();}
-    static uint_type get(const address_space &a, int fc, uint32_type address)
+    static uint_type get(const memory_address_space &a,
+			 int fc, uint32_type address)
       {return a.getw(fc, address);}
     static void put(uint32_type &dest, uint_type value)
       {dest = dest & ~uint32_type(value_mask()) | value & value_mask();}
-    static void put(address_space &a, int fc,
+    static void put(memory_address_space &a, int fc,
 		    uint32_type address, uint_type value)
       {a.putw(fc, address, value & value_mask());}
 
@@ -118,12 +119,12 @@ namespace vm68k
       }
 
     static uint32_type get(uint32_type value) {return value;}
-    static uint32_type get(const address_space &a, int fc,
+    static uint32_type get(const memory_address_space &a, int fc,
 			   uint32_type address)
       {return a.getl(fc, address);}
     static void put(uint32_type &dest, uint32_type value)
       {dest = value & value_mask();}
-    static void put(address_space &a, int fc,
+    static void put(memory_address_space &a, int fc,
 		    uint32_type address, uint32_type value)
       {a.putl(fc, address, value & value_mask());}
 
@@ -299,11 +300,11 @@ namespace vm68k
 #if 0
   struct exception_listener
   {
-    virtual void bus_error (registers *, address_space *) = 0;
-    virtual void address_error (registers *, address_space *) = 0;
-    virtual void trap (int, registers *, address_space *) = 0;
-    virtual void interrupt (int, registers *, address_space *) = 0;
-    virtual void illegal (int, registers *, address_space *) = 0;
+    virtual void bus_error (registers *, memory_address_space *) = 0;
+    virtual void address_error (registers *, memory_address_space *) = 0;
+    virtual void trap (int, registers *, memory_address_space *) = 0;
+    virtual void interrupt (int, registers *, memory_address_space *) = 0;
+    virtual void illegal (int, registers *, memory_address_space *) = 0;
   };
 #endif
 
@@ -313,7 +314,7 @@ namespace vm68k
   {
   public:
     registers regs;
-    address_space *mem;
+    memory_address_space *mem;
     //exception_listener *exception;
 
   private:
@@ -327,7 +328,7 @@ namespace vm68k
     vector<queue<unsigned int> > interrupt_queues;
 
   public:
-    explicit context(address_space *);
+    explicit context(memory_address_space *);
 
   public:
     /* Returns true if supervisor state.  */

@@ -358,7 +358,7 @@ dos_exec_context::~dos_exec_context()
     _fs->unref(*i);
 }
 
-dos_exec_context::dos_exec_context(address_space *m, exec_unit *eu,
+dos_exec_context::dos_exec_context(memory_address_space *m, exec_unit *eu,
 				   memory_allocator *a, file_system *fs)
   : context(m),
     _eu(eu),			// FIXME
