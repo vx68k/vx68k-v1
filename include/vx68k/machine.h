@@ -161,6 +161,7 @@ namespace vx68k
     scc_memory scc;
     ppi_memory ppi;
     sram _sram;
+    font_rom font;
     system_rom rom;
     class exec_unit eu;
 
@@ -197,7 +198,7 @@ namespace vx68k
 
   public:
     void connect(console *con)
-      {tvram.connect(con);}
+      {tvram.connect(con); font.copy_data(con);}
     void get_image(int x, int y, int width, int height,
 		   unsigned char *rgb_buf, size_t row_size);
 

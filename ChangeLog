@@ -1,5 +1,18 @@
 2000-08-02  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (configure): Map font.
+
+	* include/vx68k/machine.h (class machine): Add member font.  Call
+	font.copy_data in connect.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add fontrom.cc.
+
+	* libvx68k/fontrom.cc: New file.
+	(copy_data, get_16, get_8, put_16, put_8, ~font_rom, font_rom):
+	New function.
+
+	* include/vx68k/memory.h (class font_rom): New class.
+
 	* libvx68kgtk/gtkconsole.cc (handle_timeout): Remove temporary
 	code.
 

@@ -366,6 +366,7 @@ machine::configure(address_space &as)
   as.set_pages(0xe98000 >> PAGE_SHIFT, 0xe9a000 >> PAGE_SHIFT, &scc);
   as.set_pages(0xe9a000 >> PAGE_SHIFT, 0xe9c000 >> PAGE_SHIFT, &ppi);
   as.set_pages(0xed0000 >> PAGE_SHIFT, 0xed4000 >> PAGE_SHIFT, &_sram);
+  as.set_pages(0xf00000 >> PAGE_SHIFT, 0xfc0000 >> PAGE_SHIFT, &font);
   as.set_pages(0xfc0000 >> PAGE_SHIFT, 0x1000000 >> PAGE_SHIFT, &rom);
 
   rom.initialize(as);
