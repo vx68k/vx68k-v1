@@ -19,30 +19,34 @@
 #ifndef _VX68K_MEMORY_H
 #define _VX68K_MEMORY_H 1
 
-#include "vm68k/memory.h"
+#include <vm68k/memory.h>
 
 namespace vx68k
 {
-  using namespace vm68k::types;
+  using namespace vm68k;
   using namespace std;
 
-  class main_memory_page
-    : public vm68k::memory_page
+  class main_memory
+    : public memory
   {
-  public:
-    explicit main_memory_page (size_t);
-    ~main_memory_page ();
-  public:
-    size_t read(int, uint32, void *, size_t) const;
-    size_t write(int, uint32, const void *, size_t);
-    uint8 getb (int, uint32) const;
-    uint16 getw (int, uint32) const;
-    uint32 getl(int fc, uint32 address) const;
-    void putb (int, uint32, uint8);
-    void putw (int, uint32, uint16);
   private:
-    size_t end;
+    uint32_type end;
     uint16 *array;
+
+  public:
+    explicit main_memory(size_t);
+    ~main_memory();
+
+  public:
+    size_t read(int, uint32_type, void *, size_t) const;
+    uint_type getb(int, uint32_type) const;
+    uint_type getw(int, uint32_type) const;
+    uint32_type getl(int fc, uint32_type address) const;
+
+  public:
+    size_t write(int, uint32_type, const void *, size_t);
+    void putb(int, uint32_type, uint_type);
+    void putw(int, uint32_type, uint_type);
   };
 } // vx68k
 

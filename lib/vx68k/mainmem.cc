@@ -23,13 +23,11 @@
 
 #include <vx68k/memory.h>
 
-#include <cstdlib>
-
 using namespace vx68k;
 using namespace std;
 
 size_t
-main_memory_page::read(int fc, uint32 address, void *data, size_t size) const
+main_memory::read(int fc, uint32_type address, void *data, size_t size) const
 {
   if (address >= end)
     {
@@ -56,8 +54,8 @@ main_memory_page::read(int fc, uint32 address, void *data, size_t size) const
   return size;
 }
 
-uint8
-main_memory_page::getb (int fc, uint32 address) const
+uint_type
+main_memory::getb(int fc, uint32_type address) const
 {
   if (address >= end)
     {
@@ -69,8 +67,8 @@ main_memory_page::getb (int fc, uint32 address) const
   return address & 0x1 != 0 ? w & 0xffu : w >> 8;
 }
 
-uint16
-main_memory_page::getw (int fc, uint32 address) const
+uint_type
+main_memory::getw(int fc, uint32_type address) const
 {
   // Address error?
   if (address >= end)
@@ -82,8 +80,8 @@ main_memory_page::getw (int fc, uint32 address) const
   return array[address >> 1];
 }
 
-uint32
-main_memory_page::getl(int fc, uint32 address) const
+uint32_type
+main_memory::getl(int fc, uint32_type address) const
 {
   // Address error?
   uint32_type address2 = address + 2;
@@ -97,7 +95,7 @@ main_memory_page::getl(int fc, uint32 address) const
 }
 
 size_t
-main_memory_page::write(int fc, uint32 address, const void *data, size_t size)
+main_memory::write(int fc, uint32_type address, const void *data, size_t size)
 {
   if (address >= end)
     {
@@ -125,7 +123,7 @@ main_memory_page::write(int fc, uint32 address, const void *data, size_t size)
 }
 
 void
-main_memory_page::putb(int fc, uint32 address, uint8 value)
+main_memory::putb(int fc, uint32_type address, uint_type value)
 {
   if (address >= end)
     {
@@ -142,7 +140,7 @@ main_memory_page::putb(int fc, uint32 address, uint8 value)
 }
 
 void
-main_memory_page::putw (int fc, uint32 address, uint16 value)
+main_memory::putw(int fc, uint32_type address, uint_type value)
 {
   // Address error?
   if (address >= end)
@@ -154,15 +152,15 @@ main_memory_page::putw (int fc, uint32 address, uint16 value)
   array[address >> 1] = value;
 }
 
-main_memory_page::~main_memory_page ()
+main_memory::~main_memory()
 {
-  free (array);
+  delete [] array;
 }
 
-main_memory_page::main_memory_page (size_t n)
-  : end (n),
-    array (NULL)
+main_memory::main_memory(size_t n)
+  : end((n + 1u) & ~1u),
+    array(NULL)
 {
-  array = static_cast <uint16 *> (malloc (n));
+  array = new uint16 [end >> 1];
 }
 

@@ -1,5 +1,20 @@
 1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Change file name.
+
+	* lib/vx68k/mainmem.cc: Renamed from memory.cc.
+
+	* lib/vx68k/memory.cc (getb, getw, getl): Change return type and
+	argument type.
+	(putb, putw): Change argument type.
+	(~main_memory): Use delete.
+	(main_memory): Use new.
+
+	* include/vx68k/memory.h: Add using namespace vm68k.  Use <> for
+	include.
+	(class main_memory): Renamed from main_memory_page.
+	(class main_memory): Move data members and change type of end.
+
 	* lib/vm68k/addrspace.cc (no_mem): New static object.
 	(read, write): Change use of uint32 to uint32_type.
 	(read, write): Use canonical_address and find_page.
