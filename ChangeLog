@@ -1,3 +1,11 @@
+2000-08-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/sram.cc: Include <vx68k/memory.h> instead of
+	<vx68k/machine.h>.
+
+	* include/vx68k/machine.h (class machine): Add new template
+	update_image.
+
 2000-08-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* include/vm68k/addressing.h: Return string from member text.

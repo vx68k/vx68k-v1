@@ -1,5 +1,5 @@
 /* Virtual X68000 - X68000 virtual machine
-   Copyright (C) 1998, 2000 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #undef const
 #undef inline
 
-#include <vx68k/machine.h>
+#include <vx68k/memory.h>
 
 #include <sys/mman.h>
 #ifdef HAVE_FCNTL_H
