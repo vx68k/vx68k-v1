@@ -1,5 +1,8 @@
 1999-11-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vx68kgtk/gtkconsole.cc (handle_timeout): Adjust bounds so that
+	bounds.x == 0.
+
 	* include/vm68k/cpu.h (struct byte_type, struct word_type): Change
 	type of value_mask to uint32_type.  Use value_mask in get.
 	(struct long_word_size): Use constant in value_mask.

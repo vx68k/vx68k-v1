@@ -274,9 +274,8 @@ gtk_console::handle_timeout()
       gdk_threads_leave();
 
       // FIXME: This adjustment is temporary.
-      int x = bounds.x % 16;
-      bounds.x -= x;
-      bounds.width += x;
+      bounds.width += bounds.x;
+      bounds.x = 0;
 
       _m->get_image(bounds.x, bounds.y, bounds.width, bounds.height,
 		    rgb_buf + bounds.y * row_size + bounds.x * 3, row_size);
