@@ -205,10 +205,6 @@ text_video_memory::raster(unsigned int x, unsigned int y)
 uint_type
 text_video_memory::get_16(int fc, uint32_type address) const
 {
-#ifdef HAVE_NANA_H
-  L("class text_video_memory: get_16 fc=%d address=%#010lx\n",
-    fc, (unsigned long) address);
-#endif
   if (fc != SUPER_DATA)
     throw bus_error_exception(true, fc, address);
 
@@ -220,10 +216,6 @@ text_video_memory::get_16(int fc, uint32_type address) const
 uint_type
 text_video_memory::get_8(int fc, uint32_type address) const
 {
-#ifdef HAVE_NANA_H
-  L("class text_video_memory: get_8 fc=%d address=%#010lx\n",
-    fc, (unsigned long) address);
-#endif
   if (fc != SUPER_DATA)
     throw bus_error_exception(true, fc, address);
 

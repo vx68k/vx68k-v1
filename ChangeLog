@@ -1,5 +1,7 @@
 2000-08-02  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/textvram.cc (get_16, get_8): Remove log output.
+
 	* libvx68k/machine.cc (configure): Map font.
 
 	* include/vx68k/machine.h (class machine): Add member font.  Call
