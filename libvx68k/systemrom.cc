@@ -44,35 +44,58 @@ uint_type
 system_rom::get_16(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("class system_rom: FIXME: `get_16' not implemented\n");
+  L("class system_rom: get_16: fc=%d address=%#010lx\n",
+    fc, (unsigned long) address);
+#endif
+#if 0
+  if (fc == USER_DATA || fc == USER_PROGRAM)
+    throw bus_error_exception(true, fc, address);
+#endif
+
+  fprintf(stderr, "class system_rom: FIXME: `get_16' not implemented\n");
+  return 0x4e73;
+}
+
+uint_type
+system_rom::get_8(int fc, uint32_type address) const
+{
+#ifdef HAVE_NANA_H
+  L("class system_rom: get_8: fc=%d address=%#010lx\n",
+    fc, (unsigned long) address);
 #endif
   // A program access generates a bus error to detect emulation bugs
   // easily.
   if (fc == SUPER_PROGRAM || fc == USER_PROGRAM)
     throw bus_error_exception(true, fc, address);
 
+  fprintf(stderr, "class system_rom: FIXME: `get_8' not implemented\n");
   return 0;
 }
 
-uint_type
-system_rom::get_8(int, uint32_type) const
+void
+system_rom::put_16(int fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
-  L("class system_rom: FIXME: `get_8' not implemented\n");
+  L("class system_rom: put_16: fc=%d address=%#010lx value=%#06x\n",
+    fc, (unsigned long) address, value & 0xffffu);
 #endif
-  return 0;
+  if (fc != SUPER_DATA)
+    throw bus_error_exception(false, fc, address);
+
+  fprintf(stderr, "class system_rom: FIXME: `put_16' not implemented\n");
 }
 
 void
-system_rom::put_16(int fc, uint32_type address, uint_type)
+system_rom::put_8(int fc, uint32_type address, uint_type value)
 {
-  throw bus_error_exception(false, fc, address);
-}
+#ifdef HAVE_NANA_H
+  L("class system_rom: put_8: fc=%d address=%#010lx value=%#04x\n",
+    fc, (unsigned long) address, value & 0xffu);
+#endif
+  if (fc != SUPER_DATA)
+    throw bus_error_exception(false, fc, address);
 
-void
-system_rom::put_8(int fc, uint32_type address, uint_type)
-{
-  throw bus_error_exception(false, fc, address);
+  fprintf(stderr, "class system_rom: FIXME: `put_8' not implemented\n");
 }
 
 void

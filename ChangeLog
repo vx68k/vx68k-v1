@@ -4,6 +4,8 @@
 	iocs_skey_mod, iocs_tgusemd, iocs_vdispst): New function.
 	(iocs_tcolor, iocs_tpalet): Correct log messages.
 	(initialize_iocs_functions): Use new handlers.
+	(get_16): Return 0x4e73.  Disable fc test.
+	(get_8, put_16, put_8): Add fc test.  Add messages.
 
 	* bin/main.cc (create_window): Modify menu structure.
 
