@@ -174,12 +174,12 @@ con_device_file::read(address_space *, uint32_type, uint32_type)
 }
 
 sint32_type
-con_device_file::write(const address_space *,
+con_device_file::write(const address_space *as,
 		       uint32_type dataptr, uint32_type size)
 {
   // FIXME.
   unsigned char *data = new unsigned char [size];
-  _m->read(SUPER_DATA, dataptr, data, size);
+  as->read(SUPER_DATA, dataptr, data, size);
 
   for (unsigned char *i = data + 0;
        i != data + size;
@@ -209,9 +209,9 @@ con_device_file::fputc(sint_type code)
 }
 
 sint32_type
-con_device_file::fputs(const address_space *, uint32_type str)
+con_device_file::fputs(const address_space *as, uint32_type str)
 {
-  _m->b_print(str);
+  _m->b_print(as, str);
   return 0;			// FIXME
 }
 

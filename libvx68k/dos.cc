@@ -492,10 +492,11 @@ namespace
 
     try
       {
-	vx68k::machine *m = static_cast<vx68k::machine *>(c.mem);
-	I(m != NULL);
+	vx68k::x68k_address_space *as
+	  = static_cast<vx68k::x68k_address_space *>(c.mem);
+	I(as != NULL);
 
-	m->exec_unit()->run(c);
+	as->machine()->exec_unit()->run(c);
 
 	abort();
       }
@@ -584,24 +585,24 @@ dos_exec_context *
 dos::create_context()
 {
   dos_exec_context *c
-    = new dos_exec_context(vm, vm->exec_unit(), &allocator, &_fs);
+    = new dos_exec_context(&as, as.machine()->exec_unit(), &allocator, &_fs);
   c->set_debug_level(debug_level);
 
   return c;
 }
 
 dos::dos(class machine *m)
-  : vm(m),
-    allocator(vm, 0x8000u, vm->memory_size()),
-    _fs(vm),
+  : as(m),
+    allocator(&as, 0x8000u, as.machine()->memory_size()),
+    _fs(as.machine()),
     debug_level(0)
 {
-  add_instructions(*vm->exec_unit(), this);
+  add_instructions(*as.machine()->exec_unit(), this);
 
   // Dummy NUL device.  LHA scans this for TwentyOne?
-  vm->putl(SUPER_DATA, 0x6900 +  0, 0x6a00);
-  vm->putl(SUPER_DATA, 0x6900 + 14, 0x4e554c20);
-  vm->putl(SUPER_DATA, 0x6900 + 18, 0x20202020);
+  as.putl(SUPER_DATA, 0x6900 +  0, 0x6a00);
+  as.putl(SUPER_DATA, 0x6900 + 14, 0x4e554c20);
+  as.putl(SUPER_DATA, 0x6900 + 18, 0x20202020);
 
-  vm->putl(SUPER_DATA, 0x6a00 +  0, 0xffffffff);
+  as.putl(SUPER_DATA, 0x6a00 +  0, 0xffffffff);
 }

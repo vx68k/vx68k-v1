@@ -110,9 +110,9 @@ machine::b_putc(uint_type code)
 }
 
 void
-machine::b_print(uint32_type strptr)
+machine::b_print(const address_space *as, uint32_type strptr)
 {
-  const string str = gets(SUPER_DATA, strptr);
+  const string str = as->gets(SUPER_DATA, strptr);
 
   for (string::const_iterator i = str.begin();
        i != str.end();
@@ -123,7 +123,7 @@ machine::b_print(uint32_type strptr)
 }
 
 sint32_type
-machine::read_disk(uint_type mode, uint32_type pos,
+machine::read_disk(address_space &as, uint_type mode, uint32_type pos,
 		   uint32_type buf, uint32_type nbytes)
 {
   uint_type u = mode >> 8 & 0xf;
@@ -137,7 +137,7 @@ machine::read_disk(uint_type mode, uint32_type pos,
       if (u >= NFDS)
 	throw range_error("read_disk");
 
-      return fd[u]->read(mode, pos, *this, buf, nbytes);
+      return fd[u]->read(mode, pos, as, buf, nbytes);
 
     default:
       abort();
@@ -145,7 +145,7 @@ machine::read_disk(uint_type mode, uint32_type pos,
 }
 
 sint32_type
-machine::write_disk(uint_type mode, uint32_type pos,
+machine::write_disk(const address_space &as, uint_type mode, uint32_type pos,
 		    uint32_type buf, uint32_type nbytes) const
 {
   uint_type u = mode >> 8 & 0xf;
@@ -159,7 +159,7 @@ machine::write_disk(uint_type mode, uint32_type pos,
       if (u >= NFDS)
 	throw range_error("write_disk");
 
-      return fd[u]->write(mode, pos, *this, buf, nbytes);
+      return fd[u]->write(mode, pos, as, buf, nbytes);
 
     default:
       abort();
@@ -169,7 +169,9 @@ machine::write_disk(uint_type mode, uint32_type pos,
 void
 machine::boot()
 {
-  sint32_type st = read_disk(0x9000, 0x03000001, 0x2000, 1024);
+  x68k_address_space as(this);
+
+  sint32_type st = read_disk(as, 0x9000, 0x03000001, 0x2000, 1024);
   if (st >> 24 & 0xc0)
     {
 #ifdef HAVE_NANA_H
@@ -178,7 +180,7 @@ machine::boot()
       throw runtime_error("machine");
     }
 
-  context c(this);
+  context c(&as);
   c.regs.pc = 0x2000;
 
   eu.run(c);
@@ -268,6 +270,19 @@ machine::get_image(int x, int y, int width, int height,
   tvram.get_image(x, y, width, height, rgb_buf, row_size);
 }
 
+void
+machine::configure(address_space &as)
+{
+  as.set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &mem);
+#if 0
+  as.set_pages(0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &graphic_vram);
+#endif
+  as.set_pages(0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &tvram);
+  as.set_pages(0xfc0000 >> PAGE_SHIFT, 0x1000000 >> PAGE_SHIFT, &rom);
+
+  rom.initialize(as);
+}
+
 machine::~machine()
 {
   for (iocs::disk **i = fd + 0; i != fd + NFDS; ++i)
@@ -289,15 +304,6 @@ machine::machine(size_t memory_size)
   pthread_mutex_init(&key_queue_mutex, NULL);
 
   fill(fd + 0, fd + NFDS, (iocs::disk *) NULL);
-
-  set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &mem);
-#if 0
-  set_pages(0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &graphic_vram);
-#endif
-  set_pages(0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &tvram);
-  set_pages(0xfc0000 >> PAGE_SHIFT, 0x1000000 >> PAGE_SHIFT, &rom);
-
-  rom.initialize(*this);
 
   rom.attach(&eu);
 }

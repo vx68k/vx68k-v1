@@ -1,3 +1,30 @@
+2000-05-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/dos.cc (dos_super_jsr): Use x68k_address_space.
+	(create_context, dos): Use as instead of vm.
+
+	* libvx68k/filesystem.cc (write): Use the first argument.
+	(fputs): Pass as to b_print.
+
+	* libvx68k/machine.cc (b_print, read_disk, write_disk): Add
+	argument as.
+	(boot): Make its own address space.
+	(configure): New function.
+	(machine): Remove address space initialization.
+
+	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Add x68kaddr.cc.
+
+	* libvx68k/x68kaddr.cc: New file.
+	(x68k_address_space): New function.
+
+	* include/vx68k/human.h (class dos): Add new member as.  Remove
+	member vm.
+
+	* include/vx68k/machine.h (class machine): Remove class
+	address_space from its base.  Add new member configure.  Change
+	arguments of member b_print, read_disk, and write_disk.
+	(class x68k_address_space): New class.
+
 2000-05-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* bin/main.cc (class gtk_app): Rewrite boot and load_fd_image in

@@ -195,10 +195,11 @@ namespace vx68k
 	       const char *const *envp);
     };
 
+    /* DOS.  */
     class dos
     {
     private:
-      machine *vm;
+      x68k_address_space as;
       memory_allocator allocator;
       file_system _fs;
 

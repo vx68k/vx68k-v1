@@ -228,8 +228,8 @@ namespace vx68k
 		   unsigned char *rgb_buf, size_t row_size);
   };
 
-  /* Virtual machine of X68000.  */
-  class machine: public address_space
+  /* Machine of X68000.  */
+  class machine
   {
   private:
     size_t _memory_size;
@@ -272,6 +272,9 @@ namespace vx68k
     void get_image(int x, int y, int width, int height,
 		   unsigned char *rgb_buf, size_t row_size);
 
+    /* Configures address space AS.  */
+    void configure(address_space &as);
+
   public:
     /* Loads a file on a FD unit.  */
     void load_fd(unsigned int u, int fildes);
@@ -281,7 +284,7 @@ namespace vx68k
 
   public:
     void b_putc(uint_type);
-    void b_print(uint32_type);
+    void b_print(const address_space *as, uint32_type);
 
   public:			// Keyboard Input
     /* Queues a key input.  */
@@ -292,15 +295,30 @@ namespace vx68k
 
   public:
     /* Reads blocks from a FD unit.  */
-    sint32_type read_disk(uint_type u, uint32_type pos,
+    sint32_type read_disk(address_space &, uint_type u, uint32_type pos,
 			  uint32_type buf, uint32_type nbytes);
 
     /* Writes blocks from a FD unit.  */
-    sint32_type write_disk(uint_type u, uint32_type pos,
+    sint32_type write_disk(const address_space &, uint_type u, uint32_type pos,
 			   uint32_type buf, uint32_type nbytes) const;
 
     /* Boots up this machine.  */
     void boot();
+  };
+
+  /* Address space of X68000.  */
+  class x68k_address_space: public address_space
+  {
+  private:
+    class machine *_m;
+
+  public:
+    x68k_address_space(class machine *m);
+
+  public:
+    /* Shortcut for the emulated machine.  */
+    class machine *machine() const
+    {return _m;}
   };
 } // vx68k
 
