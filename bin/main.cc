@@ -30,11 +30,16 @@
 
 #include <gtk/gtk.h>
 #include <pthread.h>
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#else
+# define O_RDWR 2
+#endif
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 
-#include <exception>
+#include <stdexcept>
 #include <csignal>
 #include <cstdlib>
 #include <cstdio>
@@ -60,12 +65,10 @@ using namespace std;
 #define COPYRIGHT_YEAR "1998, 2000"
 
 /* Application.  */
-class vx68k_app
+class gtk_app
 {
 public:
   /* Program options.  */
-  static const char *opt_fd0_image;
-  static const char *opt_fd1_image;
   static size_t opt_memory_size;
   static int opt_single_threaded;
   static int opt_debug_level;
@@ -91,7 +94,7 @@ private:
   GtkWidget *main_window;
 
 public:
-  vx68k_app();
+  gtk_app();
 
 protected:
   void run_machine();
@@ -118,14 +121,12 @@ public:
   void show_about_dialog();
 };
 
-const char *vx68k_app::opt_fd0_image = "";
-const char *vx68k_app::opt_fd1_image = "";
-size_t vx68k_app::opt_memory_size = 0;
-int vx68k_app::opt_single_threaded = false;
-int vx68k_app::opt_debug_level = 0;
+size_t gtk_app::opt_memory_size = 0;
+int gtk_app::opt_single_threaded = false;
+int gtk_app::opt_debug_level = 0;
 
 void
-vx68k_app::run_machine()
+gtk_app::run_machine()
 {
   human::dos env(&vm);
   if (opt_debug_level > 0)
@@ -140,7 +141,7 @@ vx68k_app::run_machine()
 }
 
 void *
-vx68k_app::run_machine_thread(void *data)
+gtk_app::run_machine_thread(void *data)
   throw ()
 {
   sigset_t sigs;
@@ -157,7 +158,7 @@ vx68k_app::run_machine_thread(void *data)
   pthread_sigmask(SIG_BLOCK, &sigs, NULL);
   try
     {
-      vx68k_app *app = static_cast<vx68k_app *>(data);
+      gtk_app *app = static_cast<gtk_app *>(data);
       I(app != NULL);
       app->run_machine();
     }
@@ -170,7 +171,7 @@ vx68k_app::run_machine_thread(void *data)
 }
 
 void
-vx68k_app::run(const char *const *args)
+gtk_app::run(const char *const *args)
 {
   vm_args = args;
 
@@ -181,13 +182,13 @@ vx68k_app::run(const char *const *args)
 }
 
 void
-vx68k_app::boot()
+gtk_app::boot()
 {
   g_message("`boot' function not implemented yet");
 }
 
 void
-vx68k_app::join(int *status)
+gtk_app::join(int *status)
 {
   if (vm_thread != pthread_self())
     {
@@ -200,9 +201,28 @@ vx68k_app::join(int *status)
 }
 
 void
-vx68k_app::load_fd_image(unsigned int u, const char *name)
+gtk_app::load_fd_image(unsigned int u, const char *name)
 {
+  int fildes = open(name, O_RDWR);
+  if (fildes == -1)
+    {
+      perror(name);
+      throw runtime_error("gtk_app");
+    }
+
+  iocs::image_file_floppy_disk *fd;
+  try
+    {
+      fd = new iocs::image_file_floppy_disk(fildes);
+    }
+  catch (...)
+    {
+      close(fildes);
+      throw;
+    }
+
   g_message("`load_fd_image' function not implemented yet");
+  delete fd;
 }
 
 /* Window management.  */
@@ -219,7 +239,7 @@ namespace
 } // namespace (unnamed)
 
 void
-vx68k_app::show_about_dialog()
+gtk_app::show_about_dialog()
 {
   GtkWidget *dialog = gtk_dialog_new();
 
@@ -361,14 +381,14 @@ namespace
   void
   handle_about_command(gpointer data, guint, GtkWidget *item) throw ()
   {
-    vx68k_app *app = static_cast<vx68k_app *>(data);
+    gtk_app *app = static_cast<gtk_app *>(data);
 
     app->show_about_dialog();
   }
 } // namespace (unnamed)
 
 GtkWidget *
-vx68k_app::create_window()
+gtk_app::create_window()
 {
   if (main_window == NULL)
     {
@@ -454,7 +474,7 @@ vx68k_app::create_window()
 
 const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
 
-vx68k_app::vx68k_app()
+gtk_app::gtk_app()
   : vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE),
     con(&vm),
     vm_status(0),
@@ -463,17 +483,16 @@ vx68k_app::vx68k_app()
   vm_thread = pthread_self();
   gtk_widget_set_default_visual(gdk_rgb_get_visual());
   vm.connect(&con);
-
-  if (opt_fd0_image[0] != '\0')
-    load_fd_image(0, opt_fd0_image);
-  if (opt_fd1_image[0] != '\0')
-    load_fd_image(1, opt_fd0_image);
 }
 
 namespace
 {
   /* Boot mode.  */
   int opt_boot = false;
+
+  /* File names of FD images.  */
+  const char *opt_fd0_image = "";
+  const char *opt_fd1_image = "";
 
   int opt_help = false;
   int opt_version = false;
@@ -486,8 +505,8 @@ namespace
 	 {"fd0-image", required_argument, NULL, '0'},
 	 {"fd1-image", required_argument, NULL, '1'},
 	 {"memory-size", required_argument, NULL, 'm'},
-	 {"one-thread", no_argument, &vx68k_app::opt_single_threaded, true},
-	 {"debug", no_argument, &vx68k_app::opt_debug_level, 1},
+	 {"one-thread", no_argument, &gtk_app::opt_single_threaded, true},
+	 {"debug", no_argument, &gtk_app::opt_debug_level, 1},
 	 {"help", no_argument, &opt_help, true},
 	 {"version", no_argument, &opt_version, true},
 	 {NULL, 0, NULL, 0}};
@@ -495,12 +514,20 @@ namespace
     for (;;)
       {
 	int index;
-	int opt = getopt_long(argc, argv, "m:0:1:", longopts, &index);
+	int opt = getopt_long(argc, argv, "0:1:m:", longopts, &index);
 	if (opt == -1)		// no more options
 	  break;
 
 	switch (opt)
 	  {
+	  case '0':
+	    opt_fd0_image = optarg;
+	    break;
+
+	  case '1':
+	    opt_fd1_image = optarg;
+	    break;
+
 	  case 'm':
 	    {
 	      int mega = atoi(optarg);
@@ -511,17 +538,9 @@ namespace
 		  return false;
 		}
 
-	      vx68k_app::opt_memory_size = mega * 1024 * 1024;
+	      gtk_app::opt_memory_size = mega * 1024 * 1024;
 	    }
 	  break;
-
-	  case '0':
-	    vx68k_app::opt_fd0_image = optarg;
-	    break;
-
-	  case '1':
-	    vx68k_app::opt_fd1_image = optarg;
-	    break;
 
 	  case 0:		// long option
 	    break;
@@ -596,10 +615,15 @@ main(int argc, char **argv)
 
   try
     {
-      vx68k_app app;
+      gtk_app app;
 
       GtkWidget *window = app.create_window();
       gtk_widget_show(window);
+
+      if (opt_fd0_image[0] != '\0')
+	app.load_fd_image(0, opt_fd0_image);
+      if (opt_fd1_image[0] != '\0')
+	app.load_fd_image(1, opt_fd0_image);
 
       if (opt_boot)
 	{
