@@ -1,5 +1,8 @@
 2000-09-05  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* doc/vx68k.texi (SCC): New node.
+	(Machine): Add menu.
+
 	* libvx68k/sccmem.cc (set_mouse_position): Limit mouse position in
 	bounds.
 	(mouse_motion): Remove call to sched_yield and pthread_testcancel.

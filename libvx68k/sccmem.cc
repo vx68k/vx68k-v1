@@ -274,7 +274,7 @@ namespace
     long_word_size::uvalue_type br = long_word_size::get(c.regs.d[2]);
 #ifdef HAVE_NANA_H
     LG(nana_iocs_call_trace, "IOCS _MS_LIMIT; %%d1=0x%08lx %%d2=0x%08lx\n",
-       topleft + 0UL, bottomright + 0UL);
+       tl + 0UL, br + 0UL);
 #endif
     scc_memory *m = reinterpret_cast<scc_memory *>(data);
 

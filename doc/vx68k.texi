@@ -219,6 +219,20 @@ processor into an execution unit.
 In Virtual X68000, a machine is an abstraction of X68000
 hardware and firmware BIOS.
 
+@menu
+* SCC::                         
+@end menu
+
+@node SCC,  , Machine, Machine
+@subsection Z8530 SCC
+@cindex SCC
+@cindex serial communication controller
+@cindex Z8530
+@cindex COM port
+@cindex mouse port
+X68000 uses a Z8530 SCC, or serial communication controller, for a COM
+port and a mouse port.
+
 @node Human68k,  , Machine, X68000 emulation
 @section Human68k
 @cindex Human68k
