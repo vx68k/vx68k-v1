@@ -231,6 +231,46 @@ namespace vm68k
 	{return textw(ec);}
     };
 
+    class disp_indirect
+    {
+    private:
+      int reg;
+      int offset;
+    public:
+      disp_indirect(int r, int off)
+	: reg(r), offset(off) {}
+    public:
+      size_t isize(size_t) const
+	{return 2;}
+      uint32 address(const execution_context *ec) const
+	{return ec->regs.a[reg] + extsw(ec->fetchw(offset));}
+      int getb(const execution_context *ec) const
+	{return extsb(ec->mem->getb(ec->data_fc(), address(ec)));}
+      int getw(const execution_context *ec) const
+	{return extsw(ec->mem->getw(ec->data_fc(), address(ec)));}
+      int32 getl(const execution_context *ec) const
+	{return extsl(ec->mem->getl(ec->data_fc(), address(ec)));}
+      void putb(execution_context *ec, int value) const
+	{ec->mem->putb(ec->data_fc(), address(ec), value);}
+      void putw(execution_context *ec, int value) const
+	{ec->mem->putw(ec->data_fc(), address(ec), value);}
+      void putl(execution_context *ec, int32 value) const
+	{ec->mem->putl(ec->data_fc(), address(ec), value);}
+      void finishb(execution_context *) const {}
+      void finishw(execution_context *) const {}
+      void finishl(execution_context *) const {}
+      const char *textb(const execution_context *ec) const
+	{return textw(ec);}
+      const char *textw(const execution_context *ec) const
+	{
+	  static char buf[16];
+	  sprintf(buf, "%%a%d@(%d)", reg, extsw(ec->fetchw(2)));
+	  return buf;
+	}
+      const char *textl(const execution_context *ec) const
+	{return textw(ec);}
+    };
+
     class absolute_long
     {
     protected:

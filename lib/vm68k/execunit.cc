@@ -418,17 +418,30 @@ namespace
       ec->regs.pc += 2 + disp;
     }
 
+  template <class Destination> void clrb(unsigned int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      Destination ea1(op & 0x7, 2);
+      VL((" clrb %s\n", ea1.textb(ec)));
+
+      ea1.putb(ec, 0);
+      ea1.finishb(ec);
+      ec->regs.sr.set_cc(0);
+
+      ec->regs.pc += 2 + ea1.isize(2);
+    }
+
   template <class Destination> void clrw(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       Destination ea1(op & 0x7, 2);
-      VL((" clrw *\n"));
+      VL((" clrw %s\n", ea1.textw(ec)));
 
       ea1.putw(ec, 0);
       ea1.finishw(ec);
       ec->regs.sr.set_cc(0);
 
-      ec->regs.pc += 2;
+      ec->regs.pc += 2 + ea1.isize(2);
     }
 
   template <> void clrw<address_register>(unsigned int, execution_context *);
@@ -776,6 +789,7 @@ namespace
       ec->regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
     }
 
+#if 0
   void movew_off_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -795,7 +809,6 @@ namespace
       ec->regs.pc += 2 + 2;
     }
 
-#if 0
   void movew_absl_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -952,7 +965,6 @@ namespace
 
       ec->regs.pc += 2;
     }
-#endif /* 0 */
 
   void movel_off_d(unsigned int op, execution_context *ec)
     {
@@ -971,6 +983,7 @@ namespace
 
       ec->regs.pc += 2 + 2;
     }
+#endif /* 0 */
 
   void movel_d_postinc(unsigned int op, execution_context *ec)
     {
@@ -1355,7 +1368,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x2010, 0x0e07, &movel<indirect, data_register>);
   eu->set_instruction(0x2018, 0x0e07, &movel<postincrement_indirect, data_register>);
   eu->set_instruction(0x2020, 0x0e07, &movel<predecrement_indirect, data_register>);
-  eu->set_instruction(0x2028, 0x0e07, &movel_off_d);
+  eu->set_instruction(0x2028, 0x0e07, &movel<disp_indirect, data_register>);
   eu->set_instruction(0x2039, 0x0e00, &movel<absolute_long, data_register>);
   eu->set_instruction(0x203c, 0x0e00, &movel<immediate, data_register>);
   eu->set_instruction(0x2058, 0x0e07, &movel_postinc_a);
@@ -1371,7 +1384,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x3010, 0x0e07, &movew<indirect, data_register>);
   eu->set_instruction(0x3018, 0x0e07, &movew<postincrement_indirect, data_register>);
   eu->set_instruction(0x3020, 0x0e07, &movew<predecrement_indirect, data_register>);
-  eu->set_instruction(0x3028, 0x0e07, &movew_off_d);
+  eu->set_instruction(0x3028, 0x0e07, &movew<disp_indirect, data_register>);
   eu->set_instruction(0x3039, 0x0e00, &movew<absolute_long, data_register>);
   eu->set_instruction(0x303c, 0x0e00, &movew<immediate, data_register>);
   eu->set_instruction(0x30c0, 0x0e07, &movew_d_postinc);
@@ -1381,10 +1394,18 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x4190, 0x0e07, &lea<indirect>);
   eu->set_instruction(0x41e8, 0x0e07, &lea_offset_a);
   eu->set_instruction(0x41f9, 0x0e00, &lea<absolute_long>);
+  eu->set_instruction(0x4200, 0x0007, &clrb<data_register>);
+  eu->set_instruction(0x4210, 0x0007, &clrb<indirect>);
+  eu->set_instruction(0x4218, 0x0007, &clrb<postincrement_indirect>);
+  eu->set_instruction(0x4220, 0x0007, &clrb<predecrement_indirect>);
+  eu->set_instruction(0x4228, 0x0007, &clrb<disp_indirect>);
+  eu->set_instruction(0x4239, 0x0000, &clrb<absolute_long>);
   eu->set_instruction(0x4240, 0x0007, &clrw<data_register>);
   eu->set_instruction(0x4250, 0x0007, &clrw<indirect>);
   eu->set_instruction(0x4258, 0x0007, &clrw<postincrement_indirect>);
   eu->set_instruction(0x4260, 0x0007, &clrw<predecrement_indirect>);
+  eu->set_instruction(0x4268, 0x0007, &clrw<disp_indirect>);
+  eu->set_instruction(0x4279, 0x0000, &clrw<absolute_long>);
   eu->set_instruction(0x4879, 0x0000, &pea_absl);
   eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
   eu->set_instruction(0x4cd8, 0x0007, &moveml_postinc_r);
