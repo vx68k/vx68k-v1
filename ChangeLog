@@ -1,5 +1,8 @@
 1999-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/filesystem.cc (fputs): Use address_space::gets.
+	(open, create, chmod): Use address_space::gets.
+
 	* include/vm68k/memory.h (class address_space): Update member
 	functions.
 

@@ -31,6 +31,7 @@
 # include <unistd.h>
 #endif
 #include <cstring>
+#include <cerrno>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
@@ -110,19 +111,17 @@ regular_file::fputc(sint_type code)
 sint32_type
 regular_file::fputs(const address_space *as, uint32_type mesptr)
 {
-  // FIXME.
-  uint32_type ptr = mesptr;
-  unsigned char data[1];
-  do
-    {
-      data[0] = as->getb(SUPER_DATA, ptr++);
-      if (data[0] != 0)
-	::write(fd, data, 1);
-    }
-  while (data[0] != 0);
+  string mes = as->gets(SUPER_DATA, mesptr);
 
-  --ptr;
-  return ptr - mesptr;
+  ssize_t written_size = ::write(fd, mes.data(), mes.size());
+  if (written_size == -1)
+    switch (errno)
+      {
+      default:
+	return -6;		// FIXME
+      }
+
+  return written_size;
 }
 
 sint32_type
@@ -194,18 +193,24 @@ file_system::open(file *&ret, const address_space *as, uint32_type nameptr,
   static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
 
   // FIXME.
-  char name[256];
-  as->read(SUPER_DATA, nameptr, name, 256);
-  char *c = strpbrk(name, " "); // ???
-  if (c != NULL)
-    *c = '\0';
+  string name = as->gets(SUPER_DATA, nameptr);
+  string::size_type c = name.find_last_not_of(' '); // ???
+  name.erase(c + 1);
 
   if ((mode & 0xf) > 2)
     return -12;			// FIXME.
 
-  int fd = ::open(name, uflag[mode & 0xf]);
+  int fd = ::open(name.c_str(), uflag[mode & 0xf]);
   if (fd == -1)
-    return -2;			// FIXME: errno test.
+    switch (errno)
+      {
+#ifdef ENOENT
+      case ENOENT:
+	return -2;
+#endif
+      default:
+	return -2;		// FIXME: errno test.
+      }
 
   open(ret, fd);
   return 0;
@@ -216,16 +221,18 @@ file_system::create(file *&ret, const address_space *as, uint32_type nameptr,
 		    sint_type atr)
 {
   // FIXME.
-  char name[256];
-  as->read(SUPER_DATA, nameptr, name, 256);
-  char *c = strpbrk(name, " "); // ???
-  if (c != NULL)
-    *c = '\0';
+  string name = as->gets(SUPER_DATA, nameptr);
+  string::size_type c = name.find_last_not_of(' '); // ???
+  name.erase(c + 1);
 
   // FIXME.
-  int fd = ::open(name, O_RDWR | O_CREAT | O_TRUNC, 0666);
+  int fd = ::open(name.c_str(), O_RDWR | O_CREAT | O_TRUNC, 0666);
   if (fd == -1)
-    return -2;			// FIXME: errno test.
+    switch (errno)
+      {
+      default:
+	return -2;		// FIXME: errno test.
+      }
 
   open(ret, fd);
   return 0;
@@ -235,11 +242,9 @@ sint_type
 file_system::chmod(const address_space *as, uint32_type nameptr, sint_type atr)
 {
   // FIXME.
-  char name[256];
-  as->read(SUPER_DATA, nameptr, name, 256);
-  char *c = strpbrk(name, " "); // ???
-  if (c != NULL)
-    *c = '\0';
+  string name = as->gets(SUPER_DATA, nameptr);
+  string::size_type c = name.find_last_not_of(' '); // ???
+  name.erase(c + 1);
 
   return -1;
 }
