@@ -348,6 +348,7 @@ namespace
     ec.regs.pc += 2 + (cond(ec) ? disp : len);
   }
 
+#if 0
   void bcc(unsigned int op, context &ec)
     {
       int len = 2;
@@ -364,6 +365,7 @@ namespace
       // XXX: The condition codes are not affected.
       ec.regs.pc += ec.regs.sr.cc() ? 2 + disp : len;
     }
+#endif
 
   void beq(unsigned int op, context &ec)
     {
@@ -1417,7 +1419,9 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x51c8, 0x0007, &dbf_d);
   eu.set_instruction(0x6000, 0x00ff, &bra);
   eu.set_instruction(0x6100, 0x00ff, &bsr);
-  eu.set_instruction(0x6400, 0x00ff, &bcc);
+  eu.set_instruction(0x6200, 0x00ff, &b<hi>);
+  eu.set_instruction(0x6300, 0x00ff, &b<ls>);
+  eu.set_instruction(0x6400, 0x00ff, &b<cc>);
   eu.set_instruction(0x6500, 0x00ff, &b<cs>);
   eu.set_instruction(0x6600, 0x00ff, &bne);
   eu.set_instruction(0x6700, 0x00ff, &beq);

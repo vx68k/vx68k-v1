@@ -1,5 +1,10 @@
 1999-06-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (bcc): #if'd out
+	(install_instructions): Add new handlers.
+
+	* include/vm68k/condition.h (struct hi, struct ls): New classes.
+
 	* include/vm68k/addressing.h (class data_register): Fix getb wrong
 	size bug.
 
