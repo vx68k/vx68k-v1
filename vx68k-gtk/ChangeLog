@@ -1,5 +1,7 @@
 2001-07-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* configure.in: Set VERSION to 1.1.9.
+
 	* bin/Makefile.am (INCLUDES): Remove `-I$(prefix)/include'.
 	(noinst_LIBRARIES): Removed.
 	(libmisc_a_SOURCES): Removed.

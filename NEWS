@@ -6,6 +6,10 @@ History of user-visible changes in Virtual X68000.  -*-Outline-*-
 
 Code was modified to use new classes.
 
+** Directory Hierarchy Change
+
+The GTK+-dependent components were moved into the directory vx68k-gtk.
+
 * Version 1.1.8
 
 ** Updates for Libvm68k 1.0.5

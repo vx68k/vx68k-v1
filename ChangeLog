@@ -1,5 +1,15 @@
 2001-07-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* Version 1.1.9.
+
+	* libvx68k/Makefile.am (libvx68k_la_LDFLAGS): Update the version
+	information.
+	* libvx68kdos/Makefile.am (libvx68kdos_la_LDFLAGS): Likewise.
+
+	* configure.in: Set VERSION to 1.1.9.
+
+	* NEWS: Updated.
+
 	* libvx68k/Makefile.am (INCLUDES): Remove `-I$(prefix)/include'.
 	* libvx68kdos/Makefile.am (INCLUDES): Likewise.
 
