@@ -1,3 +1,10 @@
+1999-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/memory.h (class address_space): Update member
+	functions.
+
+	* lib/vm68k/addrspace.cc (gets, puts): New functions.
+
 1999-07-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* Makefile.am (EXTRA_DIST): Add doc/vx68k.sgml.

@@ -22,6 +22,7 @@
 #include <vm68k/except.h>
 #include <vm68k/types.h>
 #include <iterator>
+#include <string>
 
 namespace vm68k
 {
@@ -109,6 +110,8 @@ namespace vm68k
       {return page_table[address >> PAGE_SHIFT];}
 
   public:
+    void read(int, uint32, void *, size_t) const;
+
     /* Returns one byte at address ADDRESS in this address space.  */
     uint_type getb(int fc, uint32_type address) const
       {
@@ -134,8 +137,10 @@ namespace vm68k
        Any unaligned address will be handled.  */
     uint32_type getl(int fc, uint32_type address) const;
 
-    void read (int, uint32, void *, size_t) const;
-    size_t gets(int, uint32, char *, size_t) const;
+    string gets(int, uint32) const;
+
+  public:
+    void write (int, uint32, const void *, size_t);
 
     /* Stores byte VALUE at address ADDRESS in this address space.  */
     void putb(int fc, uint32_type address, uint_type value)
@@ -162,8 +167,7 @@ namespace vm68k
        space.  Any unaligned address will be handled.  */
     void putl(int fc, uint32_type address, uint32_type value);
 
-    void write (int, uint32, const void *, size_t);
-    size_t puts(int, uint32, const char *);
+    void puts(int, uint32, const string &);
   };
 } // vm68k
 

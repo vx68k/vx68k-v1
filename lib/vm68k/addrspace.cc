@@ -80,6 +80,22 @@ address_space::getl(int fc, uint32_type address) const
     return p->getl(fc, address);
 }
 
+string
+address_space::gets(int fc, uint32_type address) const
+{
+  address = canonical_address(address);
+  string s;
+  for (;;)
+    {
+      uint_type c = getb(fc, address++);
+      if (c == 0)
+	break;
+      s += c;
+    }
+
+  return s;
+}
+
 /* Write a block of data to memory.  */
 void
 address_space::write(int fc, uint32_type address,
@@ -120,6 +136,17 @@ address_space::putl(int fc, uint32_type address, uint32_type value)
     }
   else
     p->putl(fc, address, value);
+}
+
+void
+address_space::puts(int fc, uint32_type address, const string &s)
+{
+  for (string::const_iterator i = s.begin();
+       i != s.end();
+       ++i)
+    putb(fc, address++, *i);
+
+  putb(fc, address++, 0);
 }
 
 void
