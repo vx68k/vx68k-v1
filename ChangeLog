@@ -1,3 +1,26 @@
+1998-10-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Add copyright info to the source files.
+
+	* vm68k/cpu.cc: All refs to substituted members of class cpu
+	changed.
+	(execution_context): New function.
+	(SUPER_PROGRAM): Removed.
+	(run): Add some code for function code.
+	(run): Change instruction handler call.
+	(set_handlers): Fill table using a mask pattern.
+	(illegal_insn): Renamed from undefined_insn.  All refs changed.
+	(cpu): Change initializers.
+
+	* include/vm68k/cpu.h (struct exception_listener): Renamed from
+	interrupt_listener.  All refs changed.
+	(struct exception_listener): Add illegal.
+	(struct execution_context): New struct.
+	(class cpu): Put explicit keyword to the constructor.
+	(class cpu): Use execution_context for insn_handler arg.
+	(class cpu): Rename undefined_insn to illegal_insn.
+	(class cpu): Substitute members with execution_context.
+
 1998-10-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* vx68k/main.cc (main): Use x68k_memory and cpu.
