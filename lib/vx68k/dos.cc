@@ -121,7 +121,7 @@ dos::load_executable (const char *name)
   // PSP setup.
   main_ec.mem->write(SUPER_DATA, load_address - 128,
 		     name, (strlen(name) + 2) & ~1);
-  main_ec.regs.a0 = load_address - 0x100; // FIXME.
+  main_ec.regs.a[0] = load_address - 0x100; // FIXME.
 
   return load_address + start_offset;
 }
@@ -130,7 +130,7 @@ uint16
 dos::start (uint32 address, const char *const *argv)
 {
   main_ec.regs.pc = address;
-  main_ec.regs.a7 = 0x8000;	// FIXME.
+  main_ec.regs.a[7] = 0x8000;	// FIXME.
   uint16 status = 0;
  restart:
   try
@@ -161,7 +161,7 @@ namespace
       I(ec != NULL);
       VL((" DOS _CLOSE\n"));
 
-      ec->regs.d0 = 0u;		// FIXME.
+      ec->regs.d[0] = 0u;	// FIXME.
 
       ec->regs.pc += 2;
     }
@@ -171,7 +171,7 @@ namespace
       I(ec != NULL);
       VL((" DOS _OPEN\n"));
 
-      ec->regs.d0 = -2u;	// FIXME.
+      ec->regs.d[0] = -2u;	// FIXME.
 
       ec->regs.pc += 2;
     }
@@ -181,7 +181,7 @@ namespace
       I(ec != NULL);
       VL((" DOS _PRINT\n"));
 
-      uint32 address = ec->mem->getl(SUPER_DATA, ec->regs.a7);
+      uint32 address = ec->mem->getl(SUPER_DATA, ec->regs.a[7]);
 
       int value;
       do

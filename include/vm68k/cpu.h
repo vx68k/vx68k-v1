@@ -56,8 +56,8 @@ namespace vm68k
   /* CPU registers (mc68000).  */
   struct registers
   {
-    uint32 d0, d1, d2, d3, d4, d5, d6, d7;
-    uint32 a0, a1, a2, a3, a4, a5, a6, a7;
+    uint32 d[8];		/* %d0-%d7 */
+    uint32 a[8];		/* %a0-%a6/%sp */
     status_register sr;
     uint32 pc;
     uint32 usp;

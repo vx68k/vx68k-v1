@@ -85,7 +85,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      (&ec->regs.a0)[reg] += value;
+      ec->regs.a[reg] += value;
 
       ec->regs.pc += 2;
     }
@@ -188,8 +188,8 @@ namespace
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
-      ec->mem->putl(fc, ec->regs.a7 - 4, ec->regs.pc + len);
-      ec->regs.a7 -= 4;
+      ec->mem->putl(fc, ec->regs.a[7] - 4, ec->regs.pc + len);
+      ec->regs.a[7] -= 4;
       ec->regs.pc += 2 + disp;
     }
 
@@ -202,8 +202,8 @@ namespace
 #endif
 
       int fc = ec->data_fc();
-      ec->mem->putw(fc, (&ec->regs.a0)[reg] - 2, 0);
-      (&ec->regs.a0)[reg] -= 2;
+      ec->mem->putw(fc, ec->regs.a[reg] - 2, 0);
+      ec->regs.a[reg] -= 2;
       ec->regs.sr.set_cc(0);
 
       ec->regs.pc += 2;
@@ -220,7 +220,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      (&ec->regs.a0)[d_reg] = (&ec->regs.a0)[s_reg] + offset;
+      ec->regs.a[d_reg] = ec->regs.a[s_reg] + offset;
 
       ec->regs.pc += 4;
     }
@@ -235,7 +235,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      (&ec->regs.a0)[reg] = address;
+      ec->regs.a[reg] = address;
 
       ec->regs.pc += 6;
     }
@@ -250,10 +250,10 @@ namespace
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
-      ec->mem->putl(fc, ec->regs.a7 - 4, (&ec->regs.a0)[reg]);
-      ec->regs.a7 -= 4;
-      (&ec->regs.a0)[reg] = ec->regs.a7;
-      ec->regs.a7 += disp;
+      ec->mem->putl(fc, ec->regs.a[7] - 4, ec->regs.a[reg]);
+      ec->regs.a[7] -= 4;
+      ec->regs.a[reg] = ec->regs.a[7];
+      ec->regs.a[7] += disp;
 
       ec->regs.pc += 4;
     }
@@ -268,10 +268,10 @@ namespace
 #endif
 
       int fc = ec->data_fc();
-      int value = extsb(ec->mem->getb(fc, (&ec->regs.a0)[s_reg]));
-      ec->mem->putb(fc, (&ec->regs.a0)[d_reg], value);
-      (&ec->regs.a0)[s_reg] += 1;
-      (&ec->regs.a0)[d_reg] += 1;
+      int value = extsb(ec->mem->getb(fc, ec->regs.a[s_reg]));
+      ec->mem->putb(fc, ec->regs.a[d_reg], value);
+      ec->regs.a[s_reg] += 1;
+      ec->regs.a[d_reg] += 1;
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2;
@@ -288,7 +288,7 @@ namespace
 
       int fc = ec->data_fc();
       int value = extsw(ec->mem->getw(fc, address));
-      (&ec->regs.d0)[reg] = value;
+      ec->regs.d[reg] = value;
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2 + 4;
@@ -304,9 +304,9 @@ namespace
 #endif
 
       int fc = ec->data_fc();
-      int value = extsw((&ec->regs.d0)[s_reg]);
-      ec->mem->putw(fc, (&ec->regs.a0)[d_reg] - 2, value);
-      (&ec->regs.a0)[d_reg] -= 2;
+      int value = extsw(ec->regs.d[s_reg]);
+      ec->mem->putw(fc, ec->regs.a[d_reg] - 2, value);
+      ec->regs.a[d_reg] -= 2;
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2;
@@ -322,7 +322,7 @@ namespace
 #endif
 
       int fc = ec->data_fc();
-      int value = extsw((&ec->regs.d0)[reg]);
+      int value = extsw(ec->regs.d[reg]);
       ec->mem->putw(fc, address, value);
       ec->regs.sr.set_cc(value);
 
@@ -339,9 +339,9 @@ namespace
 #endif
 
       int fc = ec->data_fc();
-      int32 value = (&ec->regs.a0)[s_reg];
-      ec->mem->putl(fc, (&ec->regs.a0)[d_reg] - 4, value);
-      (&ec->regs.a0)[d_reg] -= 4;
+      int32 value = ec->regs.a[s_reg];
+      ec->mem->putl(fc, ec->regs.a[d_reg] - 4, value);
+      ec->regs.a[d_reg] -= 4;
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2;
@@ -358,8 +358,8 @@ namespace
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
-      (&ec->regs.a0)[d_reg] = ec->mem->getl(fc, (&ec->regs.a0)[s_reg]);
-      (&ec->regs.a0)[s_reg] += 4;
+      ec->regs.a[d_reg] = ec->mem->getl(fc, ec->regs.a[s_reg]);
+      ec->regs.a[s_reg] += 4;
 
       ec->regs.pc += 2;
     }
@@ -379,9 +379,9 @@ namespace
 	{
 	  if (bitmap & 1 != 0)
 	    {
-	      ec->mem->putl(fc, (&ec->regs.a0)[reg] - 4,
-			    (&ec->regs.d0)[15 - i]);
-	      (&ec->regs.a0)[reg] -= 4;
+	      ec->mem->putl(fc, ec->regs.a[reg] - 4,
+			    ec->regs.d[15 - i]);
+	      ec->regs.a[reg] -= 4;
 	    }
 	  bitmap >>= 1;
 	}
@@ -400,7 +400,7 @@ namespace
       fprintf(stderr, " moveql #%d,%%d%d\n", value, reg);
 #endif
       
-      (&ec->regs.d0)[reg] = value;
+      ec->regs.d[reg] = value;
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2;
@@ -416,7 +416,7 @@ namespace
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
-      ec->mem->putl(fc, ec->regs.a7 - 4, address);
+      ec->mem->putl(fc, ec->regs.a[7] - 4, address);
 
       ec->regs.pc += 6;
     }
@@ -430,8 +430,8 @@ namespace
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
-      uint32 value = ec->mem->getl(fc, ec->regs.a7);
-      ec->regs.a7 += 4;
+      uint32 value = ec->mem->getl(fc, ec->regs.a[7]);
+      ec->regs.a[7] += 4;
       ec->regs.pc = value;
     }
 
@@ -447,7 +447,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      (&ec->regs.a0)[reg] -= value;
+      ec->regs.a[reg] -= value;
 
       ec->regs.pc += 2;
     }
@@ -460,7 +460,7 @@ namespace
       fprintf(stderr, " tstw %%d%d\n", reg);
 #endif
 
-      int value = extsw((&ec->regs.d0)[reg]);
+      int value = extsw(ec->regs.d[reg]);
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2;
@@ -475,9 +475,9 @@ namespace
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
-      uint32 address = ec->mem->getl(fc, (&ec->regs.a0)[reg]);
-      ec->regs.a7 = (&ec->regs.a0)[reg] + 4;
-      (&ec->regs.a0)[reg] = address;
+      uint32 address = ec->mem->getl(fc, ec->regs.a[reg]);
+      ec->regs.a[7] = ec->regs.a[reg] + 4;
+      ec->regs.a[reg] = address;
 
       ec->regs.pc += 2;
     }

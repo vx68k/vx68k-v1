@@ -1,5 +1,8 @@
 1999-03-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/cpu.h (registers): Use array for general
+	registers.  Update all users.
+
 	* include/debug.h (debug_printf): Fix errors.
 	(I): Remove `std::'.
 
