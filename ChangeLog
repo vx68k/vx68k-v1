@@ -1,5 +1,13 @@
 2001-06-20  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* README: Updated.
+
+	* NEWS: Updated.
+
+	* Makefile.am (EXTRA_DIST): Removed.
+
+	* VERSION-ID: Removed.
+
 	* libvx68k/Makefile.am (libvx68k_la_LDFLAGS): Use LTLIBRELEASE.
 	(libvx68kdos_la_LDFLAGS): Likewise.
 

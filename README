@@ -1,7 +1,5 @@
 READ ME about Virtual X68000
 
-$Date: Wed, 19 Jul 2000 22:54:14 +0900 $
-
 >> DESCRIPTION
 
 This program is a virtual machine that emulates a Sharp X68000.
@@ -39,7 +37,15 @@ For debugging output, GNU Nana is also required.
 See the file INSTALL in this directory for general instructions on
 installation.
 
->> CONTACT
+PREREQUISITE
+
+This program requires Libvm68k 1.0.1 or later, and GTK+ 1.2.0 or
+later.
+
+CONTACT
 
 Send comments, suggestions, or anything you thought about this program
 to vx68k@lists.hypercore.co.jp.
+
+---
+$ProjectHeader: vx68k 1.346 Wed, 20 Jun 2001 21:12:08 +0900 kaz $

@@ -1,6 +1,12 @@
-News and History of User-Visible Changes in Virtual X68000
+List of user-visible changes in Virtual X68000.
 
-$Date: Sun, 17 Dec 2000 20:00:45 +0900 $
+Version 1.1.5
+
+* Libvm68k was separated into a new package.
+
+* Unused code was removed.
+
+* Library interface was modified.
 
 Version 1.1.4
 
