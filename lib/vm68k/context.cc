@@ -39,7 +39,19 @@ void
 context::run()
 {
   for (;;)
-    step();
+    {
+      step();
+#ifdef L
+# ifdef DUMP_REGISTERS
+      for (unsigned int i = 0; i != 8; ++i)
+	{
+	  L("| %%d%u = 0x%08lx, %%a%u = 0x%08lx\n",
+	    i, (unsigned long) regs.d[i], i, (unsigned long) regs.a[i]);
+	}
+# endif
+      L("| %%pc = 0x%08lx\n", (unsigned long) regs.pc);
+#endif
+    }
 }
 
 context::context(address_space *m, const exec_unit *e)

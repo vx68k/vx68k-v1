@@ -768,18 +768,23 @@ namespace
     ec.regs.pc += 2 + 2 + ea1.isize(2);
   }
 
-  void dbf_d(unsigned int op, context &ec)
-    {
-      int reg = op & 0x7;
-      int disp = extsw(ec.fetchw(2));
-      VL((" dbf %%d%d,0x%lx\n",
-	  reg, (unsigned long) (ec.regs.pc + 2 + disp)));
+  void
+  dbf(unsigned int op, context &ec)
+  {
+    unsigned int reg1 = op & 0x7;
+    int disp = extsw(ec.fetchw(2));
+#ifdef L
+    L(" dbf %%d%d", reg1);
+    L(",0x%lx", (unsigned long) (ec.regs.pc + 2 + disp));
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
-      // XXX: The condition codes are not affected.
-      int32 value = extsl(ec.regs.d[reg]) - 1;
-      ec.regs.d[reg] = value;
-      ec.regs.pc += value != -1 ? 2 + disp : 2 + 2;
-    }
+    // The condition codes are not affected by this instruction.
+    sint_type value = extsw(ec.regs.d[reg1]) - 1;
+    const uint32_type MASK = 0xffffu;
+    ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
+    ec.regs.pc += 2 + (value != -1 ? disp : 2);
+  }
 
   void
   extl(unsigned int op, context &ec)
@@ -1579,7 +1584,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
 #ifdef L
-    L(" tstb %s", ea1.textw(ec));
+    L(" tstw %s", ea1.textw(ec));
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
@@ -1882,7 +1887,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x5179, 0x0e00, &subqw<absolute_long>);
   eu.set_instruction(0x5180, 0x0e07, &subql_d);
   eu.set_instruction(0x5188, 0x0e07, &subql_a);
-  eu.set_instruction(0x51c8, 0x0007, &dbf_d);
+  eu.set_instruction(0x51c8, 0x0007, &dbf);
   eu.set_instruction(0x6000, 0x00ff, &bra);
   eu.set_instruction(0x6100, 0x00ff, &bsr);
   eu.set_instruction(0x6200, 0x00ff, &b<hi>);

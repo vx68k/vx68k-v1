@@ -1,5 +1,11 @@
 1999-06-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (dbf): Renamed from dbf_d.
+	(dbf): Fix counter size to word.
+	(tstw): Fix debugging log message.
+
+	* lib/vm68k/context.cc (run): Add register dump.
+
 	* NEWS: Modified.
 
 	* lib/vm68k/execunit.cc (addw, andl, asll_r, asrl_r, extl, lsll_r,
