@@ -1,3 +1,17 @@
+2001-07-19  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* Version 1.1.10.
+
+	* TODO: Updated.
+
+	* NEWS: Updated.
+
+	* libvx68k/Makefile.am (libvx68k_la_LDFLAGS): Update the version
+	information.
+	* libvx68kdos/Makefile.am (libvx68kdos_la_LDFLAGS): Likewise.
+
+	* configure.in: Set VERSION to 1.1.10.
+
 2001-07-15  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* TODO: Updated.

@@ -1,5 +1,9 @@
 History of user-visible changes in Virtual X68000.  -*-Outline-*-
 
+* Version 1.1.10
+
+Most changes are in vx68k-gtk.
+
 * Version 1.1.9
 
 ** Updates for Libvm68k 1.0.6

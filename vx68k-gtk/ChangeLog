@@ -1,5 +1,11 @@
 2001-07-19  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* TODO: New file.
+
+	* NEWS: Updated.
+
+	* configure.in: Set VERSION to 1.1.10.
+
 	* libvx68k-gtk/gtkconsole.cc: Change TIMEOUT_INTERVAL to 40.
 	(gtk_console): Remove creation of _context.
 	(~gtk_console): Destroy _context before widgets.
