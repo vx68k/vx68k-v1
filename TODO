@@ -1,8 +1,10 @@
-Virtual X68000 TO DO
+To-Do List for Virtual X68000
 
-$Date: Tue, 09 Nov 1999 22:18:49 +0900 $
+$Date: Tue, 16 Nov 1999 20:42:48 +0900 $
 
 Version 1.1
+
+* Use the GdkRgb visual.  This will initialize GdkRgb automagically.
 
 * Better text VRAM emulation.
 
