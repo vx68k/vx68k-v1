@@ -45,6 +45,7 @@ namespace vx68k
       GdkImage *image;
       vector<guint32> ctable;
 #endif
+      unsigned int counter;
 
     private:
       guint machine_timeout;

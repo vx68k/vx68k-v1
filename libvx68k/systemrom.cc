@@ -144,6 +144,7 @@ namespace
   void
   iocs_trap(uint_type, context &c, unsigned long data)
   {
+    sched_yield();
     pthread_testcancel();
 
     uint32_type vecaddr = (15u + 32u) * 4u;

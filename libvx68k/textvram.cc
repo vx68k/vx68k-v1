@@ -108,6 +108,15 @@ text_video_memory::mark_update_area(unsigned int left_x,
        raster_update_marks.begin() + bottom_y, true);
 }
 
+bool
+text_video_memory::row_changed(unsigned int index)
+{
+  bool value = raster_update_marks[index];
+  if (value)
+    raster_update_marks[index] = false;
+  return value;
+}
+
 vector<bool>
 text_video_memory::poll_update()
 {

@@ -42,12 +42,6 @@ namespace vx68k
   class machine
   {
   public:
-    struct rectangle
-    {
-      int left_x, top_y, right_x, bottom_y;
-    };
-
-  public:
     static uint32_type jisx0201_16_address(unsigned int ch)
     {return font_rom::jisx0201_16_offset(ch) + 0xf00000;}
 
@@ -124,6 +118,16 @@ namespace vx68k
     context *master_context() const {return _master_context.get();}
 
   public:
+    void connect(console *con);
+
+    /* Configures address space AS.  */
+    void configure(memory_address_space &as);
+
+    /* Checks timers.  This function may be called in a separate
+       thread.  */
+    void check_timers(uint32_type t);
+
+  public:
     unsigned int opm_status() const {return opm.status();}
     void set_opm_reg(unsigned int r, unsigned int v) {opm.set_reg(r, v);}
     bool opm_interrupt_enabled() const {return opm.interrupt_enabled();}
@@ -138,24 +142,15 @@ namespace vx68k
     void set_mouse_position(int x, int y) {scc.set_mouse_position(x, y);}
 
   public:
-    void connect(console *con);
+    /* Returns true once when the screen changed.  */
+    bool screen_changed() {return palettes.check_text_colors_modified();}
 
-    /* Checks timers.  This function may be called in a separate
-       thread.  */
-    void check_timers(uint32_type t);
+    /* Returns true once when the row of the screen changed.  */
+    bool row_changed(unsigned int y) {return tvram.row_changed(y);}
 
-    /* Updates an image in a RGB buffer.  This function may be called
-       in a separate thread.  */
-    void update_image(unsigned char *rgb_buf, size_t row_size,
-		      unsigned int width, unsigned int height,
-		      rectangle &update_area);
-
-    template <class InputIterator>
-    void update_image(InputIterator first, InputIterator last,
-		      rectangle &update_area);
-
-    /* Configures address space AS.  */
-    void configure(memory_address_space &as);
+    /* Scans a row for display.  */
+    template <class OutputIterator>
+    void scan_row(unsigned int, OutputIterator first, OutputIterator last);
 
   public:
     /* Loads a file on a FD unit.  */
@@ -201,57 +196,21 @@ namespace vx68k
     void boot();
   };
 
-  template <class InputIterator> void
-  machine::update_image(InputIterator first, InputIterator last,
-			rectangle &update_area)
+  template <class OutputIterator> void
+  machine::scan_row(unsigned int y, OutputIterator first, OutputIterator last)
   {
-    vector<bool> update = tvram.poll_update();
-    vector<bool>::iterator u = update.begin();
-
-    bool tc_modified = palettes.check_text_colors_modified();
     unsigned short text_colors[16];
     palettes.get_text_colors(0, 16, text_colors);
 
-    int y = 0;
-    while (first != last && !(tc_modified || *u))
+    text_video_memory::raster_iterator r = tvram.raster(0, y);
+    for (; first != last; ++r, ++first)
       {
-	++first;
-	++u;
-	++y;
+	uint_type color = text_colors[*r];
+	if (color != 0)
+	  *first = color;
+	else
+	  *first = 0;
       }
-
-    int update_begin = y;
-    int update_end = y;
-    int update_width = 0;
-
-    for (; first != last; ++first, ++u, ++y)
-      {
-	if (tc_modified || *u)
-	  {
-	    typename InputIterator::value_type row = *first;
-
-	    text_video_memory::raster_iterator r = tvram.raster(0, y);
-	    int w = 0;
-	    for (typename InputIterator::value_type::iterator i
-		   = row.begin(); i != row.end(); ++i, ++r, ++w)
-	      {
-		uint_type color = text_colors[*r];
-		if (color != 0)
-		  *i = color;
-		else
-		  *i = 0;
-	      }
-
-	    update_end = y + 1;
-	    if (update_width < w)
-	      update_width = w;
-	  }
-      }
-
-    update_area.left_x = 0;
-    update_area.top_y = update_begin;
-    update_area.right_x = update_width;
-    update_area.bottom_y = update_end;
   }
 
   /* X68000-specific address space.  This object acts as a program

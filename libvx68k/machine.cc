@@ -318,6 +318,7 @@ machine::unload_fd(unsigned int u)
   fd[u] = NULL;
 }
 
+#if 0
 void
 machine::update_image(unsigned char *rgb_buf, size_t row_size,
 		      unsigned int width, unsigned int height,
@@ -379,6 +380,7 @@ machine::update_image(unsigned char *rgb_buf, size_t row_size,
   update_area.right_x = width;
   update_area.bottom_y = (update_end - rgb_buf) / row_size;
 }
+#endif
 
 void
 machine::check_timers(uint32_type t)

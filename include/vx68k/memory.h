@@ -24,6 +24,8 @@
 #include <vm68k/cpu.h>
 #include <vm68k/memory.h>
 
+#include <pthread.h>
+
 #include <vector>
 
 namespace vx68k
@@ -221,6 +223,9 @@ namespace vx68k
     /* Returns truth vector once if any update is pending.  This
        function may be called in a separate thread.  */
     vector<bool> poll_update();
+
+    /* Returns true once when the row is changed.  */
+    bool row_changed(unsigned int);
 
     /* Get the visual image of this text VRAM.  Image is of size
        [WIDTH HEIGHT] at position [X Y].  RGB_BUF is an array of

@@ -46,7 +46,8 @@ const char *const BASE16_FONT_NAME
 const char *const KANJI16_FONT_NAME
   = "-*-fixed-medium-r-normal--16-*-*-*-c-*-jisx0208.1983-0";
 
-const unsigned int TIMEOUT_INTERVAL = 100;
+const unsigned int TIMEOUT_INTERVAL = 50;
+const unsigned int SCREEN_CHECK_INTERVAL = 8;
 
 namespace
 {
@@ -124,7 +125,7 @@ gtk_console::handle_expose_event(GtkWidget *drawing_area,
 
   int x = e->area.x;
   int y = e->area.y;
-  if (x < width && y < height)
+  if (x < int(width) && y < int(height))
     {
       unsigned int w = e->area.width;
       unsigned int h = e->area.height;
@@ -611,30 +612,35 @@ namespace
 bool
 gtk_console::handle_timeout()
 {
-  machine::rectangle area;
-#ifndef GDK_IMAGE
-  _m->update_image(row_iterator(rgb_buf, width, row_size),
-		   row_iterator(rgb_buf + height * row_size, width, row_size),
-		   area);
-#else
-  _m->update_image(row_iterator(image, 0, ctable.begin()),
-		   row_iterator(image, height, ctable.begin()), area);
-#endif
-  if (area.left_x != area.right_x && area.top_y != area.bottom_y)
+  --counter;
+  bool u = counter == 0;
+  if (u)
     {
-      gdk_threads_monitor mon;
-
-      for (vector<GtkWidget *>::const_iterator i = widgets.begin();
-	   i != widgets.end();
-	   ++i)
-	{
-	  I(*i != NULL);
-	  gtk_widget_queue_draw_area(*i, area.left_x, area.top_y,
-				     area.right_x - area.left_x,
-				     area.bottom_y - area.top_y);
-	}
+      counter = SCREEN_CHECK_INTERVAL;
+      u = _m->screen_changed();
     }
 
+  gdk_threads_monitor mon;
+  for (unsigned int y = 0; y != height; ++y)
+    {
+      if (_m->row_changed(y) || u)
+	{
+#ifndef GDK_IMAGE
+	  _m->scan_row(y, pixel_iterator(rgb_buf + y * row_size),
+		       pixel_iterator(rgb_buf + y * row_size + width * 3));
+#else
+	  _m->scan_row(y, pixel_iterator(image, 0, y, ctable.begin()),
+		       pixel_iterator(image, image->width, y, ctable.begin()));
+#endif
+
+	  for (vector<GtkWidget *>::const_iterator i = widgets.begin();
+	       i != widgets.end(); ++i)
+	    {
+	      I(*i != NULL);
+	      gtk_widget_queue_draw_area(*i, 0, y, width, y + 1);
+	    }
+	}
+    }
   return true;
 }
 
@@ -701,6 +707,7 @@ gtk_console::gtk_console(machine *m)
     image(0),
     ctable(0x10000),
 #endif
+    counter(1),
     timeout(0),
     primary_font(NULL),
     kanji16_font(NULL)
