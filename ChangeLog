@@ -1,5 +1,10 @@
 1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/memory.h (struct bus_error): Add base class
+	exception.
+	* include/vm68k/types.h (struct exception): New class.
+	(VM68K_TYPES_H): Fix typo.
+
 	* vm68k/cpu.cc (run): Display fc and address of bus error.
 
 	* vm68k/memory.cc (bus_error): New constructor.  Update all

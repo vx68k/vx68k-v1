@@ -34,6 +34,7 @@ enum function_code
 };
 
 struct bus_error
+  : exception
 {
   int fc;
   uint32 address;

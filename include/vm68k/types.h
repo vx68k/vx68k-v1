@@ -17,7 +17,7 @@
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #ifndef VM68K_TYPES_H
-#define VM68k_TYPES_H
+#define VM68K_TYPES_H 1
 
 #include <climits>
 
@@ -34,6 +34,10 @@ typedef unsigned long uint32;
 
 typedef unsigned short uint16;
 typedef unsigned char uint8;
+
+struct exception
+{
+};
 
 };				// namespace vm68k
 
