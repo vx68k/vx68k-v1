@@ -91,6 +91,27 @@ namespace
       ec->regs.pc += 2;
     }
 
+  void bge(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int len = 2;
+      int disp = op & 0xff;
+      if (disp == 0)
+	{
+	  len = 4;
+	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+	  disp = ec->mem->getw_signed(fc, ec->regs.pc + 2);
+	}
+      else if (disp >= 0x80)
+	disp -= 0x100;
+#ifdef TRACE_STEPS
+      fprintf(stderr, " bge 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
+#endif
+
+      // XXX: The condition codes are not affected.
+      ec->regs.pc += 0 ? 2 + disp : len;// FIXME.
+    }
+
   void bne(int op, execution_context *ec)
     {
       assert(ec != NULL);
@@ -110,6 +131,27 @@ namespace
 
       // XXX: The condition codes are not affected.
       ec->regs.pc += ec->regs.sr.ne() ? 2 + disp : len;
+    }
+
+  void bra(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int len = 2;
+      int disp = op & 0xff;
+      if (disp == 0)
+	{
+	  len = 4;
+	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+	  disp = ec->mem->getw_signed(fc, ec->regs.pc + 2);
+	}
+      else if (disp >= 0x80)
+	disp -= 0x100;
+#ifdef TRACE_STEPS
+      fprintf(stderr, " bne 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
+#endif
+
+      // XXX: The condition codes are not affected.
+      ec->regs.pc += 2 + disp;
     }
 
   void bsr(int op, execution_context *ec)
@@ -221,6 +263,24 @@ namespace
       ec->regs.pc += 2;
     }
 
+  void movew_d_absl(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int reg = op & 0x7;
+      int fc = (ec->regs.sr.supervisor_state()
+		? SUPER_PROGRAM : USER_PROGRAM);
+      uint32 address = ec->mem->getl(fc, ec->regs.pc + 2);
+#ifdef TRACE_STEPS
+      fprintf(stderr, " moveb %%d%d,0x%x\n", reg, address);
+#endif
+
+      fc = ec->regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA;
+      ec->mem->putw(fc, address, (&ec->regs.d0)[reg]);
+      // FIXME: The condition codes must be set.
+
+      ec->regs.pc += 2 + 4;
+    }
+
   void movel_a_predec(int op, execution_context *ec)
     {
       assert(ec != NULL);
@@ -280,6 +340,23 @@ namespace
       ec->regs.pc += 4;
     }
 
+  void moveql_d(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int value = op & 0xff;
+      int reg = op >> 9 & 0x7;
+      if (value >= 0x80)
+	value -= 0x100;
+#ifdef TRACE_STEPS
+      fprintf(stderr, " moveql #%d,%%d%d\n", value, reg);
+#endif
+      
+      (&ec->regs.d0)[reg] = value;
+      // FIXME: The condition codes must be set.
+
+      ec->regs.pc += 2;
+    }
+
   void pea_absl(int op, execution_context *ec)
     {
       assert(ec != NULL);
@@ -334,9 +411,11 @@ void
 exec_unit::install_instructions(exec_unit *eu)
 {
   assert(eu != NULL);
+
   eu->set_instruction(0x10d8, 0x0e07, &moveb_postint_postinc);
   eu->set_instruction(0x2058, 0x0e07, &movel_postinc_a);
   eu->set_instruction(0x2108, 0x0e07, &movel_a_predec);
+  eu->set_instruction(0x33c0, 0x0007, &movew_d_absl);
   eu->set_instruction(0x41e8, 0x0e07, &lea_offset_a);
   eu->set_instruction(0x41f9, 0x0e00, &lea_absl_a);
   eu->set_instruction(0x4260, 0x0007, &clrw_predec);
@@ -344,9 +423,12 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
   eu->set_instruction(0x4e50, 0x0007, &link);
   eu->set_instruction(0x4e75, 0x0000, &rts);
-  eu->set_instruction(0x6100, 0x00ff, &bsr);
-  eu->set_instruction(0x6600, 0x00ff, &bne);
   eu->set_instruction(0x5048, 0x0e07, &addqw_a);
   eu->set_instruction(0x5188, 0x0e07, &subql_a);
+  eu->set_instruction(0x6000, 0x00ff, &bra);
+  eu->set_instruction(0x6100, 0x00ff, &bsr);
+  eu->set_instruction(0x6600, 0x00ff, &bne);
+  eu->set_instruction(0x6c00, 0x00ff, &bge);
+  eu->set_instruction(0x7000, 0x0eff, &moveql_d);
 }
 

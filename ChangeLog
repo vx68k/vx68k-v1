@@ -1,3 +1,13 @@
+1999-03-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (movew_d_absl, bge, bra, moveql_d): New
+	function.
+	(install_instructions): Set the new instructions to the operation
+	words.
+
+	* lib/vx68k/dos.cc (open): New function.
+	(dos): Set the new system call to the operation word.
+
 1999-03-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/execunit.cc (addqw_a, subql_a): Move the register
