@@ -58,10 +58,10 @@ main_memory::get_16(function_code fc, uint32_type address) const
 {
   address &= 0xfffffffeU;
 
-  if (address >= end)
+  if (address % 0x1000000U >= end)
     throw bus_error_exception(true, fc, address);
 
-  uint32_type i = address / 2;
+  uint32_type i = address % 0x1000000U / 2;
   uint_type value = data[i];
   I(value <= 0xffff);
 
@@ -73,10 +73,10 @@ main_memory::get_8(function_code fc, uint32_type address) const
 {
   address &= 0xffffffffU;
 
-  if (address >= end)
+  if (address % 0x1000000U >= end)
     throw bus_error_exception(true, fc, address);
 
-  uint32_type i = address / 2;
+  uint32_type i = address % 0x1000000U / 2;
   if (address % 2 != 0)
     {
       unsigned int value = data[i] & 0xff;
@@ -95,10 +95,10 @@ main_memory::get_32(function_code fc, uint32_type address) const
 {
   address &= 0xfffffffcU;
 
-  if (address >= end)
+  if (address % 0x1000000U >= end)
     throw bus_error_exception(true, fc, address);
 
-  uint32_type i = address / 2;
+  uint32_type i = address % 0x1000000U / 2;
   uint_type value0 = data[i];
   uint_type value1 = data[i + 1];
   I(value0 <= 0xffff);
@@ -114,11 +114,11 @@ main_memory::put_16(function_code fc, uint32_type address, uint_type value)
   address &= 0xfffffffeU;
   value &= 0xffff;
 
-  if (address >= end
-      || fc != memory::SUPER_DATA && address < super_area)
+  if (address % 0x1000000U >= end
+      || fc != memory::SUPER_DATA && address % 0x1000000U < super_area)
     throw bus_error_exception(false, fc, address);
 
-  uint32_type i = address / 2;
+  uint32_type i = address % 0x1000000 / 2;
   data[i] = value;
 }
 
@@ -128,11 +128,11 @@ main_memory::put_8(function_code fc, uint32_type address, unsigned int value)
   address &= 0xffffffffU;
   value &= 0xff;
 
-  if (address >= end
-      || fc != memory::SUPER_DATA && address < super_area)
+  if (address % 0x1000000U >= end
+      || fc != memory::SUPER_DATA && address % 0x1000000U < super_area)
     throw bus_error_exception(false, fc, address);
 
-  uint32_type i = address / 2;
+  uint32_type i = address % 0x1000000U / 2;
   if (address % 2 != 0)
     {
       data[i] = data[i] & 0xff00 | value;
@@ -149,11 +149,11 @@ main_memory::put_32(function_code fc, uint32_type address, uint32_type value)
   address &= 0xfffffffcU;
   value &= 0xffffffffU;
 
-  if (address >= end
-      || fc != memory::SUPER_DATA && address < super_area)
+  if (address % 0x1000000U >= end
+      || fc != memory::SUPER_DATA && address % 0x1000000U < super_area)
     throw bus_error_exception(false, fc, address);
 
-  uint32_type i = address / 2;
+  uint32_type i = address % 0x1000000U / 2;
   data[i] = value >> 16;
   data[i + 1] = value & 0xffffu;
 }
