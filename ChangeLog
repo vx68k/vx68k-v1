@@ -1,5 +1,9 @@
 2000-09-05  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* Version 1.1.3.
+
+	* configure.in: Set VERSION to 1.1.3.
+
 	* NEWS: Updated.
 
 	* doc/vx68k.texi (SCC): New node.
