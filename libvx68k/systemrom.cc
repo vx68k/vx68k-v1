@@ -438,7 +438,7 @@ namespace
   iocs_b_sftsns(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    L("IOCS _BSFTSNS\n");
+    L("IOCS _B_SFTSNS\n");
 #endif
     
     x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);

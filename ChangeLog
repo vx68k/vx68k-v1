@@ -1,5 +1,7 @@
 2000-07-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (namespace): Fix debug message.
+
 	* libvx68k/textvram.cc (advance_row): Change the argument to
 	unsigned char *.
 	(scroll): Use STL.
