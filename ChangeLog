@@ -1,5 +1,7 @@
 1999-06-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/condition.h (struct t, struct f): New classes.
+
 	* lib/vm68k/statusreg.cc (set_cc): Removed as an out-of-line
 	function.
 

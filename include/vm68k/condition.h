@@ -28,6 +28,24 @@ namespace vm68k
 
   namespace condition
   {
+    struct t
+      : unary_function<context, bool>
+    {
+      bool operator()(const context &ec) const
+	{return true;}
+      const char *text() const
+	{return "t";}
+    };
+
+    struct f
+      : unary_function<context, bool>
+    {
+      bool operator()(const context &ec) const
+	{return false;}
+      const char *text() const
+	{return "f";}
+    };
+
     struct hi
       : unary_function<context, bool>
     {
