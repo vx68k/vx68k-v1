@@ -91,7 +91,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void bcc(int op, execution_context *ec)
+  void bne(int op, execution_context *ec)
     {
       assert(ec != NULL);
       int len = 2;
@@ -107,14 +107,11 @@ namespace
       else if (disp >= 0x80)
 	disp -= 0x100;
 #ifdef TRACE_STEPS
-      fprintf(stderr, " bsr 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
+      fprintf(stderr, " bne 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
 #endif
 
       // XXX: The condition codes are not affected.
-      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
-      ec->mem->putl(fc, ec->regs.a7 - 4, ec->regs.pc + len);
-      ec->regs.a7 -= 4;
-      ec->regs.pc += 2 + disp;
+      ec->regs.pc += ec->regs.sr.ne() ? 2 + disp : len;
     }
 
   void bsr(int op, execution_context *ec)
@@ -287,6 +284,23 @@ namespace
       ec->regs.a7 += 4;
       ec->regs.pc = value;
     }
+
+  void subql_a(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int value = op >> 9 & 0x7;
+      if (value == 0)
+	value = 8;
+      int reg = op & 0x7;
+#ifdef TRACE_STEPS
+      fprintf(stderr, " subql #%d,%%a%d\n", value, reg);
+#endif
+
+      // XXX: The condition codes are not affected.
+      (&ec->regs.a0)[reg] -= value;
+
+      ec->regs.pc += 2;
+    }
 } // (unnamed namespace)
 
 /* Installs instructions into the execution unit.  */
@@ -303,6 +317,8 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x4e50, 0x0007, &link);
   eu->set_instruction(0x4e75, 0x0000, &rts);
   eu->set_instruction(0x6100, 0x00ff, &bsr);
+  eu->set_instruction(0x6600, 0x00ff, &bne);
   eu->set_instruction(0x5048, 0x0e07, &addqw_a);
+  eu->set_instruction(0x5188, 0x0e07, &subql_a);
 }
 
