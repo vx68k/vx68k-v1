@@ -5,9 +5,9 @@
 @synindex vr fn
 @set VERSION 1.1
 @c $Format: "@set REVISION $Revision$" $
-@set REVISION 1.19
+@set REVISION 1.20
 @c $Format: "@set DATE $Date$" $
-@set DATE Fri, 15 Dec 2000 23:44:41 +0900
+@set DATE Sat, 16 Dec 2000 00:51:50 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -72,6 +72,7 @@ Manual, updated @value{DATE}.  This manual applies to Version
 * Human68k Emulation::          The Disk Operating System.
 * GTK+ User Interface::         
 * Sample Application::          
+* Document Type Definitions::   
 * Function and Variable Index::  Index for functions and variables.
 * Data Type Index::             Index menu for data types and classes.
 * Concept Index::               Index menu for concepts.
@@ -132,6 +133,11 @@ Human68k Emulation
 
 * Memory Management::           
 * Filesystem::                  
+
+Document Type Definitions
+
+* Disk Set Descriptors::        
+* Options Settings::            
 
 @end detailmenu
 @end menu
@@ -287,7 +293,22 @@ Default implementations for @code{get_32} and
 can override those for better performance.
 @end deftp
 
-@deftp {Enumeration in @code{memory}} function_code
+@deftp {Enumeration} memory::function_code
+@tindex @code{function_code} of @code{memory}
+
+@vtable @code
+@item memory::SUPER_PROGRAM
+@vindex @code{SUPER_PROGRAM} of @code{memory}
+
+@item memory::SUPER_DATA
+@vindex @code{SUPER_DATA} of @code{memory}
+
+@item memory::USER_PROGRAM
+@vindex @code{USER_PROGRAM} of @code{memory}
+
+@item memory::USER_DATA
+@vindex @code{USER_DATA} of @code{memory}
+@end vtable
 @end deftp
 
 @deftypeop {Abstract Method} memory uint_type get_16 (function_code @var{fc}, uint32_type @var{address}) const
@@ -692,13 +713,35 @@ All components described in this chapter is declared in namespace
 Implements a console using the GTK+ user interface toolkit.
 @end deftp
 
-@node Sample Application, Function and Variable Index, GTK+ User Interface, Top
+@node Sample Application, Document Type Definitions, GTK+ User Interface, Top
 @chapter Sample Application
 
 This chapter describes the implementation of the sample application
 @code{vx68k}.
 
-@node Function and Variable Index, Data Type Index, Sample Application, Top
+@node Document Type Definitions, Function and Variable Index, Sample Application, Top
+@appendix Document Type Definitions
+
+@menu
+* Disk Set Descriptors::        
+* Options Settings::            
+@end menu
+
+@node Disk Set Descriptors, Options Settings, Document Type Definitions, Document Type Definitions
+@appendixsec Disk Set Descriptors
+
+@smallexample
+[Insert DTD here.]
+@end smallexample
+
+@node Options Settings,  , Disk Set Descriptors, Document Type Definitions
+@appendixsec Options Setting
+
+@smallexample
+[Insert DTD here.]
+@end smallexample
+
+@node Function and Variable Index, Data Type Index, Document Type Definitions, Top
 @unnumbered Function and Variable Index
 
 @printindex fn

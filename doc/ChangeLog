@@ -1,3 +1,9 @@
+2000-12-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* vx68k.texi (Document Type Definitions, Disk Set Descriptors,
+	Options Settings): New node.
+	(Class memory): Add documentation.
+
 2000-12-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* vx68k.texi (General Purpose Components): Capitalize words and
