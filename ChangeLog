@@ -1,5 +1,9 @@
 2000-08-06  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_ms_curst, iocs_ms_init,
+	iocs_ms_limit): New function.
+	(initialize_iocs_functions): Use new handlers.
+
 	* libvx68k/machine.cc (configure): Map sprites into the address
 	space.
 
