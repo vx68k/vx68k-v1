@@ -16,8 +16,8 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef VX68K_HUMAN_H
-#define VX68K_HUMAN_H 1
+#ifndef _VX68K_HUMAN_H
+#define _VX68K_HUMAN_H 1
 
 #include <vx68k/machine.h>
 #include <map>
@@ -25,6 +25,7 @@
 namespace vx68k
 {
   using namespace vm68k;
+  using namespace std;
 
   namespace human
   {
@@ -210,4 +211,5 @@ namespace vx68k
   } // human
 } // vx68k
 
-#endif
+#endif /* not _VX68K_HUMAN_H */
+
