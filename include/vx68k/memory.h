@@ -320,6 +320,7 @@ namespace vx68k
     /* Retrieves text colors.  This function may be called in a
        separate thread.  */
     void get_text_colors(unsigned int i, unsigned int j, unsigned char *out);
+    void get_text_colors(unsigned int i, unsigned int j, unsigned short *out);
   };
 
   /* Memory of DMAC input/output ports.  This memory is mapped to the

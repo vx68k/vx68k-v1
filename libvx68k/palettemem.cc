@@ -50,6 +50,18 @@ palettes_memory::check_text_colors_modified()
 
 void
 palettes_memory::get_text_colors(unsigned int first, unsigned int last,
+				 unsigned short *out)
+{
+  mutex_lock lock(&mutex);
+
+  while (first != last)
+    {
+      *out++ = _tpalette[first++];
+    }
+}
+
+void
+palettes_memory::get_text_colors(unsigned int first, unsigned int last,
 				 unsigned char *out)
 {
   mutex_lock lock(&mutex);

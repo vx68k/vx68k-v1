@@ -150,8 +150,8 @@ namespace vx68k
 		      unsigned int width, unsigned int height,
 		      rectangle &update_area);
 
-    template <class ForwardIterator>
-    void update_image(ForwardIterator first, ForwardIterator last,
+    template <class InputIterator>
+    void update_image(InputIterator first, InputIterator last,
 		      rectangle &update_area);
 
     /* Configures address space AS.  */
@@ -201,11 +201,11 @@ namespace vx68k
     void boot();
   };
 
-  template <class ForwardIterator> void
-  machine::update_image(ForwardIterator first, ForwardIterator last,
+  template <class InputIterator> void
+  machine::update_image(InputIterator first, InputIterator last,
 			rectangle &update_area)
   {
-    vector<bool> tv_update = tvram.poll_update();
+    vector<bool> update = tvram.poll_update();
     vector<bool>::iterator u = update.begin();
 
     bool tc_modified = palettes.check_text_colors_modified();
@@ -228,16 +228,18 @@ namespace vx68k
       {
 	if (tc_modified || *u)
 	  {
-	    fill(first->begin(), first->end(), 0);
+	    typename InputIterator::value_type row = *first;
 
 	    text_video_memory::raster_iterator r = tvram.raster(0, y);
 	    int w = 0;
-	    for (typename ForwardIterator::value_type::iterator i
-		   = first->begin(); i != first->end(); ++i, ++r, ++w)
+	    for (typename InputIterator::value_type::iterator i
+		   = row.begin(); i != row.end(); ++i, ++r, ++w)
 	      {
 		uint_type color = text_colors[*r];
 		if (color != 0)
-		  *i = colors;
+		  *i = color;
+		else
+		  *i = 0;
 	      }
 
 	    update_end = y + 1;

@@ -1,5 +1,20 @@
 2000-08-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68kgtk/gtkconsole.cc (handle_expose_event): Use GdkImage.
+	(handle_timeout): Likewise.
+	(~gtk_console, gtk_console): Handle GdkImage.
+	(gtk_console): Use handle_timeout as an idle handler.
+
+	* libvx68k/palettemem.cc (get_text_colors): New function.
+
+	* include/vx68k/gtk.h (class gtk_console): Add members for
+	GdkImage.
+
+	* include/vx68k/memory.h (class palettes_memory): Add an overload
+	to get_text_colors.
+
+	* include/vx68k/machine.h (update_image): Process in one pass.
+
 	* libvx68k/sram.cc: Include <vx68k/memory.h> instead of
 	<vx68k/machine.h>.
 

@@ -122,10 +122,16 @@ gtk_console::handle_expose_event(GtkWidget *drawing_area,
   GdkGC *gc = gdk_gc_new(drawing_area->window);
   gdk_gc_set_clip_rectangle(gc, &e->area);
 
+#ifdef RGB
   guchar *p = rgb_buf + e->area.y * row_size + e->area.x * 3;
   gdk_draw_rgb_image(drawing_area->window, gc,
 		     e->area.x, e->area.y, e->area.width, e->area.height,
 		     GDK_RGB_DITHER_NORMAL, p, row_size);
+#else
+  gdk_draw_image(drawing_area->window, gc, image,
+		 e->area.x, e->area.y, e->area.x, e->area.y,
+		 e->area.width, e->area.height);
+#endif
 
   gdk_gc_unref(gc);
 
@@ -171,6 +177,8 @@ namespace
     I(c != NULL);
 
     c->set_mouse_position(e->x, e->y);
+
+    return true;
   }
 
   /* Handles a GDK button press or release event.  */
@@ -394,11 +402,142 @@ gtk_console::get_k16_image(unsigned int c,
     }
 }
 
+namespace
+{
+  guint32 pvalue(GdkImage *image, unsigned short value)
+  {
+    unsigned int x = value & 0x1;
+    unsigned int r = value >> 5 & 0x3e | x;
+    unsigned int g = value >> 10 & 0x3e | x;
+    unsigned int b = value & 0x3f;
+
+    guint32 p = r * ((1 << image->visual->red_prec) - 1) / 0x3f << image->visual->red_shift;
+    p |= g * ((1 << image->visual->green_prec) - 1) / 0x3f << image->visual->green_shift;
+    p |= b * ((1 << image->visual->blue_prec) - 1) / 0x3f << image->visual->blue_shift;
+
+    return p;
+  }
+
+  class pixel_iterator: public output_iterator
+  {
+  public:
+    class ref
+    {
+    private:
+      unsigned char *ptr;
+      GdkByteOrder byte_order;
+      size_t bpp;
+      vector<guint32>::const_iterator table;
+
+    public:
+      ref(unsigned char *p, GdkByteOrder bo, size_t b,
+	  vector<guint32>::const_iterator t)
+	: ptr(p), byte_order(bo), bpp(b), table(t) {}
+
+    public:
+      ref &operator=(unsigned short p)
+      {
+	guint32 pp = table[p];
+	if (byte_order == GDK_MSB_FIRST)
+	  {
+	    for (unsigned char *i = ptr + bpp; i != ptr; --i)
+	      {
+		i[-1] = pp;
+		pp >>= 8;
+	      }
+	  }
+	else
+	  {
+	    for (unsigned char *i = ptr; i != ptr + bpp; ++i)
+	      {
+		*i = pp;
+		pp >>= 8;
+	      }
+	  }
+
+	return *this;
+      }
+    };
+
+  private:
+    GdkImage *image;
+    int x, y;
+    vector<guint32>::const_iterator table;
+
+  public:
+    pixel_iterator(GdkImage *i, int xx, int yy,
+		   vector<guint32>::const_iterator t)
+      : image(i), x(xx), y(yy), table(t) {}
+
+  public:
+    bool operator==(const pixel_iterator &another) const
+    {return image == another.image && x == another.x && y == another.y;}
+    ref operator*() const
+    {
+      unsigned char *p = (static_cast<unsigned char *>(image->mem)
+			  + y * image->bpl + x * image->bpp);
+      return ref(p, image->byte_order, image->bpp, table);
+    }
+    pixel_iterator &operator++() {++x;  return *this;}
+  };
+
+  class row
+  {
+  public:
+    typedef pixel_iterator::value_type value_type;
+    typedef pixel_iterator iterator;
+
+  private:
+    GdkImage *image;
+    int y;
+    vector<guint32>::const_iterator table;
+
+  public:
+    row(GdkImage *i, int yy, vector<guint32>::const_iterator t)
+      : image(i), y(yy), table(t) {}
+
+  public:
+    bool operator==(const row &another) const
+    {return image == another.image && y == another.y;}
+
+  public:
+    pixel_iterator begin() {return pixel_iterator(image, 0, y, table);}
+    pixel_iterator end() {return pixel_iterator(image, image->width, y, table);}
+
+  public:
+    void next() {++y;}
+  };
+
+  class row_iterator: public input_iterator<row, ptrdiff_t>
+  {
+  private:
+    row current;
+
+  public:
+    row_iterator(GdkImage *i, int yy, vector<guint32>::const_iterator t)
+      : current(i, yy, t) {}
+
+  public:
+    bool operator==(const row_iterator &another) const
+    {return current == another.current;}
+    const row &operator*() const {return current;}
+    const row *operator->() const {return &current;}
+
+  public:
+    row_iterator &operator++() {current.next();  return *this;}
+  };
+}
+
 bool
 gtk_console::handle_timeout()
 {
   machine::rectangle area;
+#ifdef RGB
   _m->update_image(rgb_buf, row_size, 768, 512, area);
+#else
+  _m->update_image(row_iterator(image, 0, ctable.begin()),
+		   row_iterator(image, height, ctable.begin()), area);
+#endif
   if (area.left_x != area.right_x && area.top_y != area.bottom_y)
     {
       gdk_threads_monitor mon;
@@ -458,32 +597,59 @@ gtk_console::~gtk_console()
       gtk_signal_disconnect_by_data(GTK_OBJECT(*i), this);
     }
 
+#ifdef TIMEOUT
   gtk_timeout_remove(timeout);
+#else
+  gtk_idle_remove(timeout);
+#endif
   gtk_timeout_remove(machine_timeout);
 
   gdk_threads_leave();
 
+#ifdef RGB
   delete [] rgb_buf;
+#else
+  gdk_image_destroy(image);
+#endif
 }
 
 gtk_console::gtk_console(machine *m)
   : _m(m),
     width(768), height(512),
+#ifdef RGB
     row_size(768 * 3),
     rgb_buf(NULL),
+#else
+    image(0),
+    ctable(0x10000),
+#endif
     timeout(0),
     primary_font(NULL),
     kanji16_font(NULL)
 {
+#ifdef RGB
   rgb_buf = new guchar [height * row_size];
+#endif
 
   gdk_threads_enter();
+
+#ifndef RGB
+  image = gdk_image_new(GDK_IMAGE_FASTEST, gdk_visual_get_system(),
+			width, height);
+  for (vector<guint32>::iterator i = ctable.begin();
+       i != ctable.end(); ++i)
+    *i = pvalue(image, i - ctable.begin());
+#endif
 
   guint t = gdk_time_get();
   _m->check_timers(t);
   machine_timeout = gtk_timeout_add(10, &handle_machine_timeout, this);
 
+#ifdef TIMEOUT
   timeout = gtk_timeout_add(TIMEOUT_INTERVAL, &::handle_timeout, this);
+#else
+  timeout = gtk_idle_add_priority(GTK_PRIORITY_LOW, &::handle_timeout, this);
+#endif
 
   gdk_threads_leave();
 

@@ -37,9 +37,14 @@ namespace vx68k
 
     private:
       machine *_m;
-      int width, height;
+      unsigned int width, height;
+#ifdef RGB
       size_t row_size;
       guchar *rgb_buf;
+#else
+      GdkImage *image;
+      vector<guint32> ctable;
+#endif
 
     private:
       guint machine_timeout;
