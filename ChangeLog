@@ -1,5 +1,7 @@
 1999-11-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* TODO: Updated.
+
 	* NEWS: Updated.
 
 	* vm68k/execunit.cc (m68k_addi): New function.
