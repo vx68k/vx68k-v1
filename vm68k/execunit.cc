@@ -2700,8 +2700,17 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x11a8, 0x0e07, &moveb<disp_indirect, indexed_indirect>);
   eu.set_instruction(0x11b0, 0x0e07, &moveb<indexed_indirect, indexed_indirect>);
   eu.set_instruction(0x11b9, 0x0e00, &moveb<absolute_long, indexed_indirect>);
+  eu.set_instruction(0x11ba, 0x0e00, &moveb<disp_pc, indexed_indirect>);
   eu.set_instruction(0x11bc, 0x0e00, &moveb<immediate, indexed_indirect>);
   eu.set_instruction(0x13c0, 0x0007, &moveb<data_register, absolute_long>);
+  eu.set_instruction(0x13d0, 0x0007, &moveb<indirect, absolute_long>);
+  eu.set_instruction(0x13d8, 0x0007, &moveb<postinc_indirect, absolute_long>);
+  eu.set_instruction(0x13e0, 0x0007, &moveb<predec_indirect, absolute_long>);
+  eu.set_instruction(0x13e8, 0x0007, &moveb<disp_indirect, absolute_long>);
+  eu.set_instruction(0x13f0, 0x0007, &moveb<indexed_indirect, absolute_long>);
+  eu.set_instruction(0x13f9, 0x0000, &moveb<absolute_long, absolute_long>);
+  eu.set_instruction(0x13fa, 0x0000, &moveb<disp_pc, absolute_long>);
+  eu.set_instruction(0x13fc, 0x0000, &moveb<immediate, absolute_long>);
   eu.set_instruction(0x2000, 0x0e07, &movel<data_register, data_register>);
   eu.set_instruction(0x2008, 0x0e07, &movel<address_register, data_register>);
   eu.set_instruction(0x2010, 0x0e07, &movel<indirect, data_register>);
