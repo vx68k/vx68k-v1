@@ -1,5 +1,7 @@
 1999-10-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* TODO: Updated.
+
 	* vx68k/dos.cc (dos_close): Change log message.
 
 	* vx68k/gtkconsole.cc: Change TIMEOUT_INTERVAL to 200.
