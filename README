@@ -1,12 +1,12 @@
 READ ME
 
-$Date: Thu, 11 Mar 1999 23:22:20 +0900 $
+$Date: Sat, 13 Mar 1999 21:16:34 +0900 $
 
 >> DESCRIPTION
 
-This directory contains vx68k.
-
-vx68k *will* eventually emulate Sharp X68000 in software.
+Virtual X68000 is a software virtual machine, or an emulator, of Sharp
+X68000.  Virutal X68000 will eventually run programs for X68000
+without the ROM image.
 
 A generic m68k emulation library will also be provided.
 

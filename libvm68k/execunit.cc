@@ -90,12 +90,12 @@ namespace
 	}
       else if (disp >= 0x80)
 	disp -= 0x100;
-      fprintf(stderr, " bsr .%+ld\n", (long) disp + 2);
+      fprintf(stderr, " bsr 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
 
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
       ec->mem->putl(fc, ec->regs.a[7], ec->regs.pc + len);
       ec->regs.a[7] -= 4;
-      ec->regs.pc += disp + 2;
+      ec->regs.pc += 2 + disp;
 
       // Condition code is not affected.
     }
@@ -106,7 +106,7 @@ namespace
       int reg = op >> 9 & 0x7;
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
       uint32 address = ec->mem->getl(fc, ec->regs.pc + 2);
-      fprintf(stderr, " lea #0x%x.l,a%d\n", address, reg);
+      fprintf(stderr, " lea 0x%lx:l,%%a%d\n", (unsigned long) address, reg);
 
       ec->regs.a[reg] = address;
 
@@ -121,7 +121,7 @@ namespace
       int32 disp = ec->mem->getw(fc, ec->regs.pc + 2);
       if (disp >= 0x8000)
 	disp -= 0x10000;
-      fprintf(stderr, " link a%d,#%d\n", reg, disp);
+      fprintf(stderr, " link %%a%d,#%d\n", reg, disp);
 
       // FIXME.
       ec->mem->putl(fc, ec->regs.a[7] - 4, ec->regs.a[reg]);
@@ -132,12 +132,12 @@ namespace
       ec->regs.pc += 4;
     }
 
-  void move_l_a_predec(int op, execution_context *ec)
+  void movel_a_predec(int op, execution_context *ec)
     {
       assert(ec != NULL);
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
-      fprintf(stderr, " move.l a%d,-(a%d)\n", s_reg, d_reg);
+      fprintf(stderr, " movel %%a%d,%%a%d@-\n", s_reg, d_reg);
 
       // FIXME.
       int fc = 1 ? SUPER_DATA : USER_DATA; // FIXME.
@@ -148,12 +148,12 @@ namespace
     }
 
   /* movem regs to EA (postdec).  */
-  void movem_l_r_predec(int op, execution_context *ec)
+  void moveml_r_predec(int op, execution_context *ec)
     {
       int reg = op & 0x0007;
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
       unsigned int bitmap = ec->mem->getw(fc, ec->regs.pc + 2);
-      fprintf(stderr, " movem.l #0x%x,-(a%d)\n", bitmap, reg);
+      fprintf(stderr, " moveml #0x%x,%%a%d@-\n", bitmap, reg);
 
       for (int i = 0; i != 16; ++i)
 	{
@@ -176,9 +176,9 @@ void
 exec_unit::install_instructions(exec_unit *eu)
 {
   assert(eu != NULL);
-  eu->set_instruction(0x2108, 0x0e07, &move_l_a_predec);
+  eu->set_instruction(0x2108, 0x0e07, &movel_a_predec);
   eu->set_instruction(0x41f9, 0x0e00, &lea_absl_a);
-  eu->set_instruction(0x48e0, 0x0007, &movem_l_r_predec);
+  eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
   eu->set_instruction(0x4e50, 0x0007, &link);
   eu->set_instruction(0x6100, 0x00ff, &bsr);
 }

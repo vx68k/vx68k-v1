@@ -1,3 +1,15 @@
+1999-03-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* README: Modified.
+
+	* libvm68k/execunit.cc (bsr): Print absolute address.
+	(lea_absl_a, link, mmove_l_a_predec, movem_l_r_predec): Use the
+	MIT syntax to print instead of the Motorola syntax.
+	(movel_a_predec): Renamed from move_l_a_predec.  Update all
+	referrers.
+	(moveml_r_predec): Renamed from movem_l_r_predec.  Update all
+	referrers.
+
 1999-03-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/dos.cc: Remove namespace blocks.
