@@ -28,6 +28,20 @@ namespace vx68k
 
   namespace human
   {
+    class memory_allocator
+    {
+    private:
+      address_space *_as;
+      uint32_type first_block;
+
+    public:
+      memory_allocator(address_space *, uint32_type, uint32_type);
+
+    public:
+      sint32_type alloc(uint32_type, uint32_type);
+      sint_type free(uint32_type);
+    };
+
     class file
     {
     public:
@@ -41,10 +55,11 @@ namespace vx68k
     class process
     {
     private:
+      memory_allocator *_allocator;
       file_system *_fs;
 
     public:
-      explicit process(file_system *fs);
+      process(memory_allocator *a, file_system *fs);
 
     public:
       file_system *fs() const
@@ -102,8 +117,9 @@ namespace vx68k
     class dos
     {
     private:
-      address_space *mem;
       vm68k::exec_unit main_cpu;
+      address_space *mem;
+      memory_allocator allocator;
       file_system fs;
 
     private:

@@ -113,8 +113,9 @@ process::create(const char *name, sint_type attr)
   return fd;
 }
 
-process::process(file_system *fs)
-  : _fs(fs)
+process::process(memory_allocator *a, file_system *fs)
+  : _allocator(a),
+    _fs(fs)
 {
 }
 

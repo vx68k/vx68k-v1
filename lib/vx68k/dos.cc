@@ -46,7 +46,7 @@ using namespace std;
 uint16
 dos::execute (const char *name, const char *const *argv)
 {
-  process p(&fs);
+  process p(&allocator, &fs);
   dos_exec_context ec(&main_cpu, mem, &p);
   ec.set_debug_level(debug_level);
   return ec.start(ec.load_executable(name), argv);
@@ -463,8 +463,9 @@ namespace
   }
 } // (unnamed namespace)
 
-dos::dos(address_space *m, size_t)
+dos::dos(address_space *m, size_t size)
   : mem(m),
+    allocator(mem, 0x8000u, size - 0x8000u),
     debug_level(0)
 {
   main_cpu.set_instruction(0xff02, 0, &dos_putchar);
