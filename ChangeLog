@@ -1,3 +1,7 @@
+2000-05-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/iocsdisk.cc (read): Round up NBYTES.
+
 2000-05-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/systemrom.cc: Rewrite using's.

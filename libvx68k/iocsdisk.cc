@@ -97,6 +97,7 @@ image_file_floppy_disk::read(uint_type mode, uint32_type pos,
       return e.value() | (mode >> 8 & 0x3) << 24;
     }
 
+  nbytes = (nbytes + 1023u) / 1024u * 1024u;
   while (nbytes >= 1024)
     {
       unsigned char data[1024];
