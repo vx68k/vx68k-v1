@@ -5,9 +5,9 @@
 @synindex vr fn
 @set VERSION 1.1
 @c $Format: "@set REVISION $Revision$" $
-@set REVISION 1.17
+@set REVISION 1.18
 @c $Format: "@set DATE $Date$" $
-@set DATE Wed, 13 Dec 2000 23:20:50 +0900
+@set DATE Fri, 15 Dec 2000 21:59:52 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -67,7 +67,7 @@ Manual, updated @value{DATE}.  This manual applies to Version
 * Command Reference::           Invoking commands.
 * M68000 Architecture::         Quick look at the M68000 architecture.
 * Coding Conventions::          How code is written.
-* General purpose components::  Generic components.
+* General Purpose Components::  Generic components.
 * X68000 Emulation::            X68000 specific components.
 * Human68k Emulation::          The Disk Operating System.
 * GTK+ User Interface::         
@@ -91,7 +91,7 @@ Virtual X68000 Coding Conventions
 
 * Basic Types::                 Typedefs.
 
-General purpose components
+General Purpose Components
 
 * Memory and I/O::              
 * Processor::                   How is a processor constructed?
@@ -192,7 +192,7 @@ Readers who is familiar with this architecture can skip this chapter.
 In M68000 architecture, a @dfn{byte} is an octet.  A @dfn{word} is two
 octets.  A @dfn{long word} is four octets.
 
-@node Coding Conventions, General purpose components, M68000 Architecture, Top
+@node Coding Conventions, General Purpose Components, M68000 Architecture, Top
 @chapter Virtual X68000 Coding Conventions
 
 @cindex coding convention
@@ -244,8 +244,9 @@ long int} if the compiler is GCC. If no type can hold
 compiled.
 @end deftp
 
-@node General purpose components, X68000 Emulation, Coding Conventions, Top
-@chapter General purpose components
+@node General Purpose Components, X68000 Emulation, Coding Conventions, Top
+@chapter General Purpose Components
+
 General purpose components are provided by the library libvm68k.
 These components are declared in the namespace vm68k.
 
@@ -254,7 +255,7 @@ These components are declared in the namespace vm68k.
 * Processor::                   How is a processor constructed?
 @end menu
 
-@node Memory and I/O, Processor, General purpose components, General purpose components
+@node Memory and I/O, Processor, General Purpose Components, General Purpose Components
 @section Memory and I/O
 
 @cindex memory
@@ -320,7 +321,7 @@ This method reads a byte data from the memory.
 This is a class of address spaces for memory.
 @end deftp
 
-@node Processor,  , Memory and I/O, General purpose components
+@node Processor,  , Memory and I/O, General Purpose Components
 @section Processor
 @cindex processor
 
@@ -402,7 +403,7 @@ This method executes instructions in context @var{c}.
 An instruction is defined by a function.
 This function is called @dfn{instruction handler}.
 
-@node X68000 Emulation, Human68k Emulation, General purpose components, Top
+@node X68000 Emulation, Human68k Emulation, General Purpose Components, Top
 @chapter X68000 Emulation
 
 This chapter describes @acronym{UI}-independent part of Virtual X68000.
@@ -595,7 +596,26 @@ COM port and a mouse port.
 @cindex disk
 
 @deftp {Abstrace Class} disk_unit
+Base class for disk units.
 @end deftp
+
+@deftypeop {Abstrace Method} disk_unit uint32_type recalibrate (uint16_type @var{mode})
+@end deftypeop
+
+@deftypeop {Abstract Method} disk_unit uint32_type seek (uint16_type @var{mode}, uint32_type @var{pos})
+@end deftypeop
+
+@deftypeop {Abstract Method} disk_unit uint32_type read (uint16_type @var{mode}, uint32_type @var{pos}, memory_address_space &@var{mm}, uint32_type @var{buf}, uint32_type @var{nbytes})
+@end deftypeop
+
+@deftypeop {Abstract Method} disk_unit uint32_type write (uint16_type @var{mode}, uint32_type @var{pos}, const memory_address_space &@var{mm}, uint32_type @var{buf}, uint32_type @var{nbytes})
+@end deftypeop
+
+@deftypeop {Abstract Method} disk_unit uint32_type verify (uint16_type @var{mode}, uint32_type @var{pos}, const memory_address_space &@var{mm}, uint32_type @var{buf}, uint32_type @var{nbytes})
+@end deftypeop
+
+@deftypeop {Abstract Method} disk_unit uint32_type check (uint16_type @var{mode}, int @var{op})
+@end deftypeop
 
 @menu
 * Floppy Disk::                 
