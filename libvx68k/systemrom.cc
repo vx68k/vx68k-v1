@@ -103,12 +103,29 @@ system_rom::dispatch_iocs_function(context &c)
 {
   unsigned int funcno = c.regs.d[0] & 0xffu;
 
-  iocs_function_handler handler = iocs_functions[funcno].first;
-  I(handler != NULL);
-
-  (*handler)(c, iocs_functions[funcno].second);
-
   c.regs.pc += 2;
+
+  uint32_type vecaddr = (funcno + 0x100u) * 4u;
+  uint32_type addr = c.mem->getl(SUPER_DATA, vecaddr);
+  if (addr != vecaddr + 0xfc0000)
+    {
+#ifdef HAVE_NANA_H
+      L("system_rom: Installed IOCS function handler used\n");
+#endif
+      uint_type oldsr = c.sr();
+      c.set_supervisor_state(true);
+      c.regs.a[7] -= 6;
+      c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+      c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, oldsr);
+      c.regs.pc = addr;
+    }
+  else
+    {
+      iocs_function_handler handler = iocs_functions[funcno].first;
+      I(handler != NULL);
+
+      (*handler)(c, iocs_functions[funcno].second);
+    }
 }
 
 namespace
@@ -117,10 +134,27 @@ namespace
   void
   iocs_trap(uint_type, context &c, unsigned long data)
   {
-    system_rom *rom = reinterpret_cast<system_rom *>(data);
-    I(rom != NULL);
+    uint32_type vecaddr = (15u + 32u) * 4u;
+    uint32_type addr = c.mem->getl(SUPER_DATA, vecaddr);
+    if (addr != vecaddr + 0xfc0000)
+      {
+#ifdef HAVE_NANA_H
+	L("iocs_trap: Installed TRAP handler used\n");
+#endif
+	uint_type oldsr = c.sr();
+	c.set_supervisor_state(true);
+	c.regs.a[7] -= 6;
+	c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+	c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	c.regs.pc = addr;
+      }
+    else
+      {
+	system_rom *rom = reinterpret_cast<system_rom *>(data);
+	I(rom != NULL);
 
-    rom->dispatch_iocs_function(c);
+	rom->dispatch_iocs_function(c);
+      }
   }
 } // namespace (unnamed)
 
@@ -617,6 +651,16 @@ namespace
     fprintf(stderr, "iocs_x3a: FIXME: not implemented\n");
   }
 
+  /* Handles a 0xac call.  */
+  void
+  iocs_xac(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: 0xac\n");
+#endif
+    fprintf(stderr, "iocs_xac: FIXME: not implemented\n");
+  }
+
   /* Initializes the IOCS functions.  */
   void
   initialize_iocs_functions(system_rom *rom)
@@ -657,6 +701,7 @@ namespace
     rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));
     rom->set_iocs_function(0x8e, iocs_function_type(&iocs_bootinf, 0));
     rom->set_iocs_function(0x8f, iocs_function_type(&iocs_romver, 0));
+    rom->set_iocs_function(0xac, iocs_function_type(&iocs_xac, 0));
     rom->set_iocs_function(0xaf, iocs_function_type(&iocs_os_curof, 0));
   }
 } // namespace (unnamed)

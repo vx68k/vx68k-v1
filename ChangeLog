@@ -1,3 +1,11 @@
+2000-06-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (dispatch_iocs_function): Add support for
+	installed handlers.
+	(iocs_trap): Likewise.
+	(iocs_xac): New function.
+	(initialize_iocs_functions): Use the new handler.
+
 2000-06-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvm68k/execunit.cc (initialize_instructions): Add new
