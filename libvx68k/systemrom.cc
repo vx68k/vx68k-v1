@@ -174,6 +174,19 @@ namespace
     c.regs.a[1] = address + 4;
   }
 
+  /* Handles a _B_PRINT call.  */
+  void
+  iocs_b_print(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _B_PRINT %%a1=%#010x\n", c.regs.a[1]);
+#endif
+    uint32_type address = c.regs.a[1];
+
+    x68k_address_space *as = static_cast<x68k_address_space *>(c.mem);
+    as->machine()->b_print(c.mem, address);
+  }
+
   /* Handles a _B_READ call.  */
   void
   iocs_b_read(context &c, unsigned long data)
@@ -181,8 +194,8 @@ namespace
 #ifdef HAVE_NANA_H
     L("system_rom: _B_READ %%d1=%#06x %%d2=%#010x %%d3=%#010x %%a1=%#010x\n",
       c.regs.d[1] & 0xffffu, c.regs.d[2], c.regs.d[3], c.regs.a[1]);
-    L("system_rom: not implemented\n");
 #endif
+    fprintf(stderr, "iocs_b_read: FIXME: not implemented\n");
   }
 
   /* Handles a _B_WRITE call.  */
@@ -192,8 +205,17 @@ namespace
 #ifdef HAVE_NANA_H
     L("system_rom: _B_WRITE %%d1=%#06x %%d2=%#010x %%d3=%#010x %%a1=%#010x\n",
       c.regs.d[1] & 0xffffu, c.regs.d[2], c.regs.d[3], c.regs.a[1]);
-    L("system_rom: not implemented\n");
 #endif
+    fprintf(stderr, "iocs_b_write: FIXME: not implemented\n");
+  }
+
+  void
+  iocs_bootinf(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _BOOTINF\n");
+#endif
+    c.regs.d[0] = 0x90;
   }
 
   /* Initializes the IOCS functions.  */
@@ -202,9 +224,11 @@ namespace
   {
     typedef system_rom::iocs_function_type iocs_function_type;
 
+    rom->set_iocs_function(0x21, iocs_function_type(&iocs_b_print, 0));
     rom->set_iocs_function(0x45, iocs_function_type(&iocs_b_write, 0));
     rom->set_iocs_function(0x46, iocs_function_type(&iocs_b_read, 0));
     rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));
+    rom->set_iocs_function(0x8e, iocs_function_type(&iocs_bootinf, 0));
   }
 } // namespace (unnamed)
 

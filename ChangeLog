@@ -1,5 +1,12 @@
 2000-05-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_b_print, iocs_bootinf): New
+	function.
+	(iocs_b_read, iocs_b_write): Print FIXME message by fprintf.
+	(initialize_iocs_functions): Add new functions.
+
+	* libvx68k/machine.cc (boot): Catch illegal_instrunction.
+
 	* bin/main.cc (class gtk_app): Add new members run_boot.  Make
 	member boot out of line.
 	(run_boot): New member function.

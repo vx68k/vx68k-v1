@@ -183,7 +183,15 @@ machine::boot()
   context c(&as);
   c.regs.pc = 0x2000;
 
-  eu.run(c);
+  try
+    {
+      eu.run(c);
+    }
+  catch (illegal_instruction &e)
+    {
+      uint_type op = c.mem->getw(SUPER_DATA, c.regs.pc);
+      fprintf(stderr, "vm68k illegal instruction (op = 0x%x)\n", op);
+    }
 }
 
 void
