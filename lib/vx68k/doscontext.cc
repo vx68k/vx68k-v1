@@ -24,6 +24,9 @@
 
 #include <vx68k/human.h>
 
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
@@ -44,6 +47,42 @@ using namespace vx68k::human;
 using namespace vm68k;
 using namespace std;
 
+sint32_type
+dos_exec_context::read(sint_type fd, uint32_type buf, uint32_type size)
+{
+  // FIXME.
+  unsigned char *data_buf = new unsigned char [size];
+
+  ssize_t done = ::read(fd, data_buf, size);
+  if (done == -1)
+    {
+      delete [] data_buf;
+      return -6;			// FIXME.
+    }
+
+  mem->write(SUPER_DATA, buf, data_buf, done);
+  delete [] data_buf;
+  return done;
+}
+
+sint32_type
+dos_exec_context::write(sint_type fd, uint32_type buf, uint32_type size)
+{
+  // FIXME.
+  unsigned char *data_buf = new unsigned char [size];
+  mem->read(SUPER_DATA, buf, data_buf, size);
+
+  ssize_t done = ::write(fd, data_buf, size);
+  if (done == -1)
+    {
+      delete [] data_buf;
+      return -6;			// FIXME.
+    }
+
+  delete [] data_buf;
+  return done;
+}
+
 int
 dos_exec_context::fgetc(int fd)
 {
@@ -62,6 +101,74 @@ dos_exec_context::seek(int fd, int32 offset, unsigned int whence)
   if (pos == -1)
     return -6;			// FIXME.
   return pos;
+}
+
+/* Closes a DOS file descriptor.  */
+sint_type
+dos_exec_context::close(sint_type fd)
+{
+  // FIXME.
+  if (::close(fd) == -1)
+    return -6;			// FIXME.
+
+  return 0;
+}
+
+/* Opens a file.  */
+sint_type
+dos_exec_context::open(const char *name, sint_type flag)
+{
+  // FIXME.
+  static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
+
+  if ((flag & 0xf) > 2)
+    return -12;			// FIXME.
+
+  sint_type fd = ::open(name, uflag[flag & 0xf]);
+  if (fd == -1)
+    return -2;			// FIXME: errno test.
+
+  return fd;
+}
+
+/* Creates a file.  */
+sint_type
+dos_exec_context::create(const char *name, sint_type attr)
+{
+  // FIXME.
+  sint_type fd = ::open(name, O_RDWR | O_CREAT | O_TRUNC, 0666);
+  if (fd == -1)
+    return -2;			// FIXME: errno test.
+
+  return fd;
+}
+
+sint32_type
+dos_exec_context::fputc(sint_type code, sint_type filno)
+{
+  // FIXME.
+  unsigned char buf[1];
+  buf[0] = code;
+  ::write(filno, buf, 1);
+
+  return 1;
+}
+
+sint32_type
+dos_exec_context::fputs(uint32_type mesptr, sint_type filno)
+{
+  // FIXME.
+  uint32_type ptr = mesptr;
+  unsigned char buf[1];
+  do
+    {
+      buf[0] = mem->getb(SUPER_DATA, ptr++);
+      if (buf[0] != 0)
+	::write(filno, buf, 1);
+    }
+  while (buf[0] != 0);
+
+  return ptr - 1 - mesptr;
 }
 
 namespace
@@ -134,7 +241,7 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
 
   uint32 load_address = address + 0xf0;
 
-  char *buf = static_cast <char *> (malloc (text_size + data_size));
+  char *buf = static_cast<char *>(::malloc(text_size + data_size));
   try
     {
       is.read (buf, text_size + data_size);
@@ -151,7 +258,7 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
   free (buf);
 
   /* Fix-up.  */
-  char *fixup_buf = static_cast<char *>(malloc(reloc_size));
+  char *fixup_buf = static_cast<char *>(::malloc(reloc_size));
   try
     {
       is.read(fixup_buf, reloc_size);
@@ -201,9 +308,11 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
   return load_address + start_offset;
 }
 
-dos_exec_context::dos_exec_context(exec_unit *e, address_space *m, process *p)
-  : context(m, e),
-    _process(p),
+dos_exec_context::dos_exec_context(address_space *m, exec_unit *eu,
+				   memory_allocator *a)
+  : context(m, eu),
+    _allocator(a),
+    current_pdb(0),
     debug_level(0)
 {
 }

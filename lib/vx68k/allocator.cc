@@ -73,9 +73,9 @@ memory_allocator::free_by_parent(uint32_type parent)
   uint32_type block = last_block;
   while (block != 0)
     {
-      if (_as->getl(SUPER_DATA, block + 4) == parent)
+      if (_as->getl(SUPER_DATA, block + 4) == parent - 0x10)
 	{
-	  free_by_parent(block);
+	  free_by_parent(block + 0x10);
 	  remove_block(block);
 	}
 
@@ -100,7 +100,7 @@ memory_allocator::free(uint32_type memptr)
 
       if (block == memptr)
 	{
-	  free_by_parent(block);
+	  free_by_parent(block + 0x10);
 	  remove_block(block);
 #ifdef L
 	  L("memory_allocator: success\n");
@@ -189,7 +189,7 @@ memory_allocator::alloc(uint32_type len, uint32_type parent)
       uint32_type free_len = next - candidate;
       if (free_len >= len)
 	{
-	  make_block(candidate, len, block, parent);
+	  make_block(candidate, len, block, parent - 0x10);
 #ifdef L
 	  L("memory_allocator: success, returning %#lx\n",
 	    (unsigned long) candidate + 0x10);
@@ -246,7 +246,7 @@ memory_allocator::alloc_largest(uint32_type parent)
   if (max_free_len == 0x10)
     return extsl(0x82000000);
 
-  make_block(best_candidate, max_free_len, best_block, parent);
+  make_block(best_candidate, max_free_len, best_block, parent - 0x10);
 #ifdef L
   L("memory_allocator: success, returning %#lx\n",
     (unsigned long) best_candidate + 0x10);

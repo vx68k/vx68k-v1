@@ -40,24 +40,22 @@ using namespace vx68k::human;
 using namespace vm68k;
 using namespace std;
 
-process *
+uint32_type
 dos::load(const char *name, dos_exec_context &c)
 {
-  process *p = new process(&allocator, &fs);
-  c.set_current_process(p);
-  c.regs.a[4] = c.load_executable(name, p->getpdb());
-  return p;
+  uint32_type pdb = allocator.alloc_largest(0);
+  c.regs.a[4] = c.load_executable(name, pdb);
+  return pdb;
 }
 
 uint16
 dos::execute (const char *name, const char *const *argv)
 {
-  dos_exec_context ec(vm->exec_unit(), vm->address_space(), NULL);
+  dos_exec_context ec(vm->address_space(), vm->exec_unit(), &allocator);
   ec.set_debug_level(debug_level);
-  process *p = load(name, ec);
+  ec.setpdb(load(name, ec));
   ec.regs.a[7] = ec.regs.a[0];	// FIXME
   uint_type st = ec.start(ec.regs.a[4], argv);
-  delete p;
   return st;
 }
 
@@ -88,8 +86,7 @@ namespace
     uint32_type sp = ec.regs.a[7];
     sint_type fd = extsw(ec.mem->getw(SUPER_DATA, sp));
 
-    process *p = static_cast<dos_exec_context &>(ec).current_process();
-    ec.regs.d[0] = p->close(fd);
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).close(fd);
 
     ec.regs.pc += 2;
   }
@@ -113,8 +110,7 @@ namespace
     if (c != NULL)
       *c = '\0';
 
-    process *p = static_cast<dos_exec_context &>(ec).current_process();
-    ec.regs.d[0] = p->create(name, attr);
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).create(name, attr);
 
     ec.regs.pc += 2;
   }
@@ -181,8 +177,7 @@ namespace
     uint32_type mesptr = ec.mem->getl(SUPER_DATA, sp + 0);
     sint_type filno = extsw(ec.mem->getw(SUPER_DATA, sp + 4));
 
-    process *p = static_cast<dos_exec_context &>(ec).current_process();
-    ec.regs.d[0] = p->fputs(ec.mem, mesptr, filno);
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).fputs(mesptr, filno);
 
     ec.regs.pc += 2;
   }
@@ -247,8 +242,7 @@ namespace
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
-    process *p = static_cast<dos_exec_context &>(ec).current_process();
-    ec.regs.d[0] = p->getpdb();
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).getpdb();
 
     ec.regs.pc += 2;
   }
@@ -313,8 +307,7 @@ namespace
     L(" DOS _MALLOC\n");
 #endif
 
-    process *p = static_cast<dos_exec_context &>(ec).current_process();
-    ec.regs.d[0] = p->malloc(len);
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).malloc(len);
 
     ec.regs.pc += 2;
   }
@@ -338,8 +331,7 @@ namespace
     if (c != NULL)
       *c = '\0';
 
-    process *p = static_cast<dos_exec_context &>(ec).current_process();
-    ec.regs.d[0] = p->open(name, flags);
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).open(name, flags);
 
     ec.regs.pc += 2;
   }
@@ -354,8 +346,7 @@ namespace
     uint32_type sp = ec.regs.a[7];
     uint32_type mesptr = ec.mem->getl(SUPER_DATA, sp + 0);
 
-    process *p = static_cast<dos_exec_context &>(ec).current_process();
-    p->fputs(ec.mem, mesptr, 1);
+    static_cast<dos_exec_context &>(ec).fputs(mesptr, 1);
     ec.regs.d[0] = 0;		// FIXME: is it correct?
 
     ec.regs.pc += 2;
@@ -372,8 +363,7 @@ namespace
     uint32_type sp = ec.regs.a[7];
     sint_type code = extsw(ec.mem->getw(SUPER_DATA, sp + 0));
 
-    process *p = static_cast<dos_exec_context &>(ec).current_process();
-    p->fputc(code, 1);
+    static_cast<dos_exec_context &>(ec).fputc(code, 1);
     ec.regs.d[0] = 0;		// FIXME: is it correct?
 
     ec.regs.pc += 2;
@@ -393,8 +383,7 @@ namespace
     uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
     uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
 
-    process *p = static_cast<dos_exec_context &>(ec).current_process();
-    ec.regs.d[0] = p->read(fd, ec.mem, buf, size);
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).read(fd, buf, size);
 
     ec.regs.pc += 2;
   }
@@ -425,8 +414,7 @@ namespace
     L(" DOS _SETBLOCK\n");
 #endif
 
-    process *p = static_cast<dos_exec_context &>(ec).current_process();
-    ec.regs.d[0] = p->setblock(memptr, newlen);
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).setblock(memptr, newlen);
 
     ec.regs.pc += 2;
   }
@@ -458,8 +446,7 @@ namespace
     uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
     uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
 
-    process *p = static_cast<dos_exec_context &>(ec).current_process();
-    ec.regs.d[0] = p->write(fd, ec.mem, buf, size);
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).write(fd, buf, size);
 
     ec.regs.pc += 2;
   }

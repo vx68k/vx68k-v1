@@ -61,73 +61,45 @@ namespace vx68k
       virtual ~file() {}
     };
 
-    /* Process */
-    class process
+    class dos_exec_context
+      : public context
     {
     private:
       memory_allocator *_allocator;
-      file_system *_fs;
-      uint32_type pdb;
+      uint32_type current_pdb;
+
+    private:
+      int debug_level;
 
     public:
-      process(memory_allocator *a, file_system *fs);
-      ~process();
-
-    public:
-      file_system *fs() const
-	{return _fs;}
+      dos_exec_context(address_space *, exec_unit *, memory_allocator *);
 
     public:
       uint32_type getpdb() const
-	{return pdb;}
-      void exit(sint_type);
+	{return current_pdb;}
+      void setpdb(uint32_type pdb)
+	{current_pdb = pdb;}
+
+      void exit(unsigned int);
 
     public:
       sint32_type malloc(uint32_type len)
-	{return _allocator->alloc(len, pdb - 0x10);}
+	{return _allocator->alloc(len, current_pdb);}
       sint_type mfree(uint32_type);
       sint32_type setblock(uint32_type memptr, uint32_type newlen)
 	{return _allocator->resize(memptr, newlen);}
 
     public:
       sint_type create(const char *name, sint_type attr);
-      sint_type open(const char *name, sint_type mode);
+      sint_type open(const char *, sint_type);
       sint_type close(sint_type);
-      sint32_type read(sint_type, address_space *, uint32_type, uint32_type);
-      sint32_type write(sint_type,
-			const address_space *, uint32_type, uint32_type);
-      sint32_type seek(sint_type, sint32_type, uint_type);
-      sint_type dup(sint_type);
-      sint_type dup2(sint_type, sint_type);
-      sint32_type fputs(const address_space *, uint32_type, sint_type);
-      sint32_type fputc(sint_type, sint_type);
-    };
-
-    class dos_exec_context
-      : public context
-    {
-    private:
-      process *_process;
-
-    private:
-      int debug_level;
-
-    public:
-      dos_exec_context(exec_unit *, address_space *, process *);
-
-    public:
-      process *current_process() const
-	{return _process;}
-      void set_current_process(process *p)
-	{_process = p;}
-
-      void exit(unsigned int);
-      int open(const char *, unsigned int);
-      int close(int);
-      int32 read(int, uint32, uint32);
-      sint32_type write(int, uint32_type, uint32_type);
+      sint32_type read(sint_type, uint32_type, uint32_type);
+      sint32_type write(sint_type, uint32_type, uint32_type);
       int32 seek(int, int32, unsigned int);
+
       int fgetc(int);
+      sint32_type fputc(sint_type, sint_type);
+      sint32_type fputs(uint32_type, sint_type);
 
     public:
       uint32 load_executable(const char *, uint32_type address);
@@ -153,7 +125,7 @@ namespace vx68k
       dos(machine *);
 
     public:
-      process *load(const char *name, dos_exec_context &c);
+      uint32_type load(const char *name, dos_exec_context &c);
       uint16 execute (const char *, const char *const *);
 
     public:
