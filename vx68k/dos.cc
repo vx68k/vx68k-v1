@@ -33,7 +33,6 @@
 #else
 # include <cassert>
 # define I assert
-# define VL(EXPR)
 #endif
 
 using namespace vx68k::human;
@@ -62,12 +61,11 @@ namespace
   void
   dos_close(unsigned int op, context &ec, instruction_data *data)
   {
+    uint32_type sp = ec.regs.a[7];
+    sint_type fd = extsw(ec.mem->getw(SUPER_DATA, sp));
 #ifdef L
     L(" DOS _CLOSE\n");
 #endif
-
-    uint32_type sp = ec.regs.a[7];
-    sint_type fd = extsw(ec.mem->getw(SUPER_DATA, sp));
 
     ec.regs.d[0] = static_cast<dos_exec_context &>(ec).close(fd);
 
@@ -93,8 +91,7 @@ namespace
   dos_delete(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
-    L(" DOS _DELETE");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _DELETE\n");
 #endif
 
     // FIXME.
@@ -119,13 +116,15 @@ namespace
 
   void
   dos_exit2(unsigned int op, context &ec, instruction_data *data)
-    {
-      VL((" DOS _EXIT2\n"));
+  {
+    uint32 sp = ec.regs.a[7];
+    unsigned int status = ec.mem->getw(SUPER_DATA, sp + 0);
+#ifdef L
+    L(" DOS _EXIT2\n");
+#endif
 
-      uint32 sp = ec.regs.a[7];
-      unsigned int status = ec.mem->getw(SUPER_DATA, sp + 0);
-      static_cast<dos_exec_context &>(ec).exit(status);
-    }
+    static_cast<dos_exec_context &>(ec).exit(status);
+  }
 
   void
   dos_fflush(uint_type op, context &c, instruction_data *data)
@@ -145,8 +144,7 @@ namespace
   dos_filedate(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
-    L(" DOS _FILEDATE");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _FILEDATE\n");
 #endif
 
     // FIXME.
@@ -157,26 +155,27 @@ namespace
 
   void
   dos_fgetc(unsigned int op, context &ec, instruction_data *data)
-    {
-      VL((" DOS _FGETC\n"));
+  {
+    uint32 sp = ec.regs.a[7];
+    int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
+#ifdef L
+    L(" DOS _FGETC\n");
+#endif
 
-      uint32 sp = ec.regs.a[7];
-      int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
-      ec.regs.d[0] = static_cast<dos_exec_context &>(ec).fgetc(fd);
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).fgetc(fd);
 
-      ec.regs.pc += 2;
-    }
+    ec.regs.pc += 2;
+  }
 
   void
   dos_fputs(uint_type op, context &ec, instruction_data *data)
   {
-#ifdef L
-    L(" DOS _FPUTS\n");
-#endif
-
     uint32_type sp = ec.regs.a[7];
     uint32_type mesptr = ec.mem->getl(SUPER_DATA, sp + 0);
     sint_type filno = extsw(ec.mem->getw(SUPER_DATA, sp + 4));
+#ifdef L
+    L(" DOS _FPUTS\n");
+#endif
 
     ec.regs.d[0] = static_cast<dos_exec_context &>(ec).fputs(mesptr, filno);
 
@@ -202,8 +201,7 @@ namespace
   dos_getdate(uint_type op, context &ec, instruction_data *data)
   {
 #ifdef L
-    L(" DOS _GETDATE");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _GETDATE\n");
 #endif
 
     time_t t = time(NULL);
@@ -243,8 +241,7 @@ namespace
   dos_getpdb(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
-    L(" DOS _GETPDB");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _GETPDB\n");
 #endif
 
     ec.regs.d[0] = static_cast<dos_exec_context &>(ec).getpdb();
@@ -256,8 +253,7 @@ namespace
   dos_gettim2(uint_type op, context &ec, instruction_data *data)
   {
 #ifdef L
-    L(" DOS _GETTIM2");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _GETTIM2\n");
 #endif
 
     time_t t = time(NULL);
@@ -279,8 +275,7 @@ namespace
   dos_intvcs(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
-    L(" DOS _INTVCS");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _INTVCS\n");
 #endif
 
     // FIXME.
@@ -291,17 +286,16 @@ namespace
 
   void
   dos_ioctrl(unsigned int op, context &ec, instruction_data *data)
-    {
+  {
 #ifdef L
-      L(" DOS _IOCTRL");
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _IOCTRL\n");
 #endif
 
-      // FIXME.
-      ec.regs.d[0] = 0;
+    // FIXME.
+    ec.regs.d[0] = 0;
 
-      ec.regs.pc += 2;
-    }
+    ec.regs.pc += 2;
+  }
 
   void
   dos_malloc(unsigned int op, context &ec, instruction_data *data)
@@ -367,12 +361,11 @@ namespace
   void
   dos_print(unsigned int op, context &ec, instruction_data *data)
   {
+    uint32_type sp = ec.regs.a[7];
+    uint32_type mesptr = ec.mem->getl(SUPER_DATA, sp + 0);
 #ifdef L
     L(" DOS _PRINT\n");
 #endif
-
-    uint32_type sp = ec.regs.a[7];
-    uint32_type mesptr = ec.mem->getl(SUPER_DATA, sp + 0);
 
     static_cast<dos_exec_context &>(ec).fputs(mesptr, 1);
     ec.regs.d[0] = 0;		// FIXME: is it correct?
@@ -383,12 +376,11 @@ namespace
   void
   dos_putchar(unsigned int op, context &ec, instruction_data *data)
   {
+    uint32_type sp = ec.regs.a[7];
+    sint_type code = extsw(ec.mem->getw(SUPER_DATA, sp + 0));
 #ifdef L
     L(" DOS _PUTCHAR\n");
 #endif
-
-    uint32_type sp = ec.regs.a[7];
-    sint_type code = extsw(ec.mem->getw(SUPER_DATA, sp + 0));
 
     static_cast<dos_exec_context &>(ec).fputc(code, 1);
     ec.regs.d[0] = 0;		// FIXME: is it correct?
@@ -399,15 +391,13 @@ namespace
   void
   dos_read(unsigned int op, context &ec, instruction_data *data)
   {
-#ifdef L
-    L(" DOS _READ\n");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
-#endif
-
     uint32 sp = ec.regs.a[7];
     sint_type fd = extsw(ec.mem->getw(SUPER_DATA, sp));
     uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
     uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
+#ifdef L
+    L(" DOS _READ\n");
+#endif
 
     ec.regs.d[0] = static_cast<dos_exec_context &>(ec).read(fd, buf, size);
 
@@ -416,18 +406,20 @@ namespace
 
   void
   dos_seek(unsigned int op, context &ec, instruction_data *data)
-    {
-      VL((" DOS _SEEK\n"));
+  {
+    uint32 sp = ec.regs.a[7];
+    int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
+    int32 offset = extsl(ec.mem->getl(SUPER_DATA, sp + 2));
+    unsigned int whence = ec.mem->getw(SUPER_DATA, sp + 6);
+#ifdef L
+    L(" DOS _SEEK\n");
+#endif
 
-      uint32 sp = ec.regs.a[7];
-      int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
-      int32 offset = extsl(ec.mem->getl(SUPER_DATA, sp + 2));
-      unsigned int whence = ec.mem->getw(SUPER_DATA, sp + 6);
-      ec.regs.d[0]
-	= static_cast<dos_exec_context &>(ec).seek(fd, offset, whence);
+    ec.regs.d[0]
+      = static_cast<dos_exec_context &>(ec).seek(fd, offset, whence);
 
-      ec.regs.pc += 2;
-    }
+    ec.regs.pc += 2;
+  }
 
   void
   dos_setblock(unsigned int op, context &ec, instruction_data *data)
@@ -484,8 +476,7 @@ namespace
   dos_vernum(uint_type op, context &ec, instruction_data *data)
   {
 #ifdef L
-    L(" DOS _VERNUM");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _VERNUM\n");
 #endif
 
     ec.regs.d[0] = (uint32_type(0x3638) << 16 | 3u << 8 | 2u);
@@ -496,21 +487,20 @@ namespace
   void
   dos_write(unsigned int op, context &ec, instruction_data *data)
   {
-#ifdef L
-    L(" DOS _WRITE");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
-#endif
-
     uint32_type sp = ec.regs.a[7];
     int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
     uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
     uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
+#ifdef L
+    L(" DOS _WRITE\n");
+#endif
 
     ec.regs.d[0] = static_cast<dos_exec_context &>(ec).write(fd, buf, size);
 
     ec.regs.pc += 2;
   }
 
+  /* Adds DOS-call instructions to exec_unit EU.  */
   void
   add_instructions(exec_unit &eu, dos *data)
   {

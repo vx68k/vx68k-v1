@@ -1,5 +1,13 @@
 1999-10-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vx68k/dos.cc (dos_delete, dos_filedate, dos_getdate, dos_getpdb,
+	dos_gettim2, dos_intvcs, dos_ioctrl, dos_read, dos_vernum,
+	dos_write): Change log messages.
+	(dos_close, dos_exit2, dos_fgetc, dos_fputs, dos_print,
+	dos_putchar, dos_read, dos_seek, dos_write): Move log output after
+	getting parameters.
+	(add_instructions): Add function comments.
+
 	* vx68k/textvram.cc (scroll): Call update_area.
 
 	* vx68kgtk/gtkconsole.cc (handle_timeout): Use update_area to
