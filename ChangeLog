@@ -1,5 +1,8 @@
 2001-06-29  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* configure.in (ALL_LINGUAS): Add AC_C_CONST.  Add tests for the
+	C++ features.  Move `--with-nana' handling later.
+
 	* TODO: Updated.
 
 	* acinclude.m4: Copied from the autoconf macro archive.
