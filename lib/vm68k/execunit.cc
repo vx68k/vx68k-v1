@@ -433,6 +433,22 @@ namespace
     }
 #endif /* 0 */
 
+  template <class Destination> void cmpib(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int value2 = extsb(ec->fetchw(2));
+      Destination ea1(op & 0x7, 2 + 2);
+      VL((" cmpib #%d,*\n", value2));
+
+      int value1 = ea1.getb(ec);
+      int value = extsb(value1 - value2);
+      ea1.finishb(ec);
+      ec->regs.sr.set_cc(value); // FIXME.
+
+      ec->regs.pc += 2 + 2;
+    }
+
+#if 0
   void cmpib_postinc(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -450,6 +466,7 @@ namespace
 
       ec->regs.pc += 2 + 2;
     }
+#endif /* 0 */
 
   void dbf_d(int op, execution_context *ec)
     {
@@ -1165,13 +1182,15 @@ namespace
 void
 exec_unit::install_instructions(exec_unit *eu)
 {
-  using namespace addressing;
   I(eu != NULL);
   eu->set_instruction(0x0680, 0x0007, &addil<data_register>);
   eu->set_instruction(0x0690, 0x0007, &addil<indirect>);
   eu->set_instruction(0x0698, 0x0007, &addil<postincrement_indirect>);
   eu->set_instruction(0x06a0, 0x0007, &addil<predecrement_indirect>);
-  eu->set_instruction(0x0c18, 0x0007, &cmpib_postinc);
+  eu->set_instruction(0x0c00, 0x0007, &cmpib<data_register>);
+  eu->set_instruction(0x0c10, 0x0007, &cmpib<indirect>);
+  eu->set_instruction(0x0c18, 0x0007, &cmpib<postincrement_indirect>);
+  eu->set_instruction(0x0c20, 0x0007, &cmpib<predecrement_indirect>);
   eu->set_instruction(0x1010, 0x0e07, &moveb_indir_d);
   eu->set_instruction(0x1018, 0x0e07, &moveb_postinc_d);
   eu->set_instruction(0x1028, 0x0e07, &moveb_off_d);
