@@ -1,5 +1,14 @@
 2000-09-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (machine): Call install_iocs_calls on scc.
+
+	* libvx68k/sccmem.cc (install_iocs_calls): Changed to member
+	function.
+	(scc_memory): Remove call to install_iocs_calls.
+
+	* include/vx68k/memory.h (class scc_memory): Remove argument from
+	the constructor.  Add member install_iocs_calls.
+
 	* libvx68k/machine.cc (machine): Call install_iocs_calls for
 	tvram.
 

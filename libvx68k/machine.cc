@@ -440,7 +440,6 @@ machine::machine(size_t memory_size)
     mem(memory_size),
     dmac(rom),
     _area_set(&mem),
-    scc(rom),
     master_as(new x68k_address_space(this)),
     _master_context(new context(master_as.get())),
     _key_modifiers(0),
@@ -454,4 +453,5 @@ machine::machine(size_t memory_size)
 
   rom.attach(&eu);
   tvram.install_iocs_calls(rom);
+  scc.install_iocs_calls(rom);
 }

@@ -134,58 +134,6 @@ scc_memory::initialize_mouse()
   _mouse_motion.y = 0;
 }
 
-uint_type
-scc_memory::get_16(function_code fc, uint32_type address) const
-{
-#ifdef HAVE_NANA_H
-  DL("class scc_memory: get_16: fc=%d address=0x%08lx\n", fc, address + 0UL);
-#endif
-  static bool once;
-  if (!once++)
-    fprintf(stderr, "class scc_memory: FIXME: `get_16' not implemented\n");
-  return 0;
-}
-
-unsigned int
-scc_memory::get_8(function_code fc, uint32_type address) const
-{
-#ifdef HAVE_NANA_H
-  DL("class scc_memory: get_8: fc=%d address=0x%08lx\n", fc, address + 0UL);
-#endif
-  static bool once;
-  if (!once++)
-    fprintf(stderr, "class scc_memory: FIXME: `get_8' not implemented\n");
-  address &= 0x1fff;
-  switch (address) {
-  default:
-    return 0;
-  }
-}
-
-void
-scc_memory::put_16(function_code fc, uint32_type address, uint_type value)
-{
-#ifdef HAVE_NANA_H
-  DL("class scc_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
-     fc, address + 0UL, value);
-#endif
-  static bool once;
-  if (!once++)
-    fprintf(stderr, "class scc_memory: FIXME: `put_16' not implemented\n");
-}
-
-void
-scc_memory::put_8(function_code fc, uint32_type address, unsigned int value)
-{
-#ifdef HAVE_NANA_H
-  DL("class scc_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",
-     fc, address + 0UL, value);
-#endif
-  static bool once;
-  if (!once++)
-    fprintf(stderr, "class scc_memory: FIXME: `put_8' not implemented\n");
-}
-
 namespace
 {
   using vm68k::word_size;
@@ -295,42 +243,93 @@ namespace
       fprintf(stderr, "iocs_set232c: FIXME: not implemented\n");
     c.regs.d[0] = 0;
   }
+}
 
-  /* Installs serial and mouse IOCS calls to the BIOS ROM.  */
-  void
-  install_iocs_calls(system_rom &bios, unsigned long data)
-  {
-    bios.set_iocs_function(0x30, make_pair(&iocs_set232c, data));
-    // 0x31 _LOF232C
-    // 0x32 _INP232C
-    // 0x33 _ISNS232C
-    // 0x34 _OSNS232C
-    // 0x35 _OUT232C
-    bios.set_iocs_function(0x70, make_pair(&iocs_ms_init, data));
-    // 0x71 _MS_CURON
-    // 0x72 _MS_CUROF
-    // 0x73 _MS_STAT
-    bios.set_iocs_function(0x74, make_pair(&iocs_ms_getdt, data));
-    bios.set_iocs_function(0x75, make_pair(&iocs_ms_curgt, data));
-    bios.set_iocs_function(0x76, make_pair(&iocs_ms_curst, data));
-    bios.set_iocs_function(0x77, make_pair(&iocs_ms_limit, data));
-    // 0x78 _MS_OFFTM
-    // 0x79 _MS_ONTM
-    // 0x7a _MS_PATST
-    // 0x7b _MS_SEL
-    // 0x7c _MS_SEL2
+void
+scc_memory::install_iocs_calls(system_rom &rom)
+{
+  unsigned long data = reinterpret_cast<unsigned long>(this);
+  rom.set_iocs_function(0x30, make_pair(&iocs_set232c, data));
+  // 0x31: _LOF232C
+  // 0x32: _INP232C
+  // 0x33: _ISNS232C
+  // 0x34: _OSNS232C
+  // 0x35: _OUT232C
+  rom.set_iocs_function(0x70, make_pair(&iocs_ms_init, data));
+  // 0x71: _MS_CURON
+  // 0x72: _MS_CUROF
+  // 0x73: _MS_STAT
+  rom.set_iocs_function(0x74, make_pair(&iocs_ms_getdt, data));
+  rom.set_iocs_function(0x75, make_pair(&iocs_ms_curgt, data));
+  rom.set_iocs_function(0x76, make_pair(&iocs_ms_curst, data));
+  rom.set_iocs_function(0x77, make_pair(&iocs_ms_limit, data));
+  // 0x78: _MS_OFFTM
+  // 0x79: _MS_ONTM
+  // 0x7a: _MS_PATST
+  // 0x7b: _MS_SEL
+  // 0x7c: _MS_SEL2
+}
+
+uint_type
+scc_memory::get_16(function_code fc, uint32_type address) const
+{
+#ifdef HAVE_NANA_H
+  DL("class scc_memory: get_16: fc=%d address=0x%08lx\n", fc, address + 0UL);
+#endif
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class scc_memory: FIXME: `get_16' not implemented\n");
+  return 0;
+}
+
+unsigned int
+scc_memory::get_8(function_code fc, uint32_type address) const
+{
+#ifdef HAVE_NANA_H
+  DL("class scc_memory: get_8: fc=%d address=0x%08lx\n", fc, address + 0UL);
+#endif
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class scc_memory: FIXME: `get_8' not implemented\n");
+  address &= 0x1fff;
+  switch (address) {
+  default:
+    return 0;
   }
 }
 
+void
+scc_memory::put_16(function_code fc, uint32_type address, uint_type value)
+{
+#ifdef HAVE_NANA_H
+  DL("class scc_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
+     fc, address + 0UL, value);
+#endif
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class scc_memory: FIXME: `put_16' not implemented\n");
+}
+
+void
+scc_memory::put_8(function_code fc, uint32_type address, unsigned int value)
+{
+#ifdef HAVE_NANA_H
+  DL("class scc_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",
+     fc, address + 0UL, value);
+#endif
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class scc_memory: FIXME: `put_8' not implemented\n");
+}
+
 scc_memory::~scc_memory()
 {
   pthread_mutex_destroy(&mutex);
 }
 
-scc_memory::scc_memory(system_rom &bios)
+scc_memory::scc_memory()
   : mouse_left(0), mouse_top(0), mouse_right(768), mouse_bottom(512),
     mouse_states(2, false)
 {
   pthread_mutex_init(&mutex, 0);
-  install_iocs_calls(bios, reinterpret_cast<unsigned long>(this));
 }

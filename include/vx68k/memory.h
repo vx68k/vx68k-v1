@@ -478,7 +478,7 @@ namespace vx68k
     mutable pthread_mutex_t mutex;
 
   public:
-    explicit scc_memory(system_rom &);
+    scc_memory();
     ~scc_memory();
 
   public:
@@ -489,6 +489,9 @@ namespace vx68k
     /* Writes data to this object.  */
     void put_16(function_code, uint32_type, uint_type);
     void put_8(function_code, uint32_type, unsigned int);
+
+  public:
+    void install_iocs_calls(system_rom &);
 
   public:
     /* Initializes mouse states.  */
