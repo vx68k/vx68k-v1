@@ -1,5 +1,7 @@
 1999-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* configure.in: Add check for -lpthread.
+
 	* include/vx68k/human.h (class dos): Remove members
 	load_executable and start.
 

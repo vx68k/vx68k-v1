@@ -9,6 +9,7 @@ AC_PROG_CXX
 AC_PROG_RANLIB
 dnl This is required to avoid error on later test?
 AC_PROG_CPP
+AC_CHECK_LIB(pthread, pthread_create)
 AC_ARG_WITH(nana,
 [  --with-nana             use GNU Nana for testing [no]],, with_nana=no)
 if test "$with_nana" != no; then
