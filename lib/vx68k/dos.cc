@@ -161,15 +161,26 @@ namespace
     }
 
   void
-  dos_getpdb(unsigned int op, context &ec, instruction_data *data)
+  dos_fputs(uint_type op, context &ec, instruction_data *data)
   {
 #ifdef L
-    L(" DOS _GETPDB");
+    L(" DOS _FPUTS\n");
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
+    uint32_type sp = ec.regs.a[7];
+    uint32_type mesptr = ec.mem->getl(SUPER_DATA, sp + 0);
+    sint_type filno = extsw(ec.mem->getw(SUPER_DATA, sp + 4));
+
     // FIXME.
-    ec.regs.d[0] = 0x8010;
+    unsigned char buf[1];
+    do
+      {
+	buf[0] = ec.mem->getb(SUPER_DATA, mesptr++);
+	if (buf[0] != 0)
+	  write(filno, buf, 1);
+      }
+    while (buf[0] != 0);
 
     ec.regs.pc += 2;
   }
@@ -194,6 +205,71 @@ namespace
 		    | lt->tm_year - 80 << 9
 		    | lt->tm_mon + 1 << 5
 		    | lt->tm_mday);
+
+    ec.regs.pc += 2;
+  }
+
+  void
+  dos_getenv(uint_type op, context &ec, instruction_data *data)
+  {
+#ifdef L
+    L(" DOS _GETENV");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    uint32_type sp = ec.regs.a[7];
+    uint32_type getname = ec.mem->getw(SUPER_DATA, sp + 0);
+    uint32_type env = ec.mem->getw(SUPER_DATA, sp + 4);
+    uint32_type getbuf = ec.mem->getw(SUPER_DATA, sp + 8);
+
+    // FIXME.
+    char name[256];
+    ec.mem->read(SUPER_DATA, getname, name, 256);
+
+    const char *value = getenv(name);
+    if (value == NULL)
+      value = "";
+
+    // FIXME
+    ec.mem->write(SUPER_DATA, getbuf, value, 256);
+    ec.regs.d[0] = 0;
+
+    ec.regs.pc += 2;
+  }
+
+  void
+  dos_getpdb(unsigned int op, context &ec, instruction_data *data)
+  {
+#ifdef L
+    L(" DOS _GETPDB");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    // FIXME.
+    ec.regs.d[0] = 0x8010;
+
+    ec.regs.pc += 2;
+  }
+
+  void
+  dos_gettim2(uint_type op, context &ec, instruction_data *data)
+  {
+#ifdef L
+    L(" DOS _GETTIM2");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    time_t t = time(NULL);
+#ifdef HAVE_LOCALTIME_R
+    struct tm lt0;
+    struct tm *lt = localtime_r(&t, &lt0);
+#else
+    struct tm *lt = localtime(&t);
+#endif
+
+    ec.regs.d[0] = (lt->tm_hour << 16
+		    | lt->tm_min << 8
+		    | lt->tm_sec);
 
     ec.regs.pc += 2;
   }
@@ -353,6 +429,19 @@ namespace
     }
 
   void
+  dos_vernum(uint_type op, context &ec, instruction_data *data)
+  {
+#ifdef L
+    L(" DOS _VERNUM");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    ec.regs.d[0] = (uint32_type(0x3638) << 16 | 3u << 8 | 2u);
+
+    ec.regs.pc += 2;
+  }
+
+  void
   dos_write(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
@@ -379,8 +468,11 @@ dos::dos(address_space *m, size_t)
   main_cpu.set_instruction(0xff02, 0, &dos_putchar);
   main_cpu.set_instruction(0xff09, 0, &dos_print);
   main_cpu.set_instruction(0xff1b, 0, &dos_fgetc);
+  main_cpu.set_instruction(0xff1e, 0, &dos_fputs);
   main_cpu.set_instruction(0xff25, 0, &dos_intvcs);
+  main_cpu.set_instruction(0xff27, 0, &dos_gettim2);
   main_cpu.set_instruction(0xff2a, 0, &dos_getdate);
+  main_cpu.set_instruction(0xff30, 0, &dos_vernum);
   main_cpu.set_instruction(0xff3c, 0, &dos_create);
   main_cpu.set_instruction(0xff3d, 0, &dos_open);
   main_cpu.set_instruction(0xff3e, 0, &dos_close);
@@ -394,9 +486,11 @@ dos::dos(address_space *m, size_t)
   main_cpu.set_instruction(0xff4a, 0, &dos_setblock);
   main_cpu.set_instruction(0xff4c, 0, &dos_exit2);
   main_cpu.set_instruction(0xff51, 0, &dos_getpdb);
+  main_cpu.set_instruction(0xff53, 0, &dos_getenv);
   main_cpu.set_instruction(0xff57, 0, &dos_filedate);
 
   main_cpu.set_instruction(0xff81, 0, &dos_getpdb);
+  main_cpu.set_instruction(0xff83, 0, &dos_getenv);
   main_cpu.set_instruction(0xff87, 0, &dos_filedate);
 }
 

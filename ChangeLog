@@ -1,5 +1,9 @@
 1999-06-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/dos.cc (dos_fputs, dos_getenv, dos_gettim2,
+	dos_vernum): New functions.
+	(dos): Add new handlers.
+
 	* lib/vm68k/execunit.cc (andw, negw, rolw_i): New functions.
 	(negl): Fix result and Add putl call.
 	(install_instructions): Add new handlers.
