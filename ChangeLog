@@ -1,5 +1,11 @@
 1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/Makefile.am (INCLUDES): Add ${GTK_CFLAGS}.
+	(vx68k_LDADD): Add ${GTK_LIBS}.
+
+	* bin/main.cc: Include <gtk/gtk.h>.  Put #ifdef for <unistd.h>.
+	(main): Call gtk_set_locale and gtk_init.
+
 	* configure.in: Add check for GTK+.
 
 	* include/vx68k/human.h: Add using namespace std.  Prefix

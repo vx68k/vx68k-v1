@@ -25,8 +25,11 @@
 #include "vx68k/human.h"
 #include "vx68k/memory.h"
 #include "getopt.h"
+#include <gtk/gtk.h>
 #include <pthread.h>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 #include <exception>
 #include <cstdlib>
 #include <cstdio>
@@ -129,8 +132,11 @@ namespace
 
 /* vx68k main.  */
 int
-main (int argc, char **argv)
+main(int argc, char **argv)
 {
+  gtk_set_locale();
+  gtk_init(&argc, &argv);
+
   if (!parse_options(argc, argv))
     return EXIT_FAILURE;
 
