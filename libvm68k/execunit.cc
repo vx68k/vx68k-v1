@@ -504,6 +504,31 @@ namespace
   }
 #endif
 
+  /* Handles an ASL instruction with a register count.  */
+  template <class Size> void
+  m68k_asl_r(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    unsigned int reg1 = op & 0x7;
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef TRACE_INSTRUCTIONS
+    L("\tasl%s\t", Size::suffix());
+    L("%%d%u,", reg2);
+    L("%%d%u\n", reg1);
+#endif
+
+    uvalue_type value2 = c.regs.d[reg2] % Size::value_bit();
+    svalue_type value1 = Size::svalue(Size::get(c.regs.d[reg1]));
+    svalue_type value = Size::svalue(Size::get(value1 << value2));
+    Size::put(c.regs.d[reg1], value);
+    c.regs.ccr.set_cc_lsl(value, value1, value2 + (32 - Size::value_bit())); // FIXME?
+
+    c.regs.pc += 2;
+  }
+
+#if 0
   void
   asll_r(uint_type op, context &ec, unsigned long data)
   {
@@ -522,6 +547,7 @@ namespace
 
     ec.regs.pc += 2;
   }
+#endif
 
   void
   asrl_i(uint_type op, context &c, unsigned long data)
@@ -4944,16 +4970,18 @@ namespace
     eu.set_instruction(0xe0a8, 0x0e07, &lsrl_r);
     eu.set_instruction(0xe100, 0x0e07, &m68k_asl_i<byte_size>);
     eu.set_instruction(0xe108, 0x0e07, &lslb_i);
+    eu.set_instruction(0xe120, 0x0e07, &m68k_asl_r<byte_size>);
     eu.set_instruction(0xe138, 0x0e07, &m68k_rol_r<byte_size>);
     eu.set_instruction(0xe140, 0x0e07, &m68k_asl_i<word_size>);
     eu.set_instruction(0xe148, 0x0e07, &lslw_i);
     eu.set_instruction(0xe158, 0x0e07, &rolw_i);
+    eu.set_instruction(0xe160, 0x0e07, &m68k_asl_r<word_size>);
     eu.set_instruction(0xe168, 0x0e07, &lslw_r);
     eu.set_instruction(0xe178, 0x0e07, &m68k_rol_r<word_size>);
     eu.set_instruction(0xe180, 0x0e07, &m68k_asl_i<long_word_size>);
     eu.set_instruction(0xe188, 0x0e07, &lsll_i);
     eu.set_instruction(0xe198, 0x0e07, &roll_i);
-    eu.set_instruction(0xe1a0, 0x0e07, &asll_r);
+    eu.set_instruction(0xe1a0, 0x0e07, &m68k_asl_r<long_word_size>);
     eu.set_instruction(0xe1a8, 0x0e07, &lsll_r);
     eu.set_instruction(0xe1b8, 0x0e07, &m68k_rol_r<long_word_size>);
   }

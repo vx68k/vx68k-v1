@@ -1,5 +1,9 @@
 2000-08-06  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (m68k_asl_r): New function template.
+	(asll_r): #if'd out.
+	(initialize_instructions): Use new handlers.
+
 	* libvx68kgtk/gtkconsole.cc (handle_timeout): Request drawing only
 	in RGB buffer.
 
