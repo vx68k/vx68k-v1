@@ -34,7 +34,7 @@ namespace vm68k
   };
 
   /* CPU registers (mc68000).  */
-  struct cpu_regs
+  struct registers
   {
     uint32 d0, d1, d2, d3, d4, d5, d6, d7;
     uint32 a0, a1, a2, a3, a4, a5, a6, a7;
@@ -46,16 +46,16 @@ namespace vm68k
 
 struct exception_listener
 {
-  virtual void bus_error (cpu_regs *, address_space *) = 0;
-  virtual void address_error (cpu_regs *, address_space *) = 0;
-  virtual void trap (int, cpu_regs *, address_space *) = 0;
-  virtual void interrupt (int, cpu_regs *, address_space *) = 0;
-  virtual void illegal (int, cpu_regs *, address_space *) = 0;
+  virtual void bus_error (registers *, address_space *) = 0;
+  virtual void address_error (registers *, address_space *) = 0;
+  virtual void trap (int, registers *, address_space *) = 0;
+  virtual void interrupt (int, registers *, address_space *) = 0;
+  virtual void illegal (int, registers *, address_space *) = 0;
 };
 
 struct execution_context
 {
-  cpu_regs regs;
+  registers regs;
   address_space *mem;
   exception_listener *exception;
   explicit execution_context (address_space *);

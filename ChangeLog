@@ -1,5 +1,8 @@
 1999-03-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/cpu.h (registers): Renamed from cpu_regs.  Update
+	all users.
+
 	* lib/vm68k/execunit.cc (bne, bsr, lea_offset_a, link): Use
 	address_space::getw_signed.
 
