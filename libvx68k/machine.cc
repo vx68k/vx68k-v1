@@ -129,9 +129,6 @@ machine::read_disk(memory_address_space &as, uint_type mode, uint32_type pos,
 {
   uint_type u = mode >> 8 & 0xf;
 
-#ifdef HAVE_NANA_H
-  L("machine: reading disk %#x %#x %#x %#x\n", mode, pos, buf, nbytes);
-#endif
   switch (mode >> 12)
     {
     case 0x9:
