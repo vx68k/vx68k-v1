@@ -1,5 +1,11 @@
 1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* TODO: Modified.
+
+	* NEWS: Modified.
+
+	* configure.in: Set VERSION to 0.36.
+
 	* bin/main.cc (main): Modify version string.
 
 	* bin/Makefile.am (INCLUDES): Add ${GTK_CFLAGS}.

@@ -1,10 +1,18 @@
 Virtual X68000 TO DO
 
-$Date: Thu, 01 Jul 1999 20:58:29 +0900 $
+$Date: Fri, 09 Jul 1999 23:08:47 +0900 $
+
+Version 0.36
+
+* Video hardware emulation.
+
+* Console device.
+
+Version 0.36 or later
 
 * IOCS handler.
 
-* File system translation layer must be added.
+* File name translation.
 
 * More instructions must be implemented.
 
@@ -12,7 +20,7 @@ $Date: Thu, 01 Jul 1999 20:58:29 +0900 $
 
 * The value of errno must be looked at for DOS calls.
 
-* Efficient CCR update.
+* Efficient CCR update.  (Mostly done)
 
 Since CCR is normally updated more often than referenced, speed of CCR
 update is important to improve system performance.
@@ -26,14 +34,16 @@ M68k instructions can be categorized into three classes:
 (2) that change all bits except X, and
 (3) that change Z only (bit test).
 
-* Common code optimization.
-
-Some common code sequences (strcpy, memcpy, etc.) can be optimized.
-
 * Modular design.
 
 Split X68000-specific code from generic m68k code.  Also GTK-dependent
 code from platform-independent code.
+
+Version 1.1 or later
+
+* Common code optimization.
+
+Some common code sequences (strcpy, memcpy, etc.) can be optimized.
 
 * Non-square pixel graphics.
 
