@@ -115,6 +115,20 @@ namespace
     }
 
   void
+  dos_fflush(uint_type op, context &c, instruction_data *data)
+  {
+#ifdef L
+    L(" DOS _FFLUSH\n");
+#endif
+
+    dos *d = dynamic_cast<dos *>(data);
+    I(d != NULL);
+    // FIXME
+
+    c.regs.pc += 2;
+  }
+
+  void
   dos_filedate(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
@@ -427,6 +441,7 @@ dos::dos(machine *m)
 
   eu->set_instruction(0xff02, 0, &dos_putchar, this);
   eu->set_instruction(0xff09, 0, &dos_print, this);
+  eu->set_instruction(0xff0d, 0, &dos_fflush, this);
   eu->set_instruction(0xff1b, 0, &dos_fgetc, this);
   eu->set_instruction(0xff1e, 0, &dos_fputs, this);
   eu->set_instruction(0xff25, 0, &dos_intvcs, this);
