@@ -75,6 +75,19 @@ exec_unit::illegal(int op, execution_context *)
 namespace
 {
 
+  void lea_absl_a(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int reg = op >> 9 & 0x7;
+      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+      uint32 address = ec->mem->getl(fc, ec->regs.pc + 2);
+      fprintf(stderr, " lea #0x%x.l,a%d\n", address, reg);
+
+      ec->regs.a[reg] = address;
+
+      ec->regs.pc += 6;
+    }
+
   void link(int op, execution_context *ec)
     {
       int reg = op & 0x0007;
@@ -91,6 +104,20 @@ namespace
       ec->regs.a[7] += disp;
 
       ec->regs.pc += 4;
+    }
+
+  void move_l_a_predec(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+      fprintf(stderr, " move.l a%d,-(a%d)\n", s_reg, d_reg);
+
+      // FIXME.
+      // ec->mem->putl(fc, ec->regs.a[d_reg] - 4, ec->regs.a[s_reg]);
+      ec->regs.a[d_reg] -= 4;
+
+      ec->regs.pc += 2;
     }
 
   /* movem regs to EA (postdec).  */
@@ -122,6 +149,8 @@ void
 exec_unit::install_instructions(exec_unit *eu)
 {
   assert(eu != NULL);
+  eu->set_instruction(0x2108, 0x0e07, &move_l_a_predec);
+  eu->set_instruction(0x41f9, 0x0e00, &lea_absl_a);
   eu->set_instruction(0x48e0, 0x0007, &movem_l_r_predec);
   eu->set_instruction(0x4e50, 0x0007, &link);
 }
