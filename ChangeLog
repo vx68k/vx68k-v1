@@ -1,5 +1,12 @@
 1999-11-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (class vx68k_app): Moved out of unnamed namespace.
+	(class vx68k_app): Add new static members: opt_memory_size,
+ 	opt_single_threaded, and opt_debug_level.
+	(namespace): Remove opt_memory_size, opt_one_thread, and
+ 	opt_debug.  Also change all users.
+	(parse_options): Define longopts locally.
+
 	* README: Modified.
 
 	* TODO: Modified.

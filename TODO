@@ -1,8 +1,6 @@
 To-Do List for Virtual X68000
 
-$Date: Fri, 26 Nov 1999 21:32:58 +0900 $
-
-* Make some option variables in main.cc class-local.
+$Date: Fri, 26 Nov 1999 21:50:38 +0900 $
 
 * Display indication when the process exits.
 
