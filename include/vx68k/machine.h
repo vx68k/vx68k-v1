@@ -97,6 +97,7 @@ namespace vx68k
   private:
     uint16 *buf;
     console *connected_console;
+    unsigned int curx, cury;
 
   public:
     text_vram();
@@ -111,6 +112,10 @@ namespace vx68k
     size_t write(int, uint32_type, const void *, size_t);
     void putb(int, uint32_type, uint_type);
     void putw(int, uint32_type, uint_type);
+
+  public:
+    void draw_char(unsigned int);
+    void scroll();
 
   public:
     void connect(console *);

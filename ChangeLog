@@ -1,3 +1,12 @@
+1999-08-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/textvram.cc (advance_row): New function.
+	(scroll, draw_char): New function.
+	(text_vram): Initialize curx and cury.
+
+	* include/vx68k/machine.h (class text_vram): Add members: curx,
+	cury, draw_char, and scroll.
+
 1999-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/doscontext.cc (getenv): Add test before erase.

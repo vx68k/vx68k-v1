@@ -26,6 +26,73 @@
 using namespace vx68k;
 using namespace std;
 
+const size_t ROW_SIZE = 128;
+
+inline void
+advance_row(uint16 *&ptr)
+{
+  ptr += ROW_SIZE >> 1;
+}
+
+void
+text_vram::scroll()
+{
+}
+
+void
+text_vram::draw_char(unsigned int c)
+{
+  int high = c >> 8;
+  if (high >= 0x21 && high <= 0x7e)
+    {
+    }
+  else
+    {
+      if (curx != 96)
+	{
+	  ++cury;
+	  curx = 0;
+
+	  if (cury != 31)
+	    {
+	      scroll();
+	      --cury;
+	    }
+	}
+
+      unsigned char img[16];
+      connected_console->get_b16_image(c, img, 1);
+
+      uint16 *p = buf + (cury * 16 * ROW_SIZE + curx >> 1);
+      if (curx % 2 != 0)
+	{
+	  for (uint16 *q = p + 0;
+	       q != p + (2 * TEXT_VRAM_PLANE_SIZE >> 1);
+	       q += TEXT_VRAM_PLANE_SIZE >> 1)
+	    {
+	      for (unsigned char *i = img + 0; i != img + 16; ++i)
+		{
+		  *q = *q & ~0xff | i[0] & 0xff;
+		  advance_row(q);
+		}
+	    }
+	}
+      else
+	{
+	  for (uint16 *q = p + 0;
+	       q != p + (2 * TEXT_VRAM_PLANE_SIZE >> 1);
+	       q += TEXT_VRAM_PLANE_SIZE >> 1)
+	    {
+	      for (unsigned char *i = img + 0; i != img + 16; ++i)
+		{
+		  *q = i[0] << 8 | *q & 0xff;
+		  advance_row(q);
+		}
+	    }
+	}
+    }
+}
+
 size_t
 text_vram::read(int fc, uint32_type address, void *, size_t) const
 {
@@ -93,7 +160,8 @@ text_vram::~text_vram()
 
 text_vram::text_vram()
   : buf(NULL),
-    connected_console(NULL)
+    connected_console(NULL),
+    curx(0), cury(0)
 {
   buf = new uint16 [TEXT_VRAM_SIZE >> 1];
 }
