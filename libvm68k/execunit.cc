@@ -2148,6 +2148,31 @@ namespace
     ec.regs.pc += 2 + 4 + ea1.isize(4);
   }
 
+  /* Handles an SUBQ instruction.  */
+  template <class Size, class Destination> void
+  m68k_subq(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    Destination ea1(op & 0x7, 2);
+    int value2 = op >> 9 & 0x7;
+    if (value2 == 0)
+      value2 = 8;
+#ifdef TRACE_INSTRUCTIONS
+    L(" subq%s #%d,", Size::suffix(), value2);
+    L("%s\n", ea1.text(c));
+#endif
+
+    svalue_type value1 = ea1.get(c);
+    svalue_type value = Size::svalue(Size::get(value1 - value2));
+    ea1.put(c, value);
+    c.regs.sr.set_cc_sub(value, value1, value2);
+    ea1.finish(c);
+
+    c.regs.pc += 2 + ea1.extension_size();
+  }
+
   template <class Destination> void
   subqw(uint_type op, context &ec, unsigned long data)
   {
@@ -2311,9 +2336,9 @@ namespace
       ec.regs.pc += 2;
     }
 
-  /* Adds the machine instructions to exec. unit EU.  */
+  /* Initializes the machine instructions of execution unit EU.  */
   void
-  add_instructions(exec_unit &eu)
+  initialize_instructions(exec_unit &eu)
   {
     eu.set_instruction(0x0000, 0x0007, &orib<data_register>);
     eu.set_instruction(0x0010, 0x0007, &orib<indirect>);
@@ -2824,6 +2849,18 @@ namespace
     eu.set_instruction(0x50e8, 0x0007, &s_b<t, disp_indirect>);
     eu.set_instruction(0x50f0, 0x0007, &s_b<t, indexed_indirect>);
     eu.set_instruction(0x50f9, 0x0000, &s_b<t, absolute_long>);
+    eu.set_instruction(0x5100, 0x0e07, &m68k_subq<byte_size, byte_d_register>);
+    eu.set_instruction(0x5110, 0x0e07, &m68k_subq<byte_size, byte_indirect>);
+    eu.set_instruction(0x5118, 0x0e07,
+		       &m68k_subq<byte_size, byte_postinc_indirect>);
+    eu.set_instruction(0x5120, 0x0e07,
+		       &m68k_subq<byte_size, byte_predec_indirect>);
+    eu.set_instruction(0x5128, 0x0e07,
+		       &m68k_subq<byte_size, byte_disp_indirect>);
+    eu.set_instruction(0x5130, 0x0e07,
+		       &m68k_subq<byte_size, byte_index_indirect>);
+    eu.set_instruction(0x5138, 0x0e00, &m68k_subq<byte_size, byte_abs_short>);
+    eu.set_instruction(0x5139, 0x0e00, &m68k_subq<byte_size, byte_abs_long>);
     eu.set_instruction(0x5140, 0x0e07, &subqw<data_register>);
     eu.set_instruction(0x5148, 0x0e07, &subqw<address_register>);
     eu.set_instruction(0x5150, 0x0e07, &subqw<indirect>);
@@ -3249,7 +3286,7 @@ namespace
 exec_unit::exec_unit()
   : instructions(0x10000, instruction_type(&illegal, 0))
 {
-  add_instructions(*this);
+  initialize_instructions(*this);
 }
 
 /* Executes an illegal instruction.  */

@@ -1,5 +1,10 @@
 2000-05-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (m68k_subq): New function template.
+	(initialize_instructions): Renamed from add_instructions.  Also
+	change all callers.
+	(initialize_instructions): Add SUBQ instructions for byte.
+
 	* libvx68k/systemrom.cc (iocs_b_recali): New function.
 	(initialize_iocs_functions): Use iocs_b_recali.
 
