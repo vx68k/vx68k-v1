@@ -351,7 +351,13 @@ machine::get_image(int x, int y, int width, int height,
 	}
     }
 }
-
+
+void
+machine::check_timers(uint32_type t)
+{
+  last_check_time = t;
+}
+
 void
 machine::configure(address_space &as)
 {

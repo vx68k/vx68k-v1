@@ -166,6 +166,10 @@ namespace vx68k
     system_rom rom;
     class exec_unit eu;
 
+  private:
+    /* Last time when timers were checked.  */
+    uint32_type last_check_time;
+
     /* Cursor position.  */
     unsigned int curx, cury;
 
@@ -200,6 +204,10 @@ namespace vx68k
   public:
     void connect(console *con)
       {tvram.connect(con); font.copy_data(con);}
+
+    /* Checks timers.  */
+    void check_timers(uint32_type t);
+
     void get_image(int x, int y, int width, int height,
 		   unsigned char *rgb_buf, size_t row_size);
 

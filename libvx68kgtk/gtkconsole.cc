@@ -388,6 +388,19 @@ gtk_console::handle_timeout()
 
 namespace
 {
+  /* Handles a timeout for the machine.  */
+  gint
+  handle_machine_timeout(gpointer data) throw ()
+  {
+    gtk_console *c = static_cast<gtk_console *>(data);
+    I(c != NULL);
+
+    guint32 t = gdk_time_get();
+    c->check_machine_timers(t);
+
+    return true;
+  }
+
   /* Handles a timeout.  This function is a glue for GTK.  */
   gint
   handle_timeout(gpointer data) throw ()
@@ -415,6 +428,7 @@ gtk_console::~gtk_console()
     }
 
   gtk_timeout_remove(timeout);
+  gtk_timeout_remove(machine_timeout);
   gdk_region_destroy(update_region);
 
   gdk_threads_leave();
@@ -435,6 +449,10 @@ gtk_console::gtk_console(machine *m)
   rgb_buf = new guchar [height * row_size];
 
   gdk_threads_enter();
+
+  guint t = gdk_time_get();
+  _m->check_timers(t);
+  machine_timeout = gtk_timeout_add(10, &handle_machine_timeout, this);
 
   update_region = gdk_region_new();
   timeout = gtk_timeout_add(TIMEOUT_INTERVAL, &::handle_timeout, this);

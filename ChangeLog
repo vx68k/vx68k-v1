@@ -1,5 +1,18 @@
 2000-08-06  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68kgtk/gtkconsole.cc (handle_machine_timeout): New
+	function.
+	(~gtk_console): Call gtk_timeout_remove for machine_timeout.
+	(gtk_console): Initialize machine_timeout.
+
+	* include/vx68k/gtk.h (class gtk_console): Add members
+	machine_timeout and check_machine_timers.
+
+	* libvx68k/machine.cc (check_timers): New function.
+
+	* include/vx68k/machine.h (class machine): Add members
+	last_check_time and check_timers.
+
 	* libvm68k/execunit.cc (m68k_asl_r): New function template.
 	(asll_r): #if'd out.
 	(initialize_instructions): Use new handlers.

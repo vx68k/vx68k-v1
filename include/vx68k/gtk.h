@@ -42,6 +42,8 @@ namespace vx68k
       guchar *rgb_buf;
 
     private:
+      guint machine_timeout;
+
       GdkRegion *update_region;
       guint timeout;
       vector<GtkWidget *> widgets;
@@ -62,6 +64,8 @@ namespace vx68k
       void get_k16_image(unsigned int, unsigned char *, size_t) const;
 
     public:
+      void check_machine_timers(uint32_type t) {_m->check_timers(t);}
+
       /* Handles a timeout.  */
       bool handle_timeout();
 
