@@ -155,6 +155,17 @@ dos::execute (const char *name, const char *const *argv)
 
 namespace
 {
+  void close(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+#ifdef TRACE_STEPS
+      fprintf(stderr, " DOS _CLOSE\n");
+#endif
+
+      ec->regs.d0 = 0u;		// FIXME.
+
+      ec->regs.pc += 2;
+    }
 
   void open(int op, execution_context *ec)
     {
@@ -196,5 +207,6 @@ dos::dos (address_space *as, size_t)
 {
   main_cpu.set_handlers(0xff09, 0, &print);
   main_cpu.set_handlers(0xff3d, 0, &open);
+  main_cpu.set_handlers(0xff3e, 0, &close);
 }
 

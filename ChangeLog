@@ -1,5 +1,8 @@
 1999-03-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/dos.cc (close): New function.
+	(dos): Set operation word to the new function.
+
 	* lib/vm68k/execunit.cc (movew_absl_d, tstw_d, beq,
 	movew_d_predec): New functions.
 	(install_instructions): Set operation words to the new functions.
