@@ -35,28 +35,8 @@
 using namespace vm68k;
 using namespace std;
 
-void
-context::run()
-{
-  for (;;)
-    {
-#ifdef L
-# ifdef DUMP_REGISTERS
-      for (unsigned int i = 0; i != 8; ++i)
-	{
-	  L("| %%d%u = 0x%08lx, %%a%u = 0x%08lx\n",
-	    i, (unsigned long) regs.d[i], i, (unsigned long) regs.a[i]);
-	}
-# endif
-      L("| %#lx: %#06x\n", (unsigned long) regs.pc, fetchw(0));
-#endif
-      step();
-    }
-}
-
-context::context(address_space *m, const exec_unit *e)
+context::context(address_space *m)
   : mem(m),
-    eu(e),
     pfc(regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM),
     dfc(regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA)
 {

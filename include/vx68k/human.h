@@ -122,6 +122,7 @@ namespace vx68k
       : public context
     {
     private:
+      exec_unit *_eu;		// FIXME
       memory_allocator *_allocator;
       file_system *_fs;
       uint32_type current_pdb;

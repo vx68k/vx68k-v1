@@ -41,6 +41,25 @@
 using namespace vm68k;
 using namespace std;
 
+void
+exec_unit::run(context &c) const
+{
+  for (;;)
+    {
+#ifdef TRACE_INSTRUCTIONS
+# ifdef DUMP_REGISTERS
+      for (unsigned int i = 0; i != 8; ++i)
+	{
+	  L("| %%d%u = 0x%08lx, %%a%u = 0x%08lx\n",
+	    i, (unsigned long) c.regs.d[i], i, (unsigned long) c.regs.a[i]);
+	}
+# endif
+      L("| %#lx: %#06x\n", (unsigned long) c.regs.pc, c.fetchw(0));
+#endif
+      step(c);
+    }
+}
+
 /* Sets an instruction to operation codes.  */
 void
 exec_unit::set_instruction(int code, int mask, instruction_handler h,

@@ -190,7 +190,36 @@ struct exception_listener
   {
   }; 
 
-  class context;	// Forward declaration.
+  class exec_unit;		// Forward declaration.
+
+  /* Context of execution.  */
+  class context
+  {
+  public:
+    registers regs;
+    address_space *mem;
+    exception_listener *exception;
+  private:
+    int pfc, dfc;
+
+  public:
+    explicit context(address_space *);
+
+  public:
+    /* Returns the FC for program in the current state.  */
+    int program_fc() const
+      {return pfc;}
+
+    /* Returns the FC for data in the current state.  */
+    int data_fc() const
+      {return dfc;}
+
+  public:
+    uint_type fetchw(int disp) const
+      {return mem->getw_aligned(program_fc(), regs.pc + disp);}
+    uint32 fetchl(int disp) const
+      {return mem->getl(program_fc(), regs.pc + disp);}
+  };
 
   /* Execution unit.  */
   class exec_unit
@@ -212,45 +241,21 @@ struct exception_listener
     void set_instruction(int op, int mask, instruction_handler h)
       {set_instruction(op, mask, h, NULL);}
 
+  protected:
     /* Dispatches for instruction handlers.  */
     void dispatch(uint_type op, context &ec) const
       {
 	op &= 0xffffu;
 	instructions[op].first(op, ec, instructions[op].second);
       }
-  };
-
-  class context
-  {
-  public:
-    registers regs;
-    address_space *mem;
-    exception_listener *exception;
-  private:
-    const exec_unit *eu;
-    int pfc, dfc;
 
   public:
-    context(address_space *, const exec_unit *);
-
-  public:
-    int program_fc() const
-      {return pfc;}
-    int data_fc() const
-      {return dfc;}
-
-  public:
-    uint_type fetchw(int disp) const
-      {return mem->getw_aligned(program_fc(), regs.pc + disp);}
-    uint32 fetchl(int disp) const
-      {return mem->getl(program_fc(), regs.pc + disp);}
-
     /* Steps one instruction.  */
-    void step()
-      {eu->dispatch(fetchw(0), *this);}
+    void step(context &c) const
+      {dispatch(c.fetchw(0), c);}
 
     /* Starts the program.  */
-    void run();
+    void run(context &c) const;
   };
 } // vm68k
 

@@ -181,7 +181,7 @@ dos_exec_context::start(uint32 address, const char *const *argv)
   uint16 status = 0;
   try
     {
-      run();
+      _eu->run(*this);
       abort ();
     }
   catch (quit_loop &x)
@@ -350,7 +350,8 @@ dos_exec_context::~dos_exec_context()
 
 dos_exec_context::dos_exec_context(address_space *m, exec_unit *eu,
 				   memory_allocator *a, file_system *fs)
-  : context(m, eu),
+  : context(m),
+    _eu(eu),			// FIXME
     _allocator(a),
     _fs(fs),
     current_pdb(0),
