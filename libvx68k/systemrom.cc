@@ -273,7 +273,10 @@ namespace
     DL("IOCS _B_DRVCHK; %%d1:w=0x%04x %%d2:w=0x%04x\n",
        word_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]));
 #endif
-    fprintf(stderr, "iocs_b_drvchk: FIXME: not implemented\n");
+
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_b_drvchk: FIXME: not implemented\n");
     if ((c.regs.d[2] & 0xffff) == 8)
       long_word_size::put(c.regs.d[0], 1);
     else
