@@ -279,18 +279,23 @@ namespace
 
   void
   dos_read(unsigned int op, context &ec, instruction_data *data)
-    {
-      VL((" DOS _READ\n"));
+  {
+#ifdef L
+    L(" DOS _READ\n");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
-      // FIXME.
-      uint32 sp = ec.regs.a[7];
-      int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
-      uint32 buf = ec.mem->getl(SUPER_DATA, sp + 2);
-      uint32 size = ec.mem->getl(SUPER_DATA, sp + 6);
-      ec.regs.d[0] = static_cast<dos_exec_context &>(ec).read(fd, buf, size);
+    // FIXME.
+    uint32 sp = ec.regs.a[7];
+    sint_type fd = extsw(ec.mem->getw(SUPER_DATA, sp));
+    uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
+    uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
 
-      ec.regs.pc += 2;
-    }
+    process *p = static_cast<dos_exec_context &>(ec).current_process();
+    ec.regs.d[0] = p->read(fd, ec.mem, buf, size);
+
+    ec.regs.pc += 2;
+  }
 
   void
   dos_seek(unsigned int op, context &ec, instruction_data *data)
@@ -335,7 +340,9 @@ namespace
     int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
     uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
     uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).write(fd, buf, size);
+
+    process *p = static_cast<dos_exec_context &>(ec).current_process();
+    ec.regs.d[0] = p->write(fd, ec.mem, buf, size);
 
     ec.regs.pc += 2;
   }

@@ -35,6 +35,44 @@ using namespace vx68k::human;
 using namespace vx68k;
 using namespace std;
 
+sint32_type
+process::read(sint_type fd,
+	      address_space *mem, uint32_type buf, uint32_type size)
+{
+  // FIXME.
+  unsigned char *data_buf = new unsigned char [size];
+
+  ssize_t done = ::read(fd, data_buf, size);
+  if (done == -1)
+    {
+      delete [] data_buf;
+      return -6;			// FIXME.
+    }
+
+  mem->write(SUPER_DATA, buf, data_buf, done);
+  delete [] data_buf;
+  return done;
+}
+
+sint32_type
+process::write(sint_type fd,
+	       const address_space *mem, uint32_type buf, uint32_type size)
+{
+  // FIXME.
+  unsigned char *data_buf = new unsigned char [size];
+  mem->read(SUPER_DATA, buf, data_buf, size);
+
+  ssize_t done = ::write(fd, data_buf, size);
+  if (done == -1)
+    {
+      delete [] data_buf;
+      return -6;			// FIXME.
+    }
+
+  delete [] data_buf;
+  return done;
+}
+
 /* Closes a DOS file descriptor.  */
 sint_type
 process::close(sint_type fd)

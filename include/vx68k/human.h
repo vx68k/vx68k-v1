@@ -60,8 +60,9 @@ namespace vx68k
       sint_type create(const char *name, sint_type attr);
       sint_type open(const char *name, sint_type mode);
       sint_type close(sint_type);
-      sint32_type read(sint_type, uint32_type, uint32_type);
-      sint32_type write(sint_type, uint32_type, uint32_type);
+      sint32_type read(sint_type, address_space *, uint32_type, uint32_type);
+      sint32_type write(sint_type,
+			const address_space *, uint32_type, uint32_type);
       sint32_type seek(sint_type, sint32_type, uint_type);
       sint_type dup(sint_type);
       sint_type dup2(sint_type, sint_type);
