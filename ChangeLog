@@ -1,5 +1,16 @@
 1999-11-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* README: Modified.
+
+	* TODO: Modified.
+
+	* NEWS: Modified.
+
+	* libvm68k/execunit.cc (m68k_and): New function.
+	(install_instructions): Use m68k_and to replace andb, andw, and
+ 	andl.
+	(andb, andw, andl): Removed.
+
 	* bin/Makefile.am (bin_PROGRAMS): Modify locations.
 	(noinst_LIBRARIES): Make libmisc.a.
 	(libmisc_a_SOURCES): Add getopt.c and getopt1.c.

@@ -1,8 +1,8 @@
 To-Do List for Virtual X68000
 
-$Date: Fri, 26 Nov 1999 20:25:11 +0900 $
+$Date: Fri, 26 Nov 1999 21:32:58 +0900 $
 
-* Make some option variables class-local.
+* Make some option variables in main.cc class-local.
 
 * Display indication when the process exits.
 
@@ -18,6 +18,8 @@ $Date: Fri, 26 Nov 1999 20:25:11 +0900 $
 
 * Improve console device behaviour.
 
+* Implement condition code updates for ADD.
+
 * Implement the handler for instruction DBNE to make HAS work.
 
 * Implement minimum FLOAT calls.
@@ -26,6 +28,8 @@ $Date: Fri, 26 Nov 1999 20:25:11 +0900 $
 
 * Implement DOS drives.  This will require some run-time
 configuration.
+
+* Inprements interrupts.
 
 * Write vx68k.xml.
 
