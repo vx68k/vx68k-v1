@@ -42,12 +42,6 @@ void
 machine::b_putc(uint_type code)
 {
   /* FIXME.  This function must handle double-byte character.  */
-#if 1
-  unsigned char c[1];
-  c[0] = code;
-  write(STDOUT_FILENO, c, 1);
-#endif
-
   if (code <= 0x1f || code == 0x7f)
     {
       switch (code)
