@@ -23,6 +23,9 @@
 
 #include "vx68k/human.h"
 
+#include <iostream>
+
+using namespace std;
 using namespace vm68k;
 
 namespace vx68k
@@ -48,8 +51,21 @@ uint16
 dos::start (uint32 address)
 {
   main_ec.regs.pc = address;
-  main_cpu.run (&main_ec);
-  return 0;
+  uint16 status = 0;
+ restart:
+  try
+    {
+      main_cpu.run (&main_ec);
+      abort ();
+    }
+  catch (illegal_instruction &e)
+    {
+      uint16 op = main_ec.mem->getw (SUPER_DATA, main_ec.regs.pc);
+      cerr << hex << "vm68k illegal instruction (op = 0x" << op << ")\n" << dec;
+      status = 0xff;
+    }
+
+  return status;
 }
 
 uint16

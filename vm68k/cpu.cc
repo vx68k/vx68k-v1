@@ -102,9 +102,7 @@ cpu::set_handlers (int code, int mask, insn_handler h)
 void
 cpu::illegal_insn (int op, execution_context *)
 {
-  // Notify listener.  The listener must handle this case.
-  cerr << hex << "vm68k illegal instruction (op = 0x" << op << ")\n" << dec;
-  abort ();			// FIXME
+  throw illegal_instruction ();
 }
 
 cpu::cpu ()
