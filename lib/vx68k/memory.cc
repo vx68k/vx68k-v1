@@ -32,7 +32,11 @@ size_t
 main_memory_page::read(int fc, uint32 address, void *data, size_t size) const
 {
   if (address >= end)
-    throw bus_error(fc, address);
+    {
+      generate_bus_error(fc, address);
+      abort();
+    }
+
   if (address + size >= end)
     size = end - address;
 
@@ -55,8 +59,14 @@ main_memory_page::read(int fc, uint32 address, void *data, size_t size) const
 uint8
 main_memory_page::getb (int fc, uint32 address) const
 {
-  uint16 wvalue = getw(fc, address & ~0x1);
-  return address & 0x1 != 0 ? wvalue : wvalue >> 8;
+  if (address >= end)
+    {
+      generate_bus_error(fc, address);
+      abort();
+    }
+
+  uint_type w = array[address >> 1];
+  return address & 0x1 != 0 ? w & 0xffu : w >> 8;
 }
 
 uint16
@@ -64,7 +74,11 @@ main_memory_page::getw (int fc, uint32 address) const
 {
   // Address error?
   if (address >= end)
-    throw bus_error(fc, address);
+    {
+      generate_bus_error(fc, address);
+      abort();
+    }
+
   return array[address >> 1];
 }
 
@@ -72,7 +86,11 @@ size_t
 main_memory_page::write(int fc, uint32 address, const void *data, size_t size)
 {
   if (address >= end)
-    throw bus_error(fc, address);
+    {
+      generate_bus_error(fc, address);
+      abort();
+    }
+
   if (address + size >= end)
     size = end - address;
 
@@ -95,19 +113,18 @@ main_memory_page::write(int fc, uint32 address, const void *data, size_t size)
 void
 main_memory_page::putb(int fc, uint32 address, uint8 value)
 {
-  // FIXME.  Is it slow?
-  uint16 wvalue = getw(fc, address & ~0x1);
+  if (address >= end)
+    {
+      generate_bus_error(fc, address);
+      abort();
+    }
+
+  uint_type w = array[address >> 1];
   if (address & 0x1 != 0)
-    {
-      wvalue &= ~0x00ff;
-      wvalue |= value;
-    }
+    w = w & ~0xffu | value & 0xffu;
   else
-    {
-      wvalue &= ~0xff00;
-      wvalue |= value << 8;
-    }
-  putw(fc, address & ~0x1, wvalue);
+    w = value << 8 | w & 0xffu;
+  array[address >> 1] = w & 0xffffu;
 }
 
 void
@@ -115,7 +132,11 @@ main_memory_page::putw (int fc, uint32 address, uint16 value)
 {
   // Address error?
   if (address >= end)
-    throw bus_error(fc, address);
+    {
+      generate_bus_error(fc, address);
+      abort();
+    }
+
   array[address >> 1] = value;
 }
 

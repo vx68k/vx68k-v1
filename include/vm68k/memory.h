@@ -46,9 +46,11 @@ uint32 getl (const void *);
 void putw (void *, uint16);
 void putl (void *, uint32);
 
-  struct memory_page
+  class memory_page
   {
+  public:
     virtual ~memory_page () {}
+  public:
     virtual size_t read(int, uint32, void *, size_t) const = 0;
     virtual size_t write(int, uint32, const void *, size_t) = 0;
     virtual uint8 getb (int, uint32) const = 0;
@@ -57,6 +59,8 @@ void putl (void *, uint32);
     virtual void putb (int, uint32, uint8) = 0;
     virtual void putw (int, uint32, uint16) = 0;
     virtual void putl (int, uint32, uint32);
+  protected:
+    void generate_bus_error(int, uint32_type) const;
   };
 
   /* Memory page that always raises a bus error.  */

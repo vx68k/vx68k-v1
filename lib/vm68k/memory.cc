@@ -26,7 +26,14 @@
 #include <algorithm>
 #include <cassert>
 
+using namespace vm68k;
 using namespace std;
+
+void
+memory_page::generate_bus_error(int fc, uint32_type address) const
+{
+  throw bus_error(fc, address);
+}
 
 namespace vm68k
 {

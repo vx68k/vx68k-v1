@@ -1,5 +1,15 @@
 1999-06-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/memory.cc (read, getb, getw, write, putb, putw): Use
+	generate_bus_error.
+	(getb): Changed to read words from the array directly.
+	(putb): Changed to read-modify-write words to the array directly.
+
+	* include/vm68k/memory.h (class memory_page): Changed to a class
+	with access specs.
+
+	* lib/vm68k/memory.cc (generate_bus_error): New function.
+
 	* include/vm68k/memory.h (struct memory_page): Remove throw-specs
 	from methods.  Also change all classes derived from this class.
 
