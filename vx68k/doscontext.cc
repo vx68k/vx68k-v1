@@ -171,6 +171,7 @@ namespace
 void
 dos_exec_context::exit(unsigned int status)
 {
+  /* FIXME.  This may be abuse of exception.  */
   throw quit_loop(status);
 }
 

@@ -1,6 +1,7 @@
 1999-10-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* vx68k/doscontext.cc (start): Clear the supervisor state.
+	(exit): Add comments.
 
 	* include/vm68k/cpu.h (class context): Add method
 	supervisor_state.
