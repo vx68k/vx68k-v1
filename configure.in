@@ -19,6 +19,12 @@ if test "$with_nana" != no; then
 fi
 
 AC_TYPE_SIZE_T
+HS_CPLUSPLUS_EXCEPTIONS
+if test "$hs_cv_cplusplus_exceptions" = no; then
+  AC_MSG_WARN([exceptions not supported in C++;])
+  AC_MSG_WARN([this package cannot be built without exceptions])
+fi
+
 AC_CHECK_FUNCS(localtime_r)
 AC_OUTPUT(Makefile \
 include/Makefile include/vm68k/Makefile include/vx68k/Makefile \
