@@ -308,6 +308,24 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
   return load_address + start_offset;
 }
 
+uint32_type
+dos_exec_context::load(const char *name, uint32_type arg, uint32_type env)
+{
+  uint32_type pdb = _allocator->alloc_largest(current_pdb);
+
+  uint32_type pdb_base = pdb - 0x10;
+  mem->putl(SUPER_DATA, pdb_base + 0x10, env);
+  mem->putl(SUPER_DATA, pdb_base + 0x20, arg);
+
+  uint32_type start = load_executable(name, pdb);
+
+  regs.a[2] = arg;
+  regs.a[3] = env;
+  regs.a[4] = start;
+
+  return pdb;
+}
+
 dos_exec_context::dos_exec_context(address_space *m, exec_unit *eu,
 				   memory_allocator *a)
   : context(m, eu),

@@ -1,5 +1,11 @@
 1999-07-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/dos.cc (load): Removed.
+	(execute): Use dos_exec_context::load.
+
+	* lib/vx68k/doscontext.cc (load): New function.  Also change class
+	definition.
+
 	* lib/vx68k/allocator.cc (free_by_parent, alloc, alloc_largest):
 	Use inner address for parent.  Also change all callers.
 

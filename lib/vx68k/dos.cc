@@ -40,20 +40,12 @@ using namespace vx68k::human;
 using namespace vm68k;
 using namespace std;
 
-uint32_type
-dos::load(const char *name, dos_exec_context &c)
-{
-  uint32_type pdb = allocator.alloc_largest(0);
-  c.regs.a[4] = c.load_executable(name, pdb);
-  return pdb;
-}
-
 uint16
 dos::execute (const char *name, const char *const *argv)
 {
   dos_exec_context ec(vm->address_space(), vm->exec_unit(), &allocator);
   ec.set_debug_level(debug_level);
-  ec.setpdb(load(name, ec));
+  ec.setpdb(ec.load(name, 0x7000, 0x7800));
   ec.regs.a[7] = ec.regs.a[0];	// FIXME
   uint_type st = ec.start(ec.regs.a[4], argv);
   return st;

@@ -80,6 +80,7 @@ namespace vx68k
       void setpdb(uint32_type pdb)
 	{current_pdb = pdb;}
 
+      uint32_type load(const char *name, uint32_type arg, uint32_type env);
       void exit(unsigned int);
 
     public:
