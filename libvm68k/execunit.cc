@@ -628,6 +628,7 @@ namespace
     bool value = value1 & mask;
     ea1.put(c, value1 & ~mask);
     c.regs.ccr.set_cc(value);	// FIXME.
+    ea1.finish(c);
 
     c.regs.pc += 2 + ea1.extension_size();
   }
@@ -653,6 +654,7 @@ namespace
     bool value = value1 & mask;
     ea1.put(c, value1 & ~mask);
     c.regs.ccr.set_cc(value);	// FIXME.
+    ea1.finish(c);
 
     c.regs.pc += 2 + ea1.extension_size();
   }
@@ -1574,15 +1576,45 @@ namespace
 
     Destination ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
-    L("\tmovew\t");
+    L("\tmove%s\t", word_size::suffix());
     L("%%sr,");
-    L("%%a%u\n", reg1);
+    L("%s\n", ea1.text(c));
 #endif
 
     // This instruction is not privileged on MC68000.
-    // The condition codes are not affected by this instruction.
+    // This instruction does not affect the condition codes.
     uvalue_type value = c.sr();
     ea1.put(c, value);
+    ea1.finish(c);
+
+    c.regs.pc += 2 + ea1.extension_size();
+  }
+
+  /* Handles a MOVE-to-SR instruction.  */
+  template <class Source> void
+  m68k_move_to_sr(uint_type op, context &c, unsigned long data)
+  {
+    typedef word_size::uvalue_type uvalue_type;
+    typedef word_size::svalue_type svalue_type;
+
+    Source ea1(op & 0x7, 2);
+#ifdef TRACE_INSTRUCTIONS
+    L("\tmove%s\t", word_size::suffix());
+    L("%s,", ea1.text(c));
+    L("%%sr\n");
+#endif
+
+    // This instruction is privileged.
+    if (!c.supervisor_state())
+      {
+	exec_unit::illegal(op, c, data); // FIXME
+	abort();
+      }
+
+    // This instruction sets the condition codes.
+    uvalue_type value = ea1.get(c);
+    c.set_sr(value);
+    ea1.finish(c);
 
     c.regs.pc += 2 + ea1.extension_size();
   }
@@ -3046,6 +3078,7 @@ namespace
     eu.set_instruction(0x2120, 0x0e07, &movel<predec_indirect, predec_indirect>);
     eu.set_instruction(0x2128, 0x0e07, &movel<disp_indirect, predec_indirect>);
     eu.set_instruction(0x2130, 0x0e07, &movel<indexed_indirect, predec_indirect>);
+    eu.set_instruction(0x2138, 0x0e00, &movel<absolute_short, predec_indirect>);
     eu.set_instruction(0x2139, 0x0e00, &movel<absolute_long, predec_indirect>);
     eu.set_instruction(0x213c, 0x0e00, &movel<immediate, predec_indirect>);
     eu.set_instruction(0x2140, 0x0e07, &movel<data_register, disp_indirect>);
@@ -3233,6 +3266,27 @@ namespace
     eu.set_instruction(0x44a8, 0x0007, &negl<disp_indirect>);
     eu.set_instruction(0x44b0, 0x0007, &negl<indexed_indirect>);
     eu.set_instruction(0x44b9, 0x0000, &negl<absolute_long>);
+    eu.set_instruction(0x46c0, 0x0007, &m68k_move_to_sr<word_d_register>);
+    eu.set_instruction(0x46d0, 0x0007,
+		       &m68k_move_to_sr<word_indirect>);
+    eu.set_instruction(0x46d8, 0x0007,
+		       &m68k_move_to_sr<word_postinc_indirect>);
+    eu.set_instruction(0x46e0, 0x0007,
+		       &m68k_move_to_sr<word_predec_indirect>);
+    eu.set_instruction(0x46e8, 0x0007,
+		       &m68k_move_to_sr<word_disp_indirect>);
+    eu.set_instruction(0x46f0, 0x0007,
+		       &m68k_move_to_sr<word_index_indirect>);
+    eu.set_instruction(0x46f8, 0x0000,
+		       &m68k_move_to_sr<word_abs_short>);
+    eu.set_instruction(0x46f9, 0x0000,
+		       &m68k_move_to_sr<word_abs_long>);
+    eu.set_instruction(0x46fa, 0x0000,
+		       &m68k_move_to_sr<word_disp_pc_indirect>);
+    eu.set_instruction(0x46fb, 0x0000,
+		       &m68k_move_to_sr<word_index_pc_indirect>);
+    eu.set_instruction(0x46fc, 0x0000,
+		       &m68k_move_to_sr<word_immediate>);
     eu.set_instruction(0x4840, 0x0007, &swapw);
     eu.set_instruction(0x4850, 0x0007, &pea<indirect>);
     eu.set_instruction(0x4868, 0x0007, &pea<disp_indirect>);

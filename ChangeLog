@@ -1,5 +1,11 @@
 2000-06-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (m68k_bclr_r, m68k_bclr_i,
+	m68k_move_from_sr): Add missing finish call.
+	(m68k_move_from_sr): Fix diagnostic output.
+	(m68k_move_to_sr): New function template.
+	(initialize_instructions): Add new handlers.
+
 	* libvx68k/systemrom.cc (getw): Generate a bus error for a program
 	access.
 
