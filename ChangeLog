@@ -1,9 +1,32 @@
 1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* Version 0.25.
+
+	* vm68k/cpu.cc (run): Modify display format for bus error.
+
+	* vm68k/memory.cc (READ): New const.
+	(WRITE): New const.
+	(read): Add READ to fc.
+	(getb): Likewise.
+	(getw): Likewise.
+	(write): Add WRITE to fc.
+	(putb): Likewise.
+	(putw): Likewise.
+
+	* vx68k/main.cc (main): Update use of cpu.
+
+	* vm68k/cpu.cc (cpu): Remove argument.
+	(run): Add argument ec.
+	(set_pc): #if'd out code.
+	(set_exception_listener): Likewise.
+
+	* include/vm68k/cpu.h (class cpu): Remove member context.
+
 	* include/vm68k/memory.h (struct bus_error): Add base class
 	exception.
 	* include/vm68k/types.h (struct exception): New class.
 	(VM68K_TYPES_H): Fix typo.
+	Test UINT_MAX instead of INT_MAX.
 
 	* vm68k/cpu.cc (run): Display fc and address of bus error.
 

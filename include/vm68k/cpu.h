@@ -67,15 +67,14 @@ struct execution_context
 class cpu
 {
 public:
-  explicit cpu (memory *);
+  cpu ();
   void set_pc (uint32);
-  void run ();
+  void run (execution_context *);
   void set_exception_listener (exception_listener *);
   typedef void (*insn_handler) (int, execution_context *);
   void set_handlers (int begin, int end, insn_handler);
   static void illegal_insn (int, execution_context *);
 private:
-  execution_context context;
   insn_handler insn[0x10000];
 };
 

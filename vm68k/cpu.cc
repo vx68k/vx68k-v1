@@ -41,6 +41,7 @@ execution_context::execution_context (memory *m)
 void
 cpu::set_pc (uint32 addr)
 {
+#if 0
   if (addr & 1 != 0)
     {
       if (context.exception != NULL)
@@ -50,30 +51,34 @@ cpu::set_pc (uint32 addr)
     }
 
   context.regs.pc = addr;
+#endif
 }
 
 void
 cpu::set_exception_listener (exception_listener *l)
 {
+#if 0
   context.exception = l;
+#endif
 }
 
 void
-cpu::run ()
+cpu::run (execution_context *ec)
 {
+  assert (ec != NULL);
   for (;;)
     {
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM;
       try
 	{
-	  unsigned int w = context.mem->getw (fc, context.regs.pc);
+	  unsigned int w = ec->mem->getw (fc, ec->regs.pc);
 	  assert (w < 0x10000);
-	  insn[w] (w, &context);
+	  insn[w] (w, ec);
 	}
       catch (bus_error &e)
 	{
 	  // We should handle this in a callback function.
-	  cerr << "vm68k bus error: FC = " << e.fc << ", address = 0x" << hex << e.address << dec << "\n";
+	  cerr << hex << "vm68k bus error: status = 0x" << e.fc << ", address = 0x" << e.address << "\n" << dec;
 	  abort ();
 	}
     }
@@ -100,8 +105,7 @@ cpu::illegal_insn (int, execution_context *)
   abort ();			// FIXME
 }
 
-cpu::cpu (memory *m)
-  : context (m)
+cpu::cpu ()
 {
   std::fill (insn + 0, insn + 0x10000, &illegal_insn);
 }

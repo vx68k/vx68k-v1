@@ -54,46 +54,49 @@ memory_page::putl (int fc, uint32 address, uint32 value)
   putw (fc, address + 2, value);
 }
 
+const int READ = 0x10;
+const int WRITE = 0;
+
 void
 bus_error_page::read (int fc, uint32 address, void *, size_t) const
   throw (bus_error)
 {
-  throw bus_error (fc, address);
+  throw bus_error (fc + READ, address);
 }
 
 void
 bus_error_page::write (int fc, uint32 address, const void *, size_t)
   throw (bus_error)
 {
-  throw bus_error (fc, address);
+  throw bus_error (fc + WRITE, address);
 }
 
 uint8
 bus_error_page::getb (int fc, uint32 address) const
   throw (bus_error)
 {
-  throw bus_error (fc, address);
+  throw bus_error (fc + READ, address);
 }
 
 uint16
 bus_error_page::getw (int fc, uint32 address) const
   throw (bus_error)
 {
-  throw bus_error (fc, address);
+  throw bus_error (fc + READ, address);
 }
 
 void
 bus_error_page::putb (int fc, uint32 address, uint8)
   throw (bus_error)
 {
-  throw bus_error (fc, address);
+  throw bus_error (fc + WRITE, address);
 }
 
 void
 bus_error_page::putw (int fc, uint32 address, uint16)
   throw (bus_error)
 {
-  throw bus_error (fc, address);
+  throw bus_error (fc + WRITE, address);
 }
 
 /* Get a word from memory.  */

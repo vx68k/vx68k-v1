@@ -24,7 +24,7 @@
 namespace vm68k
 {
 
-#if INT_MAX >= 0x7fffffff
+#if UINT_MAX >= 0xffffffff
 typedef int int32;
 typedef unsigned int uint32;
 #else

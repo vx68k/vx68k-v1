@@ -25,6 +25,7 @@
 #include "vx68k/memory.h"
 
 using namespace vx68k;
+using vm68k::execution_context;
 using vm68k::cpu;
 
 /* vx68k main.  */
@@ -32,8 +33,9 @@ int
 main (int argc, char **argv)
 {
   memory mem;
-  cpu main_cpu (&mem);
-  main_cpu.run ();
+  execution_context ec (&mem);
+  cpu main_cpu;
+  main_cpu.run (&ec);
   return 0;
 }
 
