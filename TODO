@@ -1,6 +1,8 @@
 To-Do List for Virtual X68000
 
-$Date: Fri, 26 Nov 1999 20:21:23 +0900 $
+$Date: Fri, 26 Nov 1999 20:25:11 +0900 $
+
+* Make some option variables class-local.
 
 * Display indication when the process exits.
 
