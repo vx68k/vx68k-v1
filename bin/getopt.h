@@ -1,0 +1,1 @@
+/home/kaz/share/getopt.h

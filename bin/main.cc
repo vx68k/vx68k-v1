@@ -24,7 +24,7 @@
 
 #include "vx68k/human.h"
 #include "vx68k/memory.h"
-#include <getopt.h>
+#include "getopt.h"
 #include <exception>
 #include <cstdlib>
 #include <cstdio>

@@ -4,10 +4,9 @@ AM_INIT_AUTOMAKE(vx68k, 0.34)
 AM_CONFIG_HEADER(include/config.h)
 AC_DEFINE(_GNU_SOURCE)
 AC_DEFINE(_REENTRANT)
+AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB
-dnl This is required to avoid error on later test?
-AC_PROG_CPP
 AC_SEARCH_LIBS(pthread_create, pthread)
 AC_ARG_WITH(nana,
 [  --with-nana             use GNU Nana for testing [no]],, with_nana=no)
@@ -20,4 +19,4 @@ AC_CHECK_HEADERS(fcntl.h unistd.h)
 AC_TYPE_SIZE_T
 AC_OUTPUT(Makefile
 include/Makefile include/vm68k/Makefile include/vx68k/Makefile
-lib/Makefile lib/vm68k/Makefile lib/vx68k/Makefile)
+lib/Makefile lib/vm68k/Makefile lib/vx68k/Makefile bin/Makefile)

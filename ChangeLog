@@ -1,3 +1,18 @@
+1999-06-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc: Use "getopt.h" instead of <getopt.h>.
+
+	* Makefile.am (bin_PROGRAMS): Removed.
+	(SUBDIRS): Add bin to the list.
+
+	* configure.in: Add AC_PROG_CC and remove AC_PROG_CPP.
+	Add bin/Makefile to output files.
+
+	* bin/main.cc: Moved from ../main.cc.
+
+	* bin/Makefile.am: New file.
+	* bin/getopt.c, bin/getopt1.c, bin/getopt.h: New file.
+
 1999-06-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/execunit.cc (bclrl_i, btstl_i, cmpaw, muluw, negl):
