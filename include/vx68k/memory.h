@@ -147,6 +147,8 @@ namespace vx68k
     /* True if any update on a raster is pending.  */
     vector<bool> raster_update_marks;
 
+    pthread_mutex_t mutex;
+
   public:
     text_video_memory();
     ~text_video_memory();
@@ -168,7 +170,8 @@ namespace vx68k
   public:
     void connect(console *);
 
-    /* Returns truth vector once if any update is pending.  */
+    /* Returns truth vector once if any update is pending.  This
+       function may be called in a separate thread.  */
     vector<bool> poll_update();
 
     /* Get the visual image of this text VRAM.  Image is of size
@@ -177,6 +180,8 @@ namespace vx68k
     void get_image(int x, int y, int width, int height,
 		   unsigned char *rgb_buf, size_t row_size);
 
+    /* Returns an iterator for a raster.  This function may be called
+       in a separate thread.  */
     raster_iterator raster(unsigned int, unsigned int);
 
   protected:
@@ -200,6 +205,8 @@ namespace vx68k
        interrupt.  */
     console::time_type vdisp_start_time;
 
+    pthread_mutex_t mutex;
+
   public:
     crtc_memory();
     ~crtc_memory();
@@ -221,7 +228,8 @@ namespace vx68k
     /* Resets internal timestamps.  */
     void reset(console::time_type t);
 
-    /* Checks timeouts for interrupts.  */
+    /* Checks timeouts for interrupts.  This function may be called in
+       a separate thread.  */
     void check_timeouts(console::time_type t, context &c);
   };
 
@@ -232,8 +240,11 @@ namespace vx68k
     vector<unsigned short> _tpalette;
     bool text_colors_modified;
 
+    pthread_mutex_t mutex;
+
   public:
     palettes_memory();
+    ~palettes_memory();
 
   public:
     /* Reads data from this object.  */
@@ -245,7 +256,12 @@ namespace vx68k
     void put_8(int, uint32_type, unsigned int);
 
   public:
+    /* Checks if text colors are modified.  This function may be
+       called in a separate thread.  */
     bool check_text_colors_modified();
+
+    /* Retrieves text colors.  This function may be called in a
+       separate thread.  */
     void get_text_colors(unsigned int i, unsigned int j, unsigned char *out);
   };
 
@@ -317,6 +333,8 @@ namespace vx68k
     /* Reset times for timers A and B.  */
     console::time_type timer_a_start_time, timer_b_start_time;
 
+    pthread_mutex_t mutex;
+
   public:
     opm_memory();
     ~opm_memory();
@@ -340,7 +358,8 @@ namespace vx68k
     /* Resets times.  */
     void reset(console::time_type t);
 
-    /* Checks timeouts for interrupts.  */
+    /* Checks timeouts for interrupts.  This function may be called in
+       a separate thread.  */
     void check_timeouts(console::time_type t, context &c);
   };
 

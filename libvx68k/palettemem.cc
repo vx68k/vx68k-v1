@@ -22,6 +22,7 @@
 #undef inline
 
 #include <vx68k/memory.h>
+#include <vx68k/utility.h>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
@@ -40,6 +41,8 @@ using namespace std;
 bool
 palettes_memory::check_text_colors_modified()
 {
+  auto_lock<pthread_mutex_t> lock(&mutex);
+
   bool tmp = text_colors_modified;
   text_colors_modified = false;
   return tmp;
@@ -49,6 +52,8 @@ void
 palettes_memory::get_text_colors(unsigned int first, unsigned int last,
 				 unsigned char *out)
 {
+  auto_lock<pthread_mutex_t> lock(&mutex);
+
   while (first != last)
     {
       uint_type value = _tpalette[first++];
@@ -176,6 +181,8 @@ palettes_memory::put_16(int fc, uint32_type address, uint_type value)
     }
   else if (off >= 256 * 2)
     {
+      auto_lock<pthread_mutex_t> lock(&mutex);
+
       unsigned int i = (off - 256 * 2) / 2;
       _tpalette[i] = value;
       text_colors_modified = true;
@@ -197,6 +204,11 @@ palettes_memory::put_8(int, uint32_type, unsigned int)
 #endif
 }
 
+palettes_memory::~palettes_memory()
+{
+  pthread_mutex_destroy(&mutex);
+}
+
 palettes_memory::palettes_memory()
   : _tpalette(256, 0),
     text_colors_modified(false)
@@ -205,4 +217,6 @@ palettes_memory::palettes_memory()
   _tpalette[1] = 0xf83e;
   _tpalette[2] = 0xffc0;
   _tpalette[3] = 0xffff;
+
+  pthread_mutex_init(&mutex, NULL);
 }

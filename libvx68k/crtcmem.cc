@@ -22,6 +22,7 @@
 #undef inline
 
 #include <vx68k/memory.h>
+#include <vx68k/utility.h>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
@@ -44,6 +45,8 @@ crtc_memory::reset(console::time_type t)
 void
 crtc_memory::check_timeouts(console::time_type t, context &c)
 {
+  auto_lock<pthread_mutex_t> lock(&mutex);
+
   if (t - vdisp_start_time >= vdisp_interval)
     {
       vdisp_start_time += vdisp_interval;
@@ -56,6 +59,8 @@ crtc_memory::check_timeouts(console::time_type t, context &c)
 void
 crtc_memory::set_vdisp_interrupt_enabled(bool value)
 {
+  auto_lock<pthread_mutex_t> lock(&mutex);
+
   _vdisp_interrupt_enabled = value;
 }
 
@@ -105,10 +110,12 @@ crtc_memory::put_8(int, uint32_type, uint_type)
 
 crtc_memory::~crtc_memory()
 {
+  pthread_mutex_destroy(&mutex);
 }
 
 crtc_memory::crtc_memory()
   : _vdisp_interrupt_enabled(false),
     vdisp_interval(1000 / 55)
 {
+  pthread_mutex_init(&mutex, NULL);
 }

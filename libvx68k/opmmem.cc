@@ -22,6 +22,7 @@
 #undef inline
 
 #include <vx68k/memory.h>
+#include <vx68k/utility.h>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
@@ -45,6 +46,8 @@ opm_memory::reset(console::time_type t)
 void
 opm_memory::check_timeouts(console::time_type t, context &c)
 {
+  auto_lock<pthread_mutex_t> lock(&mutex);
+
   last_check_time = t;
 
   unsigned int old_status = status();
@@ -61,7 +64,7 @@ opm_memory::check_timeouts(console::time_type t, context &c)
       timer_a_start_time += timer_b_interval;
     }
 
-  if (_interrupt_enabled)
+  if (interrupt_enabled())
     {
       unsigned int set_status = status() - ~old_status;
       if ((tcr & 0x4) == 0x4 && (set_status & 0x2) == 0x2
@@ -75,6 +78,8 @@ opm_memory::check_timeouts(console::time_type t, context &c)
 void
 opm_memory::set_reg(unsigned int regno, unsigned int value)
 {
+  auto_lock<pthread_mutex_t> lock(&mutex);
+
   regno &= 0xffu;
   value &= 0xffu;
   _regs[regno] = value;
@@ -115,6 +120,8 @@ opm_memory::set_reg(unsigned int regno, unsigned int value)
 void
 opm_memory::set_interrupt_enabled(bool value)
 {
+  auto_lock<pthread_mutex_t> lock(&mutex);
+
   _interrupt_enabled = value;
 }
 
@@ -199,6 +206,7 @@ opm_memory::put_16(int fc, uint32_type address, uint_type value)
 
 opm_memory::~opm_memory()
 {
+  pthread_mutex_destroy(&mutex);
 }
 
 opm_memory::opm_memory()
@@ -207,4 +215,6 @@ opm_memory::opm_memory()
     _interrupt_enabled(false)
 {
   reg_index = 0;
+
+  pthread_mutex_init(&mutex, NULL);
 }

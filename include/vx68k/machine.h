@@ -214,10 +214,12 @@ namespace vx68k
   public:
     void connect(console *con);
 
-    /* Checks timers.  */
+    /* Checks timers.  This function may be called in a separate
+       thread.  */
     void check_timers(uint32_type t);
 
-    /* Updates an image in a RGB buffer.  */
+    /* Updates an image in a RGB buffer.  This function may be called
+       in a separate thread.  */
     void update_image(unsigned char *rgb_buf, size_t row_size,
 		      unsigned int width, unsigned int height,
 		      rectangle &update_area);

@@ -22,6 +22,7 @@
 #undef inline
 
 #include <vx68k/memory.h>
+#include <vx68k/utility.h>
 
 #include <algorithm>
 
@@ -101,6 +102,8 @@ text_video_memory::mark_update_area(unsigned int left_x,
 				    unsigned int right_x,
 				    unsigned int bottom_y)
 {
+  auto_lock<pthread_mutex_t> lock(&mutex);
+
   fill(raster_update_marks.begin() + top_y,
        raster_update_marks.begin() + bottom_y, true);
 }
@@ -108,6 +111,8 @@ text_video_memory::mark_update_area(unsigned int left_x,
 vector<bool>
 text_video_memory::poll_update()
 {
+  auto_lock<pthread_mutex_t> lock(&mutex);
+
   vector<bool> tmp(1024, false);
   tmp.swap(raster_update_marks);
   return tmp;
@@ -280,6 +285,8 @@ text_video_memory::connect(console *con)
 
 text_video_memory::~text_video_memory()
 {
+  pthread_mutex_destroy(&mutex);
+
   delete [] buf;
 }
 
@@ -290,4 +297,6 @@ text_video_memory::text_video_memory()
 {
   buf = new unsigned char [PLANE_MAX * PLANE_SIZE];
   fill(buf + 0, buf + PLANE_MAX * PLANE_SIZE, 0);
+
+  pthread_mutex_init(&mutex, NULL);
 }

@@ -1,5 +1,35 @@
 2000-08-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/opmmem.cc (check_timeouts, set_reg,
+	set_interrupt_enabled): Lock mutex.
+	(check_timeouts): Use function interrupt_enabled.
+	(~opm_memory): Destroy mutex.
+	(opm_memory): Initialize mutex.
+
+	* libvx68k/palettemem.cc (check_text_colors_modified,
+	get_text_colors, put_16): Lock mutex.
+	(~palettes_memory): New function.
+	(palettes_memory): Initialize mutex.
+
+	* libvx68k/crtcmem.cc (check_timeouts,
+	set_vdisp_interrupt_enabled): Lock mutex.
+	(~crtc_memory): Destroy mutex.
+	(crtc_memory): Initialize mutex.
+
+	* libvx68k/textvram.cc (mark_update_area, poll_update): Lock
+	mutex.
+	(~text_video_memory): Destroy mutex.
+	(text_video_memory): Initialize mutex.
+
+	* include/vx68k/memory.h (class text_video_memory): Add member
+	mutex.  Update comments.
+	(class crtc_memory): Add member mutex.  Update comments.
+	(class palettes_memory): Add member mutex and destructor.  Update
+	comments.
+	(class opm_memory): Add member mutex.  Update comments.
+
+	* include/vx68k/machine.h (class machine): Update comments.
+
 	* libvx68k/systemrom.cc: Use DL instead of L.  Modify debug
 	strings.
 
