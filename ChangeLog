@@ -1,5 +1,7 @@
 2000-06-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_b_intvcs): Fix the data size.
+
 	* libvm68k/execunit.cc (m68k_cmp): New function template.
 	(cmpb, cmpw, cmpl): Disabled in #if-#endif.
 	(initialize_instructions): Use the new handlers.

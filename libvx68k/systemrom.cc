@@ -252,8 +252,8 @@ namespace
       }
 
     uint32_type vecaddr = vecno * 4u;
-    uint32_type oaddr = c.mem->getw(SUPER_DATA, vecaddr);
-    c.mem->putw(SUPER_DATA, vecaddr, addr);
+    uint32_type oaddr = c.mem->getl(SUPER_DATA, vecaddr);
+    c.mem->putl(SUPER_DATA, vecaddr, addr);
 
     long_word_size::put(c.regs.d[0], oaddr);
   }
