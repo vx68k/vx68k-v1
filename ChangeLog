@@ -1,3 +1,17 @@
+1999-06-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/addressing.h (class disp_pc): New class.
+
+	* lib/vm68k/execunit.cc: Expand "debug.h".
+	(cmpb, jsr, moveml_mr, pea): New function template.
+	(cmpl): Rename Destination to Source.
+	(lea): Rename Source to Destination.
+	(moveml_mr<postinc_indirect>): Renamed from moveml_postinc_r.
+	(cmpl, lea, moveml_mr<postinc_indirect>): Use L instead of VL.
+	(lea): Change the arg to isize to 0.
+	(pea_absl): #if-out the function.
+	(install_instructions): Add new functions.
+
 1999-05-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/context.cc: Rename execution_context to context.

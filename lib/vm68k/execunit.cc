@@ -27,7 +27,13 @@
 
 #include <algorithm>
 
-#include "debug.h"
+#ifdef HAVE_NANA_H
+# include <nana.h>
+# include <cstdio>
+#else
+# include <cassert>
+# define I assert
+#endif
 
 using namespace vm68k;
 using namespace std;
@@ -485,14 +491,38 @@ namespace
       ec->regs.pc += 2 + ea1.isize(2);
     }
 
-  template <class Destination> void cmpl(unsigned int op, execution_context *ec)
+  template <class Source> void cmpb(unsigned int op,
+				    execution_context *ec)
     {
       I(ec != NULL);
-      Destination ea1(op & 0x7, 2);
+      Source ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
-      VL((" cmpl %s", ea1.textl(ec)));
-      VL((",%%d%d", reg2));
-      VL((" | %%pc = 0x%lx\n", (unsigned long) ec->regs.pc));
+#ifdef L
+      L(" cmpb %s", ea1.textb(ec));
+      L(",%%d%d", reg2);
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
+
+      int value1 = ea1.getb(ec);
+      int value2 = extsb(ec->regs.d[reg2]);
+      int value = extsb(value2 - value1);
+      ea1.finishb(ec);
+      ec->regs.sr.set_cc(value); // FIXME.
+
+      ec->regs.pc += 2 + ea1.isize(2);
+    }
+
+  template <class Source> void cmpl(unsigned int op,
+				    execution_context *ec)
+    {
+      I(ec != NULL);
+      Source ea1(op & 0x7, 2);
+      int reg2 = op >> 9 & 0x7;
+#ifdef L
+      L(" cmpl %s", ea1.textl(ec));
+      L(",%%d%d", reg2);
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
 
       int32 value1 = ea1.getl(ec);
       int32 value2 = extsl(ec->regs.d[reg2]);
@@ -534,20 +564,41 @@ namespace
       ec->regs.pc += value != -1 ? 2 + disp : 2 + 2;
     }
 
-  template <class Source> void lea(unsigned int op, execution_context *ec)
+  template <class Destination> void jsr(unsigned int op,
+					execution_context *ec)
     {
       I(ec != NULL);
-      Source ea1(op & 0x7, 2);
+      Destination ea1(op & 0x7, 2);
+#ifdef L
+      L(" jsr %s", ea1.textw(ec));
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
+
+      // XXX: The condition codes are not affected.
+      uint32 address = ea1.address(ec);
+      int fc = ec->data_fc();
+      ec->mem->putl(fc, ec->regs.a[7] - 4, ec->regs.pc + 2 + ea1.isize(0));
+      ec->regs.a[7] -= 4;
+      ec->regs.pc = address;
+    }
+
+  template <class Destination> void lea(unsigned int op,
+					execution_context *ec)
+    {
+      I(ec != NULL);
+      Destination ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
-      VL((" lea %s", ea1.textw(ec)));
-      VL((",%%a%d", reg2));
-      VL((" | %%pc = 0x%lx\n", (unsigned long) ec->regs.pc));
+#ifdef L
+      L(" lea %s", ea1.textw(ec));
+      L(",%%a%d", reg2);
+      L("\t| 0x%04d, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
 
       // XXX: The condition codes are not affected.
       uint32 address = ea1.address(ec);
       ec->regs.a[reg2] = address;
 
-      ec->regs.pc += 2 + ea1.isize(2);
+      ec->regs.pc += 2 + ea1.isize(0);
     }
 
   void link_a(unsigned int op, execution_context *ec)
@@ -971,14 +1022,21 @@ namespace
       ec->regs.pc += 2 + 2;
     }
 
-  void moveml_postinc_r(unsigned int op, execution_context *ec)
+  /* moveml instruction (memory to register) */
+  template <class Source> void moveml_mr(unsigned int op,
+					 execution_context *ec)
     {
-      int reg = op & 0x0007;
+      I(ec != NULL);
+      Source ea1(op & 0x7, 4);
       unsigned int bitmap = ec->fetchw(2);
-      VL((" moveml %%a%d@+,#0x%x\n", reg, bitmap));
+#ifdef L
+      L(" moveml %s", ea1.textl(ec));
+      L(",#0x%04x", bitmap);
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
 
       // XXX: The condition codes are not affected.
-      uint32 address = ec->regs.a[reg];
+      uint32 address = ea1.address(ec);
       int fc = ec->data_fc();
       for (uint32 *i = ec->regs.d + 0; i != ec->regs.d + 8; ++i)
 	{
@@ -998,9 +1056,47 @@ namespace
 	    }
 	  bitmap >>= 1;
 	}
-      ec->regs.a[reg] = address;
 
-      ec->regs.pc += 2 + 2;
+      ec->regs.pc += 4 + ea1.isize(4);
+    }
+
+  /* moveml (postinc) */
+  template <> void moveml_mr<postinc_indirect>(unsigned int op,
+					       execution_context *ec)
+    {
+      I(ec != NULL);
+      int reg1 = op & 0x7;
+      unsigned int bitmap = ec->fetchw(2);
+#ifdef L
+      L(" moveml %%a%d@+", reg1);
+      L(",#0x%04x", bitmap);
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
+
+      // XXX: The condition codes are not affected.
+      uint32 address = ec->regs.a[reg1];
+      int fc = ec->data_fc();
+      for (uint32 *i = ec->regs.d + 0; i != ec->regs.d + 8; ++i)
+	{
+	  if (bitmap & 1 != 0)
+	    {
+	      *i = ec->mem->getl(fc, address);
+	      address += 4;
+	    }
+	  bitmap >>= 1;
+	}
+      for (uint32 *i = ec->regs.a + 0; i != ec->regs.a + 8; ++i)
+	{
+	  if (bitmap & 1 != 0)
+	    {
+	      *i = ec->mem->getl(fc, address);
+	      address += 4;
+	    }
+	  bitmap >>= 1;
+	}
+      ec->regs.a[reg1] = address;
+
+      ec->regs.pc += 4;
     }
 
   void moveql_d(unsigned int op, execution_context *ec)
@@ -1016,6 +1112,26 @@ namespace
       ec->regs.pc += 2;
     }
 
+  template <class Destination> void pea(unsigned int op,
+					execution_context *ec)
+    {
+      I(ec != NULL);
+      Destination ea1(op & 0x7, 2);
+#ifdef L
+      L(" pea %s", ea1.textw(ec));
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
+
+      // XXX: The condition codes are not affected.
+      uint32 address = ea1.address(ec);
+      int fc = ec->data_fc();
+      ec->mem->putl(fc, ec->regs.a[7] - 4, address);
+      ec->regs.a[7] -= 4;
+
+      ec->regs.pc += 2 + ea1.isize(0);
+    }
+
+#if 0
   void pea_absl(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -1029,6 +1145,7 @@ namespace
 
       ec->regs.pc += 2 + 4;
     }
+#endif
 
   void rts(unsigned int op, execution_context *ec)
     {
@@ -1325,9 +1442,16 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x42a0, 0x0007, &clrl<predecrement_indirect>);
   eu->set_instruction(0x42a8, 0x0007, &clrl<disp_indirect>);
   eu->set_instruction(0x42b9, 0x0000, &clrl<absolute_long>);
-  eu->set_instruction(0x4879, 0x0000, &pea_absl);
+  eu->set_instruction(0x4850, 0x0007, &pea<indirect>);
+  eu->set_instruction(0x4868, 0x0007, &pea<disp_indirect>);
+  eu->set_instruction(0x4879, 0x0000, &pea<absolute_long>);
+  eu->set_instruction(0x487a, 0x0000, &pea<disp_pc>);
   eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
-  eu->set_instruction(0x4cd8, 0x0007, &moveml_postinc_r);
+  eu->set_instruction(0x4cd0, 0x0007, &moveml_mr<indirect>);
+  eu->set_instruction(0x4cd8, 0x0007, &moveml_mr<postinc_indirect>);
+  eu->set_instruction(0x4ce8, 0x0007, &moveml_mr<disp_indirect>);
+  eu->set_instruction(0x4cf9, 0x0000, &moveml_mr<absolute_long>);
+  eu->set_instruction(0x4cfa, 0x0000, &moveml_mr<disp_pc>);
   eu->set_instruction(0x4a00, 0x0007, &tstb<data_register>);
   eu->set_instruction(0x4a10, 0x0007, &tstb<indirect>);
   eu->set_instruction(0x4a18, 0x0007, &tstb<postinc_indirect>);
@@ -1344,6 +1468,9 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x4e50, 0x0007, &link_a);
   eu->set_instruction(0x4e58, 0x0007, &unlk_a);
   eu->set_instruction(0x4e75, 0x0000, &rts);
+  eu->set_instruction(0x4e90, 0x0007, &jsr<indirect>);
+  eu->set_instruction(0x4ea8, 0x0007, &jsr<disp_indirect>);
+  eu->set_instruction(0x4eb9, 0x0000, &jsr<absolute_long>);
   eu->set_instruction(0x5000, 0x0e07, &addqb<data_register>);
   eu->set_instruction(0x5010, 0x0e07, &addqb<indirect>);
   eu->set_instruction(0x5018, 0x0e07, &addqb<postincrement_indirect>);
@@ -1376,12 +1503,21 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x90a0, 0x0e07, &subl<predecrement_indirect>);
   eu->set_instruction(0x90b9, 0x0e00, &subl<absolute_long>);
   eu->set_instruction(0x90bc, 0x0e00, &subl<immediate>);
+  eu->set_instruction(0xb000, 0x0e07, &cmpb<data_register>);
+  eu->set_instruction(0xb010, 0x0e07, &cmpb<indirect>);
+  eu->set_instruction(0xb018, 0x0e07, &cmpb<postinc_indirect>);
+  eu->set_instruction(0xb020, 0x0e07, &cmpb<predec_indirect>);
+  eu->set_instruction(0xb028, 0x0e07, &cmpb<disp_indirect>);
+  eu->set_instruction(0xb039, 0x0e00, &cmpb<absolute_long>);
+  eu->set_instruction(0xb03c, 0x0e00, &cmpb<immediate>);
   eu->set_instruction(0xb080, 0x0e07, &cmpl<data_register>);
   eu->set_instruction(0xb088, 0x0e07, &cmpl<address_register>);
   eu->set_instruction(0xb090, 0x0e07, &cmpl<indirect>);
   eu->set_instruction(0xb098, 0x0e07, &cmpl<postincrement_indirect>);
   eu->set_instruction(0xb0a0, 0x0e07, &cmpl<predecrement_indirect>);
+  eu->set_instruction(0xb0a8, 0x0e07, &cmpl<disp_indirect>);
   eu->set_instruction(0xb0b9, 0x0e00, &cmpl<absolute_long>);
+  eu->set_instruction(0xb0bc, 0x0e00, &cmpl<immediate>);
   eu->set_instruction(0xc0bc, 0x0e00, &andl_i_d);
   eu->set_instruction(0xd068, 0x0e07, &addw_off_d);
   eu->set_instruction(0xd080, 0x0e07, &addl<data_register>);

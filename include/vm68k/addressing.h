@@ -313,6 +313,40 @@ namespace vm68k
 	{return textw(ec);}
     };
 
+    class disp_pc
+    {
+    private:
+      int offset;
+    public:
+      disp_pc(int r, int off)
+	: offset(off) {}
+    public:
+      size_t isize(size_t size) const
+	{return 2;}
+      uint32 address(const execution_context *ec) const
+	{return ec->regs.pc + extsw(ec->fetchw(offset));}
+      int getb(const execution_context *ec) const
+	{return extsb(ec->mem->getb(ec->data_fc(), address(ec)));}
+      int getw(const execution_context *ec) const
+	{return extsw(ec->mem->getw(ec->data_fc(), address(ec)));}
+      int32 getl(const execution_context *ec) const
+	{return extsl(ec->mem->getl(ec->data_fc(), address(ec)));}
+      // XXX: putb, putw, and putl are unimplemented.
+      void finishb(execution_context *ec) const {}
+      void finishw(execution_context *ec) const {}
+      void finishl(execution_context *ec) const {}
+      const char *textb(const execution_context *ec) const
+	{return textw(ec);}
+      const char *textw(const execution_context *ec) const
+	{
+	  static char buf[16];
+	  sprintf(buf, "%%pc@(%d)", extsw(ec->fetchw(2)));
+	  return buf;
+	}
+      const char *textl(const execution_context *ec) const
+	{return textw(ec);}
+    };
+
     class immediate
     {
     protected:
