@@ -1,3 +1,12 @@
+2000-02-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (PROGRAM, COPYRIGHT_YEAR): New macros.
+	(class vx68k_app): Add new member shor_about_dialog.
+	(handle_about_ok_clicked, show_about_dialog,
+	handle_about_command): New functions.
+	(create_window): Use macro for function casts.  Use
+	handle_about_command for about handler.
+
 2000-02-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* bin/main.cc: Add declaration for environ.
