@@ -1,12 +1,14 @@
 Virtual X68000 TO DO
 
-$Date: Fri, 22 Oct 1999 22:58:19 +0900 $
+$Date: Fri, 22 Oct 1999 22:59:47 +0900 $
 
 Version 1.1
 
 * Better text VRAM emulation.
 
 * Better console device behaviour, especially on input.
+
+* Basic FLOAT handlers.
 
 Maybe version 1.1 or later
 
