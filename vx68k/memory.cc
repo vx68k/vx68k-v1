@@ -97,12 +97,10 @@ address_space::address_space (size_t n)
   : main_memory (n)
 {
   using vm68k::PAGE_SHIFT;
-  set_memory_pages (0, 0xc00000 >> PAGE_SHIFT, &main_memory);
+  set_pages (0, 0xc00000 >> PAGE_SHIFT, &main_memory);
 #if 0
-  set_memory_pages (0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT,
-		    &graphic_vram);
-  set_memory_pages (0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT,
-		    &text_vram);
+  set_pages (0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &graphic_vram);
+  set_pages (0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &text_vram);
 #endif
 }
 

@@ -16,31 +16,23 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef VM68K_TYPES_H
-#define VM68K_TYPES_H 1
-
-#include <climits>
+#ifndef VM68K_EXCEPT_H
+#define VM68K_EXCEPT_H 1
 
 namespace vm68k
 {
 
-namespace types
+struct exception
 {
+};
 
-#if UINT_MAX >= 0xffffffff
-typedef int int32;
-typedef unsigned int uint32;
-#else
-typedef long int32;
-typedef unsigned long uint32;
-#endif
-
-typedef unsigned short uint16;
-typedef unsigned char uint8;
-
-};				// namespace types
-
-using namespace types;
+struct bus_error
+  : exception
+{
+  int fc;
+  uint32 address;
+  bus_error (int, uint32);
+};
 
 };				// namespace vm68k
 

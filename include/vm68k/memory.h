@@ -21,6 +21,7 @@
 
 #include <iterator>
 #include "vm68k/types.h"
+#include "vm68k/except.h"
 
 namespace vm68k
 {
@@ -31,14 +32,6 @@ enum function_code
   USER_PROGRAM = 2,
   SUPER_DATA = 5,
   SUPER_PROGRAM = 6
-};
-
-struct bus_error
-  : exception
-{
-  int fc;
-  uint32 address;
-  bus_error (int, uint32);
 };
 
 const int PAGE_SHIFT = 12;
@@ -83,7 +76,7 @@ public:
   };
 #endif
   address_space ();
-  void set_memory_pages (int begin, int end, memory_page *);
+  void set_pages (size_t begin, size_t end, memory_page *);
   void read (int, uint32, void *, size_t) const throw (bus_error);
   void write (int, uint32, const void *, size_t) throw (bus_error);
   uint8 getb (int, uint32) const throw (bus_error);

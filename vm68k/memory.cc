@@ -118,9 +118,8 @@ address_space::putw (int fc, uint32 address, uint16 value)
 }
 
 void
-address_space::set_memory_pages (int first, int last, memory_page *p)
+address_space::set_pages (size_t first, size_t last, memory_page *p)
 {
-  assert (first >= 0);
   assert (first <= last);
   assert (last <= NPAGES);
   fill (page_table + first, page_table + last, p);

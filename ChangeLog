@@ -1,5 +1,14 @@
 1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/memory.cc (address_space::set_pages): Renamed from
+	set_memory_pages.  Change the first and the second arguments'
+	types.  All refs changed too.
+
+	* include/vm68k/Makefile.am (noinst_HEADERS): Add except.h.
+	* include/vm68k/except.h: New file.
+	(struct exception): Moved from types.h.
+	(struct bus_error): Moved from memory.h.
+
 	* vm68k/cpu.cc (set_pc): #if'd out.
 
 	* include/vm68k/cpu.h (class cpu): Remove member function set_pc.

@@ -1,3 +1,4 @@
+## -*-Makefile-*-
 
-noinst_HEADERS = types.h memory.h cpu.h
+noinst_HEADERS = types.h except.h memory.h cpu.h
 
