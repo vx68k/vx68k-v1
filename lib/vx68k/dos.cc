@@ -184,6 +184,21 @@ namespace
     ec.regs.pc += 2;
   }
 
+  /* Handles DOS _GETC function.  This function is similar to DOS
+     _GETCHAR except no echo-back is made.  */
+  void
+  dos_getc(uint_type op, context &c, instruction_data *data)
+  {
+#ifdef L
+    L(" DOS _GETC\n");
+#endif
+
+    // FIXME
+    c.regs.d[0] = static_cast<dos_exec_context &>(c).fgetc(0);
+
+    c.regs.pc += 2;
+  }
+
   void
   dos_getdate(uint_type op, context &ec, instruction_data *data)
   {
@@ -481,6 +496,7 @@ dos::dos(machine *m)
   exec_unit *eu = vm->exec_unit();
 
   eu->set_instruction(0xff02, 0, &dos_putchar, this);
+  eu->set_instruction(0xff08, 0, &dos_getc, this);
   eu->set_instruction(0xff09, 0, &dos_print, this);
   eu->set_instruction(0xff0d, 0, &dos_fflush, this);
   eu->set_instruction(0xff1b, 0, &dos_fgetc, this);
