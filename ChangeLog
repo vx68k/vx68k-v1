@@ -1,3 +1,15 @@
+1999-10-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/Makefile.am (vx68k_LDADD): Modify directory of libvm68k.a.
+
+	* lib/Makefile.am (SUBDIRS): Remove vm68k.
+
+	* Makefile.am (SUBDIRS): Add vm68k.
+
+	* configure.in: Modify AC_OUTPUT.
+
+	* lib/Makefile.am: Move lib/vm68k to vm68k.
+
 1999-09-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/textvram.cc (draw_char): Call console::update_area.

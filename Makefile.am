@@ -2,5 +2,5 @@
 
 EXTRA_DIST = VERSION-ID doc/vx68k.sgml
 
-SUBDIRS = include lib bin testsuite
+SUBDIRS = include vm68k lib bin testsuite
 
