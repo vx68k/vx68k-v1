@@ -1015,6 +1015,20 @@ namespace
   }
 
   template <class Destination> void
+  jmp(uint_type op, context &c, instruction_data *data)
+  {
+    Destination ea1(op & 0x7, 2);
+#ifdef L
+    L(" jmp %s\n", ea1.textw(c));
+#endif
+
+    // The condition codes are not affected by this instruction.
+    uint32_type address = ea1.address(c);
+
+    c.regs.pc = address;
+  }
+
+  template <class Destination> void
   jsr(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
@@ -2488,6 +2502,10 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x4e90, 0x0007, &jsr<indirect>);
   eu.set_instruction(0x4ea8, 0x0007, &jsr<disp_indirect>);
   eu.set_instruction(0x4eb9, 0x0000, &jsr<absolute_long>);
+  eu.set_instruction(0x4ed0, 0x0007, &jmp<indirect>);
+  eu.set_instruction(0x4ee8, 0x0007, &jmp<disp_indirect>);
+  eu.set_instruction(0x4ef0, 0x0007, &jmp<indexed_indirect>);
+  eu.set_instruction(0x4ef9, 0x0000, &jmp<absolute_long>);
   eu.set_instruction(0x5000, 0x0e07, &addqb<data_register>);
   eu.set_instruction(0x5010, 0x0e07, &addqb<indirect>);
   eu.set_instruction(0x5018, 0x0e07, &addqb<postinc_indirect>);
