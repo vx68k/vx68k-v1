@@ -1,5 +1,8 @@
 1998-10-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/memory.h (VM68K_MEMORY_H): Fix typo.
+	(function_code): New enum.
+
 	* include/vm68k/Makefile.am (noinst_HEADERS): Add types.h and
 	memory.h.
 

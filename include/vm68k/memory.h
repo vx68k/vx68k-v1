@@ -1,10 +1,18 @@
 /* -*-C++-*- */
 
 #ifndef VM68K_MEMORY_H
-#define VM68k_MEMORY_H
+#define VM68K_MEMORY_H 1
 
 #include <iterator>
 #include "vm68k/types.h"
+
+enum function_code
+{
+  USER_DATA = 1,
+  USER_PROGRAM = 2,
+  SUPER_DATA = 5,
+  SUPER_PROGRAM = 6
+};
 
 class bus_error
 {
