@@ -1,5 +1,8 @@
 2000-12-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/Makefile.am (lib_LTLIBRARIES): Exchange the order of
+	libvx68k.la and libvx68kdos.la.
+
 	* libvx68k/systemrom.cc (initialize_iocs_calls): Renamed from
 	initialize_iocs_handlers.  Also change all users.
 
