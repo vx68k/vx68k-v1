@@ -1,5 +1,9 @@
 2000-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (class vx68k_app): Add new member load_fd_image.
+	(load_fd_image): New function.
+	(vx68k_app): Load image files.
+
 	* libvx68k/machine.cc (iocs_b_lpeek, invalid_iocs_function,
 	set_iocs_function): Change argument type.  Also change all
 	callers.

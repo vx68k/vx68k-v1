@@ -107,6 +107,10 @@ public:
   void join(int *st);
 
 public:
+  /* Loads an image file on a FD unit.  */
+  void load_fd_image(unsigned int u, const char *);
+
+public:
   GtkWidget *create_window();
 
 public:
@@ -193,6 +197,12 @@ vx68k_app::join(int *status)
 
   if (status != NULL)
     *status = vm_status;
+}
+
+void
+vx68k_app::load_fd_image(unsigned int u, const char *name)
+{
+  g_message("`load_fd_image' function not implemented yet");
 }
 
 /* Window management.  */
@@ -453,6 +463,11 @@ vx68k_app::vx68k_app()
   vm_thread = pthread_self();
   gtk_widget_set_default_visual(gdk_rgb_get_visual());
   vm.connect(&con);
+
+  if (opt_fd0_image[0] != '\0')
+    load_fd_image(0, opt_fd0_image);
+  if (opt_fd1_image[0] != '\0')
+    load_fd_image(1, opt_fd0_image);
 }
 
 namespace
