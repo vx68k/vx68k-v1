@@ -158,6 +158,30 @@ namespace
     long_word_size::put(c.regs.d[0], value);
   }
 
+  /* Handles a _MS_CUROF IOCS call.  */
+  void
+  iocs_ms_curof(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace, "IOCS _MS_CUROF\n");
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_ms_curof: FIXME: not implemented\n");
+  }
+
+  /* Handles a _MS_CURON IOCS call.  */
+  void
+  iocs_ms_curon(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace, "IOCS _MS_CURON\n");
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_ms_curon: FIXME: not implemented\n");
+  }
+
   /* Handles a _MS_CURST IOCS call.  */
   void
   iocs_ms_curst(context &c, unsigned long data)
@@ -229,6 +253,20 @@ namespace
     m->set_mouse_bounds(tl >> 16, tl & 0xffff, br >> 16, br & 0xffff);
   }
 
+  /* Handles a _MS_STAT IOCS call.  */
+  void
+  iocs_ms_stat(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace, "IOCS _MS_STAT\n");
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_ms_stat: FIXME: not implemented\n");
+
+    word_size::put(c.regs.d[0], 0);
+  }
+
   /* Handles a _SET232C IOCS call.  */
   void
   iocs_set232c(context &c, unsigned long data)
@@ -256,9 +294,9 @@ scc_memory::install_iocs_calls(system_rom &rom)
   // 0x34: _OSNS232C
   // 0x35: _OUT232C
   rom.set_iocs_function(0x70, make_pair(&iocs_ms_init, data));
-  // 0x71: _MS_CURON
-  // 0x72: _MS_CUROF
-  // 0x73: _MS_STAT
+  rom.set_iocs_function(0x71, make_pair(&iocs_ms_curon, data));
+  rom.set_iocs_function(0x72, make_pair(&iocs_ms_curof, data));
+  rom.set_iocs_function(0x73, make_pair(&iocs_ms_stat, data));
   rom.set_iocs_function(0x74, make_pair(&iocs_ms_getdt, data));
   rom.set_iocs_function(0x75, make_pair(&iocs_ms_curgt, data));
   rom.set_iocs_function(0x76, make_pair(&iocs_ms_curst, data));
