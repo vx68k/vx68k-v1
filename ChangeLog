@@ -1,5 +1,18 @@
 1999-10-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/Makefile.am (vx68k_LDADD): Change libvx68kgtk's location.
+
+	* vx68k/Makefile.am (noinst_LIBRARIES): Remove libvx68kgtk.a.
+	(INCLUDES): Remove ${GTK_CFLAGS}.
+
+	* Makefile.am (SUBDIRS): Add vx68kgtk.
+
+	* configure.in: Add vx68kgtk/Makefile to AC_OUTPUT.
+
+	* vx68kgtk/gtkconsole.cc: Moved from vx68k/gtkconsole.cc.
+
+	* vx68kgtk/Makefile.am: New file.
+
 	* NEWS: Updated.
 
 	* vm68k/execunit.cc (install_instructions): Replace

@@ -22,5 +22,5 @@ AC_TYPE_SIZE_T
 AC_CHECK_FUNCS(localtime_r)
 AC_OUTPUT(Makefile \
 include/Makefile include/vm68k/Makefile include/vx68k/Makefile \
-vm68k/Makefile vx68k/Makefile bin/Makefile \
+vm68k/Makefile vx68k/Makefile vx68kgtk/Makefile bin/Makefile \
 testsuite/Makefile)

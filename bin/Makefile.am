@@ -6,7 +6,7 @@ ${GTK_CFLAGS}
 bin_PROGRAMS = vx68k
 
 vx68k_SOURCES = getopt.c getopt1.c main.cc
-vx68k_LDADD = ../vx68k/libvx68kgtk.a ../vx68k/libvx68k.a \
+vx68k_LDADD = ../vx68kgtk/libvx68kgtk.a ../vx68k/libvx68k.a \
 ../vm68k/libvm68k.la \
 ${GTK_LIBS}
 
