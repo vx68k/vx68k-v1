@@ -33,7 +33,7 @@
 #endif
 
 using vx68k::crtc_memory;
-using vm68k::auto_lock;
+using vm68k::mutex_lock;
 using namespace vm68k::types;
 using namespace std;
 
@@ -46,7 +46,7 @@ crtc_memory::reset(console::time_type t)
 void
 crtc_memory::check_timeouts(console::time_type t, context &c)
 {
-  auto_lock<pthread_mutex_t> lock(&mutex);
+  mutex_lock lock(&mutex);
 
   if (t - vdisp_start_time >= vdisp_interval)
     {
@@ -67,7 +67,7 @@ crtc_memory::check_timeouts(console::time_type t, context &c)
 void
 crtc_memory::set_vdisp_counter_data(unsigned int value)
 {
-  auto_lock<pthread_mutex_t> lock(&mutex);
+  mutex_lock lock(&mutex);
 
   vdisp_counter_data = value;
   if (vdisp_interrupt_enabled())

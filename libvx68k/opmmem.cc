@@ -34,7 +34,7 @@
 
 using vx68k::opm_memory;
 using vm68k::bus_error_exception;
-using vm68k::auto_lock;
+using vm68k::mutex_lock;
 using namespace vm68k::types;
 using namespace std;
 
@@ -47,7 +47,7 @@ opm_memory::reset(console::time_type t)
 void
 opm_memory::check_timeouts(console::time_type t, context &c)
 {
-  auto_lock<pthread_mutex_t> lock(&mutex);
+  mutex_lock lock(&mutex);
 
   last_check_time = t;
 
@@ -79,7 +79,7 @@ opm_memory::check_timeouts(console::time_type t, context &c)
 void
 opm_memory::set_reg(unsigned int regno, unsigned int value)
 {
-  auto_lock<pthread_mutex_t> lock(&mutex);
+  mutex_lock lock(&mutex);
 
   regno &= 0xffu;
   value &= 0xffu;
@@ -121,7 +121,7 @@ opm_memory::set_reg(unsigned int regno, unsigned int value)
 void
 opm_memory::set_interrupt_enabled(bool value)
 {
-  auto_lock<pthread_mutex_t> lock(&mutex);
+  mutex_lock lock(&mutex);
 
   _interrupt_enabled = value;
 }

@@ -1,5 +1,8 @@
 2000-08-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/mutex.h (class mutex_lock): New class replacing
+	auto_lock.  Also change all users.
+
 	* libvx68k/textvram.cc: Add using auto_lock.
 	* libvx68k/crtcmem.cc: Likewise.
 	* libvx68k/palettemem.cc: Likewise.

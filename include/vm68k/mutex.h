@@ -23,68 +23,69 @@
 
 namespace vm68k
 {
-  template <class Mutex> class auto_lock
+  /* Locking helper for pthread mutex.  */
+  class mutex_lock
   {
   protected:
-    static void unlock(Mutex *mutex);
+    static void unlock(pthread_mutex_t *mutex);
 
   private:
-    Mutex *_mutex;
+    pthread_mutex_t *_mutex;
 
   public:
-    explicit auto_lock(Mutex *mutex = NULL) throw ();
+    explicit mutex_lock(pthread_mutex_t *mutex = 0) throw ();
 
-    auto_lock(auto_lock &x) throw ();
+    mutex_lock(mutex_lock &x) throw ();
 
-    ~auto_lock() throw ();
-
-  public:
-    auto_lock &operator=(auto_lock &x) throw ();
+    ~mutex_lock() throw ();
 
   public:
-    Mutex *get() throw () {return _mutex;}
+    mutex_lock &operator=(mutex_lock &x) throw ();
 
-    Mutex *release() throw ();
+  public:
+    pthread_mutex_t *get() throw () {return _mutex;}
+
+    pthread_mutex_t *release() throw ();
   };
 
-  template <class Mutex> inline void
-  auto_lock<Mutex>::unlock(Mutex *mutex)
+  inline void
+  mutex_lock::unlock(pthread_mutex_t *mutex)
   {
-    if (mutex != NULL)
+    if (mutex != 0)
       pthread_mutex_unlock(mutex);
   }
 
-  template <class Mutex> inline Mutex *
-  auto_lock<Mutex>::release() throw ()
+  inline pthread_mutex_t *
+  mutex_lock::release() throw ()
   {
-    Mutex *tmp = _mutex;
-    _mutex = NULL;
+    pthread_mutex_t *tmp = _mutex;
+    _mutex = 0;
     return tmp;
   }
 
-  template <class Mutex> inline auto_lock<Mutex> &
-  auto_lock<Mutex>::operator=(auto_lock &x) throw ()
+  inline mutex_lock &
+  mutex_lock::operator=(mutex_lock &x) throw ()
   {
     unlock(_mutex);
     _mutex = x.release();
   }
 
-  template <class Mutex> inline
-  auto_lock<Mutex>::~auto_lock() throw ()
+  inline
+  mutex_lock::~mutex_lock() throw ()
   {
     unlock(_mutex);
   }
 
-  template <class Mutex> inline
-  auto_lock<Mutex>::auto_lock(Mutex *mutex) throw ()
+  inline
+  mutex_lock::mutex_lock(pthread_mutex_t *mutex) throw ()
     : _mutex(mutex)
   {
-    if (_mutex != NULL)
+    if (_mutex != 0)
       pthread_mutex_lock(_mutex);
   }
 
-  template <class Mutex> inline
-  auto_lock<Mutex>::auto_lock(auto_lock &x) throw ()
+  inline
+  mutex_lock::mutex_lock(mutex_lock &x) throw ()
     : _mutex(x.release())
   {}
 } // namespace

@@ -35,14 +35,14 @@
 using vx68k::palettes_memory;
 using vm68k::bus_error_exception;
 using vm68k::SUPER_DATA;
-using vm68k::auto_lock;
+using vm68k::mutex_lock;
 using namespace vm68k::types;
 using namespace std;
 
 bool
 palettes_memory::check_text_colors_modified()
 {
-  auto_lock<pthread_mutex_t> lock(&mutex);
+  mutex_lock lock(&mutex);
 
   bool tmp = text_colors_modified;
   text_colors_modified = false;
@@ -53,7 +53,7 @@ void
 palettes_memory::get_text_colors(unsigned int first, unsigned int last,
 				 unsigned char *out)
 {
-  auto_lock<pthread_mutex_t> lock(&mutex);
+  mutex_lock lock(&mutex);
 
   while (first != last)
     {
@@ -170,7 +170,7 @@ palettes_memory::put_16(int fc, uint32_type address, uint_type value)
     }
   else if (off >= 256 * 2)
     {
-      auto_lock<pthread_mutex_t> lock(&mutex);
+      mutex_lock lock(&mutex);
 
       unsigned int i = (off - 256 * 2) / 2;
       _tpalette[i] = value;

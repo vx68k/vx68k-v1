@@ -249,7 +249,7 @@ machine::boot()
 void
 machine::queue_key(uint_type key)
 {
-  auto_lock<pthread_mutex_t> lock(&key_queue_mutex);
+  mutex_lock lock(&key_queue_mutex);
 
   key_queue.push(key);
   pthread_cond_signal(&key_queue_not_empty);
@@ -264,7 +264,7 @@ machine::peek_key()
       pthread_testcancel();
     }
 
-  auto_lock<pthread_mutex_t> lock(&key_queue_mutex);
+  mutex_lock lock(&key_queue_mutex);
 
   uint_type key;
   if (key_queue.empty())
@@ -278,7 +278,7 @@ machine::peek_key()
 uint_type
 machine::get_key()
 {
-  auto_lock<pthread_mutex_t> lock(&key_queue_mutex);
+  mutex_lock lock(&key_queue_mutex);
 
   while (key_queue.empty())
     pthread_cond_wait(&key_queue_not_empty, &key_queue_mutex);
