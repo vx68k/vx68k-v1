@@ -2,7 +2,7 @@
 # include "config.h"
 #endif
 
-#include "cpu.h"
+#include "vm68k/cpu.h"
 
 int
 main (int argc, char **argv)

@@ -1,2 +1,2 @@
 
-SUBDIRS = include m68k x68k
+SUBDIRS = include vm68k vx68k
