@@ -204,6 +204,19 @@ namespace vx68k
     void put_8(int, uint32_type, uint_type);
   };
 
+  /* Sprite controller memory.  */
+  class sprites_memory: public memory
+  {
+  public:
+    /* Reads data from this object.  */
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
+
+    /* Writes data to this object.  */
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
+  };
+
   /* Font ROM.  */
   class font_rom: public memory
   {

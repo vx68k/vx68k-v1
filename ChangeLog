@@ -1,5 +1,17 @@
 2000-08-06  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (configure): Map sprites into the address
+	space.
+
+	* include/vx68k/machine.h (class machine): Add new member sprites.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add spritemem.cc.
+
+	* libvx68k/spritemem.cc: New file.
+	(get_16, get_8, put_16, put_8): New function.
+
+	* include/vx68k/memory.h (class sprites_memory): New class.
+
 	* bin/gtkabout.cc: Include cstdlib and cstdio.
 
 	* bin/main.cc (console_callback): Add console_callback to base.

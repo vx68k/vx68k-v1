@@ -160,6 +160,7 @@ namespace vx68k
     area_set _area_set;
     scc_memory scc;
     ppi_memory ppi;
+    sprites_memory sprites;
     sram _sram;
     font_rom font;
     system_rom rom;
