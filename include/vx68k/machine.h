@@ -1,6 +1,6 @@
 /* -*-C++-*- */
 /* vx68k - Virtual X68000
-   Copyright (C) 1998 Hypercore Software Design, Ltd.
+   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 #define _VX68K_MACHINE_H 1
 
 #include <vm68k/cpu.h>
+#include <pthread.h>
+#include <queue>
 
 namespace vx68k
 {
@@ -130,6 +132,7 @@ namespace vx68k
 		   unsigned char *rgb_buf, size_t row_size);
   };
 
+  /* Virtual machine of X68000.  */
   class machine
     : public instruction_data
   {
@@ -156,8 +159,15 @@ namespace vx68k
     /* Saved byte 1 of double-byte character.  */
     unsigned char saved_byte1;
 
+    /* Key input queue.  */
+    queue<uint_type> key_queue;
+
+    /* Mutex for key_queue.  */
+    pthread_mutex_t key_queue_mutex;
+
   public:
     explicit machine(size_t);
+    ~machine();
 
   public:
     size_t memory_size() const
@@ -180,6 +190,14 @@ namespace vx68k
   public:
     void b_putc(uint_type);
     void b_print(uint32_type);
+
+  public:			// Keyboard Input
+    /* Queues key input.  */
+    void queue_key(uint_type key);
+
+    /* Queues key input without locking.  */
+    void queue_key_unlocked(uint_type key)
+      {key_queue.push(key);}
   };
 } // vx68k
 

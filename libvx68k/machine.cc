@@ -117,6 +117,26 @@ machine::b_print(uint32_type strptr)
     }
 }
 
+void
+machine::queue_key(uint_type key)
+{
+  pthread_mutex_lock(&key_queue_mutex);
+
+  try
+    {
+      queue_key_unlocked(key);
+    }
+  catch (...)
+    {
+      pthread_mutex_unlock(&key_queue_mutex);
+      throw;
+    }
+
+  pthread_mutex_unlock(&key_queue_mutex);
+}
+
+/* IOCS functions.  */
+
 namespace
 {
   void
@@ -186,12 +206,19 @@ machine::get_image(int x, int y, int width, int height,
   tvram.get_image(x, y, width, height, rgb_buf, row_size);
 }
 
+machine::~machine()
+{
+  pthread_mutex_destroy(&key_queue_mutex);
+}
+
 machine::machine(size_t memory_size)
   : _memory_size(memory_size),
     mem(memory_size),
     curx(0), cury(0),
     saved_byte1(0)
 {
+  pthread_mutex_init(&key_queue_mutex, NULL);
+
   fill(iocs_functions + 0, iocs_functions + 0x100,
        make_pair(&invalid_iocs_function, (iocs_function_data *) 0));
   

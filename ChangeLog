@@ -1,5 +1,13 @@
 1999-11-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (machine): Initialize key_queue_mutex.
+	(~machine): Destroy key_queue_mutex.
+	(queue_key): New function.
+
+	* include/vx68k/machine.h (class machine): Add new members
+ 	queue_key, queue_key_unlocked, key_queue, key_queue_mutex, and
+ 	destructor.
+
 	* bin/main.cc (class vx68k_app): Moved out of unnamed namespace.
 	(class vx68k_app): Add new static members: opt_memory_size,
  	opt_single_threaded, and opt_debug_level.
