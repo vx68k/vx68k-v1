@@ -526,7 +526,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" cmpb %s", ea1.textb(ec));
-    L(",%%d%d", reg2);
+    L(",%%d%u", reg2);
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
@@ -546,7 +546,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" cmpw %s", ea1.textw(ec));
-    L(",%%d%d", reg2);
+    L(",%%d%u", reg2);
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
@@ -566,12 +566,32 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" cmpl %s", ea1.textl(ec));
-    L(",%%d%d", reg2);
+    L(",%%d%u", reg2);
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
     sint32_type value1 = ea1.getl(ec);
     sint32_type value2 = extsl(ec.regs.d[reg2]);
+    sint32_type value = extsl(value2 - value1);
+    ec.regs.sr.set_cc_cmp(value, value2, value1);
+    ea1.finishl(ec);
+
+    ec.regs.pc += 2 + ea1.isize(4);
+  }
+
+  template <class Source> void
+  cmpal(unsigned int op, context &ec)
+  {
+    Source ea1(op & 0x7, 2);
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef L
+    L(" cmpal %s", ea1.textl(ec));
+    L(",%%a%u", reg2);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    sint32_type value1 = ea1.getl(ec);
+    sint32_type value2 = extsl(ec.regs.a[reg2]);
     sint32_type value = extsl(value2 - value1);
     ec.regs.sr.set_cc_cmp(value, value2, value1);
     ea1.finishl(ec);
@@ -756,24 +776,27 @@ namespace
     ec.regs.pc += 2;
   }
 
-  template <class Source, class Destination>
-    void moveb(unsigned int op, context &ec)
-    {
-      Source ea1(op & 0x7, 2);
-      Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
-      VL((" moveb %s", ea1.textb(ec)));
-      VL((",%s", ea2.textb(ec)));
-      VL((" | %%pc = 0x%lx\n", (unsigned long) ec.regs.pc));
+  template <class Source, class Destination> void
+  moveb(unsigned int op, context &ec)
+  {
+    Source ea1(op & 0x7, 2);
+    Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
+#ifdef L
+    L(" moveb %s", ea1.textb(ec));
+    L(",%s", ea2.textb(ec));
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
-      int value = ea1.getb(ec);
-      ea2.putb(ec, value);
-      ea1.finishb(ec);
-      ea2.finishb(ec);
-      ec.regs.sr.set_cc(value);
+    sint_type value = ea1.getb(ec);
+    ea2.putb(ec, value);
+    ec.regs.sr.set_cc(value);
+    ea1.finishb(ec);
+    ea2.finishb(ec);
 
-      ec.regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
-    }
+    ec.regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
+  }
 
+#ifdef 0
   void moveb_d_postinc(unsigned int op, context &ec)
     {
       int s_reg = op & 0x7;
@@ -809,27 +832,29 @@ namespace
 
       ec.regs.pc += 2;
     }
-
-  template <class Source, class Destination> void movew(unsigned int op,
-							context &ec)
-    {
-      Source ea1(op & 0x7, 2);
-      Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
-#ifdef L
-      L(" movew %s", ea1.textw(ec));
-      L(",%s", ea2.textw(ec));
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
-      int value = ea1.getw(ec);
-      ea2.putw(ec, value);
-      ea1.finishw(ec);
-      ea2.finishw(ec);
-      ec.regs.sr.set_cc(value);
+  template <class Source, class Destination> void
+  movew(unsigned int op, context &ec)
+  {
+    Source ea1(op & 0x7, 2);
+    Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
+#ifdef L
+    L(" movew %s", ea1.textw(ec));
+    L(",%s", ea2.textw(ec));
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
-      ec.regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
-    }
+    sint_type value = ea1.getw(ec);
+    ea2.putw(ec, value);
+    ec.regs.sr.set_cc(value);
+    ea1.finishw(ec);
+    ea2.finishw(ec);
 
+    ec.regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
+  }
+
+#if 0
   void movew_d_predec(unsigned int op, context &ec)
     {
       int s_reg = op & 0x7;
@@ -863,6 +888,7 @@ namespace
 
       ec.regs.pc += 2 + 4;
     }
+#endif
 
   void movew_d_absl(unsigned int op, context &ec)
     {
@@ -1260,8 +1286,22 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x1039, 0x0e00, &moveb<absolute_long, data_register>);
   eu.set_instruction(0x103a, 0x0e00, &moveb<disp_pc, data_register>);
   eu.set_instruction(0x103c, 0x0e00, &moveb<immediate, data_register>);
-  eu.set_instruction(0x10c0, 0x0e07, &moveb_d_postinc);
-  eu.set_instruction(0x10d8, 0x0e07, &moveb_postinc_postinc);
+  eu.set_instruction(0x1080, 0x0e07, &moveb<data_register, indirect>);
+  eu.set_instruction(0x1090, 0x0e07, &moveb<indirect, indirect>);
+  eu.set_instruction(0x1098, 0x0e07, &moveb<postinc_indirect, indirect>);
+  eu.set_instruction(0x10a0, 0x0e07, &moveb<predec_indirect, indirect>);
+  eu.set_instruction(0x10a8, 0x0e07, &moveb<disp_indirect, indirect>);
+  eu.set_instruction(0x10b9, 0x0e00, &moveb<absolute_long, indirect>);
+  eu.set_instruction(0x10ba, 0x0e00, &moveb<disp_pc, indirect>);
+  eu.set_instruction(0x10bc, 0x0e00, &moveb<immediate, indirect>);
+  eu.set_instruction(0x10c0, 0x0e07, &moveb<data_register, postinc_indirect>);
+  eu.set_instruction(0x10d0, 0x0e07, &moveb<indirect, postinc_indirect>);
+  eu.set_instruction(0x10d8, 0x0e07, &moveb<postinc_indirect, postinc_indirect>);
+  eu.set_instruction(0x10e0, 0x0e07, &moveb<predec_indirect, postinc_indirect>);
+  eu.set_instruction(0x10e8, 0x0e07, &moveb<disp_indirect, postinc_indirect>);
+  eu.set_instruction(0x10f9, 0x0e00, &moveb<absolute_long, postinc_indirect>);
+  eu.set_instruction(0x10fa, 0x0e00, &moveb<disp_pc, postinc_indirect>);
+  eu.set_instruction(0x10fc, 0x0e00, &moveb<immediate, postinc_indirect>);
   eu.set_instruction(0x1140, 0x0e07, &moveb<data_register, disp_indirect>);
   eu.set_instruction(0x1150, 0x0e07, &moveb<indirect, disp_indirect>);
   eu.set_instruction(0x1158, 0x0e07, &moveb<postinc_indirect, disp_indirect>);
@@ -1350,8 +1390,15 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x30e8, 0x0e07, &movew<disp_indirect, postinc_indirect>);
   eu.set_instruction(0x30f9, 0x0e00, &movew<absolute_long, postinc_indirect>);
   eu.set_instruction(0x30fc, 0x0e00, &movew<immediate, postinc_indirect>);
-  eu.set_instruction(0x3100, 0x0e07, &movew_d_predec);
-  eu.set_instruction(0x3139, 0x0e00, &movew_absl_predec);
+  eu.set_instruction(0x3100, 0x0e07, &movew<data_register, predec_indirect>);
+  eu.set_instruction(0x3108, 0x0e07, &movew<address_register, predec_indirect>);
+  eu.set_instruction(0x3110, 0x0e07, &movew<indirect, predec_indirect>);
+  eu.set_instruction(0x3118, 0x0e07, &movew<postinc_indirect, predec_indirect>);
+  eu.set_instruction(0x3120, 0x0e07, &movew<predec_indirect, predec_indirect>);
+  eu.set_instruction(0x3128, 0x0e07, &movew<disp_indirect, predec_indirect>);
+  eu.set_instruction(0x3139, 0x0e00, &movew<absolute_long, predec_indirect>);
+  eu.set_instruction(0x313a, 0x0e00, &movew<disp_pc, predec_indirect>);
+  eu.set_instruction(0x313c, 0x0e00, &movew<immediate, predec_indirect>);
   eu.set_instruction(0x33c0, 0x0007, &movew_d_absl);
   eu.set_instruction(0x4190, 0x0e07, &lea<indirect>);
   eu.set_instruction(0x41e8, 0x0e07, &lea<disp_indirect>);
@@ -1470,6 +1517,15 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0xb0a8, 0x0e07, &cmpl<disp_indirect>);
   eu.set_instruction(0xb0b9, 0x0e00, &cmpl<absolute_long>);
   eu.set_instruction(0xb0bc, 0x0e00, &cmpl<immediate>);
+  eu.set_instruction(0xb1c0, 0x0e07, &cmpal<data_register>);
+  eu.set_instruction(0xb1c8, 0x0e07, &cmpal<address_register>);
+  eu.set_instruction(0xb1d0, 0x0e07, &cmpal<indirect>);
+  eu.set_instruction(0xb1d8, 0x0e07, &cmpal<postinc_indirect>);
+  eu.set_instruction(0xb1e0, 0x0e07, &cmpal<predec_indirect>);
+  eu.set_instruction(0xb1e8, 0x0e07, &cmpal<disp_indirect>);
+  eu.set_instruction(0xb1f9, 0x0e00, &cmpal<absolute_long>);
+  eu.set_instruction(0xb1fa, 0x0e00, &cmpal<disp_pc>);
+  eu.set_instruction(0xb1fc, 0x0e00, &cmpal<immediate>);
   eu.set_instruction(0xc0bc, 0x0e00, &andl_i_d);
   eu.set_instruction(0xd068, 0x0e07, &addw_off_d);
   eu.set_instruction(0xd080, 0x0e07, &addl<data_register>);
