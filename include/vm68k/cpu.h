@@ -1,6 +1,6 @@
 /* -*-C++-*- */
 /* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -168,12 +168,23 @@ namespace vm68k
   class condition_tester
   {
   public:
-    virtual bool ls(const sint32_type *) const = 0;
+    virtual bool ls(const sint32_type *v) const
+    {return cs(v) || eq(v);}
     virtual bool cs(const sint32_type *) const = 0;
     virtual bool eq(const sint32_type *) const = 0;
     virtual bool mi(const sint32_type *) const = 0;
     virtual bool lt(const sint32_type *) const = 0;
-    virtual bool le(const sint32_type *) const = 0;
+    virtual bool le(const sint32_type *v) const
+    {return eq(v) || lt(v);}
+  };
+
+  class bitmap_condition_tester: public condition_tester
+  {
+  public:
+    bool cs(const sint32_type *) const;
+    bool eq(const sint32_type *) const;
+    bool mi(const sint32_type *) const;
+    bool lt(const sint32_type *) const;
   };
 
   /* Status register.  */
@@ -184,6 +195,7 @@ namespace vm68k
     {S = 1 << 13};
 
   private:			// Condition testers
+    static const bitmap_condition_tester bitmap_tester;
     static const condition_tester *const general_condition_tester;
     static const condition_tester *const add_condition_tester;
 
@@ -199,6 +211,12 @@ namespace vm68k
 
   public:
     operator uint_type() const;
+    status_register &operator=(uint_type v)
+    {
+      x_eval = cc_eval = &bitmap_tester;
+      x_values[0] = cc_values[0] = v;
+      return *this;
+    }
 
   public:
     bool hi() const
@@ -314,6 +332,13 @@ namespace vm68k
     /* Sets the supervisor state to STATE.  */
     void set_supervisor_state(bool state);
 
+    /* Returns the value of the status register.  */
+    uint_type sr() const;
+
+    /* Sets the status register.  */
+    void set_sr(uint_type value);
+
+  public:
     /* Returns the FC for program in the current state.  */
     int program_fc() const
     {return pfc_cache;}

@@ -95,6 +95,7 @@ exec_unit::set_instruction(int code, int mask, instruction_handler h,
 
 namespace
 {
+  using vm68k::SUPER_DATA;
   using vm68k::extsb;
   using vm68k::extsw;
   using vm68k::extsl;
@@ -1476,6 +1477,29 @@ namespace
       ec.regs.pc += 2 + ea1.isize(4) + ea2.isize(4);
     }
 
+  /* Handles an MOVE-from-USP instruction.  */
+  void
+  m68k_move_from_usp(uint_type op, context &c, instruction_data *data)
+  {
+    unsigned int reg1 = op & 0x7;
+#ifdef TRACE_INSTRUCTIONS
+    L(" movel %%usp,");
+    L("%%a%u\n", reg1);
+#endif
+
+    // This instruction is privileged.
+    if (!c.supervisor_state())
+      {
+	exec_unit::illegal(op, c, data); // FIXME
+	abort();
+      }
+
+    // The condition codes are not affected by this instruction.
+    c.regs.a[reg1] = c.regs.usp;
+
+    c.regs.pc += 2;
+  }
+
   /* Handles an MOVEA instruction.  */
   template <class Size, class Source> void
   m68k_movea(uint_type op, context &c, instruction_data *data)
@@ -2024,6 +2048,28 @@ namespace
     ea1.finishl(c);
 
     c.regs.pc += 2 + ea1.isize(4);
+  }
+
+  /* Handles a RTE instruction.  */
+  void
+  m68k_rte(uint_type op, context &c, instruction_data *data)
+  {
+#ifdef TRACE_INSTRUCTIONS
+    L(" rte\n");
+#endif
+
+    // This instruction is privileged.
+    if (!c.supervisor_state())
+      {
+	exec_unit::illegal(op, c, data); // FIXME
+	abort();
+      }
+
+    uint_type status = c.mem->getw(SUPER_DATA, c.regs.a[7] + 0);
+    uint32_type value = c.mem->getl(SUPER_DATA, c.regs.a[7] + 2);
+    c.regs.a[7] += 6;
+    c.set_sr(status);
+    c.regs.pc = value;
   }
 
   void
@@ -2879,6 +2925,8 @@ namespace
     eu.set_instruction(0x4ab9, 0x0000, &tstl<absolute_long>);
     eu.set_instruction(0x4e50, 0x0007, &link_a);
     eu.set_instruction(0x4e58, 0x0007, &unlk_a);
+    eu.set_instruction(0x4e68, 0x0007, &m68k_move_from_usp);
+    eu.set_instruction(0x4e73, 0x0000, &m68k_rte);
     eu.set_instruction(0x4e75, 0x0000, &rts);
     eu.set_instruction(0x4e90, 0x0007, &jsr<indirect>);
     eu.set_instruction(0x4ea8, 0x0007, &jsr<disp_indirect>);
