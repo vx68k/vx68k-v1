@@ -109,7 +109,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      ec->regs.pc += 0 ? 2 + disp : len;// FIXME.
+      ec->regs.pc += ec->regs.sr.ge() ? 2 + disp : len;// FIXME.
     }
 
   void bne(int op, execution_context *ec)

@@ -1,7 +1,19 @@
 1999-03-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/statusreg.cc (lt): New function.
+
+	* lib/vm68k/execunit.cc (bge): Do test condition code.
+
+	* lib/vx68k/dos.cc (open): Make the d0 value unsigned.
+
+	* lib/vm68k/statusreg.cc (eq): Invert the return value to debug.
+
+	* include/vm68k/cpu.h (extsb, extsw): New functions.
+	(status_register): Fix ne to invert its return value.
+	(status_register): Add lt and ge.
+
 	* lib/vm68k/execunit.cc (movew_d_absl, bge, bra, moveql_d): New
-	function.
+	functions.
 	(install_instructions): Set the new instructions to the operation
 	words.
 

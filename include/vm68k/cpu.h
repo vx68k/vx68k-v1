@@ -26,10 +26,26 @@
 namespace vm68k
 {
 
+  inline int extsb(unsigned int value)
+    {
+      const unsigned int M = 1u << 8;
+      value &= M - 1;
+      return value >= M >> 1 ? -(int) (M - value) : (int) value;
+    }
+
+  inline int extsw(unsigned int value)
+    {
+      const unsigned int M = 1u << 16;
+      value &= M - 1;
+      return value >= M >> 1 ? -(int) (M - value) : (int) value;
+    }
+
   struct status_register
   {
     bool eq() const;
-    bool ne() const {return eq();}
+    bool ne() const {return !eq();}
+    bool lt() const;
+    bool ge() const {return !lt();}
     bool supervisor_state() const;
   };
 

@@ -29,7 +29,13 @@ using namespace vm68k;
 bool
 status_register::eq() const
 {
-  return false;			// FIXME.
+  return true;			// FIXME.
+}
+
+bool
+status_register::lt() const
+{
+  return true;			// FIXME.
 }
 
 bool

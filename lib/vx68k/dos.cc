@@ -157,7 +157,7 @@ namespace
     {
       assert(ec != NULL);
 
-      ec->regs.d0 = -2;		// FIXME.
+      ec->regs.d0 = -2u;	// FIXME.
 
       ec->regs.pc += 2;
     }
