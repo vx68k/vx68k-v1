@@ -16,10 +16,10 @@ preserved on all copies.
 
 @titlepage
 @title Virtual X68000 Reference Manual
-@author Kaz Sasayama 
+@author Kaz Sasayama
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1999, 2000 Hypercore Software Design, Ltd.
+Copyright @copyright{} 1999-2000 Hypercore Software Design, Ltd.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -28,59 +28,97 @@ preserved on all copies.
 
 @contents
 
-@ifinfo
-@node Top, Using Virtual X68000, (dir), (dir)
+@ifnottex
+@node Top, Introduction, (dir), (dir)
 @top Virtual X68000 Reference Manual
+
 Virtual X68000 is a host-architecture independent emulator of
 Sharp X68000 written in C++.
 
-@menu
-* Using Virtual X68000::        
-* Command Reference::           
-* Inside Virtual X68000::       
-* General purpose components::  
-* X68000 emulation::            
-* Concept Index::               
-@end menu
-@end ifinfo
+This edition describes version 1.1 of Virtual X68000.
 
-@node Using Virtual X68000, Command Reference, Top, Top
-@chapter Using Virtual X68000
 @menu
-* Introdution::                 
+* Introduction::                
+* Command Reference::           Invoking commands.
+* M68000 Architecture::         Quick look at the M68000 architecture.
+* Coding Conventions::          How code is written.
+* General purpose components::  Generic components.
+* X68000 emulation::            X68000 specific components.
+* GTK+ User Interface::         
+* Sample Application::          
+* Function Index::              Index menu for functions and methods.
+* Data Type Index::             Index menu for data types and classes.
+* Concept Index::               Index menu for concepts.
+
+@detailmenu
+ --- The Detailed Node Listing ---
+
+Command Reference
+
+* Invoking vx68k::              Example command.
+
+M68000 Architecture
+
+* Data Size::                   Data size description.
+
+Virtual X68000 Coding Conventions
+
+* Basic Types::                 Typedefs.
+
+General purpose components
+
+* Memory and I/O::              
+* Processor::                   How is a processor constructed?
+
+Memory and I/O
+
+* Class memory::                
+* Class memory_address_space::  
+
+Processor
+
+* Context::                     
+* Execution Unit::              
+
+Execution Unit
+
+* Instructions::                
+
+X68000 emulation
+
+* Machine::                     
+* Human68k::                    
+
+Machine
+
+* SCC::                         
+
+@end detailmenu
 @end menu
 
-@node Introdution,  , Using Virtual X68000, Using Virtual X68000
-@section Introdution
+@end ifnottex
+
+@node Introduction, Command Reference, Top, Top
+@chapter Introduction
 ....
 
-@node Command Reference, Inside Virtual X68000, Using Virtual X68000, Top
+@node Command Reference, M68000 Architecture, Introduction, Top
 @chapter Command Reference
+
 @menu
-* vx68k::                       
+* Invoking vx68k::              Example command.
 @end menu
 
-@node vx68k,  , Command Reference, Command Reference
-@section vx68k
-@menu
-@end menu
+@node Invoking vx68k,  , Command Reference, Command Reference
+@section Invoking @code{vx68k}
 
-@subheading Name
-vx68k --- run X68000 command on a virtual machine
-
-@subheading Synopsis
+@code{vx68k} is a sample application to run X68000 programs.
 
 @code{vx68k}
 [@var{option}]...
 [--]
 @var{command}
 [@var{argument}]...
-
-@subheading Description
-@code{vx68k} runs X68000
-@var{command} on a virtual machine.
-
-...
 
 @subheading Options
 @table @asis
@@ -90,44 +128,65 @@ Allocate @var{n} megabytes.
 
 @end table
 
-@node Inside Virtual X68000, General purpose components, Command Reference, Top
-@chapter Inside Virtual X68000
+@node M68000 Architecture, Coding Conventions, Command Reference, Top
+@chapter M68000 Architecture
+
+Before describing internals of Virtual X68000, let's review the M68000
+architecture.
+
+Readers who is familiar with this architecture can skip this chapter.
+
 @menu
-* Basic types::                 
+* Data Size::                   Data size description.
 @end menu
 
-@node Basic types,  , Inside Virtual X68000, Inside Virtual X68000
-@section Basic types
+@node Data Size,  , M68000 Architecture, M68000 Architecture
+@section Data Size
+
+In M68000 architecture, a @dfn{byte} is an octet.  A @dfn{word} is two
+octets.  A @dfn{long word} is four octets.
+
+@node Coding Conventions, General purpose components, M68000 Architecture, Top
+@chapter Virtual X68000 Coding Conventions
+
+@cindex coding convention
+This chapter describes the coding conventions used in the Virtual X68000
+programs.
+
+@menu
+* Basic Types::                 Typedefs.
+@end menu
+
+@node Basic Types,  , Coding Conventions, Coding Conventions
+@section Basic Types
 Virtual X68000 defines several basic types to keep the program
 portable. These types are defined in namespace
 @code{vm68k::types} and imported in namespace
 @code{vm68k}.
 
-@menu
-* Unsigned integer types::      
-* Signed integer types::        
-@end menu
-
-@node Unsigned integer types, Signed integer types, Basic types, Basic types
-@subsection Unsigned integer types
-@code{uint_type} is a natural unsigned type that can
+@deftp Typedef uint_type
+This is a natural unsigned type that can
 hold an unsigned word number on M68000. This type is
 @code{unsigned int} on all host architectures.
+@end deftp
 
-@code{uint32_type} is a natural unsigned type that can
+@deftp Typedef uint32_type
+This is a natural unsigned type that can
 hold an unsigned long word number on M68000. This type is
 @code{unsigned int} on host architectures that have
 @code{unsigned int} with at least 32-bit.
+@end deftp
 
-@node Signed integer types,  , Unsigned integer types, Basic types
-@subsection Signed integer types
+@deftp Typedef sint_type
 @code{sint_type} is a natural signed type that can
 hold a signed word number on M68000. This type is
 @code{int} on most host architectures, but if the host
 architecture cannot represent -0x8000 in that type, i.e. it
 does not use 2's complement representation, it is @code{long
 int} instead.
+@end deftp
 
+@deftp Typedef sint32_type
 @code{sint32_type} is a natural signed type that can
 hold a signed long word number on M68000. This type is
 @code{int} on host architectures that have
@@ -137,31 +196,38 @@ int} if the type can hold -0x80000000, or @code{long
 long int} if the compiler is GCC. If no type can hold
 -0x80000000 on the architecture, Virtual X68000 cannot be
 compiled.
+@end deftp
 
-@node General purpose components, X68000 emulation, Inside Virtual X68000, Top
+@node General purpose components, X68000 emulation, Coding Conventions, Top
 @chapter General purpose components
 General purpose components are provided by the library libvm68k.
 These components are declared in the namespace vm68k.
 
 @menu
-* Memory::                      
-* Address space::               
-* Processor::                   
+* Memory and I/O::              
+* Processor::                   How is a processor constructed?
 @end menu
 
-@node Memory, Address space, General purpose components, General purpose components
-@section Memory
+@node Memory and I/O, Processor, General purpose components, General purpose components
+@section Memory and I/O
+
+@cindex memory
 Memory is an object that can be mapped in an address space.
 The class @code{memory} is the abstract base
 class for all memory.
 
+Virtual X68000 uses a single address space to access memory
+and peripheral devices.
+
 @menu
-* @code{memory}: memory.        
+* Class memory::                
+* Class memory_address_space::  
 @end menu
 
-@node memory,  , Memory, Memory
-@subsection @code{memory}
-@cindex memory
+@node Class memory, Class memory_address_space, Memory and I/O, Memory and I/O
+@subsection Class @code{memory}
+
+@deftp {Abtract Class} memory
 This class has methods @code{get_16},
 @code{get_8}, @code{get_32},
 @code{put_16}, @code{put_8}, and
@@ -172,14 +238,43 @@ are pure virtual and must be overridden in derived classes.
 Default implementations for @code{get_32} and
 @code{put_32} are provided but a derived class
 can override those for better performance.
+@end deftp
 
-@node Address space, Processor, Memory, General purpose components
-@section Address space
-@cindex address space
-Virtual X68000 uses a single address space to access memory
-and peripheral devices.
+@deftp {Enumeration in @code{memory}} function_code
+@end deftp
 
-@node Processor,  , Address space, General purpose components
+@deftypeop {Abstract Method} memory uint_type get_16 (function_code @var{fc}, uint32_type @var{address}) const
+This method reads a word data from the memory.  @var{address} must be
+aligned to a word boundary.
+@end deftypeop
+
+@deftypeop {Abstract Method} memory {unsigned int} get_8 (function_code @var{fc}, uint32_type @var{address}) const
+This method reads a byte data from the memory.
+@end deftypeop
+
+@deftypemethod memory uint32_type get_32 (function_code @var{fc}, uint32_type @var{address}) const
+@end deftypemethod
+
+@deftypeop {Abstract Method} memory void put_16 (function_code @var{fc}, uint32_type @var{address}, uint_type @var{value})
+@end deftypeop
+
+@deftypeop {Abstract Method} memory void put_8 (function_code @var{fc}, uint32_type @var{address}, unsigned int @var{value})
+@end deftypeop
+
+@deftypemethod memory void put_32 (function_code @var{fc}, uint32_type @var{address}, uint32_type @var{value})
+@end deftypemethod
+
+@deftp Class default_memory
+@end deftp
+
+@node Class memory_address_space,  , Class memory, Memory and I/O
+@subsection Class @code{memory_address_space}
+
+@deftp Class memory_address_space
+This is a class of address spaces for memory.
+@end deftp
+
+@node Processor,  , Memory and I/O, General purpose components
 @section Processor
 @cindex processor
 A processor is made of a pair of a context and an execution
@@ -190,23 +285,41 @@ execution.
 
 @menu
 * Context::                     
-* Execution unit::              
+* Execution Unit::              
 @end menu
 
-@node Context, Execution unit, Processor, Processor
+@node Context, Execution Unit, Processor, Processor
 @subsection Context
 @cindex context
 The state of the processor is stored in a context. Major
 components of a context are a set of registers and a
 reference to an address space.
 
-@node Execution unit,  , Context, Processor
-@subsection Execution unit
+@deftp Class context
+@end deftp
+
+@node Execution Unit,  , Context, Processor
+@subsection Execution Unit
+
 @cindex execution unit
 Virtual X68000 encapsulates non-dynamic aspects of a M68000
 processor into an execution unit.
 
-@node X68000 emulation, Concept Index, General purpose components, Top
+@deftp Class exec_unit
+@end deftp
+
+@menu
+* Instructions::                
+@end menu
+
+@node Instructions,  , Execution Unit, Execution Unit
+@subsubsection Instructions
+
+An instruction is defined by a function.
+@cindex instruction handler
+This function is called @dfn{instruction handler}.
+
+@node X68000 emulation, GTK+ User Interface, General purpose components, Top
 @chapter X68000 emulation
 @menu
 * Machine::                     
@@ -239,7 +352,37 @@ port and a mouse port.
 Virtual X68000 is unique as it also offers functions of the
 basic operating system, Human68k.
 
-@node Concept Index,  , X68000 emulation, Top
+@node GTK+ User Interface, Sample Application, X68000 emulation, Top
+@chapter GTK+ User Interface
+
+This chapter describes the GTK+ implementation of user interface
+components.
+
+All components described in this chapter is declared in namespace
+@code{vx68k::gtk}.
+
+@deftp Class gtk_console
+Implements a console using the GTK+ user interface toolkit.
+@end deftp
+
+@node Sample Application, Function Index, GTK+ User Interface, Top
+@comment  node-name,  next,  previous,  up
+@chapter Sample Application
+
+This chapter describes the implementation of the sample application
+@code{vx68k}.
+
+@node Function Index, Data Type Index, Sample Application, Top
+@unnumbered Function Index
+
+@printindex fn
+
+@node Data Type Index, Concept Index, Function Index, Top
+@unnumbered Data Type Index
+
+@printindex tp
+
+@node Concept Index,  , Data Type Index, Top
 @unnumbered Concept Index
 
 @printindex cp
