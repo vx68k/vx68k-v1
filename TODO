@@ -1,14 +1,10 @@
 TO DO List for Virtual X68000
 
-$Date: Mon, 14 Aug 2000 16:11:29 +0900 $
+$Date: Sun, 17 Dec 2000 20:00:45 +0900 $
 
 * Implement the DMA controller.
 
-* Implement a mouse.
-
 * Generalize interrupt handling.
-
-* Use GdkImage to improve screen update.
 
 * Implement text cursor.
 
@@ -31,9 +27,7 @@ $Date: Mon, 14 Aug 2000 16:11:29 +0900 $
 * Implement DOS drives.  This will require some run-time
 configuration.
 
-* Make `exec_unit::install_instructions' table-driven.  (trivial)
-
-* Write vx68k.xml.
+* Write the Reference Manual.
 
 Maybe version 1.1 or later
 
@@ -60,11 +54,6 @@ M68k instructions can be categorized into three classes:
 (1) that change all five bits in CCR,
 (2) that change all bits except X, and
 (3) that change Z only (bit test).
-
-* Modular design.
-
-Split X68000-specific code from generic m68k code.  Also GTK-dependent
-code from platform-independent code.
 
 Version 1.2 or later
 

@@ -1,3 +1,13 @@
+2000-12-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Version 1.1.4.
+
+	* configure.in: Set VERSION to 1.1.4.
+
+	* TODO: Updated.
+
+	* NEWS: New version.
+
 2000-12-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/systemrom.cc (initialize_iocs_calls): Add new argument
