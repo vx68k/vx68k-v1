@@ -1,7 +1,11 @@
 2000-12-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* doc/vx68k.texi: Add @direntry commands.
+	* doc/vx68k.texi: Add @direntry commands.  Sets flags VERSION,
+	REVISION, and DATE.  Update text.  Insert blank lines after node
+	headings.
 	(SCC): Update documentation.
+	(Top): Change the title and update text.
+	(Instructions): Move @cindex to the head of the paragraph.
 
 	* bin/Makefile.am (noinst_LIBRARIES): Moved after bin_PROGRAMS.
 	(vx68k_SOURCES): Change the order of files.

@@ -2,6 +2,11 @@
 @c %**start of header
 @setfilename vx68k.info
 @settitle Virtual X68000 Reference Manual
+@set VERSION 1.1
+@c $Format: "@set REVISION $Revision$" $
+@set REVISION 1.11
+@c $Format: "@set DATE $Date$" $
+@set DATE Sun, 10 Dec 2000 23:18:08 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -16,7 +21,7 @@
 @end direntry
 
 @ifinfo
-This file documents Virtual X68000.
+This file documents the usage and the internals of Virtual X68000.
 
 Copyright 1999-2000 Hypercore Software Design, Ltd.
 
@@ -27,9 +32,12 @@ preserved on all copies.
 
 @titlepage
 @title Virtual X68000 Reference Manual
+@subtitle Version @value{VERSION}
 @author Kaz Sasayama
 @page
 @vskip 0pt plus 1filll
+Revision @value{REVISION}, updated @value{DATE}.
+
 Copyright @copyright{} 1999-2000 Hypercore Software Design, Ltd.
 
 Permission is granted to make and distribute verbatim copies of this
@@ -43,12 +51,14 @@ preserved on all copies.
 
 @ifnottex
 @node Top, Introduction, (dir), (dir)
-@top Virtual X68000 Reference Manual
+@top Virtual X68000
 
 Virtual X68000 is a host-architecture independent emulator of
 Sharp X68000 written in C++.
 
-This edition describes version 1.1 of Virtual X68000.
+This is Revision @value{REVISION} of the Virtual X68000 Reference
+Manual, updated @value{DATE}.  This manual applies to Version
+@value{VERSION} of Virtual X68000.
 @end ifnottex
 
 @menu
@@ -298,6 +308,7 @@ This is a class of address spaces for memory.
 @node Processor,  , Memory and I/O, General purpose components
 @section Processor
 @cindex processor
+
 A processor is made of a pair of a context and an execution
 unit. A context represents the dynamic state, which is
 updated by program execution. An execution unit represents
@@ -312,6 +323,7 @@ execution.
 @node Context, Execution Unit, Processor, Processor
 @subsection Context
 @cindex context
+
 The state of the processor is stored in a context. Major
 components of a context are a set of registers and a
 reference to an address space.
@@ -371,8 +383,8 @@ This method executes instructions in context @var{c}.
 @node Instructions,  , Execution Unit, Execution Unit
 @subsubsection Instructions
 
-An instruction is defined by a function.
 @cindex instruction handler
+An instruction is defined by a function.
 This function is called @dfn{instruction handler}.
 
 @node X68000 emulation, GTK+ User Interface, General purpose components, Top
@@ -385,6 +397,7 @@ This function is called @dfn{instruction handler}.
 @node Machine, Human68k, X68000 emulation, X68000 emulation
 @section Machine
 @cindex machine
+
 In Virtual X68000, a machine is an abstraction of X68000
 hardware and firmware BIOS.
 
@@ -396,9 +409,19 @@ hardware and firmware BIOS.
 @node Class machine, SCC, Machine, Machine
 @subsection Class machine
 
+These definitions are available in @file{<vx68k/machine.h>}.
+
 @deftp Class machine
 This class represents the user-interface independent part of an X68000
 hardware and firmware.
+@end deftp
+
+@defop Constructor machine machine (size_t @var{memory_size})
+This method constructs a machine.
+@end defop
+
+@deftp {Abstract Class} console
+This class is an abstract interface to the host system.
 @end deftp
 
 @node SCC,  , Class machine, Machine
@@ -408,12 +431,14 @@ hardware and firmware.
 @cindex Z8530 SCC
 @cindex COM port
 @cindex mouse port
+
 X68000 uses a Zilog Z8530 SCC, or serial communication controller, for a
 COM port and a mouse port.
 
 @node Human68k,  , Machine, X68000 emulation
 @section Human68k
 @cindex Human68k
+
 Virtual X68000 is unique as it also offers functions of the
 basic operating system, Human68k.
 
