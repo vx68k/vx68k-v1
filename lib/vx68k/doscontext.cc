@@ -32,6 +32,7 @@
 #endif
 #include <fstream>
 #include <algorithm>
+#include <stdexcept>
 #include <cstdlib>
 #include <cstdio>
 
@@ -51,21 +52,6 @@ using namespace std;
 sint32_type
 dos_exec_context::read(uint_type fd, uint32_type dataptr, uint32_type size)
 {
-#if 0
-  // FIXME.
-  unsigned char *data_buf = new unsigned char [size];
-
-  ssize_t done = ::read(fd, data_buf, size);
-  if (done == -1)
-    {
-      delete [] data_buf;
-      return -6;			// FIXME.
-    }
-
-  mem->write(SUPER_DATA, dataptr, data_buf, done);
-  delete [] data_buf;
-  return done;
-#endif
   if (fd >= NFILES || files[fd] == NULL)
     return -6;
 
@@ -75,21 +61,6 @@ dos_exec_context::read(uint_type fd, uint32_type dataptr, uint32_type size)
 sint32_type
 dos_exec_context::write(uint_type fd, uint32_type dataptr, uint32_type size)
 {
-#if 0
-  // FIXME.
-  unsigned char *data_buf = new unsigned char [size];
-  mem->read(SUPER_DATA, dataptr, data_buf, size);
-
-  ssize_t done = ::write(fd, data_buf, size);
-  if (done == -1)
-    {
-      delete [] data_buf;
-      return -6;			// FIXME.
-    }
-
-  delete [] data_buf;
-  return done;
-#endif
   if (fd >= NFILES || files[fd] == NULL)
     return -6;
 
@@ -99,13 +70,6 @@ dos_exec_context::write(uint_type fd, uint32_type dataptr, uint32_type size)
 sint_type
 dos_exec_context::fgetc(uint_type fd)
 {
-#if 0
-  unsigned char data_buf[1];
-  ssize_t done = ::read(fd, data_buf, 1);
-  if (done == -1)
-    return -6;			// FIXME.
-  return data_buf[0];
-#endif
   if (fd >= NFILES || files[fd] == NULL)
     return -6;
 
@@ -115,14 +79,6 @@ dos_exec_context::fgetc(uint_type fd)
 sint_type
 dos_exec_context::fputc(sint_type code, uint_type filno)
 {
-#if 0
-  // FIXME.
-  unsigned char buf[1];
-  buf[0] = code;
-  ::write(filno, buf, 1);
-
-  return 1;
-#endif
   if (filno >= NFILES || files[filno] == NULL)
     return -6;
 
@@ -132,20 +88,6 @@ dos_exec_context::fputc(sint_type code, uint_type filno)
 sint32_type
 dos_exec_context::fputs(uint32_type mesptr, uint_type filno)
 {
-#if 0
-  // FIXME.
-  uint32_type ptr = mesptr;
-  unsigned char buf[1];
-  do
-    {
-      buf[0] = mem->getb(SUPER_DATA, ptr++);
-      if (buf[0] != 0)
-	::write(filno, buf, 1);
-    }
-  while (buf[0] != 0);
-
-  return ptr - 1 - mesptr;
-#endif
   if (filno < 0 || filno >= NFILES || files[filno] == NULL)
     return -6;
 
@@ -155,12 +97,6 @@ dos_exec_context::fputs(uint32_type mesptr, uint_type filno)
 sint32_type
 dos_exec_context::seek(uint_type fd, sint32_type offset, uint_type mode)
 {
-#if 0
-  // FIXME.
-  int32 pos = ::lseek(fd, offset, mode);
-  if (pos == -1)
-    return -6;			// FIXME.
-#endif
   if (fd >= NFILES || files[fd] == NULL)
     return -6;
 
@@ -171,11 +107,6 @@ dos_exec_context::seek(uint_type fd, sint32_type offset, uint_type mode)
 sint_type
 dos_exec_context::close(uint_type fd)
 {
-#if 0
-  // FIXME.
-  if (::close(fd) == -1)
-    return -6;			// FIXME.
-#endif
   if (fd >= NFILES || files[fd] == NULL)
     return -6;
 
@@ -202,19 +133,6 @@ dos_exec_context::dup(uint_type filno)
 sint_type
 dos_exec_context::open(uint32_type nameptr, uint_type mode)
 {
-#if 0
-  // FIXME.
-  static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
-
-  if ((flag & 0xf) > 2)
-    return -12;			// FIXME.
-
-  sint_type fd = ::open(name, uflag[flag & 0xf]);
-  if (fd == -1)
-    return -2;			// FIXME: errno test.
-
-  return fd;
-#endif
   file **found = find(files + 0, files + NFILES, (file *) 0);
   if (found == files + NFILES)
     return -4;
@@ -227,14 +145,6 @@ dos_exec_context::open(uint32_type nameptr, uint_type mode)
 sint_type
 dos_exec_context::create(uint32_type nameptr, uint_type atr)
 {
-#if 0
-  // FIXME.
-  sint_type fd = ::open(name, O_RDWR | O_CREAT | O_TRUNC, 0666);
-  if (fd == -1)
-    return -2;			// FIXME: errno test.
-
-  return fd;
-#endif
   file **found = find(files + 0, files + NFILES, (file *) 0);
   if (found == files + NFILES)
     return -4;
@@ -299,13 +209,13 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
 {
   ifstream is (name, ios::in | ios::binary);
   if (!is)
-    abort ();			// FIXME
+    throw runtime_error("open error");
   char head[64];
   is.read (head, 64);
   if (!is)
-    abort ();			// FIXME
+    throw runtime_error("read error");
   if (head[0] != 'H' || head[1] != 'U')
-    abort ();			// FIXME
+    throw runtime_error("exec format error");
 
   uint32 base = getl (head + 4);
   uint32 start_offset = getl (head + 8);
@@ -330,7 +240,7 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
     {
       is.read (buf, text_size + data_size);
       if (!is)
-	abort ();		// FIXME
+	throw runtime_error("read error");
       mem->write(SUPER_DATA, load_address,
 		 buf, text_size + data_size);
     }
@@ -347,7 +257,7 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
     {
       is.read(fixup_buf, reloc_size);
       if (!is)
-	abort();		// FIXME.
+	throw runtime_error("read error");
 
       const char *p = fixup_buf;
       uint32 address = load_address;
@@ -363,7 +273,7 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
 	  if (d % 2 != 0)
 	    {
 	      fprintf(stderr, "Illegal fixup at an odd address\n");
-	      abort();		// FIXME.
+	      throw runtime_error("exec format error");
 	    }
 	  address += d;
 	  uint32 value = mem->getl(SUPER_DATA, address);
@@ -381,13 +291,9 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
   free(fixup_buf);
 
   // PSP setup.
-  mem->write(SUPER_DATA, load_address - 128,
-	     name, strlen(name) + 1);
+  mem->puts(SUPER_DATA, load_address - 128, name);
   regs.a[0] = load_address - 0x100;
   regs.a[1] = load_address + text_size + data_size + bss_size;
-  regs.a[2] = 0x7000;		// FIXME.
-  regs.a[3] = 0x7000;		// FIXME.
-  regs.a[4] = load_address + start_offset;
 
   return load_address + start_offset;
 }
@@ -414,16 +320,16 @@ sint_type
 dos_exec_context::getenv(uint32_type getname, uint32_type env,
 			 uint32_type getbuf)
 {
-  // FIXME.
-  char name[256];
-  mem->read(SUPER_DATA, getname, name, 256);
-
-  const char *value = ::getenv(name);
-  if (value == NULL)
-    value = "";
+  string name = mem->gets(SUPER_DATA, getname);
 
   // FIXME
-  mem->write(SUPER_DATA, getbuf, value, strlen(value) + 1);
+  string s;
+  const char *value = ::getenv(name.c_str());
+  if (value != NULL)
+    s = value;
+
+  s.erase(255);
+  mem->puts(SUPER_DATA, getbuf, s);
 
   return 0;
 }

@@ -1,5 +1,12 @@
 1999-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/doscontext.cc (read, write, fgetc, fputc, fputs, seek,
+	close, open, create): Remove obsolete code.
+	(load_executable): Replace abort calls with throws.
+	(load_executable): Use address_space::puts.
+	(load_executable): Remove a[2]..a[4] setting code.
+	(getenv): Use address_space::gets and puts.
+
 	* lib/vx68k/filesystem.cc (fputs): Use address_space::gets.
 	(open, create, chmod): Use address_space::gets.
 
