@@ -100,10 +100,10 @@ namespace
 	{
 	  len = 4;
 	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
-	  disp = ec->mem->getw_signed(fc, ec->regs.pc + 2);
+	  disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
 	}
-      else if (disp >= 0x80)
-	disp -= 0x100;
+      else
+	disp = extsb(disp);
 #ifdef TRACE_STEPS
       fprintf(stderr, " bge 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
 #endif
@@ -121,10 +121,10 @@ namespace
 	{
 	  len = 4;
 	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
-	  disp = ec->mem->getw_signed(fc, ec->regs.pc + 2);
+	  disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
 	}
-      else if (disp >= 0x80)
-	disp -= 0x100;
+      else
+	disp = extsb(disp);
 #ifdef TRACE_STEPS
       fprintf(stderr, " bne 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
 #endif
@@ -201,7 +201,7 @@ namespace
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
-      int offset = ec->mem->getw_signed(fc, ec->regs.pc + 2);
+      int offset = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
 #ifdef TRACE_STEPS
       fprintf(stderr, " lea %%a%d@(%ld),%%a%d\n", s_reg, (long) offset, d_reg);
 #endif
@@ -228,11 +228,11 @@ namespace
       ec->regs.pc += 6;
     }
 
-  void link(int op, execution_context *ec)
+  void link_a(int op, execution_context *ec)
     {
       int reg = op & 0x0007;
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
-      int disp = ec->mem->getw_signed(fc, ec->regs.pc + 2);
+      int disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
 #ifdef TRACE_STEPS
       fprintf(stderr, " link %%a%d,#%d\n", reg, disp);
 #endif
@@ -421,7 +421,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x4260, 0x0007, &clrw_predec);
   eu->set_instruction(0x4879, 0x0000, &pea_absl);
   eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
-  eu->set_instruction(0x4e50, 0x0007, &link);
+  eu->set_instruction(0x4e50, 0x0007, &link_a);
   eu->set_instruction(0x4e75, 0x0000, &rts);
   eu->set_instruction(0x5048, 0x0e07, &addqw_a);
   eu->set_instruction(0x5188, 0x0e07, &subql_a);

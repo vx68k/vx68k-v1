@@ -1,5 +1,12 @@
 1999-03-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/addrspace.cc: Modify comments.
+	(getb_signed, getw_signed, getl_signed): Removed.
+
+	* lib/vm68k/execunit.cc (bge, bne, lea_offset_a, link): Use
+	extsw/extsb instead of getw_/getb_signed.
+	(link_a): Renamed from link.  Update all referrers.
+
 	* lib/vm68k/addrspace.cc: New file.
 	* lib/vm68k/Makefile.am (libvm68k_a_SOURCES): Add the new file.
 	* lib/vm68k/memory.cc: Move address_space methods to
