@@ -58,12 +58,13 @@ namespace vx68k
     {
     };
 
+    /* Process */
     class process
     {
     private:
       memory_allocator *_allocator;
       file_system *_fs;
-      uint32_type block;
+      uint32_type pdb;
 
     public:
       process(memory_allocator *a, file_system *fs);
@@ -74,6 +75,8 @@ namespace vx68k
 	{return _fs;}
 
     public:
+      uint32_type getpdb() const
+	{return pdb;}
       void exit(sint_type);
       sint32_type malloc(uint32_type);
       sint_type mfree(sint32_type);
@@ -114,7 +117,9 @@ namespace vx68k
       sint32_type write(int, uint32_type, uint32_type);
       int32 seek(int, int32, unsigned int);
       int fgetc(int);
-      uint32 load_executable(const char *);
+
+    public:
+      uint32 load_executable(const char *, uint32_type address);
       uint16 start(uint32, const char *const *);
 
     public:

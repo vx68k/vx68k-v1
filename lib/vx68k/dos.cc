@@ -47,7 +47,7 @@ process *
 dos::load(const char *name, dos_exec_context &c)
 {
   process *p = new process(&allocator, &fs);
-  c.regs.a[4] = c.load_executable(name);
+  c.regs.a[4] = c.load_executable(name, p->getpdb());
   return p;
 }
 
@@ -255,8 +255,8 @@ namespace
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
-    // FIXME.
-    ec.regs.d[0] = 0x8010;
+    process *p = static_cast<dos_exec_context &>(ec).current_process();
+    ec.regs.d[0] = p->getpdb();
 
     ec.regs.pc += 2;
   }

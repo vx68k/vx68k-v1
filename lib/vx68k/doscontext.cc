@@ -105,7 +105,7 @@ dos_exec_context::start(uint32 address, const char *const *argv)
 }
 
 uint32
-dos_exec_context::load_executable(const char *name)
+dos_exec_context::load_executable(const char *name, uint32_type address)
 {
   ifstream is (name, ios::in | ios::binary);
   if (!is)
@@ -133,7 +133,7 @@ dos_exec_context::load_executable(const char *name)
       fprintf(stderr, "Fixup: %lu\n", (unsigned long) reloc_size);
     }
 
-  uint32 load_address = 0x8100;	// FIXME.
+  uint32 load_address = address + 0xf0;
 
   char *buf = static_cast <char *> (malloc (text_size + data_size));
   try
@@ -193,8 +193,8 @@ dos_exec_context::load_executable(const char *name)
   // PSP setup.
   mem->write(SUPER_DATA, load_address - 128,
 	     name, strlen(name) + 1);
-  regs.a[0] = load_address - 0x100; // FIXME.
-  regs.a[1] = load_address + 0x100000; // FIXME.
+  regs.a[0] = load_address - 0x100;
+  regs.a[1] = mem->getl(SUPER_DATA, regs.a[0] + 8);
   regs.a[2] = 0x7000;		// FIXME.
   regs.a[3] = 0x7000;		// FIXME.
   regs.a[4] = load_address + start_offset;
