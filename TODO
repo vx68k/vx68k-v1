@@ -1,10 +1,12 @@
 To-Do List for Virtual X68000
 
-$Date: Tue, 16 Nov 1999 20:42:48 +0900 $
+$Date: Tue, 16 Nov 1999 20:58:28 +0900 $
 
 Version 1.1
 
 * Use the GdkRgb visual.  This will initialize GdkRgb automagically.
+
+* Implement key event handling to the GTK+ console.
 
 * Better text VRAM emulation.
 
@@ -13,8 +15,6 @@ Version 1.1
 ** Optimization.
 
 * Better console device behaviour, especially on input.
-
-** Key input.
 
 * Basic FLOAT handlers.
 
