@@ -260,7 +260,8 @@ const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
 
 vx68k_app::vx68k_app(const char *const *a)
   : args(a),
-    vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE)
+    vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE),
+    con(&vm)
 {
   vm.connect(&con);
 }

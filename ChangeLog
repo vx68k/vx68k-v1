@@ -1,5 +1,14 @@
 1999-08-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (vx68k_app): Add argument to con initialize.
+
+	* lib/vx68k/gtkconsole.cc (handle_timeout): Get image from
+	machine.
+	(gtk_console): Add argument and initialize _m.
+
+	* include/vx68k/gtk.h (class gtk_console): Add member _m, and
+	change constructor.
+
 	* lib/vx68k/machine.cc (get_image): New function.
 
 	* lib/vx68k/textvram.cc (draw_char): Add code for control

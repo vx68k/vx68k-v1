@@ -41,6 +41,7 @@ namespace vx68k
 				      gpointer) throw ();
 
     private:
+      machine *_m;
       int width, height;
       size_t row_size;
       guchar *rgb_buf;
@@ -48,7 +49,7 @@ namespace vx68k
       vector<GtkWidget *> widgets;
 
     public:
-      gtk_console();
+      explicit gtk_console(machine *);
       ~gtk_console();
 
     public:

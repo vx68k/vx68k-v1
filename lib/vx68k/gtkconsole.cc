@@ -92,6 +92,8 @@ gtk_console::handle_timeout(gpointer data) throw ()
   gtk_console *c = static_cast<gtk_console *>(data);
   I(c != NULL);
 
+  c->_m->get_image(0, 0, c->width, c->height, c->rgb_buf, c->row_size);
+
   for (vector<GtkWidget *>::const_iterator i = c->widgets.begin();
        i != c->widgets.end();
        ++i)
@@ -127,8 +129,9 @@ gtk_console::~gtk_console()
   delete [] rgb_buf;
 }
 
-gtk_console::gtk_console()
-  : width(768), height(512),
+gtk_console::gtk_console(machine *m)
+  : _m(m),
+    width(768), height(512),
     row_size(768 * 3),
     rgb_buf(NULL),
     timeout(0)
