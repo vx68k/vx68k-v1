@@ -45,18 +45,12 @@ namespace vm68k
 	{return extsw(ec.regs.d[reg]);}
       int32 getl(const context &ec) const
 	{return extsl(ec.regs.d[reg]);}
-      void putb(context &ec, int value) const
-	{
-	  const uint32 MASK = ((uint32) 1u << 8) - 1;
-	  ec.regs.d[reg] = ec.regs.d[reg] & ~MASK | (uint32) value & MASK;
-	}
-      void putw(context &ec, int value) const
-	{
-	  const uint32 MASK = ((uint32) 1u << 16) - 1;
-	  ec.regs.d[reg] = ec.regs.d[reg] & ~MASK | (uint32) value & MASK;
-	}
-      void putl(context &ec, int32 value) const
-	{ec.regs.d[reg] = value;}
+      void putb(context &ec, uint_type value) const
+	{modify_b(ec.regs.d[reg], value);}
+      void putw(context &ec, uint_type value) const
+	{modify_w(ec.regs.d[reg], value);}
+      void putl(context &ec, uint32_type value) const
+	{modify_l(ec.regs.d[reg], value);}
       void finishb(context &) const {}
       void finishw(context &) const {}
       void finishl(context &) const {}

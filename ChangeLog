@@ -1,7 +1,13 @@
 1999-08-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/addressing.h (class data_register): Use new modify
+	functions.
+
+	* include/vm68k/cpu.h (extract_ub, extract_uw, extract_ul,
+	modify_b, modify_w, modify_l): New functions.
+
 	* lib/vx68k/textvram.cc (advance_row): New function.
-	(scroll, draw_char): New function.
+	(scroll, draw_char): New functions.
 	(text_vram): Initialize curx and cury.
 
 	* include/vx68k/machine.h (class text_vram): Add members: curx,

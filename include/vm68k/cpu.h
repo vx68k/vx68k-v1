@@ -26,6 +26,24 @@ namespace vm68k
 {
   using namespace std;
 
+  inline uint_type
+  extract_ub(uint32_type value)
+  {
+    return value & 0xffu;
+  }
+
+  inline uint_type
+  extract_uw(uint32_type value)
+  {
+    return value & 0xffffu;
+  }
+
+  inline uint32_type
+  extract_ul(uint32_type value)
+  {
+    return value;
+  }
+
   inline int extsb(unsigned int value)
     {
       const unsigned int N = 1u << 7;
@@ -49,6 +67,27 @@ namespace vm68k
       value &= M;
       return value >= N ? -(int32) (M - value) - 1 : (int32) value;
     }
+
+  inline void
+  modify_b(uint32_type &dest, uint_type value)
+  {
+    const uint32_type MASK = 0xffu;
+    dest = dest & ~MASK | value & MASK;
+  }
+
+  inline void
+  modify_w(uint32_type &dest, uint_type value)
+  {
+    const uint32_type MASK = 0xffffu;
+    dest = dest & ~MASK | value & MASK;
+  }
+
+  inline void
+  modify_l(uint32_type &dest, uint32_type value)
+  {
+    const uint32_type MASK = 0xffffffffu;
+    dest = value & MASK;
+  }
 
   /* Condition code evaluator (abstract base class).  */
   struct cc_evaluator
