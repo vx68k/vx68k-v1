@@ -154,6 +154,20 @@ namespace
       ec.regs.pc += 2;
     }
 
+  void
+  dos_malloc(unsigned int op, context &ec)
+  {
+#ifdef L
+    L(" DOS _MALLOC");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    // FIXME.
+    ec.regs.d[0] = 0x110000;
+
+    ec.regs.pc += 2;
+  }
+
   void dos_open(unsigned int op, context &ec)
     {
       VL((" DOS _OPEN\n"));
@@ -282,8 +296,11 @@ dos::dos(address_space *m, size_t)
   main_cpu.set_instruction(0xff42, 0, &dos_seek);
   main_cpu.set_instruction(0xff43, 0, &dos_chmod);
   main_cpu.set_instruction(0xff44, 0, &dos_ioctrl);
+  main_cpu.set_instruction(0xff48, 0, &dos_malloc);
   main_cpu.set_instruction(0xff4a, 0, &dos_setblock);
   main_cpu.set_instruction(0xff4c, 0, &dos_exit2);
   main_cpu.set_instruction(0xff57, 0, &dos_filedate);
+
+  main_cpu.set_instruction(0xff87, 0, &dos_filedate);
 }
 
