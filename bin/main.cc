@@ -185,101 +185,112 @@ void
 vx68k_app::show_about_dialog()
 {
   GtkWidget *dialog = gtk_dialog_new();
-  gtk_window_set_policy(GTK_WINDOW(dialog), false, false, false);
-  gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-  if (main_window != NULL)
-    gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(main_window));
-  gtk_window_set_modal(GTK_WINDOW(dialog), true);
 
-  const char *title_format = _("About %s");
-  char *title;
+  try
+    {
+      gtk_window_set_policy(GTK_WINDOW(dialog), false, false, false);
+      gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
+      gtk_window_set_modal(GTK_WINDOW(dialog), true);
+      if (main_window != NULL)
+	gtk_window_set_transient_for(GTK_WINDOW(dialog),
+				     GTK_WINDOW(main_window));
+
+      const char *title_format = _("About %s");
+      char *title;
 #ifdef HAVE_ASPRINTF
-  asprintf(&title, title_format, PROGRAM);
+      asprintf(&title, title_format, PROGRAM);
 #else
-  title = static_cast<char *>(malloc(strlen(title_format) - 2
-				     + strlen(PROGRAM) + 1));
-  sprintf(title, title_format, PROGRAM);
+      title = static_cast<char *>(malloc(strlen(title_format) - 2
+					 + strlen(PROGRAM) + 1));
+      sprintf(title, title_format, PROGRAM);
 #endif
 
-  gtk_window_set_title(GTK_WINDOW(dialog), title);
-  free(title);
+      gtk_window_set_title(GTK_WINDOW(dialog), title);
+      free(title);
 
-  {
-    GtkWidget *vbox1 = gtk_vbox_new(false, 10);
-    gtk_widget_show(vbox1);
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox1,
-		     false, false, 0);
-    gtk_container_set_border_width(GTK_CONTAINER(vbox1), 20);
+      GtkWidget *vbox1 = gtk_vbox_new(false, 10);
+      gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox1,
+			 false, false, 0);
 
-    const char *version_format = _("%s %s");
-    char *version;
+      gtk_widget_show(vbox1);
+      gtk_container_set_border_width(GTK_CONTAINER(vbox1), 20);
+      {
+	const char *version_format = _("%s %s");
+	char *version;
 #ifdef HAVE_ASPRINTF
-    asprintf(&version, version_format, PROGRAM, VERSION);
+	asprintf(&version, version_format, PROGRAM, VERSION);
 #else
-    version = static_cast<char *>(malloc(strlen(version_format) - 2 * 2
-					 + strlen(PROGRAM) + strlen(VERSION)
-					 + 1));
-    sprintf(version, version_format, PROGRAM, VERSION);
+	version = static_cast<char *>(malloc(strlen(version_format) - 2 * 2
+					     + strlen(PROGRAM)
+					     + strlen(VERSION) + 1));
+	sprintf(version, version_format, PROGRAM, VERSION);
 #endif
 
-    GtkWidget *version_label = gtk_label_new(version);
-    gtk_widget_show(version_label);
-    gtk_box_pack_start(GTK_BOX(vbox1), version_label,
-		       false, false, 0);
-    gtk_misc_set_alignment(GTK_MISC(version_label), 0.0, 0.5);
-    gtk_label_set_justify(GTK_LABEL(version_label), GTK_JUSTIFY_LEFT);
-    free(version);
+	GtkWidget *version_label = gtk_label_new(version);
+	gtk_box_pack_start(GTK_BOX(vbox1), version_label, false, false, 0);
 
-    const char *copyright_format
-      = _("Copyright (C) %s Hypercore Software Design, Ltd.");
-    char *copyright;
+	gtk_widget_show(version_label);
+	gtk_misc_set_alignment(GTK_MISC(version_label), 0.0, 0.5);
+	gtk_label_set_justify(GTK_LABEL(version_label), GTK_JUSTIFY_LEFT);
+	free(version);
+
+	const char *copyright_format
+	  = _("Copyright (C) %s Hypercore Software Design, Ltd.");
+	char *copyright;
 #ifdef HAVE_ASPRINTF
-    asprintf(&copyright, copyright_format, COPYRIGHT_YEAR);
+	asprintf(&copyright, copyright_format, COPYRIGHT_YEAR);
 #else
-    copyright = static_cast<char *>(malloc(strlen(copyright_format) - 2
-					   + strlen(COPYRIGHT_YEAR) + 1));
-    sprintf(copyright, copyright_format, COPYRIGHT_YEAR);
+	copyright = static_cast<char *>(malloc(strlen(copyright_format) - 2
+					       + strlen(COPYRIGHT_YEAR) + 1));
+	sprintf(copyright, copyright_format, COPYRIGHT_YEAR);
 #endif
 
-    GtkWidget *copyright_label = gtk_label_new(copyright);
-    gtk_widget_show(copyright_label);
-    gtk_box_pack_start(GTK_BOX(vbox1), copyright_label,
-		       false, false, 0);
-    gtk_misc_set_alignment(GTK_MISC(copyright_label), 0.0, 0.5);
-    gtk_label_set_justify(GTK_LABEL(copyright_label), GTK_JUSTIFY_LEFT);
-    free(copyright);
+	GtkWidget *copyright_label = gtk_label_new(copyright);
+	gtk_box_pack_start(GTK_BOX(vbox1), copyright_label, false, false, 0);
 
-    const char *notice1
-      = _("This is free software; see the source for copying conditions.\n"
-	  "There is NO WARRANTY; not even for MERCHANTABILITY\n"
-	  "or FITNESS FOR A PARTICULAR PURPOSE.");
-    GtkWidget *notice1_label = gtk_label_new(notice1);
-    gtk_widget_show(notice1_label);
-    gtk_box_pack_start(GTK_BOX(vbox1), notice1_label,
-		       false, false, 0);
-    gtk_misc_set_alignment(GTK_MISC(notice1_label), 0.0, 0.5);
-    gtk_label_set_justify(GTK_LABEL(notice1_label), GTK_JUSTIFY_LEFT);
-    // gtk_label_set_line_wrap(GTK_LABEL(notice1_label), true);
+	gtk_widget_show(copyright_label);
+	gtk_misc_set_alignment(GTK_MISC(copyright_label), 0.0, 0.5);
+	gtk_label_set_justify(GTK_LABEL(copyright_label), GTK_JUSTIFY_LEFT);
+	free(copyright);
 
-    const char *report_bugs
-      = _("Send comments or report bugs to <vx68k@lists.hypercore.co.jp>.");
-    GtkWidget *report_bugs_label = gtk_label_new(report_bugs);
-    gtk_widget_show(report_bugs_label);
-    gtk_box_pack_start(GTK_BOX(vbox1), report_bugs_label,
-		       false, false, 0);
-    gtk_misc_set_alignment(GTK_MISC(report_bugs_label), 0.0, 0.5);
-    gtk_label_set_justify(GTK_LABEL(report_bugs_label), GTK_JUSTIFY_LEFT);
-    gtk_label_set_line_wrap(GTK_LABEL(report_bugs_label), true);
-  }
+	const char *notice1
+	  = _("This is free software; see the source for copying conditions.\n"
+	      "There is NO WARRANTY; not even for MERCHANTABILITY\n"
+	      "or FITNESS FOR A PARTICULAR PURPOSE.");
+	GtkWidget *notice1_label = gtk_label_new(notice1);
+	gtk_box_pack_start(GTK_BOX(vbox1), notice1_label, false, false, 0);
 
-  const char *ok = _("OK");
-  GtkWidget *ok_button = gtk_button_new_with_label(ok);
-  gtk_widget_show(ok_button);
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
-		     ok_button, false, false, 0);
-  gtk_signal_connect(GTK_OBJECT(ok_button), "clicked",
-		     GTK_SIGNAL_FUNC(&handle_about_ok_clicked), this);
-  gtk_window_set_focus(GTK_WINDOW(dialog), ok_button);
+	gtk_widget_show(notice1_label);
+	gtk_misc_set_alignment(GTK_MISC(notice1_label), 0.0, 0.5);
+	gtk_label_set_justify(GTK_LABEL(notice1_label), GTK_JUSTIFY_LEFT);
+	// gtk_label_set_line_wrap(GTK_LABEL(notice1_label), true);
+
+	const char *report_bugs
+	  = _("Send comments or report bugs to <vx68k@lists.hypercore.co.jp>.");
+	GtkWidget *report_bugs_label = gtk_label_new(report_bugs);
+	gtk_box_pack_start(GTK_BOX(vbox1), report_bugs_label, false, false, 0);
+
+	gtk_widget_show(report_bugs_label);
+	gtk_misc_set_alignment(GTK_MISC(report_bugs_label), 0.0, 0.5);
+	gtk_label_set_justify(GTK_LABEL(report_bugs_label), GTK_JUSTIFY_LEFT);
+	gtk_label_set_line_wrap(GTK_LABEL(report_bugs_label), true);
+      }
+
+      const char *ok = _("OK");
+      GtkWidget *ok_button = gtk_button_new_with_label(ok);
+      gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
+			 ok_button, false, false, 0);
+
+      gtk_widget_show(ok_button);
+      gtk_window_set_focus(GTK_WINDOW(dialog), ok_button);
+      gtk_signal_connect(GTK_OBJECT(ok_button), "clicked",
+			 GTK_SIGNAL_FUNC(&handle_about_ok_clicked), this);
+    }
+  catch (...)
+    {
+      gtk_widget_destroy(dialog);
+      throw;
+    }
 
   gtk_widget_show(dialog);
 }

@@ -6,6 +6,7 @@
 	(show_about_dialog): Show the dialog at the end.
 	(create_window): Set the title and add an accel group.  Do not
 	show the window here.
+	(show_about_dialog): Add cleanup for exceptions.
 
 2000-02-29  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
