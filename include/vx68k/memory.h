@@ -48,6 +48,54 @@ namespace vx68k
     void putb(int, uint32_type, uint_type);
     void putw(int, uint32_type, uint_type);
   };
+
+  const size_t GRAPHICS_VRAM_SIZE = 2 * 1024 * 1024;
+  const size_t TEXT_VRAM_PLANE_SIZE = 128 * 1024;
+  const size_t TEXT_VRAM_SIZE = 4 * TEXT_VRAM_PLANE_SIZE;
+
+  /* Graphics VRAM.  */
+  class graphics_vram
+    : public memory
+  {
+  private:
+    uint16 *base;
+
+  public:
+    graphics_vram();
+    ~graphics_vram();
+
+  public:
+    size_t read(int, uint32_type, void *, size_t) const;
+    uint_type getb(int, uint32_type) const;
+    uint_type getw(int, uint32_type) const;
+
+  public:
+    size_t write(int, uint32_type, const void *, size_t);
+    void putb(int, uint32_type, uint_type);
+    void putw(int, uint32_type, uint_type);
+  };
+
+  /* Text VRAM.  */
+  class text_vram
+    : public memory
+  {
+  private:
+    uint16 *base;
+
+  public:
+    text_vram();
+    ~text_vram();
+
+  public:
+    size_t read(int, uint32_type, void *, size_t) const;
+    uint_type getb(int, uint32_type) const;
+    uint_type getw(int, uint32_type) const;
+
+  public:
+    size_t write(int, uint32_type, const void *, size_t);
+    void putb(int, uint32_type, uint_type);
+    void putw(int, uint32_type, uint_type);
+  };
 } // vx68k
 
 #endif /* not _VX68K_MEMORY_H */

@@ -1,5 +1,8 @@
 1999-07-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/memory.h (class graphics_vram, class text_vram):
+	New classes.
+
 	* bin/Makefile.am (man_MANS): Add vx68k.1.
 	(EXTRA_DIST): Add ${man_MANS}.
 
