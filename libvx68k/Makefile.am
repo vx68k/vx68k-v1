@@ -11,6 +11,6 @@ libvx68k_la_LDFLAGS = -release ${VERSION} -version-info 0
 #libvx68k_la_LDFLAGS = -version-info 0:0:0
 
 libvx68k_la_SOURCES = version.cc mainmem.cc textvram.cc sram.cc \
-iocsdisk.cc systemrom.cc x68kaddr.cc machine.cc \
+iocsdisk.cc systemrom.cc areaset.cc x68kaddr.cc machine.cc \
 allocator.cc filesystem.cc doscontext.cc shell.cc dos.cc
 

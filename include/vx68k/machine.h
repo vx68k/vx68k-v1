@@ -19,6 +19,7 @@
 #ifndef _VX68K_MACHINE_H
 #define _VX68K_MACHINE_H 1
 
+#include <vx68k/memory.h>
 #include <vx68k/iocs.h>
 #include <vm68k/cpu.h>
 #include <pthread.h>
@@ -274,6 +275,7 @@ namespace vx68k
     size_t _memory_size;
     main_memory mem;
     text_vram tvram;
+    area_set _area_set;
     sram _sram;
     system_rom rom;
     class exec_unit eu;

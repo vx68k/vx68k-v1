@@ -341,6 +341,7 @@ machine::configure(address_space &as)
   as.set_pages(0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &graphic_vram);
 #endif
   as.set_pages(0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &tvram);
+  as.set_pages(0xe86000 >> PAGE_SHIFT, 0xe88000 >> PAGE_SHIFT, &_area_set);
   as.set_pages(0xed0000 >> PAGE_SHIFT, 0xed4000 >> PAGE_SHIFT, &_sram);
   as.set_pages(0xfc0000 >> PAGE_SHIFT, 0x1000000 >> PAGE_SHIFT, &rom);
 
@@ -361,6 +362,7 @@ machine::~machine()
 machine::machine(size_t memory_size)
   : _memory_size(memory_size),
     mem(memory_size),
+    _area_set(&mem),
     curx(0), cury(0),
     saved_byte1(0)
 {

@@ -54,7 +54,7 @@ sram::getw(int fc, uint32_type address) const
 #ifdef HAVE_NANA_H
   L("sram: getw fc=%d address=%#010x\n", fc, address);
 #endif
-  address &= 0xfff;
+  address &= 0x3fff;
   uint_type value = ::getw(buf + address);
   return value;
 }
@@ -65,7 +65,7 @@ sram::getb(int fc, uint32_type address) const
 #ifdef HAVE_NANA_H
   L("sram: getb fc=%d address=%#010x\n", fc, address);
 #endif
-  address &= 0xfff;
+  address &= 0x3fff;
   uint_type value = *(buf + address) & 0xffu;
   return value;
 }

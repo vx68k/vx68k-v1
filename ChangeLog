@@ -1,3 +1,23 @@
+2000-06-29  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/machine.cc (configure): Map _area_set.
+	(machine): Add initialization of _area_set.
+
+	* include/vx68k/machine.h (class machine): Add new member
+	_area_set.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add areaset.cc.
+
+	* libvx68k/areaset.cc: New file.
+	(getw, getb, read, putw, putb, write, area_set): New function.
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Add memory.h.
+
+	* include/vx68k/memory.h: New file.
+	(class area_set): New class.
+
+	* libvx68k/sram.cc (getw, getb): Fix memory size mask.
+
 2000-06-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/machine.cc (boot): Handle bus error and address error
