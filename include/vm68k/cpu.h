@@ -205,23 +205,28 @@ struct exception_listener
     registers regs;
     address_space *mem;
     exception_listener *exception;
+
   private:
-    int pfc, dfc;
+    int pfc_cache, dfc_cache;
 
   public:
     explicit context(address_space *);
 
   public:
-    /* Returns the FC for program in the current state.  */
-    int program_fc() const
-      {return pfc;}
-
-    /* Returns the FC for data in the current state.  */
-    int data_fc() const
-      {return dfc;}
+    /* Returns true if supervisor state.  */
+    bool supervisor_state() const
+      {return regs.sr.supervisor_state();}
 
     /* Sets the supervisor state to STATE.  */
     void set_supervisor_state(bool state);
+
+    /* Returns the FC for program in the current state.  */
+    int program_fc() const
+      {return pfc_cache;}
+
+    /* Returns the FC for data in the current state.  */
+    int data_fc() const
+      {return dfc_cache;}
 
   public:
     uint_type fetchw(int disp) const

@@ -40,34 +40,34 @@ context::set_supervisor_state(bool state)
 {
   if (state)
     {
-      if (!regs.sr.supervisor_state())
+      if (!supervisor_state())
 	{
 	  regs.usp = regs.a[7];
 	  regs.sr.set_s_bit(true);
 	  regs.a[7] = regs.ssp;
 
-	  pfc = SUPER_PROGRAM;
-	  dfc = SUPER_DATA;
+	  pfc_cache = SUPER_PROGRAM;
+	  dfc_cache = SUPER_DATA;
 	}
     }
   else
     {
-      if (regs.sr.supervisor_state())
+      if (supervisor_state())
 	{
 	  regs.ssp = regs.a[7];
 	  regs.sr.set_s_bit(false);
 	  regs.a[7] = regs.usp;
 
-	  pfc = USER_PROGRAM;
-	  dfc = USER_DATA;
+	  pfc_cache = USER_PROGRAM;
+	  dfc_cache = USER_DATA;
 	}
     }
 }
 
 context::context(address_space *m)
   : mem(m),
-    pfc(regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM),
-    dfc(regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA)
+    pfc_cache(regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM),
+    dfc_cache(regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA)
 {
 }
 

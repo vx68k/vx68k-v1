@@ -1,5 +1,12 @@
 1999-10-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/cpu.h (class context): Add method
+	supervisor_state.
+	(class context): Rename member pfc to pfc_cache, and dfc to
+	dfc_cache.  Also change all users.
+	* vm68k/context.cc: Change use of pfc and dfc.
+	(set_supervisor_state): Use new method supervisor_state.
+
 	* vm68k/context.cc (set_supervisor_state): New function.
 
 	* include/vm68k/cpu.h (class context): Add method
