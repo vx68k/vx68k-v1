@@ -21,22 +21,3 @@
 #undef const
 #undef inline
 
-#include "vm68k/cpu.h"
-#include "vx68k/memory.h"
-
-using namespace vx68k;
-using vm68k::execution_context;
-using vm68k::cpu;
-
-/* vx68k main.  */
-int
-main (int argc, char **argv)
-{
-  memory mem;
-  execution_context ec (&mem);
-  ec.regs.pc = 0x8100;		// FIXME
-  cpu main_cpu;
-  main_cpu.run (&ec);
-  return 0;
-}
-

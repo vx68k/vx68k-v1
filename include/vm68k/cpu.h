@@ -29,7 +29,7 @@ namespace vm68k
 /* User view of CPU registers.  */
 struct user_cpu_regs
 {
-  uint32 r[16];
+  uint32 gr[16];		// d0-d7/a0-a7
   uint32 pc;
   uint16 ccr;
 };

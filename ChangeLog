@@ -1,5 +1,13 @@
 1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vx68k/main.cc (main): Set PC.
+
+	* include/vm68k/cpu.h (struct user_cpu_regs): Rename member r to
+	gr.
+
+	* vx68k/Makefile.am (libvx68k_a_SOURCES): Add loader.cc.
+	* vx68k/loader.cc: New file.
+
 	* Version 0.25.
 
 	* vm68k/cpu.cc (run): Modify display format for bus error.
