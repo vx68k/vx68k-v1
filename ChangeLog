@@ -1,5 +1,18 @@
 1999-07-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (vx68k_app): Connect text vram to console.
+
+	* lib/vx68k/machine.cc (machine): Set pages for tvram.
+
+	* include/vx68k/machine.h (class text_vram): Rename member base to
+	buf.
+	(class machine): Rename member main_mem to mem, and add tvram and
+	text_vram.
+
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add textvram.cc.
+
+	* lib/vx68k/textvram.cc: New file.
+
 	* lib/vx68k/gtkconsole.cc (handle_expose_event, ~gtk_console,
 	gtk_console): New functions.
 

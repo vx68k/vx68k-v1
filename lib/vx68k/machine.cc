@@ -93,16 +93,16 @@ machine::set_iocs_function(unsigned int i, iocs_function_handler handler,
 
 machine::machine(size_t memory_size)
   : _memory_size(memory_size),
-    main_mem(memory_size)
+    mem(memory_size)
 {
   fill(iocs_functions + 0, iocs_functions + 0x100,
        make_pair(&invalid_iocs_function, (iocs_function_data *) 0));
   
-  as.set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &main_mem);
+  as.set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &mem);
 #if 0
   as.set_pages(0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &graphic_vram);
-  as.set_pages(0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &text_vram);
 #endif
+  as.set_pages(0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &tvram);
 
   eu.set_instruction(0x4e4f, 0, &iocs, this);
 

@@ -93,7 +93,7 @@ namespace vx68k
     : public memory
   {
   private:
-    uint16 *base;
+    uint16 *buf;
     console *connected_console;
 
   public:
@@ -128,16 +128,20 @@ namespace vx68k
 
   private:
     size_t _memory_size;
-    main_memory main_mem;
+    main_memory mem;
+    class text_vram tvram;
     class address_space as;
     class exec_unit eu;
     pair<iocs_function_handler, iocs_function_data *> iocs_functions[0x100];
 
   public:
     explicit machine(size_t);
+
   public:
     size_t memory_size() const
       {return _memory_size;}
+    class text_vram *text_vram()
+      {return &tvram;}
     class address_space *address_space()
       {return &as;}
     class exec_unit *exec_unit()
