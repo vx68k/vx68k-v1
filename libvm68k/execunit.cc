@@ -47,10 +47,7 @@ using namespace vm68k::types;
 using namespace std;
 
 #ifdef HAVE_NANA_H
-namespace nana
-{
-  bool instruction_trace = false;
-}
+bool nana_instruction_trace = false;
 #endif
 
 void
@@ -66,13 +63,13 @@ exec_unit::run(context &c) const
 # ifdef DUMP_REGISTERS
 	  for (unsigned int i = 0; i != 8; ++i)
 	    {
-	      LG(nana::instruction_trace,
+	      LG(nana_instruction_trace,
 		 "| %%d%u = 0x%08lx, %%a%u = 0x%08lx\n",
 		 i, (unsigned long) c.regs.d[i],
 		 i, (unsigned long) c.regs.a[i]);
 	    }
 # endif
-	  LG(nana::instruction_trace, "| 0x%08lx (0x%04x)\n",
+	  LG(nana_instruction_trace, "| 0x%08lx (0x%04x)\n",
 	     (unsigned long) long_word_size::get(c.regs.pc),
 	     c.fetch(word_size(), 0));
 #endif
@@ -141,7 +138,7 @@ namespace
 
 #ifdef HAVE_NANA_H
 # undef L_DEFAULT_GUARD
-# define L_DEFAULT_GUARD nana::instruction_trace
+# define L_DEFAULT_GUARD nana_instruction_trace
 #endif
 
   /* Handles an ADD instruction.  */

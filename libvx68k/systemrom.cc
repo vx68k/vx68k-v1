@@ -41,10 +41,7 @@ using namespace vm68k::types;
 using namespace std;
 
 #ifdef HAVE_NANA_H
-namespace nana
-{
-  bool iocs_call_trace = false;
-}
+bool nana_iocs_call_trace = false;
 #endif
 
 uint_type
@@ -221,7 +218,7 @@ namespace
 
 #ifdef HAVE_NANA_H
 # undef L_DEFAULT_GUARD
-# define L_DEFAULT_GUARD nana::iocs_call_trace
+# define L_DEFAULT_GUARD nana_iocs_call_trace
 #endif
 
   /* Handles a _B_CLR_ST call.  */

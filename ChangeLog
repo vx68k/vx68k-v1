@@ -1,3 +1,11 @@
+2000-08-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc: Replace nana::iocs_call_trace with
+	nana_iocs_call_trace.  Also change all users.
+
+	* libvm68k/execunit.cc: Replace nana::instruction_trace with
+	nana_instruction_trace.  Also change all users.
+
 2000-08-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* TODO: Modified.
