@@ -1,6 +1,6 @@
 To-Do List for Virtual X68000
 
-$Date: Fri, 10 Dec 1999 21:59:11 +0900 $
+$Date: Tue, 25 Jan 2000 22:40:35 +0900 $
 
 * Update the status bar when the process exits.
 
@@ -10,9 +10,9 @@ $Date: Fri, 10 Dec 1999 21:59:11 +0900 $
 
 ** Optimize the text VRAM drawing.
 
-** Implement text scrolling, or at least prepare for it.
+** Implement hardware text scrolling, or at least prepare for it.
 
-* Improve console device behaviour.
+* Improve console device behaviour using emulated keyboard input.
 
 * Implement condition code updates for ADD.
 
@@ -25,10 +25,12 @@ $Date: Fri, 10 Dec 1999 21:59:11 +0900 $
 * Implement DOS drives.  This will require some run-time
 configuration.
 
-* Inprements interrupts.
+* Implements interrupts in `class context'.
+
+* Make `exec_unit::install_instructions' table-driven.  (trivial)
 
 * Write vx68k.xml.
-
+
 Maybe version 1.1 or later
 
 * IOCS function handlers.
