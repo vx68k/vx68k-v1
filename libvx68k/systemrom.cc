@@ -536,7 +536,18 @@ namespace
     L("IOCS _OPMINTST: %%a1=%#010lx\n", (unsigned long) c.regs.a[1]);
 #endif
     fprintf(stderr, "iocs_opmintst: FIXME: not implemented\n");
-    long_word_size::put(c.regs.d[0], 0);
+    long_word_size::put(c.regs.d[0], 1);
+  }
+
+  /* Handles a _OPMSET call.  */
+  void
+  iocs_opmset(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _OPMSET: %%d1:b=%#04x %%d2:b=%#04x\n",
+      byte_size::get(c.regs.d[1]), byte_size::get(c.regs.d[2]));
+#endif
+    fprintf(stderr, "iocs_opmset: FIXME: not implemented\n");
   }
 
   /* Handles a _OS_CUROF call.  */
@@ -769,6 +780,7 @@ namespace
     rom->set_iocs_function(0x55, iocs_function_type(&iocs_datebin, 0));
     rom->set_iocs_function(0x56, iocs_function_type(&iocs_timeget, 0));
     rom->set_iocs_function(0x57, iocs_function_type(&iocs_timebin, 0));
+    rom->set_iocs_function(0x68, iocs_function_type(&iocs_opmset, 0));
     rom->set_iocs_function(0x6a, iocs_function_type(&iocs_opmintst, 0));
     rom->set_iocs_function(0x6b, iocs_function_type(&iocs_timerdst, 0));
     rom->set_iocs_function(0x7f, iocs_function_type(&iocs_ontime, 0));

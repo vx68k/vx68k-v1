@@ -1,6 +1,9 @@
 2000-07-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* libvx68k/systemrom.cc (iocs_ontime, iocs_opmintst): New function.
+	* libvx68k/textvram.cc (putw): Output diagnostic message.
+
+	* libvx68k/systemrom.cc (iocs_ontime, iocs_opmintst, iocs_opmset):
+	New function.
 	(initialize_iocs_functions): Add new handlers.
 
 	* libvm68k/execunit.cc (extsb, extsw, extsl): New inline function.

@@ -1,5 +1,5 @@
-/* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+/* Virtual X68000 - Sharp X68000 emulator
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,14 @@
 #undef inline
 
 #include <vx68k/machine.h>
+
+#ifdef HAVE_NANA_H
+# include <nana.h>
+# include <cstdio>
+#else
+# include <cassert>
+# define I assert
+#endif
 
 using namespace vx68k;
 using namespace std;
@@ -224,6 +232,10 @@ text_vram::putb(int fc, uint32_type address, uint_type value)
 void
 text_vram::putw(int fc, uint32_type address, uint_type value)
 {
+#ifdef HAVE_NANA_H
+  L("class text_vram: putw fc=%d address=%#010lx\n",
+    fc, (unsigned long) address);
+#endif
   if (fc != SUPER_DATA)
     generate_bus_error(false, fc, address);
 
