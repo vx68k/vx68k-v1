@@ -465,7 +465,7 @@ namespace
 
 dos::dos(address_space *m, size_t size)
   : mem(m),
-    allocator(mem, 0x8000u, size - 0x8000u),
+    allocator(mem, 0x8000u, size),
     debug_level(0)
 {
   main_cpu.set_instruction(0xff02, 0, &dos_putchar);

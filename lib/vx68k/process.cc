@@ -30,6 +30,7 @@
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
+#include <stdexcept>
 
 using namespace vx68k::human;
 using namespace vx68k;
@@ -113,9 +114,21 @@ process::create(const char *name, sint_type attr)
   return fd;
 }
 
+process::~process()
+{
+  if (block != 0)
+    _allocator->free(block - 0x10);
+}
+
 process::process(memory_allocator *a, file_system *fs)
   : _allocator(a),
-    _fs(fs)
+    _fs(fs),
+    block(0)
 {
+  sint32_type t = _allocator->alloc_largest(0);
+  if (t < 0)
+    throw runtime_error("Out of memory");
+
+  block = t - 0x10;
 }
 

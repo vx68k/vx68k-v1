@@ -64,9 +64,11 @@ namespace vx68k
     private:
       memory_allocator *_allocator;
       file_system *_fs;
+      uint32_type block;
 
     public:
       process(memory_allocator *a, file_system *fs);
+      ~process();
 
     public:
       file_system *fs() const

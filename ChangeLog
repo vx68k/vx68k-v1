@@ -1,5 +1,12 @@
 1999-06-28  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/process.cc (~process): New function.
+	(process): Allocate memory block.
+
+	* include/vx68k/human.h (class process): Add member block.
+
+	* lib/vx68k/dos.cc (dos): Change argument to allocator.
+
 	* lib/vx68k/allocator.cc (remove_block, make_block,
 	free_by_parent, alloc_largest): New functions.
 	(free, alloc): Implemented.
