@@ -1,11 +1,11 @@
 User-Visible Changes
 
 $Format: "Version $Version$ ($ProjectDate$ -r $ProjectVersion$)" $
-Version 0.32 (Sun, 04 Apr 1999 19:11:33 +0900 -r 0.170)
+Version 0.32 (Sun, 04 Apr 1999 20:13:37 +0900 -r 0.172)
 
 * Some instructions are implemented using templates.
 
-* 98 instruction handlers are implemented though some do not update
+* 110 instruction handlers are implemented though some do not update
 the condition codes properly.
 
 * 7 DOS-call handlers are partially implemented.
