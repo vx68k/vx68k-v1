@@ -1,5 +1,11 @@
 1999-06-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* configure.in: Add check for localtime_r.
+	Move AC_CHECK_HEADERS.
+
+	* lib/vx68k/dos.cc (dos_getdate): New function.
+	(dos): Add new handler.
+
 	* lib/vx68k/doscontext.cc (read, write, close, open): Removed.
 
 	* lib/vx68k/dos.cc (dos_read, dos_write): Use methods of class

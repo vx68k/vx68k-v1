@@ -27,6 +27,7 @@
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
+#include <ctime>
 #include <cstring>
 
 #ifdef HAVE_NANA_H
@@ -169,6 +170,30 @@ namespace
 
     // FIXME.
     ec.regs.d[0] = 0x8010;
+
+    ec.regs.pc += 2;
+  }
+
+  void
+  dos_getdate(uint_type op, context &ec, instruction_data *data)
+  {
+#ifdef L
+    L(" DOS _GETDATE");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    time_t t = time(NULL);
+#ifdef HAVE_LOCALTIME_R
+    struct tm lt0;
+    struct tm *lt = localtime_r(&t, &lt0);
+#else
+    struct tm *lt = localtime(&t);
+#endif
+
+    ec.regs.d[0] = (lt->tm_wday << 16
+		    | lt->tm_year - 80 << 9
+		    | lt->tm_mon + 1 << 5
+		    | lt->tm_mday);
 
     ec.regs.pc += 2;
   }
@@ -355,6 +380,7 @@ dos::dos(address_space *m, size_t)
   main_cpu.set_instruction(0xff09, 0, &dos_print);
   main_cpu.set_instruction(0xff1b, 0, &dos_fgetc);
   main_cpu.set_instruction(0xff25, 0, &dos_intvcs);
+  main_cpu.set_instruction(0xff2a, 0, &dos_getdate);
   main_cpu.set_instruction(0xff3c, 0, &dos_create);
   main_cpu.set_instruction(0xff3d, 0, &dos_open);
   main_cpu.set_instruction(0xff3e, 0, &dos_close);
