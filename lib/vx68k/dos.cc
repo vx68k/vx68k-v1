@@ -43,13 +43,22 @@ using namespace vx68k::human;
 using namespace vm68k;
 using namespace std;
 
+process *
+dos::load(const char *name, dos_exec_context &c)
+{
+  process *p = new process(&allocator, &fs);
+  c.regs.a[4] = c.load_executable(name);
+  return p;
+}
+
 uint16
 dos::execute (const char *name, const char *const *argv)
 {
-  process p(&allocator, &fs);
-  dos_exec_context ec(vm->exec_unit(), vm->address_space(), &p);
+  dos_exec_context ec(vm->exec_unit(), vm->address_space(), NULL);
   ec.set_debug_level(debug_level);
-  return ec.start(ec.load_executable(name), argv);
+  process *p = load(name, ec);
+  uint_type st = ec.start(ec.regs.a[4], argv);
+  delete p;
 }
 
 namespace

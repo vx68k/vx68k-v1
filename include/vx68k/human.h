@@ -136,6 +136,7 @@ namespace vx68k
       dos(machine *);
 
     public:
+      process *load(const char *name, dos_exec_context &c);
       uint16 execute (const char *, const char *const *);
 
     public:
