@@ -27,13 +27,13 @@
 using namespace vx68k;
 using vm68k::cpu;
 
+/* vx68k main.  */
 int
 main (int argc, char **argv)
 {
   memory mem;
   cpu main_cpu (&mem);
-  abort ();			// FIXME
   main_cpu.run ();
-  return 1;
+  return 0;
 }
 

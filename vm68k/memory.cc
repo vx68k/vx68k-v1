@@ -25,21 +25,89 @@
 
 #include <algorithm>
 
+using namespace std;
+
 namespace vm68k
 {
+#if 0
+}
+#endif
 
-uint16
-memory::read16 (int, uint32) const
+bus_error::bus_error (int f, uint32 a)
+  : fc (f), address (a)
+{
+}
+
+uint32
+memory_page::getl (int fc, uint32 address) const
   throw (bus_error)
 {
-  abort ();
-  return 0;
+  return ((uint32) getw (fc, address) << 16
+	  | (uint32) getw (fc, address + 2));
+}
+
+void
+memory_page::putl (int fc, uint32 address, uint32 value)
+  throw (bus_error)
+{
+  putw (fc, address, value >> 16);
+  putw (fc, address + 2, value);
+}
+
+void
+bus_error_page::read (int fc, uint32 address, void *, size_t) const
+  throw (bus_error)
+{
+  throw bus_error (fc, address);
+}
+
+void
+bus_error_page::write (int fc, uint32 address, const void *, size_t)
+  throw (bus_error)
+{
+  throw bus_error (fc, address);
+}
+
+uint8
+bus_error_page::getb (int fc, uint32 address) const
+  throw (bus_error)
+{
+  throw bus_error (fc, address);
+}
+
+uint16
+bus_error_page::getw (int fc, uint32 address) const
+  throw (bus_error)
+{
+  throw bus_error (fc, address);
+}
+
+void
+bus_error_page::putb (int fc, uint32 address, uint8)
+  throw (bus_error)
+{
+  throw bus_error (fc, address);
+}
+
+void
+bus_error_page::putw (int fc, uint32 address, uint16)
+  throw (bus_error)
+{
+  throw bus_error (fc, address);
+}
+
+/* Get a word from memory.  */
+uint16
+memory::getw (int fc, uint32 address) const
+  throw (bus_error)
+{
+  uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
+  return page_table[p]->getw (fc, address);
 }
 
 memory::memory ()
 {
-  memory_page *null = NULL;
-  fill (page + 0, page + (1 << 32 - PAGE_SIZE_SHIFT), null);
+  fill (page_table + 0, page_table + NPAGES, &default_page);
 }
 
 };				// namespace vm68k

@@ -33,44 +33,67 @@ enum function_code
   SUPER_PROGRAM = 6
 };
 
-class bus_error
+struct bus_error
 {
+  int fc;
+  uint32 address;
+  bus_error (int, uint32);
 };
 
-const int PAGE_SIZE_SHIFT = 13;
-const size_t PAGE_SIZE = 1 < PAGE_SIZE_SHIFT;
+const int PAGE_SHIFT = 12;
+const size_t PAGE_SIZE = (size_t) 1 << PAGE_SHIFT;
+
+// External mc68000 address is 24-bit size.
+const int MEMORY_SHIFT = 24;
+const size_t NPAGES = (size_t) 1 << MEMORY_SHIFT - PAGE_SHIFT;
 
 struct memory_page
 {
   virtual ~memory_page () {}
   virtual void read (int, uint32, void *, size_t) const throw (bus_error) = 0;
-  virtual void write (int, uint32, const void *, size_t) = 0;
-  virtual uint16 read16 (int, uint32) const throw (bus_error) = 0;
-  virtual uint32 read32 (int, uint32) const throw (bus_error);
-  virtual uint8 read8 (int, uint32) const throw (bus_error) = 0;
-  virtual void write16 (int, uint32, uint16) throw (bus_error) = 0;
-  virtual void write32 (int, uint32, uint32) throw (bus_error);
-  virtual void write8 (int, uint32, uint8) throw (bus_error) = 0;
+  virtual void write (int, uint32, const void *, size_t) throw (bus_error) = 0;
+  virtual uint8 getb (int, uint32) const throw (bus_error) = 0;
+  virtual uint16 getw (int, uint32) const throw (bus_error) = 0;
+  virtual uint32 getl (int, uint32) const throw (bus_error);
+  virtual void putb (int, uint32, uint8) throw (bus_error) = 0;
+  virtual void putw (int, uint32, uint16) throw (bus_error) = 0;
+  virtual void putl (int, uint32, uint32) throw (bus_error);
+};
+
+/* Memory page that always raises a bus error.  */
+class bus_error_page
+  : public memory_page
+{
+public:
+  virtual void read (int, uint32, void *, size_t) const throw (bus_error);
+  virtual void write (int, uint32, const void *, size_t) throw (bus_error);
+  virtual uint8 getb (int, uint32) const throw (bus_error);
+  virtual uint16 getw (int, uint32) const throw (bus_error);
+  virtual void putb (int, uint32, uint8) throw (bus_error);
+  virtual void putw (int, uint32, uint16) throw (bus_error);
 };
 
 class memory
 {
 public:
+#if 0
   struct iterator: bidirectional_iterator <uint16, int32>
   {
   };
+#endif
   memory ();
   void set_memory_pages (int begin, int end, memory_page *);
-  void read (int, uint32, void *, size_t) const;
-  void write (int, uint32, const void *, size_t);
-  uint16 read16 (int, uint32) const throw (bus_error);
-  uint32 read32 (int, uint32) const throw (bus_error);
-  uint8 read8 (int, uint32) const throw (bus_error);
-  void write16 (int, uint32, uint16) throw (bus_error);
-  void write32 (int, uint32, uint32) throw (bus_error);
-  void write8 (int, uint32, uint8) throw (bus_error);
+  void read (int, uint32, void *, size_t) const throw (bus_error);
+  void write (int, uint32, const void *, size_t) throw (bus_error);
+  uint8 getb (int, uint32) const throw (bus_error);
+  uint16 getw (int, uint32) const throw (bus_error);
+  uint32 getl (int, uint32) const throw (bus_error);
+  void putb (int, uint32, uint8) throw (bus_error);
+  void putw (int, uint32, uint16) throw (bus_error);
+  void putl (int, uint32, uint32) throw (bus_error);
 private:
-  memory_page *page[1 << 24 - PAGE_SIZE_SHIFT];
+  bus_error_page default_page;
+  memory_page *page_table[NPAGES];
 };
 
 };				// namespace vm68k

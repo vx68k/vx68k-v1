@@ -23,8 +23,11 @@
 
 #include "vm68k/cpu.h"
 
+#include <iostream>
 #include <algorithm>
 #include <cassert>
+
+using namespace std;
 
 namespace vm68k
 {
@@ -61,9 +64,18 @@ cpu::run ()
   for (;;)
     {
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM;
-      int w = context.mem->read16 (fc, context.regs.pc);
-      assert (w >= 0 && w < 0x10000);
-      insn[w] (w, &context);
+      try
+	{
+	  unsigned int w = context.mem->getw (fc, context.regs.pc);
+	  assert (w < 0x10000);
+	  insn[w] (w, &context);
+	}
+      catch (bus_error &e)
+	{
+	  // We should handle this in a callback function.
+	  cerr << "vm68k bus error: FC = " << e.fc << ", address = 0x" << hex << e.address << dec << "\n";
+	  abort ();
+	}
     }
 }
 

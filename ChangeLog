@@ -1,3 +1,40 @@
+1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* vm68k/cpu.cc (run): Display fc and address of bus error.
+
+	* vm68k/memory.cc (bus_error): New constructor.  Update all
+	construction.
+
+	* include/vm68k/memory.h (struct bus_error): Add members.
+
+	* vx68k/main.cc (main): Remove abort.
+
+	* vm68k/cpu.cc (run): Catch bus_error.
+
+	* vm68k/memory.cc: Add using namespace std.
+	(getl): Added.
+	(putl): Added.
+	(read): New method.
+	(write): New method.
+	(getb): New method.
+	(getw): [class bus_error_page] New method.
+	(putb): New method.
+	(putw): New method.
+	(getw): [class memory] Use page_table.
+	(memory): Fill page_table with &default_page.
+
+	* include/vm68k/memory.h (PAGE_SHIFT): Renamed from
+	PAGE_SIZE_SHIFT.
+	(PAGE_SIZE): Bug fix.
+	(MEMORY_SHIFT): New const.
+	(NPAGES): New const.
+	(struct memory_page): Rename methods read8 to getb, etc.
+	(class memory): Likewise.
+	(class bus_error_page): New class.
+	(class memory): Put iterator in #if 0/#endif.
+	(class memory): Add member: default_page.  Rename member page to
+	page_table.
+
 1998-11-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* TODO: Update.
