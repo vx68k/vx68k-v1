@@ -1,5 +1,8 @@
 2000-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/sccmem.cc (install_iocs_calls): Add comments about
+	missing IOCS calls.
+
 	* libvx68k/machine.cc (machine): Add initialization of member scc.
 
 	* libvx68k/systemrom.cc (iocs_ms_curgt, iocs_ms_curst,

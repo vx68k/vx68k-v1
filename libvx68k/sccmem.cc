@@ -171,11 +171,24 @@ namespace
   install_iocs_calls(system_rom &bios, unsigned long data)
   {
     bios.set_iocs_function(0x30, make_pair(&iocs_set232c, data));
+    // 0x31 _LOF232C
+    // 0x32 _INP232C
+    // 0x33 _ISNS232C
+    // 0x34 _OSNS232C
+    // 0x35 _OUT232C
     bios.set_iocs_function(0x70, make_pair(&iocs_ms_init, data));
+    // 0x71 _MS_CURON
+    // 0x72 _MS_CUROF
+    // 0x73 _MS_STAT
     bios.set_iocs_function(0x74, make_pair(&iocs_ms_getdt, data));
     bios.set_iocs_function(0x75, make_pair(&iocs_ms_curgt, data));
     bios.set_iocs_function(0x76, make_pair(&iocs_ms_curst, data));
     bios.set_iocs_function(0x77, make_pair(&iocs_ms_limit, data));
+    // 0x78 _MS_OFFTM
+    // 0x79 _MS_ONTM
+    // 0x7a _MS_PATST
+    // 0x7b _MS_SEL
+    // 0x7c _MS_SEL2
   }
 }
 
