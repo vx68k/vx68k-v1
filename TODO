@@ -1,6 +1,10 @@
 TO DO List for Virtual X68000
 
-$Date: Fri, 11 Aug 2000 23:51:21 +0900 $
+$Date: Sat, 12 Aug 2000 21:08:31 +0900 $
+
+* Use L in IOCS handlers.
+
+* Implement VDISP interrupt using counter.
 
 * Implement text cursor.
 
