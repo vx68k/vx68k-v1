@@ -7,6 +7,7 @@
 int
 main (int argc, char **argv)
 {
+  memory mem;
   return 1;
 }
 

@@ -1,3 +1,9 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+#undef const
+#undef inline
+
 #include "cpu.h"
 
 #include <algorithm>
