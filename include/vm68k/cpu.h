@@ -46,14 +46,14 @@ namespace vm68k
     static int svalue(int value);
 
     static int uget(const uint32_type &reg);
-    static int uget(const memory_address_space &,
+    static int uget(const memory_map &,
 		    memory::function_code, uint32_type address);
     static int get(const uint32_type &reg);
-    static int get(const memory_address_space &,
+    static int get(const memory_map &,
 		   memory::function_code, uint32_type address);
 
     static void put(uint32_type &reg, int value);
-    static void put(memory_address_space &, memory::function_code,
+    static void put(memory_map &, memory::function_code,
 		    uint32_type address, int value);
 
     static const char *suffix() {return "b";}
@@ -83,10 +83,10 @@ namespace vm68k
   }
 
   inline int
-  byte_size::uget(const memory_address_space &m,
+  byte_size::uget(const memory_map &m,
 		  memory::function_code fc, uint32_type address)
   {
-    return m.get_8(fc, address);
+    return m.get_8(address, fc);
   }
 
   inline int
@@ -96,7 +96,7 @@ namespace vm68k
   }
 
   inline int
-  byte_size::get(const memory_address_space &m, memory::function_code fc,
+  byte_size::get(const memory_map &m, memory::function_code fc,
 		 uint32_type address)
   {
     return svalue(uget(m, fc, address));
@@ -109,10 +109,10 @@ namespace vm68k
   }
 
   inline void
-  byte_size::put(memory_address_space &m, memory::function_code fc,
+  byte_size::put(memory_map &m, memory::function_code fc,
 		 uint32_type address, int value)
   {
-    m.put_8(fc, address, value);
+    m.put_8(address, value, fc);
   }
 
   /* Access methods for word data.  */
@@ -132,20 +132,20 @@ namespace vm68k
     static sint16_type svalue(uint16_type value);
 
     static uint16_type uget(const uint32_type &reg);
-    static uint16_type uget_unchecked(const memory_address_space &,
+    static uint16_type uget_unchecked(const memory_map &,
 				      memory::function_code,
 				      uint32_type address);
-    static uint16_type uget(const memory_address_space &,
+    static uint16_type uget(const memory_map &,
 			    memory::function_code, uint32_type address);
     static sint16_type get(const uint32_type &reg);
-    static sint16_type get_unchecked(const memory_address_space &,
+    static sint16_type get_unchecked(const memory_map &,
 				     memory::function_code,
 				     uint32_type address);
-    static sint16_type get(const memory_address_space &,
+    static sint16_type get(const memory_map &,
 			   memory::function_code, uint32_type address);
 
     static void put(uint32_type &reg, uint16_type value);
-    static void put(memory_address_space &, memory::function_code,
+    static void put(memory_map &, memory::function_code,
 		    uint32_type address, uint16_type value);
 
     static const char *suffix() {return "w";}
@@ -175,17 +175,17 @@ namespace vm68k
   }
 
   inline uint16_type
-  word_size::uget_unchecked(const memory_address_space &m,
+  word_size::uget_unchecked(const memory_map &m,
 			    memory::function_code fc, uint32_type address)
   {
-    return m.get_16_unchecked(fc, address);
+    return m.get_16_unchecked(address, fc);
   }
 
   inline uint16_type
-  word_size::uget(const memory_address_space &m,
+  word_size::uget(const memory_map &m,
 		  memory::function_code fc, uint32_type address)
   {
-    return m.get_16(fc, address);
+    return m.get_16(address, fc);
   }
 
   inline sint16_type
@@ -195,14 +195,14 @@ namespace vm68k
   }
 
   inline sint16_type
-  word_size::get_unchecked(const memory_address_space &m,
+  word_size::get_unchecked(const memory_map &m,
 			   memory::function_code fc, uint32_type address)
   {
     return svalue(uget_unchecked(m, fc, address));
   }
 
   inline sint16_type
-  word_size::get(const memory_address_space &m,
+  word_size::get(const memory_map &m,
 		 memory::function_code fc, uint32_type address)
   {
     return svalue(uget(m, fc, address));
@@ -215,10 +215,10 @@ namespace vm68k
   }
 
   inline void
-  word_size::put(memory_address_space &m, memory::function_code fc,
+  word_size::put(memory_map &m, memory::function_code fc,
 		 uint32_type address, uint16_type value)
   {
-    m.put_16(fc, address, value);
+    m.put_16(address, value, fc);
   }
 
   /* Access methods for long word data.  */
@@ -239,20 +239,20 @@ namespace vm68k
     static sint32_type svalue(uint32_type value);
 
     static uint32_type uget(const uint32_type &reg);
-    static uint32_type uget_unchecked(const memory_address_space &,
+    static uint32_type uget_unchecked(const memory_map &,
 				      memory::function_code,
 				      uint32_type address);
-    static uint32_type uget(const memory_address_space &,
+    static uint32_type uget(const memory_map &,
 			    memory::function_code, uint32_type address);
     static sint32_type get(const uint32_type &reg);
-    static sint32_type get_unchecked(const memory_address_space &,
+    static sint32_type get_unchecked(const memory_map &,
 				     memory::function_code,
 				     uint32_type address);
-    static sint32_type get(const memory_address_space &,
+    static sint32_type get(const memory_map &,
 			   memory::function_code, uint32_type address);
 
     static void put(uint32_type &reg, uint32_type value);
-    static void put(memory_address_space &, memory::function_code,
+    static void put(memory_map &, memory::function_code,
 		    uint32_type address, uint32_type value);
 
     static const char *suffix() {return "l";}
@@ -282,17 +282,17 @@ namespace vm68k
   }
 
   inline uint32_type
-  long_word_size::uget_unchecked(const memory_address_space &m,
+  long_word_size::uget_unchecked(const memory_map &m,
 				 memory::function_code fc, uint32_type address)
   {
-    return m.get_32(fc, address);
+    return m.get_32(address, fc);
   }
 
   inline uint32_type
-  long_word_size::uget(const memory_address_space &m,
+  long_word_size::uget(const memory_map &m,
 		       memory::function_code fc, uint32_type address)
   {
-    return m.get_32(fc, address);
+    return m.get_32(address, fc);
   }
 
   inline sint32_type
@@ -302,14 +302,14 @@ namespace vm68k
   }
 
   inline sint32_type
-  long_word_size::get_unchecked(const memory_address_space &m,
+  long_word_size::get_unchecked(const memory_map &m,
 				memory::function_code fc, uint32_type address)
   {
     return svalue(uget_unchecked(m, fc, address));
   }
 
   inline sint32_type
-  long_word_size::get(const memory_address_space &m,
+  long_word_size::get(const memory_map &m,
 		      memory::function_code fc, uint32_type address)
   {
     return svalue(uget(m, fc, address));
@@ -322,10 +322,10 @@ namespace vm68k
   }
 
   inline void
-  long_word_size::put(memory_address_space &m, memory::function_code fc,
+  long_word_size::put(memory_map &m, memory::function_code fc,
 		      uint32_type address, uint32_type value)
   {
-    m.put_32(fc, address, value);
+    m.put_32(address, value, fc);
   }
 
 #ifdef VM68K_ENABLE_DEPRECATED
@@ -519,7 +519,7 @@ namespace vm68k
   {
   public:
     registers regs;
-    memory_address_space *mem;
+    memory_map *mem;
 
   private:
     /* Cache values for program and data FC's.  */
@@ -532,7 +532,7 @@ namespace vm68k
     vector<queue<unsigned int> > interrupt_queues;
 
   public:
-    explicit context(memory_address_space *);
+    explicit context(memory_map *);
 
   public:
     /* Returns true if supervisor state.  */

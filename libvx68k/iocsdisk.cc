@@ -82,7 +82,7 @@ image_file_floppy_disk::record_offset(uint32_type pos)
 
 sint32_type
 image_file_floppy_disk::read(uint_type mode, uint32_type pos,
-			     memory_address_space &a,
+			     memory_map &a,
 			     uint32_type buf, uint32_type nbytes)
 {
   I(image_fildes >= 0);
@@ -108,7 +108,7 @@ image_file_floppy_disk::read(uint_type mode, uint32_type pos,
       if (res != 1024)
 	return long_word_size::svalue(0x40202000);
 
-      a.write(memory::SUPER_DATA, buf, data, 1024);
+      a.write(buf, data, 1024, memory::SUPER_DATA);
 
       buf += 1024;
       nbytes -= 1024;
@@ -119,7 +119,7 @@ image_file_floppy_disk::read(uint_type mode, uint32_type pos,
 
 sint32_type
 image_file_floppy_disk::write(uint_type mode, uint32_type pos,
-			      const memory_address_space &a,
+			      const memory_map &a,
 			      uint32_type buf, uint32_type nbytes)
 {
   I(image_fildes >= 0);
@@ -141,7 +141,7 @@ image_file_floppy_disk::write(uint_type mode, uint32_type pos,
 
 sint32_type
 image_file_floppy_disk::verify(uint_type mode, uint32_type pos,
-			       const memory_address_space &a,
+			       const memory_map &a,
 			       uint32_type buf, uint32_type nbytes)
 {
   I(image_fildes >= 0);

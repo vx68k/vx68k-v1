@@ -31,7 +31,7 @@
 namespace vx68k
 {
   using vm68k::memory;
-  using vm68k::memory_address_space;
+  using vm68k::memory_map;
   using vm68k::context;
   using vm68k::exec_unit;
   using namespace vm68k::types;
@@ -83,7 +83,7 @@ namespace vx68k
     void detach(exec_unit *);
 
     /* Initializes memory in an address space.  */
-    void initialize(memory_address_space &);
+    void initialize(memory_map &);
 
   public:
     /* Sets an IOCS function.  */

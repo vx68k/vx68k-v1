@@ -51,7 +51,7 @@ namespace
 } // (unnamed namespace)
 
 sint32_type
-regular_file::read(memory_address_space *as,
+regular_file::read(memory_map *as,
 		   uint32_type dataptr, uint32_type size)
 {
   // FIXME.
@@ -64,18 +64,18 @@ regular_file::read(memory_address_space *as,
       return -6;			// FIXME.
     }
 
-  as->write(memory::SUPER_DATA, dataptr, data, result);
+  as->write(dataptr, data, result, memory::SUPER_DATA);
   delete [] data;
   return result;
 }
 
 sint32_type
-regular_file::write(const memory_address_space *as, uint32_type dataptr,
+regular_file::write(const memory_map *as, uint32_type dataptr,
 		    uint32_type size)
 {
   // FIXME.
   unsigned char *data = new unsigned char [size];
-  as->read(memory::SUPER_DATA, dataptr, data, size);
+  as->read(dataptr, data, size, memory::SUPER_DATA);
 
   ssize_t result = ::write(fd, data, size);
   if (result == -1)
@@ -111,9 +111,9 @@ regular_file::fputc(sint_type code)
 }
 
 sint32_type
-regular_file::fputs(const memory_address_space *as, uint32_type mesptr)
+regular_file::fputs(const memory_map *as, uint32_type mesptr)
 {
-  string mes = as->get_string(memory::SUPER_DATA, mesptr);
+  string mes = as->get_string(mesptr, memory::SUPER_DATA);
 
   ssize_t written_size = ::write(fd, mes.data(), mes.size());
   if (written_size == -1)
@@ -159,28 +159,28 @@ namespace
     explicit con_device_file(machine *m);
 
   public:
-    sint32_type read(memory_address_space *, uint32_type, uint32_type);
-    sint32_type write(const memory_address_space *, uint32_type, uint32_type);
+    sint32_type read(memory_map *, uint32_type, uint32_type);
+    sint32_type write(const memory_map *, uint32_type, uint32_type);
     sint_type fgetc();
     sint_type fputc(sint_type);
-    sint32_type fputs(const memory_address_space *, uint32_type);
+    sint32_type fputs(const memory_map *, uint32_type);
   };
 } // (unnamed namespace)
 
 sint32_type
-con_device_file::read(memory_address_space *, uint32_type, uint32_type)
+con_device_file::read(memory_map *, uint32_type, uint32_type)
 {
   // FIXME not implemented
   return -1;
 }
 
 sint32_type
-con_device_file::write(const memory_address_space *as,
+con_device_file::write(const memory_map *as,
 		       uint32_type dataptr, uint32_type size)
 {
   // FIXME.
   unsigned char *data = new unsigned char [size];
-  as->read(memory::SUPER_DATA, dataptr, data, size);
+  as->read(dataptr, data, size, memory::SUPER_DATA);
 
   for (unsigned char *i = data + 0;
        i != data + size;
@@ -210,7 +210,7 @@ con_device_file::fputc(sint_type code)
 }
 
 sint32_type
-con_device_file::fputs(const memory_address_space *as, uint32_type str)
+con_device_file::fputs(const memory_map *as, uint32_type str)
 {
   _m->b_print(as, str);
   return 0;			// FIXME
@@ -358,20 +358,20 @@ file_system::open(file *&ret, const string &name, uint_type mode)
 }
 
 sint_type
-file_system::open(file *&ret, const memory_address_space *as,
+file_system::open(file *&ret, const memory_map *as,
 		  uint32_type nameptr,
 		  sint_type mode)
 {
-  string name = as->get_string(memory::SUPER_DATA, nameptr);
+  string name = as->get_string(nameptr, memory::SUPER_DATA);
 
   return open(ret, name, mode);
 }
 
 sint_type
-file_system::create(file *&ret, const memory_address_space *as,
+file_system::create(file *&ret, const memory_map *as,
 		    uint32_type nameptr, sint_type atr)
 {
-  string name = export_file_name(as->get_string(memory::SUPER_DATA, nameptr));
+  string name = export_file_name(as->get_string(nameptr, memory::SUPER_DATA));
 
   // FIXME.
   int fd = ::open(name.c_str(), O_RDWR | O_CREAT | O_TRUNC, 0666);
@@ -391,10 +391,10 @@ file_system::create(file *&ret, const memory_address_space *as,
 }
 
 sint_type
-file_system::chmod(const memory_address_space *as,
+file_system::chmod(const memory_map *as,
 		   uint32_type nameptr, sint_type atr)
 {
-  string name = export_file_name(as->get_string(memory::SUPER_DATA, nameptr));
+  string name = export_file_name(as->get_string(nameptr, memory::SUPER_DATA));
 
   struct stat stbuf;
   if (stat(name.c_str(), &stbuf) == -1)

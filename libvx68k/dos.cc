@@ -45,8 +45,8 @@ namespace
   dos_chmod(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    uint32_type nameptr = c.mem->get_32(memory::SUPER_DATA, sp + 0);
-    sint_type atr = word_size::svalue(c.mem->get_16(memory::SUPER_DATA, sp + 4));
+    uint32_type nameptr = c.mem->get_32(sp + 0, memory::SUPER_DATA);
+    sint_type atr = word_size::svalue(c.mem->get_16(sp + 4, memory::SUPER_DATA));
 #ifdef L
     L(" DOS _CHMOD\n");
 #endif
@@ -62,7 +62,7 @@ namespace
   dos_close(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    sint_type fd = word_size::svalue(c.mem->get_16(memory::SUPER_DATA, sp));
+    sint_type fd = word_size::svalue(c.mem->get_16(sp, memory::SUPER_DATA));
 #ifdef L
     L(" DOS _CLOSE\n");
 #endif
@@ -76,8 +76,8 @@ namespace
   dos_create(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    uint32_type nameptr = c.mem->get_32(memory::SUPER_DATA, sp + 0);
-    uint_type atr = c.mem->get_16(memory::SUPER_DATA, sp + 4);
+    uint32_type nameptr = c.mem->get_32(sp + 0, memory::SUPER_DATA);
+    uint_type atr = c.mem->get_16(sp + 4, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _CREATE\n");
 #endif
@@ -104,7 +104,7 @@ namespace
   dos_dup(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    uint_type filno = c.mem->get_16(memory::SUPER_DATA, sp);
+    uint_type filno = c.mem->get_16(sp, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _DUP\n");
 #endif
@@ -118,7 +118,7 @@ namespace
   dos_exit2(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    unsigned int status = c.mem->get_16(memory::SUPER_DATA, sp + 0);
+    unsigned int status = c.mem->get_16(sp + 0, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _EXIT2\n");
 #endif
@@ -157,7 +157,7 @@ namespace
   dos_fgetc(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    int fd = word_size::svalue(c.mem->get_16(memory::SUPER_DATA, sp));
+    int fd = word_size::svalue(c.mem->get_16(sp, memory::SUPER_DATA));
 #ifdef L
     L(" DOS _FGETC\n");
 #endif
@@ -171,8 +171,9 @@ namespace
   dos_fputs(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    uint32_type mesptr = c.mem->get_32(memory::SUPER_DATA, sp + 0);
-    sint_type filno = word_size::svalue(c.mem->get_16(memory::SUPER_DATA, sp + 4));
+    uint32_type mesptr = c.mem->get_32(sp + 0, memory::SUPER_DATA);
+    sint_type filno = word_size::svalue(c.mem->get_16(sp + 4,
+						      memory::SUPER_DATA));
 #ifdef L
     L(" DOS _FPUTS\n");
 #endif
@@ -224,9 +225,9 @@ namespace
   dos_getenv(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    uint32_type getname = c.mem->get_16(memory::SUPER_DATA, sp + 0);
-    uint32_type env = c.mem->get_16(memory::SUPER_DATA, sp + 4);
-    uint32_type getbuf = c.mem->get_16(memory::SUPER_DATA, sp + 8);
+    uint32_type getname = c.mem->get_16(sp + 0, memory::SUPER_DATA);
+    uint32_type env = c.mem->get_16(sp + 4, memory::SUPER_DATA);
+    uint32_type getbuf = c.mem->get_16(sp + 8, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _GETENV\n");
 #endif
@@ -301,7 +302,7 @@ namespace
   dos_malloc(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    uint32_type len = c.mem->get_32(memory::SUPER_DATA, sp + 0);
+    uint32_type len = c.mem->get_32(sp + 0, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _MALLOC\n");
 #endif
@@ -315,8 +316,8 @@ namespace
   dos_nameck(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    uint32_type file = c.mem->get_32(memory::SUPER_DATA, sp + 0);
-    uint32_type buffer = c.mem->get_32(memory::SUPER_DATA, sp + 4);
+    uint32_type file = c.mem->get_32(sp + 0, memory::SUPER_DATA);
+    uint32_type buffer = c.mem->get_32(sp + 4, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _NAMECK\n");
 #endif
@@ -325,18 +326,18 @@ namespace
     I(d != NULL);
 
     // FIXME
-    string buf = c.mem->get_string(memory::SUPER_DATA, file);
+    string buf = c.mem->get_string(file, memory::SUPER_DATA);
     string::size_type p = buf.find_last_of(buf, '/');
     if (p == string::npos)
       {
-	c.mem->put_string(memory::SUPER_DATA, buffer + 0, "./");
-	c.mem->put_string(memory::SUPER_DATA, buffer + 67, buf);
+	c.mem->put_string(buffer + 0, "./", memory::SUPER_DATA);
+	c.mem->put_string(buffer + 67, buf, memory::SUPER_DATA);
       }
     else
       {
 	++p;
-	c.mem->put_string(memory::SUPER_DATA, buffer + 0, buf.substr(0, p));
-	c.mem->put_string(memory::SUPER_DATA, buffer + 67, buf.substr(p));
+	c.mem->put_string(buffer + 0, buf.substr(0, p), memory::SUPER_DATA);
+	c.mem->put_string(buffer + 67, buf.substr(p), memory::SUPER_DATA);
       }
     c.regs.d[0] = 0;
 
@@ -347,8 +348,8 @@ namespace
   dos_open(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    uint32_type nameptr = c.mem->get_32(memory::SUPER_DATA, sp + 0);
-    uint_type mode = c.mem->get_16(memory::SUPER_DATA, sp + 4);
+    uint32_type nameptr = c.mem->get_32(sp + 0, memory::SUPER_DATA);
+    uint_type mode = c.mem->get_16(sp + 4, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _OPEN\n");
 #endif
@@ -362,7 +363,7 @@ namespace
   dos_print(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    uint32_type mesptr = c.mem->get_32(memory::SUPER_DATA, sp + 0);
+    uint32_type mesptr = c.mem->get_32(sp + 0, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _PRINT\n");
 #endif
@@ -377,7 +378,8 @@ namespace
   dos_putchar(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    sint_type code = word_size::svalue(c.mem->get_16(memory::SUPER_DATA, sp + 0));
+    sint_type code = word_size::svalue(c.mem->get_16(sp + 0,
+						     memory::SUPER_DATA));
 #ifdef L
     L(" DOS _PUTCHAR\n");
 #endif
@@ -392,9 +394,9 @@ namespace
   dos_read(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    sint_type fd = word_size::svalue(c.mem->get_16(memory::SUPER_DATA, sp));
-    uint32_type buf = c.mem->get_32(memory::SUPER_DATA, sp + 2);
-    uint32_type size = c.mem->get_32(memory::SUPER_DATA, sp + 6);
+    sint_type fd = word_size::svalue(c.mem->get_16(sp, memory::SUPER_DATA));
+    uint32_type buf = c.mem->get_32(sp + 2, memory::SUPER_DATA);
+    uint32_type size = c.mem->get_32(sp + 6, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _READ\n");
 #endif
@@ -408,9 +410,10 @@ namespace
   dos_seek(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    int fd = word_size::svalue(c.mem->get_16(memory::SUPER_DATA, sp));
-    sint32_type offset = long_word_size::svalue(c.mem->get_32(memory::SUPER_DATA, sp + 2));
-    unsigned int whence = c.mem->get_16(memory::SUPER_DATA, sp + 6);
+    int fd = word_size::svalue(c.mem->get_16(sp, memory::SUPER_DATA));
+    sint32_type offset = long_word_size::svalue(c.mem->get_32(sp + 2,
+							      memory::SUPER_DATA));
+    unsigned int whence = c.mem->get_16(sp + 6, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _SEEK\n");
 #endif
@@ -425,8 +428,8 @@ namespace
   dos_setblock(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    uint32_type memptr = c.mem->get_32(memory::SUPER_DATA, sp + 0);
-    uint32_type newlen = c.mem->get_32(memory::SUPER_DATA, sp + 4);
+    uint32_type memptr = c.mem->get_32(sp + 0, memory::SUPER_DATA);
+    uint32_type newlen = c.mem->get_32(sp + 4, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _SETBLOCK\n");
 #endif
@@ -441,7 +444,7 @@ namespace
   dos_super(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    uint32_type stack = c.mem->get_32(memory::SUPER_DATA, sp + 0);
+    uint32_type stack = c.mem->get_32(sp + 0, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _SUPER\n");
 #endif
@@ -477,7 +480,7 @@ namespace
   dos_super_jsr(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    uint32_type empadr = c.mem->get_32(memory::SUPER_DATA, sp + 0);
+    uint32_type empadr = c.mem->get_32(sp + 0, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _SUPER_JSR\t| %#lx\n", (unsigned long) empadr);
 #endif
@@ -487,7 +490,7 @@ namespace
     c.set_supervisor_state(true);
     c.regs.pc = empadr;
 
-    c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] - 4, 0xfef600);
+    c.mem->put_32(c.regs.a[7] - 4, 0xfef600, memory::SUPER_DATA);
     c.regs.a[7] -= 4;
 
     try
@@ -528,9 +531,9 @@ namespace
   dos_write(uint16_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
-    int fd = word_size::svalue(c.mem->get_16(memory::SUPER_DATA, sp));
-    uint32_type buf = c.mem->get_32(memory::SUPER_DATA, sp + 2);
-    uint32_type size = c.mem->get_32(memory::SUPER_DATA, sp + 6);
+    int fd = word_size::svalue(c.mem->get_16(sp, memory::SUPER_DATA));
+    uint32_type buf = c.mem->get_32(sp + 2, memory::SUPER_DATA);
+    uint32_type size = c.mem->get_32(sp + 6, memory::SUPER_DATA);
 #ifdef L
     L(" DOS _WRITE\n");
 #endif
@@ -600,9 +603,9 @@ dos::dos(class machine *m)
   add_instructions(*as.machine()->exec_unit(), this);
 
   // Dummy NUL device.  LHA scans this for TwentyOne?
-  as.put_32(memory::SUPER_DATA, 0x6900 +  0, 0x6a00);
-  as.put_32(memory::SUPER_DATA, 0x6900 + 14, 0x4e554c20);
-  as.put_32(memory::SUPER_DATA, 0x6900 + 18, 0x20202020);
+  as.put_32(0x6900 +  0, 0x6a00, memory::SUPER_DATA);
+  as.put_32(0x6900 + 14, 0x4e554c20, memory::SUPER_DATA);
+  as.put_32(0x6900 + 18, 0x20202020, memory::SUPER_DATA);
 
-  as.put_32(memory::SUPER_DATA, 0x6a00 +  0, 0xffffffff);
+  as.put_32(0x6a00 +  0, 0xffffffff, memory::SUPER_DATA);
 }

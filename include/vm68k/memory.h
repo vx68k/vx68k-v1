@@ -329,14 +329,17 @@ namespace vm68k
 
   /* Address space for memories.  An address space is a software view
      of a target machine.  */
-  class memory_address_space
+  class memory_map
   {
+  public:
+    typedef memory::function_code function_code;
+
   private:
     vector<memory *> page_table;
 
   public:
-    memory_address_space();
-    virtual ~memory_address_space() {}
+    memory_map();
+    virtual ~memory_map() {}
 
   protected:
     /* Finds a page that contains address ADDRESS.  */
@@ -348,91 +351,85 @@ namespace vm68k
     void fill(uint32_type, uint32_type, memory *);
 
   public:
-    /* Returns one word at address ADDRESS in this address space.
-       The address must be word-aligned.  */
-    uint16_type get_16_unchecked(memory::function_code, uint32_type address)
-      const;
+    /* Returns one byte at address ADDRESS in this address space.  */
+    int get_8(uint32_type address, function_code fc) const;
 
     /* Returns one word at address ADDRESS in this address space.  Any
        unaligned address will be handled.  */
-    uint16_type get_16(memory::function_code, uint32_type address) const;
+    uint16_type get_16(uint32_type address, function_code fc) const;
 
-    /* Returns one byte at address ADDRESS in this address space.  */
-    int get_8(memory::function_code, uint32_type address) const;
+    /* Returns one word at address ADDRESS in this address space.
+       The address must be word-aligned.  */
+    uint16_type get_16_unchecked(uint32_type address, function_code fc) const;
 
     /* Returns one long word at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
-    uint32_type get_32(memory::function_code, uint32_type address) const;
+    uint32_type get_32(uint32_type address, function_code fc) const;
 
-    string get_string(memory::function_code, uint32_type address) const;
+    string get_string(uint32_type address, function_code fc) const;
 
-    void read(memory::function_code, uint32_type, void *, size_t) const;
+    void read(uint32_type, void *, size_t, function_code fc) const;
 
-    /* Stores word VALUE at address ADDRESS in this address space.
-       The address must be word-aligned.  */
-    void put_16_unchecked(memory::function_code, uint32_type address,
-			  uint16_type value);
+    /* Stores byte VALUE at address ADDRESS in this address space.  */
+    void put_8(uint32_type address, int value, function_code fc);
 
     /* Stores word VALUE at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
-    void put_16(memory::function_code, uint32_type address, uint16_type value);
+    void put_16(uint32_type address, uint16_type value, function_code fc);
 
-    /* Stores byte VALUE at address ADDRESS in this address space.  */
-    void put_8(memory::function_code, uint32_type address, int value);
+    /* Stores word VALUE at address ADDRESS in this address space.
+       The address must be word-aligned.  */
+    void put_16_unchecked(uint32_type address, uint16_type value,
+			  function_code fc);
 
     /* Stores long word VALUE at address ADDRESS in this address
        space.  Any unaligned address will be handled.  */
-    void put_32(memory::function_code, uint32_type address, uint32_type value);
+    void put_32(uint32_type address, uint32_type value, function_code fc);
 
-    void put_string(memory::function_code, uint32_type address,
-		    const string &);
+    void put_string(uint32_type address, const string &, function_code fc);
 
-    void write(memory::function_code, uint32_type, const void *, size_t);
+    void write(uint32_type, const void *, size_t, function_code fc);
   };
 
   inline vector<memory *>::const_iterator
-  memory_address_space::find_memory(uint32_type address) const
+  memory_map::find_memory(uint32_type address) const
   {
     return page_table.begin() + (address >> PAGE_SHIFT) % NPAGES;
   }
 
   inline vector<memory *>::iterator
-  memory_address_space::find_memory(uint32_type address)
+  memory_map::find_memory(uint32_type address)
   {
     return page_table.begin() + (address >> PAGE_SHIFT) % NPAGES;
   }
 
-  inline uint16_type
-  memory_address_space::get_16_unchecked(memory::function_code fc,
-					 uint32_type address) const
-  {
-    const memory *p = *this->find_memory(address);
-    return p->get_16(fc, address);
-  }
-
   inline int
-  memory_address_space::get_8(memory::function_code fc, uint32_type address)
-    const
+  memory_map::get_8(uint32_type address, function_code fc) const
   {
     const memory *p = *this->find_memory(address);
     return p->get_8(fc, address);
   }
 
-  inline void
-  memory_address_space::put_16_unchecked(memory::function_code fc,
-					 uint32_type address,
-					 uint16_type value)
+  inline uint16_type
+  memory_map::get_16_unchecked(uint32_type address, function_code fc) const
   {
-    memory *p = *this->find_memory(address);
-    p->put_16(fc, address, value);
+    const memory *p = *this->find_memory(address);
+    return p->get_16(fc, address);
   }
 
   inline void
-  memory_address_space::put_8(memory::function_code fc,
-			      uint32_type address, int value)
+  memory_map::put_8(uint32_type address, int value, function_code fc)
   {
     memory *p = *this->find_memory(address);
     p->put_8(fc, address, value);
+  }
+
+  inline void
+  memory_map::put_16_unchecked(uint32_type address, uint16_type value,
+			       function_code fc)
+  {
+    memory *p = *this->find_memory(address);
+    p->put_16(fc, address, value);
   }
 } // vm68k
 

@@ -148,7 +148,7 @@ namespace
     pthread_testcancel();
 
     uint32_type vecaddr = (15u + 32u) * 4u;
-    uint32_type addr = c.mem->get_32(memory::SUPER_DATA, vecaddr);
+    uint32_type addr = c.mem->get_32(vecaddr, memory::SUPER_DATA);
     if (addr != vecaddr + 0xfe0000)
       {
 #ifdef HAVE_NANA_H
@@ -157,8 +157,8 @@ namespace
 	uint_type oldsr = c.sr();
 	c.set_supervisor_state(true);
 	c.regs.a[7] -= 6;
-	c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc + 2);
-	c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	c.mem->put_32(c.regs.a[7] + 2, c.regs.pc + 2, memory::SUPER_DATA);
+	c.mem->put_16(c.regs.a[7] + 0, oldsr, memory::SUPER_DATA);
 	c.regs.pc = addr;
       }
     else
@@ -166,7 +166,8 @@ namespace
 	unsigned int callno = byte_size::uvalue(byte_size::get(c.regs.d[0]));
 
 	uint32_type call_address = (callno + 0x100U) * 4U;
-	uint32_type call_handler = c.mem->get_32(memory::SUPER_DATA, call_address);
+	uint32_type call_handler = c.mem->get_32(call_address,
+						 memory::SUPER_DATA);
 	if (call_handler != call_address + 0xfe0000)
 	  {
 #ifdef HAVE_NANA_H
@@ -175,9 +176,9 @@ namespace
 	    uint_type oldsr = c.sr();
 	    c.set_supervisor_state(true);
 	    c.regs.a[7] -= 10;
-	    c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 6, c.regs.pc + 2);
-	    c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 4, oldsr);
-	    c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 0, 0xfe0000);
+	    c.mem->put_32(c.regs.a[7] + 6, c.regs.pc + 2, memory::SUPER_DATA);
+	    c.mem->put_16(c.regs.a[7] + 4, oldsr, memory::SUPER_DATA);
+	    c.mem->put_32(c.regs.a[7] + 0, 0xfe0000, memory::SUPER_DATA);
 
 	    c.regs.pc = call_handler;
 	  }
@@ -235,7 +236,7 @@ system_rom::detach(exec_unit *eu)
 }
 
 void
-system_rom::initialize(memory_address_space &as)
+system_rom::initialize(memory_map &as)
 {
 #ifdef HAVE_NANA_H
   DL("system_rom: FIXME: `initialize' not fully implemented\n");
@@ -244,12 +245,12 @@ system_rom::initialize(memory_address_space &as)
   uint32_type f = 0xfe0000;
   for (uint32_type i = 0u; i != 0x800u; i += 4)
     {
-      as.put_32(memory::SUPER_DATA, i, f);
+      as.put_32(i, f, memory::SUPER_DATA);
       f += 4;
     }
 
   for (uint32_type i = 0x800u; i != 0x1000u; i += 4)
-    as.put_32(memory::SUPER_DATA, i, 0);
+    as.put_32(i, 0, memory::SUPER_DATA);
 }
 
 namespace
@@ -315,8 +316,8 @@ namespace
       }
 
     uint32_type vecaddr = vecno * 4u;
-    uint32_type oaddr = c.mem->get_32(memory::SUPER_DATA, vecaddr);
-    c.mem->put_32(memory::SUPER_DATA, vecaddr, addr);
+    uint32_type oaddr = c.mem->get_32(vecaddr, memory::SUPER_DATA);
+    c.mem->put_32(vecaddr, addr, memory::SUPER_DATA);
 
     long_word_size::put(c.regs.d[0], oaddr);
   }
@@ -364,7 +365,7 @@ namespace
 #endif
     uint32_type address = c.regs.a[1];
 
-    c.regs.d[0] = c.mem->get_32(memory::SUPER_DATA, address);
+    c.regs.d[0] = c.mem->get_32(address, memory::SUPER_DATA);
     c.regs.a[1] = address + 4;
   }
 
@@ -603,11 +604,11 @@ namespace
     char *p = str + 0;
     while (*p != '\0')
       {
-	c.mem->put_8(memory::SUPER_DATA, address, *p++);
+	c.mem->put_8(address, *p++, memory::SUPER_DATA);
 	address = long_word_size::get(address + 1);
       }
 
-    c.mem->put_8(memory::SUPER_DATA, address, *p);
+    c.mem->put_8(address, *p, memory::SUPER_DATA);
 
     long_word_size::put(c.regs.a[1], address);
   }
@@ -737,7 +738,7 @@ namespace
 	    long_word_size::put(c.regs.d[0], 1);
 	else
 	  {
-	    as->put_32(memory::SUPER_DATA, 0x43 * 4, address);
+	    as->put_32(0x43 * 4, address, memory::SUPER_DATA);
 	    as->machine()->set_opm_interrupt_enabled(true);
 	    long_word_size::put(c.regs.d[0], 0);
 	  }
@@ -886,11 +887,11 @@ namespace
     char *p = str + 0;
     while (*p != '\0')
       {
-	c.mem->put_8(memory::SUPER_DATA, address, *p++);
+	c.mem->put_8(address, *p++, memory::SUPER_DATA);
 	address = long_word_size::get(address + 1);
       }
 
-    c.mem->put_8(memory::SUPER_DATA, address, *p);
+    c.mem->put_8(address, *p, memory::SUPER_DATA);
 
     long_word_size::put(c.regs.a[1], address);
   }
@@ -987,7 +988,7 @@ namespace
 	    if (count == 0)
 	      count = 0x100;
 
-	    as->put_32(memory::SUPER_DATA, 0x4d * 4, address);
+	    as->put_32(0x4d * 4, address, memory::SUPER_DATA);
 	    as->machine()->set_vdisp_counter_data(count);
 	    long_word_size::put(c.regs.d[0], 0);
 	  }

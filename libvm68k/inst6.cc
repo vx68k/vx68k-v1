@@ -123,8 +123,9 @@ namespace
 
     // XXX: The condition codes are not affected.
     memory::function_code fc = c.data_fc();
-    c.mem->put_32(fc, c.regs.a[7] - long_word_size::aligned_value_size(),
-		  c.regs.pc + 2 + len);
+    long_word_size::put(*c.mem, fc,
+			c.regs.a[7] - long_word_size::aligned_value_size(),
+			c.regs.pc + 2 + len);
     c.regs.a[7] -= long_word_size::aligned_value_size();
 
     c.regs.pc += 2 + disp;

@@ -3,6 +3,8 @@
 	* vx68k.texi (General Purpose Components): Capitalize words and
 	insert a blank line.
 	(Disk I/O): Add documentation.
+	(Class memory_map): Rename the title.  Add documentation.
+	(Machine, IOCS and System ROM, Disk I/O): Updated.
 
 2000-12-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 

@@ -247,10 +247,9 @@ namespace
 	  case 12:
 	    word_size::put(*c.mem, memory::SUPER_DATA, i, 24);
 	    word_size::put(*c.mem, memory::SUPER_DATA, i + 2, 24);
-	    c.mem->read(memory::SUPER_DATA,
-			0xf00000 + font_rom::jisx0208_24_offset(ch1, ch2),
-			buf, 24 * 3);
-	    c.mem->write(memory::SUPER_DATA, i + 4, buf, 24 * 3);
+	    c.mem->read(0xf00000 + font_rom::jisx0208_24_offset(ch1, ch2),
+			buf, 24 * 3, memory::SUPER_DATA);
+	    c.mem->write(i + 4, buf, 24 * 3, memory::SUPER_DATA);
 	    break;
 
 	  default:
@@ -258,10 +257,9 @@ namespace
 	  case 8:
 	    word_size::put(*c.mem, memory::SUPER_DATA, i, 16);
 	    word_size::put(*c.mem, memory::SUPER_DATA, i + 2, 16);
-	    c.mem->read(memory::SUPER_DATA,
-			0xf00000 + font_rom::jisx0208_16_offset(ch1, ch2),
-			buf, 16 * 2);
-	    c.mem->write(memory::SUPER_DATA, i + 4, buf, 16 * 2);
+	    c.mem->read(0xf00000 + font_rom::jisx0208_16_offset(ch1, ch2),
+			buf, 16 * 2, memory::SUPER_DATA);
+	    c.mem->write(i + 4, buf, 16 * 2, memory::SUPER_DATA);
 	    break;
 	  }
       }
@@ -276,10 +274,9 @@ namespace
 	  case 12:
 	    word_size::put(*c.mem, memory::SUPER_DATA, i, 12);
 	    word_size::put(*c.mem, memory::SUPER_DATA, i + 2, 24);
-	    c.mem->read(memory::SUPER_DATA,
-			0xf00000 + font_rom::jisx0201_24_offset(ch2),
-			buf, 24 * 2);
-	    c.mem->write(memory::SUPER_DATA, i + 4, buf, 24 * 2);
+	    c.mem->read(0xf00000 + font_rom::jisx0201_24_offset(ch2),
+			buf, 24 * 2, memory::SUPER_DATA);
+	    c.mem->write(i + 4, buf, 24 * 2, memory::SUPER_DATA);
 	    break;
 
 	  default:
@@ -287,10 +284,9 @@ namespace
 	  case 8:
 	    word_size::put(*c.mem, memory::SUPER_DATA, i, 8);
 	    word_size::put(*c.mem, memory::SUPER_DATA, i + 2, 16);
-	    c.mem->read(memory::SUPER_DATA,
-			0xf00000 + font_rom::jisx0201_16_offset(ch2),
-			buf, 16 * 1);
-	    c.mem->write(memory::SUPER_DATA, i + 4, buf, 16 * 1);
+	    c.mem->read(0xf00000 + font_rom::jisx0201_16_offset(ch2),
+			buf, 16 * 1, memory::SUPER_DATA);
+	    c.mem->write(i + 4, buf, 16 * 1, memory::SUPER_DATA);
 	    break;
 	  }
       }

@@ -111,9 +111,9 @@ machine::b_putc(uint_type code)
 }
 
 void
-machine::b_print(const memory_address_space *as, uint32_type strptr)
+machine::b_print(const memory_map *as, uint32_type strptr)
 {
-  const string str = as->get_string(memory::SUPER_DATA, strptr);
+  const string str = as->get_string(strptr, memory::SUPER_DATA);
 
   for (string::const_iterator i = str.begin();
        i != str.end();
@@ -124,7 +124,7 @@ machine::b_print(const memory_address_space *as, uint32_type strptr)
 }
 
 sint32_type
-machine::read_disk(memory_address_space &as, uint_type mode, uint32_type pos,
+machine::read_disk(memory_map &as, uint_type mode, uint32_type pos,
 		   uint32_type buf, uint32_type nbytes)
 {
   uint_type u = mode >> 8 & 0xf;
@@ -143,7 +143,7 @@ machine::read_disk(memory_address_space &as, uint_type mode, uint32_type pos,
 }
 
 sint32_type
-machine::write_disk(const memory_address_space &as,
+machine::write_disk(const memory_map &as,
 		    uint_type mode, uint32_type pos,
 		    uint32_type buf, uint32_type nbytes) const
 {
@@ -187,16 +187,16 @@ machine::boot(context &c)
     }
   catch (illegal_instruction_exception &e)
     {
-      uint_type op = c.mem->get_16(memory::SUPER_DATA, c.regs.pc);
+      uint_type op = c.mem->get_16(c.regs.pc, memory::SUPER_DATA);
 
       if ((op & 0xf000u) == 0xf000u)
 	{
 	  uint_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 6;
-	  c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
-	  c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
-	  c.regs.pc = c.mem->get_32(memory::SUPER_DATA, 11u * 4u);
+	  c.mem->put_32(c.regs.a[7] + 2, c.regs.pc, memory::SUPER_DATA);
+	  c.mem->put_16(c.regs.a[7] + 0, oldsr, memory::SUPER_DATA);
+	  c.regs.pc = c.mem->get_32(11u * 4u, memory::SUPER_DATA);
 	  goto rerun;
 	}
       else if ((op & 0xfff0u) == 0x4e40)
@@ -206,9 +206,10 @@ machine::boot(context &c)
 	  uint_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 6;
-	  c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
-	  c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
-	  c.regs.pc = c.mem->get_32(memory::SUPER_DATA, ((op & 0xfu) + 32) * 4u);
+	  c.mem->put_32(c.regs.a[7] + 2, c.regs.pc, memory::SUPER_DATA);
+	  c.mem->put_16(c.regs.a[7] + 0, oldsr, memory::SUPER_DATA);
+	  c.regs.pc = c.mem->get_32(((op & 0xfu) + 32) * 4u,
+				    memory::SUPER_DATA);
 	  goto rerun;
 	}
 
@@ -217,7 +218,7 @@ machine::boot(context &c)
   catch (special_exception &e)
     {
       uint32_type vecaddr = e.vecno * 4u;
-      uint32_type addr = c.mem->get_32(memory::SUPER_DATA, vecaddr);
+      uint32_type addr = c.mem->get_32(vecaddr, memory::SUPER_DATA);
       if (addr != vecaddr + 0xfe0000)
 	{
 #ifdef HAVE_NANA_H
@@ -226,12 +227,13 @@ machine::boot(context &c)
 	  uint_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 14;
-	  c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 10, c.regs.pc);
-	  c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 8, oldsr);
-	  c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 6,
-		      c.mem->get_16(memory::SUPER_DATA, c.regs.pc));
-	  c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 2, e.address);
-	  c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 0, e.status);
+	  c.mem->put_32(c.regs.a[7] + 10, c.regs.pc, memory::SUPER_DATA);
+	  c.mem->put_16(c.regs.a[7] + 8, oldsr, memory::SUPER_DATA);
+	  c.mem->put_16(c.regs.a[7] + 6,
+			c.mem->get_16(c.regs.pc, memory::SUPER_DATA),
+			memory::SUPER_DATA);
+	  c.mem->put_32(c.regs.a[7] + 2, e.address, memory::SUPER_DATA);
+	  c.mem->put_16(c.regs.a[7] + 0, e.status, memory::SUPER_DATA);
 	  c.regs.pc = addr;
 	  goto rerun;
 	}
@@ -402,7 +404,7 @@ machine::connect(console *c)
 }
 
 void
-machine::configure(memory_address_space &as)
+machine::configure(memory_map &as)
 {
   as.fill(0, _memory_size, &mem);
   as.fill(0xc00000, 0xe00000, &gv);

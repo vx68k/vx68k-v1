@@ -79,7 +79,7 @@ namespace vx68k
 
     class exec_unit eu;
 
-    auto_ptr<memory_address_space> master_as;
+    auto_ptr<memory_map> master_as;
     auto_ptr<context> _master_context;
 
   private:
@@ -123,7 +123,7 @@ namespace vx68k
     void connect(console *con);
 
     /* Configures address space AS.  */
-    void configure(memory_address_space &as);
+    void configure(memory_map &as);
 
     /* Checks timers.  This function may be called in a separate
        thread.  */
@@ -163,7 +163,7 @@ namespace vx68k
 
   public:
     void b_putc(uint_type);
-    void b_print(const memory_address_space *as, uint32_type);
+    void b_print(const memory_map *as, uint32_type);
 
   public:			// Keyboard Input
     /* Queues a key input.  */
@@ -183,11 +183,11 @@ namespace vx68k
 
   public:
     /* Reads blocks from a FD unit.  */
-    sint32_type read_disk(memory_address_space &, uint_type u, uint32_type pos,
+    sint32_type read_disk(memory_map &, uint_type u, uint32_type pos,
 			  uint32_type buf, uint32_type nbytes);
 
     /* Writes blocks from a FD unit.  */
-    sint32_type write_disk(const memory_address_space &,
+    sint32_type write_disk(const memory_map &,
 			   uint_type u, uint32_type pos,
 			   uint32_type buf, uint32_type nbytes) const;
 
@@ -217,7 +217,7 @@ namespace vx68k
 
   /* X68000-specific address space.  This object acts as a program
      interface to the machine.  */
-  class x68k_address_space: public memory_address_space
+  class x68k_address_space: public memory_map
   {
   private:
     class machine *_m;

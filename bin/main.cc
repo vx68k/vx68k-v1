@@ -142,7 +142,7 @@ gtk_app::run_boot() throw ()
     {
       /* NOTE: This exception should have the address information.  */
       context *c = vm.master_context();
-      uint_type op = c->mem->get_16(memory::SUPER_DATA, c->regs.pc);
+      uint_type op = word_size::uget(*c->mem, memory::SUPER_DATA, c->regs.pc);
       char buf[sizeof "Illegal instruction 0x1234 at 0x12345678"];
       sprintf(buf, "Illegal instruction 0x%04x at 0x%08lx",
 	      op, c->regs.pc + 0UL);

@@ -39,12 +39,12 @@ using namespace std;
 void
 memory_allocator::remove_block(uint32_type block)
 {
-  uint32_type prev = _as->get_32(memory::SUPER_DATA, block + 0);
-  uint32_type next = _as->get_32(memory::SUPER_DATA, block + 12);
+  uint32_type prev = _as->get_32(block + 0, memory::SUPER_DATA);
+  uint32_type next = _as->get_32(block + 12, memory::SUPER_DATA);
 
-  _as->put_32(memory::SUPER_DATA, prev + 12, next);
+  _as->put_32(prev + 12, next, memory::SUPER_DATA);
   if (next != 0)
-    _as->put_32(memory::SUPER_DATA, next + 0, prev);
+    _as->put_32(next + 0, prev, memory::SUPER_DATA);
   else
     last_block = prev;
 }
@@ -53,16 +53,16 @@ void
 memory_allocator::make_block(uint32_type block, uint32_type len,
 			     uint32_type prev, uint32_type parent)
 {
-  uint32_type next = _as->get_32(memory::SUPER_DATA, prev + 12);
+  uint32_type next = _as->get_32(prev + 12, memory::SUPER_DATA);
 
-  _as->put_32(memory::SUPER_DATA, block + 0, prev);
-  _as->put_32(memory::SUPER_DATA, block + 4, parent);
-  _as->put_32(memory::SUPER_DATA, block + 8, block + len);
-  _as->put_32(memory::SUPER_DATA, block + 12, next);
+  _as->put_32(block + 0, prev, memory::SUPER_DATA);
+  _as->put_32(block + 4, parent, memory::SUPER_DATA);
+  _as->put_32(block + 8, block + len, memory::SUPER_DATA);
+  _as->put_32(block + 12, next, memory::SUPER_DATA);
 
-  _as->put_32(memory::SUPER_DATA, prev + 12, block);
+  _as->put_32(prev + 12, block, memory::SUPER_DATA);
   if (next != 0)
-    _as->put_32(memory::SUPER_DATA, next + 0, block);
+    _as->put_32(next + 0, block, memory::SUPER_DATA);
   else
     last_block = block;
 }
@@ -73,13 +73,13 @@ memory_allocator::free_by_parent(uint32_type parent)
   uint32_type block = last_block;
   while (block != 0)
     {
-      if (_as->get_32(memory::SUPER_DATA, block + 4) == parent - 0x10)
+      if (_as->get_32(block + 4, memory::SUPER_DATA) == parent - 0x10)
 	{
 	  free_by_parent(block + 0x10);
 	  remove_block(block);
 	}
 
-      block = _as->get_32(memory::SUPER_DATA, block + 0);
+      block = _as->get_32(block + 0, memory::SUPER_DATA);
     }
 }
 
@@ -109,7 +109,7 @@ memory_allocator::free(uint32_type memptr)
 	}
 
       next = limit;
-      block = _as->get_32(memory::SUPER_DATA, block + 0);
+      block = _as->get_32(block + 0, memory::SUPER_DATA);
     }
 
 #ifdef L
@@ -150,7 +150,7 @@ memory_allocator::resize(uint32_type memptr, uint32_type newlen)
 	      return long_word_size::svalue(0x81000000 + (max_newlen - 0x10));
 	    }
 
-	  _as->put_32(memory::SUPER_DATA, block + 8, new_brk);
+	  _as->put_32(block + 8, new_brk, memory::SUPER_DATA);
 #ifdef L
 	  L("memory_allocator: success\n");
 #endif
@@ -158,7 +158,7 @@ memory_allocator::resize(uint32_type memptr, uint32_type newlen)
 	}
 
       next = block;
-      block = _as->get_32(memory::SUPER_DATA, block + 0);
+      block = _as->get_32(block + 0, memory::SUPER_DATA);
     }
 
 #ifdef L
@@ -185,7 +185,7 @@ memory_allocator::alloc(uint32_type len, uint32_type parent)
       if (block + 0x10 > next)
 	return -7;
 
-      uint32_type candidate = _as->get_32(memory::SUPER_DATA, block + 8) + 0xf & ~0xf;
+      uint32_type candidate = _as->get_32(block + 8, memory::SUPER_DATA) + 0xf & ~0xf;
       uint32_type free_len = next - candidate;
       if (free_len >= len)
 	{
@@ -201,7 +201,7 @@ memory_allocator::alloc(uint32_type len, uint32_type parent)
 	max_free_len = free_len;
 
       next = block;
-      block = _as->get_32(memory::SUPER_DATA, block + 0);
+      block = _as->get_32(block + 0, memory::SUPER_DATA);
     }
 
 #ifdef L
@@ -230,7 +230,7 @@ memory_allocator::alloc_largest(uint32_type parent)
       if (block + 0x10 > next)
 	return -7;
 
-      uint32_type candidate = (_as->get_32(memory::SUPER_DATA, block + 8) + 0xf) & ~0xf;
+      uint32_type candidate = (_as->get_32(block + 8, memory::SUPER_DATA) + 0xf) & ~0xf;
       uint32_type free_len = next - candidate;
       if (free_len > max_free_len)
 	{
@@ -240,7 +240,7 @@ memory_allocator::alloc_largest(uint32_type parent)
 	}
 
       next = block;
-      block = _as->get_32(memory::SUPER_DATA, block + 0);
+      block = _as->get_32(block + 0, memory::SUPER_DATA);
     }
 
   if (max_free_len == 0x10)
@@ -254,7 +254,7 @@ memory_allocator::alloc_largest(uint32_type parent)
   return long_word_size::svalue(best_candidate + 0x10);
 }
 
-memory_allocator::memory_allocator(memory_address_space *as,
+memory_allocator::memory_allocator(memory_map *as,
 				   uint32_type address, uint32_type lim)
   : _as(as),
     limit(lim & ~0xf),
@@ -262,10 +262,10 @@ memory_allocator::memory_allocator(memory_address_space *as,
     last_block(0)
 {
   address = (address + 0xf) & ~0xf;
-  _as->put_32(memory::SUPER_DATA, address + 0, 0);
-  _as->put_32(memory::SUPER_DATA, address + 4, 0);
-  _as->put_32(memory::SUPER_DATA, address + 8, address + 0x10);
-  _as->put_32(memory::SUPER_DATA, address + 12, 0);
+  _as->put_32(address + 0, 0, memory::SUPER_DATA);
+  _as->put_32(address + 4, 0, memory::SUPER_DATA);
+  _as->put_32(address + 8, address + 0x10, memory::SUPER_DATA);
+  _as->put_32(address + 12, 0, memory::SUPER_DATA);
   last_block = root_block = address;
 }
 

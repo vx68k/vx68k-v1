@@ -644,8 +644,10 @@ namespace
     if (!c.supervisor_state())
       throw privilege_violation_exception();
 
-    uint16_type status = c.mem->get_16(memory::SUPER_DATA, c.regs.a[7] + 0);
-    uint32_type value = c.mem->get_32(memory::SUPER_DATA, c.regs.a[7] + 2);
+    uint16_type status = word_size::uget(*c.mem, memory::SUPER_DATA,
+					 c.regs.a[7] + 0);
+    uint32_type value = long_word_size::uget(*c.mem, memory::SUPER_DATA,
+					     c.regs.a[7] + 2);
     c.regs.a[7] += 6;
     c.set_sr(status);
     c.regs.pc = value;

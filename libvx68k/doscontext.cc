@@ -195,13 +195,13 @@ dos_exec_context::start(uint32_type address, const char *const *argv)
     }
   catch (illegal_instruction_exception &e)
     {
-      uint_type op = mem->get_16(memory::SUPER_DATA, regs.pc);
+      uint_type op = mem->get_16(regs.pc, memory::SUPER_DATA);
       fprintf(stderr, "vm68k illegal instruction (op = %#06x)\n", op);
       status = 0xff;
     }
   catch (special_exception &x)
     {
-      uint_type op = mem->get_16(memory::SUPER_DATA, regs.pc);
+      uint_type op = mem->get_16(regs.pc, memory::SUPER_DATA);
       if (x.vecno == 3u)
 	fprintf(stderr, "vm68k address error (fc = %#x, address = %#lx, op = %#x)\n",
 		x.status, (unsigned long) x.address, op);
@@ -251,8 +251,7 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
       is.read (buf, text_size + data_size);
       if (!is)
 	throw runtime_error("read error");
-      mem->write(memory::SUPER_DATA, load_address,
-		 buf, text_size + data_size);
+      mem->write(load_address, buf, text_size + data_size, memory::SUPER_DATA);
     }
   catch (...)
     {
@@ -286,8 +285,9 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
 	      throw runtime_error("exec format error");
 	    }
 	  address += d;
-	  uint32_type value = mem->get_32(memory::SUPER_DATA, address);
-	  mem->put_32(memory::SUPER_DATA, address, value + load_address - base);
+	  uint32_type value = mem->get_32(address, memory::SUPER_DATA);
+	  mem->put_32(address, value + load_address - base,
+		      memory::SUPER_DATA);
 	  VL(("Fixup at 0x%lx (0x%lx -> 0x%lx)\n",
 	      (unsigned long) address, (unsigned long) value,
 	      (unsigned long) value + load_address - base));
@@ -301,8 +301,8 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
   free(fixup_buf);
 
   // PSP setup.
-  mem->put_32(memory::SUPER_DATA, load_address - 0x100 + 0x80, 0);
-  mem->put_string(memory::SUPER_DATA, load_address - 0x100 + 0xc4, name);
+  mem->put_32(load_address - 0x100 + 0x80, 0, memory::SUPER_DATA);
+  mem->put_string(load_address - 0x100 + 0xc4, name, memory::SUPER_DATA);
   regs.a[0] = load_address - 0x100;
   regs.a[1] = load_address + text_size + data_size + bss_size;
 
@@ -315,8 +315,8 @@ dos_exec_context::load(const char *name, uint32_type arg, uint32_type env)
   uint32_type pdb = _allocator->alloc_largest(current_pdb);
 
   uint32_type pdb_base = pdb - 0x10;
-  mem->put_32(memory::SUPER_DATA, pdb_base + 0x10, env);
-  mem->put_32(memory::SUPER_DATA, pdb_base + 0x20, arg);
+  mem->put_32(pdb_base + 0x10, env, memory::SUPER_DATA);
+  mem->put_32(pdb_base + 0x20, arg, memory::SUPER_DATA);
 
   uint32_type start = load_executable(name, pdb);
 
@@ -331,7 +331,7 @@ sint_type
 dos_exec_context::getenv(uint32_type getname, uint32_type env,
 			 uint32_type getbuf)
 {
-  string name = mem->get_string(memory::SUPER_DATA, getname);
+  string name = mem->get_string(getname, memory::SUPER_DATA);
 
   // FIXME
   string s;
@@ -341,7 +341,7 @@ dos_exec_context::getenv(uint32_type getname, uint32_type env,
 
   if (s.size() > 255)
     s.erase(255);
-  mem->put_string(memory::SUPER_DATA, getbuf, s);
+  mem->put_string(getbuf, s, memory::SUPER_DATA);
 
   return 0;
 }
@@ -358,7 +358,7 @@ dos_exec_context::~dos_exec_context()
     _fs->unref(*i);
 }
 
-dos_exec_context::dos_exec_context(memory_address_space *m, exec_unit *eu,
+dos_exec_context::dos_exec_context(memory_map *m, exec_unit *eu,
 				   memory_allocator *a, file_system *fs)
   : context(m),
     _eu(eu),			// FIXME

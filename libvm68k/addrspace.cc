@@ -33,7 +33,7 @@
 # define I assert
 #endif
 
-using vm68k::memory_address_space;
+using vm68k::memory_map;
 using vm68k::default_memory;
 using namespace vm68k::types;
 using namespace std;
@@ -44,18 +44,16 @@ namespace
 }
 
 uint16_type
-memory_address_space::get_16(memory::function_code fc, uint32_type address)
-  const
+memory_map::get_16(uint32_type address, function_code fc) const
 {
   if (address & 0x1)
     throw address_error_exception(true, fc, address);
 
-  return this->get_16_unchecked(fc, address);
+  return this->get_16_unchecked(address, fc);
 }
 
 uint32_type
-memory_address_space::get_32(memory::function_code fc, uint32_type address)
-  const
+memory_map::get_32(uint32_type address, function_code fc) const
 {
   if (address % 2 != 0)
     throw address_error_exception(true, fc, address);
@@ -63,8 +61,8 @@ memory_address_space::get_32(memory::function_code fc, uint32_type address)
   if (address / 2 % 2 != 0)
     {
       uint32_type value
-	= (uint32_type(this->get_16_unchecked(fc, address)) << 16
-	   | uint32_type(this->get_16_unchecked(fc, address + 2)));
+	= (uint32_type(this->get_16_unchecked(address, fc)) << 16
+	   | uint32_type(this->get_16_unchecked(address + 2, fc)));
       return value;
     }
   else
@@ -76,13 +74,12 @@ memory_address_space::get_32(memory::function_code fc, uint32_type address)
 }
 
 string
-memory_address_space::get_string(memory::function_code fc, uint32_type address)
-  const
+memory_map::get_string(uint32_type address, function_code fc) const
 {
   string s;
   for (;;)
     {
-      int c = this->get_8(fc, address++);
+      int c = this->get_8(address++, fc);
       if (c == 0)
 	break;
       s += c;
@@ -93,37 +90,35 @@ memory_address_space::get_string(memory::function_code fc, uint32_type address)
 
 /* Read a block of data from memory.  */
 void
-memory_address_space::read(memory::function_code fc, uint32_type address,
-			   void *data, size_t size) const
+memory_map::read(uint32_type address, void *data, size_t size,
+		 function_code fc) const
 {
   unsigned char *i = static_cast<unsigned char *>(data);
   unsigned char *last = i + size;
 
   while (i != last)
-    *i++ = this->get_8(fc, address++);
+    *i++ = this->get_8(address++, fc);
 }
 
 void
-memory_address_space::put_16(memory::function_code fc, uint32_type address,
-			     uint16_type value)
+memory_map::put_16(uint32_type address, uint16_type value, function_code fc)
 {
   if (address & 0x1)
     throw address_error_exception(false, fc, address);
 
-  this->put_16_unchecked(fc, address, value);
+  this->put_16_unchecked(address, value, fc);
 }
 
 void
-memory_address_space::put_32(memory::function_code fc, uint32_type address,
-			     uint32_type value)
+memory_map::put_32(uint32_type address, uint32_type value, function_code fc)
 {
   if (address % 2 != 0)
     throw address_error_exception(false, fc, address);
 
   if (address / 2 % 2 != 0)
     {
-      this->put_16_unchecked(fc, address, value >> 16);
-      this->put_16_unchecked(fc, address + 2, value);
+      this->put_16_unchecked(address, value >> 16, fc);
+      this->put_16_unchecked(address + 2, value, fc);
     }
   else
     {
@@ -133,31 +128,30 @@ memory_address_space::put_32(memory::function_code fc, uint32_type address,
 }
 
 void
-memory_address_space::put_string(memory::function_code fc, uint32_type address,
-				 const string &s)
+memory_map::put_string(uint32_type address, const string &s, function_code fc)
 {
   for (string::const_iterator i = s.begin();
        i != s.end();
        ++i)
-    this->put_8(fc, address++, *i);
+    this->put_8(address++, *i, fc);
 
-  this->put_8(fc, address++, 0);
+  this->put_8(address++, 0, fc);
 }
 
 /* Write a block of data to memory.  */
 void
-memory_address_space::write(memory::function_code fc, uint32_type address,
-			    const void *data, size_t size)
+memory_map::write(uint32_type address, const void *data, size_t size,
+		  function_code fc)
 {
   unsigned char *i = static_cast<unsigned char *>(data);
   unsigned char *last = i + size;
 
   while (i != last)
-    this->put_8(fc, address++, *i++);
+    this->put_8(address++, *i++, fc);
 }
 
 void
-memory_address_space::fill(uint32_type first, uint32_type last, memory *p)
+memory_map::fill(uint32_type first, uint32_type last, memory *p)
 {
   vector<memory *>::iterator i = this->find_memory(last + PAGE_SIZE - 1);
   if (i == page_table.begin())
@@ -165,7 +159,7 @@ memory_address_space::fill(uint32_type first, uint32_type last, memory *p)
   ::fill(this->find_memory(first), i, p);
 }
 
-memory_address_space::memory_address_space()
+memory_map::memory_map()
   : page_table(NPAGES, &null_memory)
 {
 }

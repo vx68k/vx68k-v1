@@ -1,3 +1,19 @@
+2000-12-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/inst4.cc (m68k_rte): Avoid direct memory_map method calls.
+
+	* libvm68k/inst6.cc (m68k_bsr): Avoid direct memory_map method calls.
+
+	* bin/main.cc (run_boot): Avoid direct memory_map method calls.
+
+	* include/vm68k/memory.h (class memory_map): Renamed from
+	memory_address_space.  Also change all users.
+	(class memory_map): Add typedef function_code.
+	(class memory_map): Move the function_code arguments to the end
+	for methods: get_8, get_16, get_16_unchecked, get_32, get_string,
+	read, put_8, put_16, put_16_unchecked, put_32, put_string, and
+	write.  Also change all users.
+
 2000-12-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/Makefile.am (lib_LTLIBRARIES): Exchange the order of
