@@ -1,5 +1,15 @@
 2000-12-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/Makefile.am (vx68k_LDADD): Add libvx68kdos.la.
+
+	* libvx68k/Makefile.am (lib_LTLIBRARIES): Add libvx68kdos.la.
+	(libvx68kdos_la_LDFLAGS): New macro.
+	(libvx68kdos_la_SOURCES): New macro.
+	(libvx68k_la_SOURCES): Remove the DOS-emulation files.
+
+	* doc/vx68k.texi (Human68k Emulation): Renamed from Human68k.
+	(Human68k Emulation): Raise the level.
+
 	* libvx68k/systemrom.cc (initialize_iocs_handlers): Renamed from
 	initialize_iocs_functions.  Also change all callers.
 	(initialize_iocs_handlers, system_rom): Use make_pair.

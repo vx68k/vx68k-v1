@@ -5,9 +5,9 @@
 @synindex vr fn
 @set VERSION 1.1
 @c $Format: "@set REVISION $Revision$" $
-@set REVISION 1.13
+@set REVISION 1.14
 @c $Format: "@set DATE $Date$" $
-@set DATE Tue, 12 Dec 2000 22:26:31 +0900
+@set DATE Tue, 12 Dec 2000 23:18:36 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -69,6 +69,7 @@ Manual, updated @value{DATE}.  This manual applies to Version
 * Coding Conventions::          How code is written.
 * General purpose components::  Generic components.
 * X68000 Emulation::            X68000 specific components.
+* Human68k Emulation::          The Disk Operating System.
 * GTK+ User Interface::         
 * Sample Application::          
 * Function and Variable Index::  Index for functions and variables.
@@ -112,7 +113,6 @@ Execution Unit
 X68000 Emulation
 
 * Machine::                     Hardware and BIOS emulation.
-* Human68k::                    DOS emulation.
 
 Machine
 
@@ -389,7 +389,7 @@ This method executes instructions in context @var{c}.
 An instruction is defined by a function.
 This function is called @dfn{instruction handler}.
 
-@node X68000 Emulation, GTK+ User Interface, General purpose components, Top
+@node X68000 Emulation, Human68k Emulation, General purpose components, Top
 @chapter X68000 Emulation
 
 This chapter describes @acronym{UI}-independent part of Virtual X68000.
@@ -398,10 +398,9 @@ They are available in library @file{libvx68k}.
 
 @menu
 * Machine::                     Hardware and BIOS emulation.
-* Human68k::                    DOS emulation.
 @end menu
 
-@node Machine, Human68k, X68000 Emulation, X68000 Emulation
+@node Machine,  , X68000 Emulation, X68000 Emulation
 @section Machine
 @cindex machine
 
@@ -526,14 +525,17 @@ Sets the handler for IOCS call @var{number} to @var{handler}.
 X68000 uses a Zilog Z8530 SCC, or serial communication controller, for a
 COM port and a mouse port.
 
-@node Human68k,  , Machine, X68000 Emulation
-@section Human68k
+@node Human68k Emulation, GTK+ User Interface, X68000 Emulation, Top
+@chapter Human68k Emulation
 @cindex Human68k
+@cindex DOS
+@cindex Disk Operating System
+@cindex Operating System, Disk
 
 Virtual X68000 is unique as it also offers functions of the
 basic operating system, Human68k.
 
-@node GTK+ User Interface, Sample Application, X68000 Emulation, Top
+@node GTK+ User Interface, Sample Application, Human68k Emulation, Top
 @chapter GTK+ User Interface
 
 This chapter describes the GTK+ implementation of user interface
