@@ -1,5 +1,8 @@
 2000-07-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (m68k_btst_r): New function template.
+	(initialize_instructions): Add new or missing handlers.
+
 	* libvx68k/textvram.cc (putw): Output diagnostic message.
 
 	* libvx68k/systemrom.cc (iocs_ontime, iocs_opmintst, iocs_opmset):
