@@ -472,6 +472,44 @@ namespace
     c.regs.pc += 2;
   }
 
+  /* Handles DOS _SUPER_JSR syscall.  */
+  void
+  dos_super_jsr(uint_type op, context &c, instruction_data *data)
+  {
+    uint32_type sp = c.regs.a[7];
+    uint32_type empadr = c.mem->getl(SUPER_DATA, sp + 0);
+#ifdef L
+    L(" DOS _SUPER_JSR\t| %#lx\n", (unsigned long) empadr);
+#endif
+
+    uint32_type last_pc = c.regs.pc;
+    bool last_state = c.supervisor_state();
+    c.set_supervisor_state(true);
+    c.regs.pc = empadr;
+
+    c.mem->putl(SUPER_DATA, c.regs.a[7] - 4, 0xfef600);
+    c.regs.a[7] -= 4;
+
+    try
+      {
+	dos *d = static_cast<dos *>(data);
+	I(d != NULL);
+
+	d->machine()->exec_unit()->run(c);
+	abort();
+      }
+    catch (bus_error &e)
+      {
+	if (e.address != 0xfef600)
+	  throw;
+      }
+
+    c.set_supervisor_state(last_state);
+    c.regs.pc = last_pc;
+
+    c.regs.pc += 2;
+  }
+
   void
   dos_vernum(uint_type op, context &ec, instruction_data *data)
   {
@@ -532,6 +570,7 @@ namespace
     eu.set_instruction(0xff51, 0, &dos_getpdb, data);
     eu.set_instruction(0xff53, 0, &dos_getenv, data);
     eu.set_instruction(0xff57, 0, &dos_filedate, data);
+    eu.set_instruction(0xfff6, 0, &dos_super_jsr, data);
 
     eu.set_instruction(0xff81, 0, &dos_getpdb, data);
     eu.set_instruction(0xff83, 0, &dos_getenv, data);
@@ -550,7 +589,7 @@ dos::create_context()
   return c;
 }
 
-dos::dos(machine *m)
+dos::dos(class machine *m)
   : vm(m),
     allocator(vm->address_space(), 0x8000u, vm->memory_size()),
     _fs(vm),

@@ -199,7 +199,7 @@ namespace vx68k
       : public instruction_data
     {
     private:
-      machine *vm;
+      class machine *vm;
       memory_allocator allocator;
       file_system _fs;
 
@@ -207,9 +207,11 @@ namespace vx68k
       int debug_level;
 
     public:
-      dos(machine *);
+      dos(class machine *);
 
     public:
+      class machine *machine()
+        {return vm;}
       file_system *fs()
 	{return &_fs;}
       dos_exec_context *create_context();

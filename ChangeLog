@@ -1,5 +1,10 @@
 1999-11-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vx68k/dos.cc (dos_super_jsr): New function.
+	(add_instructions): Add dos_super_jsr.
+
+	* include/vx68k/human.h (class dos): Add method machine.
+
 	* bin/main.cc (create_window): Add menu bar.
 
 1999-11-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
