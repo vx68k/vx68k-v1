@@ -1,12 +1,16 @@
 Virtual X68000 TO DO
 
-$Date: Fri, 09 Jul 1999 23:09:07 +0900 $
+$Date: Fri, 09 Jul 1999 23:15:42 +0900 $
 
 Version 0.36
 
 * Video hardware emulation.
 
 * Console device.
+
+* `--one-thread' option.
+
+This option may be useful to profile the code.
 
 Version 0.36 or later
 
