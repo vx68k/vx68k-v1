@@ -193,8 +193,13 @@ namespace vm68k
     const condition_tester *x_eval;
     sint32_type x_values[3];
     uint_type value;
+
   public:
     status_register();
+
+  public:
+    operator uint_type() const;
+
   public:
     bool hi() const
       {return !ls();}

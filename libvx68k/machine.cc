@@ -181,7 +181,29 @@ machine::boot(context &c)
     }
 
   c.regs.pc = 0x2000;
-  eu.run(c);
+ rerun:
+  try
+    {
+      eu.run(c);
+    }
+  catch (illegal_instruction &e)
+    {
+      uint_type op = c.mem->getw(SUPER_DATA, c.regs.pc);
+
+      switch (op >> 12)
+	{
+	case 0xf:
+	  c.set_supervisor_state(true);
+	  c.regs.a[7] -= 6;
+	  c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, c.regs.sr);
+	  c.regs.pc = c.mem->getl(SUPER_DATA, 0x02c);
+	  goto rerun;
+
+	default:
+	  throw;
+	}
+    }
 }
 
 void

@@ -144,12 +144,22 @@ status_register::set_cc_lsl(sint32_type r, sint32_type d, uint_type s)
   x_values[1] = cc_values[1] = d;
   x_values[2] = cc_values[2] = s;
 }
+
+status_register::operator uint_type() const
+{
+  uint_type v = value & 0xff;
+  if (cs())
+    v |= 0x01;
+  if (eq())
+    v |= 0x04;
+  if (mi())
+    v |= 0x08;
+  if (x())
+    v |= 0x10;
 
-const condition_tester *const
-status_register::general_condition_tester = &const_general_condition_tester;
-const condition_tester *const
-status_register::add_condition_tester = &const_add_condition_tester;
-
+  return v;
+}
+
 status_register::status_register()
   : cc_eval(general_condition_tester),
     x_eval(general_condition_tester),
@@ -157,3 +167,7 @@ status_register::status_register()
 {
 }
 
+const condition_tester *const
+status_register::general_condition_tester = &const_general_condition_tester;
+const condition_tester *const
+status_register::add_condition_tester = &const_add_condition_tester;
