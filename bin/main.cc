@@ -104,7 +104,10 @@ namespace
     if (opt_debug)
       env.set_debug_level(1);
 
-    md->status = env.execute(md->argv[0], md->argv + 1); // FIXME
+    human::dos_exec_context *c = env.create_context();
+    human::shell p(c);
+    md->status = p.exec(md->argv[optind], md->argv + optind + 1, environ);
+    delete c;
 
     pthread_exit(NULL);
   }
@@ -156,7 +159,10 @@ main (int argc, char **argv)
       if (opt_debug)
 	env.set_debug_level(1);
 
-      int status = env.execute(argv[optind], argv + optind + 1);
+      human::dos_exec_context *c = env.create_context();
+      human::shell p(c);
+      int status = p.exec(argv[optind], argv + optind + 1, environ);
+      delete c;
 #endif
       return status;
     }

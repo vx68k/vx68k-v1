@@ -40,21 +40,6 @@ using namespace vx68k::human;
 using namespace vm68k;
 using namespace std;
 
-uint16
-dos::execute (const char *name, const char *const *argv)
-{
-  dos_exec_context ec(vm->address_space(), vm->exec_unit(), &allocator);
-  ec.set_debug_level(debug_level);
-
-  uint32_type pdb_base = ec.getpdb() - 0x10;
-  uint32_type env = ec.mem->getl(SUPER_DATA, pdb_base + 0x10);
-  ec.setpdb(ec.load(name, 0x7000, env));
-
-  ec.regs.a[7] = ec.regs.a[0];	// FIXME
-  uint_type st = ec.start(ec.regs.a[4], argv);
-  return st;
-}
-
 namespace
 {
   void
@@ -447,6 +432,16 @@ namespace
     ec.regs.pc += 2;
   }
 } // (unnamed namespace)
+
+dos_exec_context *
+dos::create_context()
+{
+  dos_exec_context *c
+    = new dos_exec_context(vm->address_space(), vm->exec_unit(), &allocator);
+  c->set_debug_level(debug_level);
+
+  return c;
+}
 
 dos::dos(machine *m)
   : vm(m),

@@ -1,5 +1,24 @@
 1999-07-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (run_machine, main): Use shell.
+
+	* include/vx68k/human.h (class shell): Rename member _ec to
+	_context.
+	(class dos): Updated with new/removed members.
+
+	* lib/vx68k/dos.cc (create_context): New function.
+	(execute): Removed.
+
+	* lib/vx68k/doscontext.cc (mfree): New function.
+	(dos_exec_context): Remove code to make environment.
+
+	* lib/vx68k/shell.cc (shell): Change block size to 0x2000 and set
+	env address to 0.
+	(shell): Use mfree to remove memory block.
+	(create_env): New function.
+	(exec): Implemented.
+	(exec): Change return type to int.
+
 	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add shell.cc.
 
 	* lib/vx68k/shell.cc: New file.

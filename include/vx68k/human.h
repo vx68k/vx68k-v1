@@ -111,20 +111,23 @@ namespace vx68k
 	{debug_level = lev;}
     };
 
-    /* Dummy process for interface from POSIX to DOS.  */
+    /* Pseudo process for interface from POSIX to DOS.  */
     class shell
     {
     private:
-      dos_exec_context *_ec;
+      dos_exec_context *_context;
       uint32_type pdb;
 
     public:
       shell(dos_exec_context *);
       ~shell();
 
+    protected:
+      uint32_type create_env(const char *const *envp);
+
     public:
-      sint_type exec(const char *name, const char *const *argv,
-		     const char *const *envp);
+      int exec(const char *name, const char *const *argv,
+	       const char *const *envp);
     };
 
     class dos
@@ -142,8 +145,7 @@ namespace vx68k
       dos(machine *);
 
     public:
-      uint32_type load(const char *name, dos_exec_context &c);
-      uint16 execute (const char *, const char *const *);
+      dos_exec_context *create_context();
 
     public:
       void set_debug_level(int lev)
