@@ -1,3 +1,17 @@
+2000-08-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/Makefile.am (noinst_HEADERS): Add gtkapp.h.
+	(vx68k_SOURCES): Add gtkconwin.cc.
+
+	* bin/gtkconwin.cc: New file.
+	(notify_window_destroyed, add_callback, show, hide, new_item,
+	new_separator_item, handle_window_destroy, ~gtk_console_window,
+	gtk_console_window): New function.
+
+	* bin/gtkapp.h: New file.
+	(struct console_callback): New class.
+	(class gtk_console_window): New class.
+
 2000-08-02  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/textvram.cc (get_16, get_8): Remove log output.
