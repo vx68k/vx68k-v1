@@ -30,12 +30,14 @@ cpu::set_interrupt_listener (interrupt_listener *l)
   interrupt = l;
 }
 
+#define SUPER_PROGRAM 6
+
 void
 cpu::run ()
 {
   for (;;)
     {
-      int w = mem->read16 (regs.pc);
+      int w = mem->read16 (SUPER_PROGRAM, regs.pc);
       assert (w >= 0 && w < 0x10000);
       insn[w] (w, &regs, mem);
     }
