@@ -167,11 +167,11 @@ machine::write_disk(const address_space &as, uint_type mode, uint32_type pos,
 }
 
 void
-machine::boot()
+machine::boot(context &c)
 {
-  x68k_address_space as(this);
+  /* c.mem must be of class x68k_address_space.  */
 
-  sint32_type st = read_disk(as, 0x9000, 0x03000001, 0x2000, 1024);
+  sint32_type st = read_disk(*c.mem, 0x9000, 0x03000001, 0x2000, 1024);
   if (st >> 24 & 0xc0)
     {
 #ifdef HAVE_NANA_H
@@ -180,18 +180,16 @@ machine::boot()
       throw runtime_error("machine");
     }
 
-  context c(&as);
   c.regs.pc = 0x2000;
+  eu.run(c);
+}
 
-  try
-    {
-      eu.run(c);
-    }
-  catch (illegal_instruction &e)
-    {
-      uint_type op = c.mem->getw(SUPER_DATA, c.regs.pc);
-      fprintf(stderr, "vm68k illegal instruction (op = 0x%x)\n", op);
-    }
+void
+machine::boot()
+{
+  x68k_address_space as(this);
+  context c(&as);
+  boot(c);
 }
 
 void

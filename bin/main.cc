@@ -132,9 +132,19 @@ int gtk_app::opt_debug_level = 0;
 void
 gtk_app::run_boot() throw ()
 {
+  x68k_address_space as(&vm);
+  context c(&as);
+
   try
     {
-      vm.boot();
+      vm.boot(c);
+    }
+  catch (illegal_instruction &e)
+    {
+      /* NOTE: This exception should have the address information.  */
+      uint_type op = as.getw(SUPER_DATA, c.regs.pc);
+      fprintf(stderr, "vm68k illegal instruction %%pc=%#010x (%#0x)\n",
+	      c.regs.pc, op);
     }
   catch (exception &x)
     {

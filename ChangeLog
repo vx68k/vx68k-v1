@@ -1,5 +1,18 @@
 2000-05-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (run_boot): Catch an illegal instruction.
+
+	* libvx68k/machine.cc (boot): Make a version with an argument of
+	class context.
+
+	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Change the file
+	order.
+
+	* include/vx68k/machine.h (class x68k_address_space): Moved before
+	class machine.
+	(class machine): Add new member boot with an argument of class
+	context.
+
 	* libvx68k/systemrom.cc (iocs_b_print, iocs_bootinf): New
 	function.
 	(iocs_b_read, iocs_b_write): Print FIXME message by fprintf.

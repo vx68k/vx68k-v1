@@ -228,6 +228,23 @@ namespace vx68k
 		   unsigned char *rgb_buf, size_t row_size);
   };
 
+  class machine;
+
+  /* Address space of X68000.  */
+  class x68k_address_space: public address_space
+  {
+  private:
+    class machine *_m;
+
+  public:
+    x68k_address_space(class machine *m);
+
+  public:
+    /* Shortcut for the emulated machine.  */
+    class machine *machine() const
+    {return _m;}
+  };
+
   /* Machine of X68000.  */
   class machine
   {
@@ -302,23 +319,11 @@ namespace vx68k
     sint32_type write_disk(const address_space &, uint_type u, uint32_type pos,
 			   uint32_type buf, uint32_type nbytes) const;
 
+    /* Boots up this machine using an address space.  */
+    void boot(context &c);
+
     /* Boots up this machine.  */
     void boot();
-  };
-
-  /* Address space of X68000.  */
-  class x68k_address_space: public address_space
-  {
-  private:
-    class machine *_m;
-
-  public:
-    x68k_address_space(class machine *m);
-
-  public:
-    /* Shortcut for the emulated machine.  */
-    class machine *machine() const
-    {return _m;}
   };
 } // vx68k
 
