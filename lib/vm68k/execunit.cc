@@ -1232,16 +1232,16 @@ namespace
 void
 exec_unit::install_instructions(exec_unit &eu)
 {
+  eu.set_instruction(0x0400, 0x0007, &subib<data_register>);
+  eu.set_instruction(0x0410, 0x0007, &subib<indirect>);
+  eu.set_instruction(0x0418, 0x0007, &subib<postinc_indirect>);
+  eu.set_instruction(0x0420, 0x0007, &subib<predec_indirect>);
+  eu.set_instruction(0x0428, 0x0007, &subib<disp_indirect>);
+  eu.set_instruction(0x0439, 0x0000, &subib<absolute_long>);
   eu.set_instruction(0x0680, 0x0007, &addil<data_register>);
   eu.set_instruction(0x0690, 0x0007, &addil<indirect>);
   eu.set_instruction(0x0698, 0x0007, &addil<postincrement_indirect>);
   eu.set_instruction(0x06a0, 0x0007, &addil<predecrement_indirect>);
-  eu.set_instruction(0x0800, 0x0007, &subib<data_register>);
-  eu.set_instruction(0x0810, 0x0007, &subib<indirect>);
-  eu.set_instruction(0x0818, 0x0007, &subib<postinc_indirect>);
-  eu.set_instruction(0x0820, 0x0007, &subib<predec_indirect>);
-  eu.set_instruction(0x0828, 0x0007, &subib<disp_indirect>);
-  eu.set_instruction(0x0839, 0x0000, &subib<absolute_long>);
   eu.set_instruction(0x0c00, 0x0007, &cmpib<data_register>);
   eu.set_instruction(0x0c10, 0x0007, &cmpib<indirect>);
   eu.set_instruction(0x0c18, 0x0007, &cmpib<postincrement_indirect>);

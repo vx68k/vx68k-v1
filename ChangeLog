@@ -2,6 +2,7 @@
 
 	* lib/vm68k/execunit.cc (cmpb, cmpw, cmpl, cmpib): Change code to
 	set condition codes properly.
+	(install_instructions): Fix subib code.
 
 	* lib/vm68k/statusreg.cc: Add suffix _eval to evaluator objects.
 	(struct common_cc_evaluator): Renamed from result_cc_evaluator.
