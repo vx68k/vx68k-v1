@@ -112,6 +112,22 @@ gtk_console::create_widget()
   return drawing_area;
 }
 
+void
+gtk_console::update_area(int x, int y, int width, int height)
+{
+  GdkRectangle area;
+  area.x = x;
+  area.y = y;
+  area.width = width;
+  area.height = height;
+
+  gdk_threads_enter();
+  GdkRegion *new_region = gdk_region_union_with_rect(update_region, &area);
+  gdk_region_destroy(update_region);
+  update_region = new_region;
+  gdk_threads_leave();
+}
+
 namespace
 {
   unsigned char *
@@ -275,7 +291,11 @@ namespace
 
 gtk_console::~gtk_console()
 {
+  delete [] kanji16_font;
+  delete [] primary_font;
+
   gdk_threads_enter();
+
   for (vector<GtkWidget *>::iterator i = widgets.begin();
        i != widgets.end();
        ++i)
@@ -283,11 +303,12 @@ gtk_console::~gtk_console()
       I(*i != NULL);
       gtk_signal_disconnect_by_data(GTK_OBJECT(*i), this);
     }
+
+  gtk_timeout_remove(timeout);
+  gdk_region_destroy(update_region);
+
   gdk_threads_leave();
 
-  delete [] kanji16_font;
-  delete [] primary_font;
-  gtk_timeout_remove(timeout);
   delete [] rgb_buf;
 }
 
@@ -296,12 +317,19 @@ gtk_console::gtk_console(machine *m)
     width(768), height(512),
     row_size(768 * 3),
     rgb_buf(NULL),
+    update_region(NULL),
     timeout(0),
     primary_font(NULL),
     kanji16_font(NULL)
 {
   rgb_buf = new guchar [height * row_size];
+
+  gdk_threads_enter();
+
+  update_region = gdk_region_new();
   timeout = gtk_timeout_add(TIMEOUT_INTERVAL, &::handle_timeout, this);
+
+  gdk_threads_leave();
 
   /* Retrieve font bitmap in the main thread.  */
   primary_font = base16_font_array();

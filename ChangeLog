@@ -1,8 +1,21 @@
 1999-09-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/gtkconsole.cc (update_area): New function.
+	(~gtk_console): Put gtk & gdk calls into thread lock.  Destroy
+	update_region.
+	(gtk_console): Create update_region.  Put gdk & gtk calls in
+	thread lock.
+
+	* include/vx68k/gtk.h (class gtk_console): Add members
+	update_region and update_area.  Move member widgets before
+	primary_font.
+
+	* include/vx68k/machine.h (struct console): Add member
+	update_area.
+
 	* lib/vx68k/gtkconsole.cc (handle_timeout): Use gdk with thread
 	lock.
-	(gtk_console): Likewise.
+	(~gtk_console): Likewise.
 	(create_widget): Copy the widget's style to modify.
 
 	* bin/main.cc (run): Use gdk with thread lock.
