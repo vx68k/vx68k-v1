@@ -5,9 +5,9 @@
 @synindex vr fn
 @set VERSION 1.1
 @c $Format: "@set REVISION $Revision$" $
-@set REVISION 1.21
+@set REVISION 1.22
 @c $Format: "@set DATE $Date$" $
-@set DATE Sat, 16 Dec 2000 00:54:31 +0900
+@set DATE Tue, 19 Dec 2000 23:46:30 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -99,7 +99,7 @@ General Purpose Components
 
 Memory and I/O
 
-* Class memory::                
+* Memory::                      
 * Class memory_map::            
 
 Processor
@@ -273,76 +273,107 @@ Virtual X68000 uses a single address space to access memory
 and peripheral devices.
 
 @menu
-* Class memory::                
+* Memory::                      
 * Class memory_map::            
 @end menu
 
-@node Class memory, Class memory_map, Memory and I/O, Memory and I/O
-@subsection Class @code{memory}
+@node Memory, Class memory_map, Memory and I/O, Memory and I/O
+@subsection Memory
 
 @deftp {Abstract Class} memory
-This class has methods @code{get_16},
-@code{get_8}, @code{get_32},
-@code{put_16}, @code{put_8}, and
-@code{put_32}. The methods
-@code{get_16}, @code{get_8},
-@code{put_16}, and @code{put_8}
-are pure virtual and must be overridden in derived classes.
-Default implementations for @code{get_32} and
-@code{put_32} are provided but a derived class
-can override those for better performance.
+Abstract base class for memory components.
 @end deftp
 
-@deftp {Enumeration} memory::function_code
-@tindex @code{function_code} of @code{memory}
+@deftp {Enumeration in @code{memory}} function_code
+Classifies memory references.  These values are defined:
 
 @vtable @code
-@item memory::SUPER_PROGRAM
-@vindex @code{SUPER_PROGRAM} of @code{memory}
+@item USER_DATA
+User data reference.  The processor uses this value in the user state
+for reading and writing data.
 
-@item memory::SUPER_DATA
-@vindex @code{SUPER_DATA} of @code{memory}
+@item USER_PROGRAM
+User program reference.  The processor uses this value in the user state
+for reading instructions.
 
-@item memory::USER_PROGRAM
-@vindex @code{USER_PROGRAM} of @code{memory}
+@item SUPER_DATA
+Supervisor data reference.  The processor uses this value in the
+supervisor state for reading and writing data.
 
-@item memory::USER_DATA
-@vindex @code{USER_DATA} of @code{memory}
+@item SUPER_PROGRAM
+Supervisor program reference.  The processor uses this value in the
+supervisor state for reading instructions.
 @end vtable
 @end deftp
 
-@deftypeop {Abstract Method} memory uint_type get_16 (function_code @var{fc}, uint32_type @var{address}) const
-This method reads a word data from the memory.  @var{address} must be
-aligned to a word boundary.
+@deftypeop {Abstract Method} memory int get_8 (uint32_type @var{address}, function_code @var{fc}) const
+Reads an 8-bit data from this memory.  The return value is unsigned.
 @end deftypeop
 
-@deftypeop {Abstract Method} memory {unsigned int} get_8 (function_code @var{fc}, uint32_type @var{address}) const
-This method reads a byte data from the memory.
+@deftypeop {Abstract Method} memory uint16_type get_16 (uint32_type @var{address}, function_code @var{fc}) const
+Reads a 16-bit data from this memory.  @var{address} must be a multiple
+of 2.  The return value is unsigned.
 @end deftypeop
 
-@deftypemethod memory uint32_type get_32 (function_code @var{fc}, uint32_type @var{address}) const
+@deftypemethod memory uint32_type get_32 (uint32_type @var{address}, function_code @var{fc}) const
+Reads a 32-bit data from this memory.  @var{address} must be a multiple
+of 4.  The return value is unsigned.
+
+This method is just implemented using two @code{get_16} calls for
+convenience, but can be overridden by a derived class for a slightly
+better performance.
 @end deftypemethod
 
-@deftypeop {Abstract Method} memory void put_16 (function_code @var{fc}, uint32_type @var{address}, uint_type @var{value})
+@deftypeop {Abstract Method} memory void put_8 (uint32_type @var{address}, int @var{value}, function_code @var{fc})
+Writes an 8-bit value to this memory.  @var{value} may be signed or
+unsigned.  @var{fc} must be one of the data references.
 @end deftypeop
 
-@deftypeop {Abstract Method} memory void put_8 (function_code @var{fc}, uint32_type @var{address}, unsigned int @var{value})
+@deftypeop {Abstract Method} memory void put_16 (uint32_type @var{address}, uint16_type @var{value}, function_code @var{fc})
+Writes a 16-bit value to this memory.  @var{address} must be a multiple
+of 2.  @var{value} may be signed or unsigned.  @var{fc} must be one of
+the data references.
 @end deftypeop
 
-@deftypemethod memory void put_32 (function_code @var{fc}, uint32_type @var{address}, uint32_type @var{value})
+@deftypemethod memory void put_32 (uint32_type @var{address}, uint32_type @var{value}, function_code @var{fc})
+Writes a 32-bit value to this memory.  @var{address} must be a multiple
+of 4.  @var{value} may be signed or unsigned.  @var{fc} must be one of
+the data references.
+
+This method is just implemented using two @code{put_16} calls for
+convenience, but can be overridden by a derived class for a slightly
+better performance.
 @end deftypemethod
 
 @deftp Class default_memory
+Memory component used for non-existent region.  Any reference to this
+memory causes a bus error exception.
 @end deftp
 
-@node Class memory_map,  , Class memory, Memory and I/O
+@deftypemethod default_memory int get_8 (uint32_type @var{address}, function_code @var{fc}) const
+Throws a @var{bus_error_exception}.
+@end deftypemethod
+
+@deftypemethod default_memory uint16_type get_16 (uint32_type @var{address}, function_code @var{fc}) const
+Throws a @var{bus_error_exception}.
+@end deftypemethod
+
+@deftypemethod default_memory void put_8 (uint32_type @var{address}, int @var{value}, function_code @var{fc})
+Throws a @var{bus_error_exception}.
+@end deftypemethod
+
+@deftypemethod default_memory void put_16 (uint32_type @var{address}, uint16_type @var{value}, function_code @var{fc})
+Throws a @var{bus_error_exception}.
+@end deftypemethod
+
+@node Class memory_map,  , Memory, Memory and I/O
 @subsection Class @code{memory_map}
 
 @deftp Class memory_map
 This is a class of address spaces for memory.
 @end deftp
 
-@deftp Typedef memory_map::function_code
+@deftp {Typedef in @code{memory_map}} function_code
 Alias of @code{memory::function_code}.
 @end deftp
 
@@ -573,7 +604,7 @@ code @var{fc}.
 @deftypemethod system_rom void initialize (memory_map &@var{mm})
 @end deftypemethod
 
-@deftp Typedef system_rom::iocs_call_type
+@deftp {Typedef in @code{system_rom}} iocs_call_type
 Type for IOCS call handlers.
 @end deftp
 

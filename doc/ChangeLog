@@ -1,3 +1,10 @@
+2000-12-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* vx68k.texi (Memory): Rename the title.
+	(Memory): Modify documentation.
+	(Class memory_map): Avoid colons in an index entry.
+	(IOCS and System ROM): Likewise.
+
 2000-12-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* vx68k.texi (Document Type Definitions, Disk Set Descriptors,
