@@ -202,12 +202,12 @@ dos_exec_context::start(uint32_type address, const char *const *argv)
   catch (memory_exception &x)
     {
       uint16_type op = mem->get_16(regs.pc, memory::SUPER_DATA);
-      if (x.vecno == 3u)
+      if (x.vecno() == 3u)
 	fprintf(stderr, "vm68k address error (fc = %#x, address = %#lx, op = %#x)\n",
-		x.status, (unsigned long) x.address, op);
+		x._status, (unsigned long) x._address, op);
       else
 	fprintf(stderr, "vm68k bus error (fc = %#x, address = %#lx, op = %#x)\n",
-		x.status, (unsigned long) x.address, op);
+		x._status, (unsigned long) x._address, op);
       status = 0xff;
     }
 

@@ -33,7 +33,7 @@
 #endif
 
 using vx68k::opm_memory;
-using vm68k::bus_error_exception;
+using vm68k::bus_error;
 using vm68k::mutex_lock;
 using namespace vm68k::types;
 using namespace std;
@@ -146,7 +146,7 @@ opm_memory::get_8(uint32_type address, function_code fc) const
 
   default:
     {
-      throw bus_error_exception(true, fc, address);
+      throw bus_error(address, READ | fc);
     }
     break;
   }
@@ -174,7 +174,7 @@ opm_memory::put_8(uint32_type address, int value, function_code fc)
 #endif
 
   if (fc != memory::SUPER_DATA)
-    throw bus_error_exception(false, fc, address);
+    throw bus_error(address, WRITE | fc);
 
   address &= 0x1fffu;
   switch (address)
@@ -188,7 +188,7 @@ opm_memory::put_8(uint32_type address, int value, function_code fc)
       break;
 
     default:
-      throw bus_error_exception(false, fc, address);
+      throw bus_error(address, WRITE | fc);
       break;
     }
 }

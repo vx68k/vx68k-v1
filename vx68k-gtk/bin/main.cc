@@ -151,12 +151,12 @@ gtk_app::run_boot() throw ()
   catch (memory_exception &x)
     {
       char buf[sizeof "Address error at 0x12345678 (status=0x12)"];
-      if (x.vecno == 3u)
+      if (x.vecno() == 3u)
 	sprintf(buf, "Address error at 0x%08lx (status=0x%02x)",
-		x.address + 0UL, x.status);
+		x._address + 0UL, x._status);
       else
 	sprintf(buf, "Bus error at 0x%08lx (status=0x%02x)",
-		x.address + 0UL, x.status);
+		x._address + 0UL, x._status);
       main_window->set_status_text(buf);
     }
   catch (exception &x)

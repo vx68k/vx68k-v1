@@ -1,3 +1,24 @@
+2001-07-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* Makefile.am (SUBDIRS): Remove vx68kui, intl, po, and bin.  Add
+	@subdirs@.
+
+	* configure.in: Move AC_CONFIG_HEADER later.  Remove
+	AC_DEFINE(_GNU_SOURCE).  Remove AC_ISC_POSIX, AM_PATH_GTK, and
+	AM_GNU_GETTEXT.  Add AC_CONFIG_SUBDIRS(vx68k-gtk).  Remove
+	vx68kui/Makefile, intl/Makefile, bin/Makefile, and po/Makefile.in
+	from AC_OUTPUT.
+
+	* vx68k-gtk: New directory.
+
+2001-07-01  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* README: Updated.
+
+	* NEWS: Updated.
+
+	* Use new memory_exception classes.
+
 2001-06-30  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* Version 1.1.8.

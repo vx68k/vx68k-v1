@@ -1,27 +1,21 @@
-READ ME about Virtual X68000
+This program is Virtual X68000, a virtual machine that emulates a Sharp
+X68000.  Virutal X68000 runs X68000 programs without any ROM image.
 
->> DESCRIPTION
+STATUS
 
-This program is a virtual machine that emulates a Sharp X68000.
-Virutal X68000 runs X68000 programs without any ROM image.
+    This program is in early development phase and for developers only.
+    Many functions are not implemented yet.
 
-This program provides a generic m68k emulation library.
-
->> STATUS
-
-This program is in early development phase and for developers only.
-Many functions are not implemented yet.
-
-See the file NEWS in this directory for the current limitations.
+    See the file NEWS in this directory for the history of changes.
 
 PREREQUISITE
 
-This program requires Libvm68k 1.0.5 or later, and GTK+ 1.2.0 or
-later.
+    This program requires Libvm68k 1.0.6 or later, and GTK+ 1.2.0 or
+    later.
 
-This program is written in C++ with exception handling, templates, and
-namespaces.  For the best performance, a compiler that is good at
-optimizing templates and inline functions is recommended.
+    This program is written in C++ with exception handling, templates,
+    and namespaces.  For the best performance, a compiler that is good
+    at optimizing templates and inline functions is recommended.
 
 - The compilers known to work are:
      GCC 2.95.2.
@@ -44,4 +38,4 @@ Send comments, suggestions, or anything you thought about this program
 to vx68k@lists.hypercore.co.jp.
 
 ---
-$ProjectHeader: vx68k 1.366 Sat, 30 Jun 2001 23:16:44 +0900 kaz $
+$ProjectHeader: vx68k 1.368 Wed, 04 Jul 2001 00:22:11 +0900 kaz $

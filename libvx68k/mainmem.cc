@@ -44,7 +44,7 @@
 #endif
 
 using vx68k::main_memory;
-using vm68k::bus_error_exception;
+using vm68k::bus_error;
 using namespace vm68k::types;
 using namespace std;
 
@@ -58,7 +58,7 @@ int
 main_memory::get_8(uint32_type address, function_code fc) const
 {
   if (address % 0x1000000U >= end)
-    throw bus_error_exception(true, fc, address);
+    throw bus_error(address, READ | fc);
 
   uint32_type i = address % 0x1000000U / 2;
   if (address % 2 != 0)
@@ -79,7 +79,7 @@ main_memory::get_16(uint32_type address, function_code fc) const
 {
   assert((address & 1) == 0);
   if (address % 0x1000000U >= end)
-    throw bus_error_exception(true, fc, address);
+    throw bus_error(address, READ | fc);
 
   uint32_type i = address % 0x1000000U / 2;
   uint16_type value = data[i];
@@ -93,7 +93,7 @@ main_memory::get_32(uint32_type address, function_code fc) const
 {
   assert((address & 3) == 0);
   if (address % 0x1000000U >= end)
-    throw bus_error_exception(true, fc, address);
+    throw bus_error(address, READ | fc);
 
   uint32_type i = address % 0x1000000U / 2;
   uint16_type value0 = data[i];
@@ -112,7 +112,7 @@ main_memory::put_8(uint32_type address, int value, function_code fc)
 
   if (address % 0x1000000U >= end
       || fc != memory::SUPER_DATA && address % 0x1000000U < super_area)
-    throw bus_error_exception(false, fc, address);
+    throw bus_error(address, WRITE | fc);
 
   uint32_type i = address % 0x1000000U / 2;
   if (address % 2 != 0)
@@ -133,7 +133,7 @@ main_memory::put_16(uint32_type address, uint16_type value, function_code fc)
 
   if (address % 0x1000000U >= end
       || fc != memory::SUPER_DATA && address % 0x1000000U < super_area)
-    throw bus_error_exception(false, fc, address);
+    throw bus_error(address, WRITE | fc);
 
   uint32_type i = address % 0x1000000 / 2;
   data[i] = value;
@@ -147,7 +147,7 @@ main_memory::put_32(uint32_type address, uint32_type value, function_code fc)
 
   if (address % 0x1000000U >= end
       || fc != memory::SUPER_DATA && address % 0x1000000U < super_area)
-    throw bus_error_exception(false, fc, address);
+    throw bus_error(address, WRITE | fc);
 
   uint32_type i = address % 0x1000000U / 2;
   data[i] = value >> 16;

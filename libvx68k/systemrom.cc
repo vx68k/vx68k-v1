@@ -77,7 +77,7 @@ system_rom::get_8(uint32_type address, function_code fc) const
   // A program access generates a bus error to detect emulation bugs
   // easily.
   if (fc == SUPER_PROGRAM || fc == USER_PROGRAM)
-    throw bus_error_exception(true, fc, address);
+    throw bus_error(address, READ | fc);
 
   static bool once;
   if (!once++)
@@ -93,7 +93,7 @@ system_rom::put_16(uint32_type address, uint16_type value, function_code fc)
      fc, (unsigned long) address, value & 0xffffu);
 #endif
   if (fc != SUPER_DATA)
-    throw bus_error_exception(false, fc, address);
+    throw bus_error(address, WRITE | fc);
 
   static bool once;
   if (!once++)
@@ -108,7 +108,7 @@ system_rom::put_8(uint32_type address, int value, function_code fc)
      fc, (unsigned long) address, value & 0xffu);
 #endif
   if (fc != SUPER_DATA)
-    throw bus_error_exception(false, fc, address);
+    throw bus_error(address, WRITE | fc);
 
   static bool once;
   if (!once++)

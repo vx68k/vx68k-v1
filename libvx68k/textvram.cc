@@ -37,7 +37,7 @@
 using vx68k::text_video_raster_iterator;
 using vx68k::text_video_memory;
 using vm68k::memory;
-using vm68k::bus_error_exception;
+using vm68k::bus_error;
 using vm68k::uint16_iterator;
 using vm68k::mutex_lock;
 using namespace vm68k::types;
@@ -481,7 +481,7 @@ uint16_type
 text_video_memory::get_16(uint32_type address, function_code fc) const
 {
   if (fc != SUPER_DATA)
-    throw bus_error_exception(true, fc, address);
+    throw bus_error(address, READ | fc);
 
   address &= PLANE_MAX * PLANE_SIZE - 1u;
   unsigned char *ptr = buf + address;
@@ -493,7 +493,7 @@ int
 text_video_memory::get_8(uint32_type address, function_code fc) const
 {
   if (fc != SUPER_DATA)
-    throw bus_error_exception(true, fc, address);
+    throw bus_error(address, READ | fc);
 
   address &= PLANE_MAX * PLANE_SIZE - 1u;
   uint16_type value = *(buf + address);
@@ -505,7 +505,7 @@ text_video_memory::put_16(uint32_type address, uint16_type value,
 			  function_code fc)
 {
   if (fc != SUPER_DATA)
-    throw bus_error_exception(false, fc, address);
+    throw bus_error(address, WRITE | fc);
 
   address &= PLANE_MAX * PLANE_SIZE - 1u;
   unsigned char *ptr = buf + address;
@@ -523,7 +523,7 @@ void
 text_video_memory::put_8(uint32_type address, int value, function_code fc)
 {
   if (fc != SUPER_DATA)
-    throw bus_error_exception(false, fc, address);
+    throw bus_error(address, WRITE | fc);
 
   address &= PLANE_MAX * PLANE_SIZE - 1u;
   if ((value & 0xff) != *(buf + address))

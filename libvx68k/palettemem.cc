@@ -33,7 +33,7 @@
 #endif
 
 using vx68k::palettes_memory;
-using vm68k::bus_error_exception;
+using vm68k::bus_error;
 using vm68k::mutex_lock;
 using namespace vm68k::types;
 using namespace std;
@@ -100,7 +100,7 @@ palettes_memory::get_16(uint32_type address, function_code fc) const
 #endif
 
   if (fc != SUPER_DATA)
-    throw bus_error_exception(true, fc, address);
+    throw bus_error(address, READ | fc);
 
   uint32_type off = address & 0x1fff;
   if (off >= 2 * 256 * 2)
@@ -160,7 +160,7 @@ palettes_memory::put_16(uint32_type address, uint16_type value,
 #endif
 
   if (fc != SUPER_DATA)
-    throw bus_error_exception(false, fc, address);
+    throw bus_error(address, WRITE | fc);
 
   uint32_type off = address & 0x1fff;
   if (off >= 2 * 256 * 2)

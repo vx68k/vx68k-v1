@@ -32,7 +32,7 @@
 #endif
 
 using vx68k::area_set;
-using vm68k::bus_error_exception;
+using vm68k::bus_error;
 using namespace vm68k::types;
 using namespace std;
 
@@ -66,7 +66,7 @@ area_set::put_8(uint32_type address, int value, function_code fc)
 
   I(fc != memory::SUPER_PROGRAM);
   if (fc != memory::SUPER_DATA)
-    throw bus_error_exception(false, fc, address);
+    throw bus_error(address, WRITE | fc);
 
   int i = address & 0x1fff;
   switch (i)
@@ -79,7 +79,7 @@ area_set::put_8(uint32_type address, int value, function_code fc)
       }
 
     default:
-      throw bus_error_exception(false, fc, address);
+      throw bus_error(address, WRITE | fc);
     }
 }
 

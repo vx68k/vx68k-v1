@@ -1,0 +1,23 @@
+2001-07-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* acinclude.m4: Copied from ../acinclude.m4.
+
+	* AUTHORS: New file.
+	* NEWS: New file.
+	* README: New file.
+
+	* libvx68k-gtk/Makefile.am (INCLUDES): Updated.
+	(SUBDIRS): New macro.
+
+	* bin/Makefile.am (INCLUDES): Updated.
+	(vx68k_LDADD): Updated.
+
+	* libvx68k-gtk/vx68k/gtk.h: Moved from
+	../include/vx68k/gtk.h.
+	* libvx68k-gtk/vx68k/Makefile.am: New file.
+
+	* bin: Moved from ../bin.
+	* libvx68k-gtk: Moved from ../vx68kui.
+	* Makefile.am: New file.
+	* configure.in: New file.
+

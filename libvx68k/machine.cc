@@ -217,7 +217,7 @@ machine::boot(context &c)
     }
   catch (memory_exception &e)
     {
-      uint32_type vecaddr = e.vecno * 4u;
+      uint32_type vecaddr = e.vecno() * 4u;
       uint32_type addr = c.mem->get_32(vecaddr, memory::SUPER_DATA);
       if (addr != vecaddr + 0xfe0000)
 	{
@@ -232,8 +232,8 @@ machine::boot(context &c)
 	  c.mem->put_16(c.regs.a[7] + 6,
 			c.mem->get_16(c.regs.pc, memory::SUPER_DATA),
 			memory::SUPER_DATA);
-	  c.mem->put_32(c.regs.a[7] + 2, e.address, memory::SUPER_DATA);
-	  c.mem->put_16(c.regs.a[7] + 0, e.status, memory::SUPER_DATA);
+	  c.mem->put_32(c.regs.a[7] + 2, e._address, memory::SUPER_DATA);
+	  c.mem->put_16(c.regs.a[7] + 0, e._status, memory::SUPER_DATA);
 	  c.regs.pc = addr;
 	  goto rerun;
 	}

@@ -503,9 +503,9 @@ namespace
 
 	abort();
       }
-    catch (bus_error_exception &e)
+    catch (bus_error &e)
       {
-	if (e.address != 0xfef600)
+	if (e._address != 0xfef600)
 	  throw;
       }
 
