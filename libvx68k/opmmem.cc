@@ -130,8 +130,8 @@ opm_memory::get_8(int fc, uint32_type address) const
 {
   address &= 0xffffffffu;
 #ifdef HAVE_NANA_H
-  L("class opm_memory: get_8: fc=%d address=%#010lx\n",
-    fc, (unsigned long) address);
+  DL("class opm_memory: get_8: fc=%d address=0x%08lx\n",
+     fc, address + 0UL);
 #endif
 
   switch (address & 0x1fffu) {
@@ -155,8 +155,8 @@ uint_type
 opm_memory::get_16(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("class opm_memory: get_16: fc=%d address=%#010lx\n",
-    fc, (unsigned long) address & 0xffffffffu);
+  DL("class opm_memory: get_16: fc=%d address=0x%08lx\n",
+     fc, address + 0UL);
 #endif
 
   return get_8(fc, address | 0x1u);
@@ -168,9 +168,10 @@ opm_memory::put_8(int fc, uint32_type address, unsigned int value)
   address &= 0xffffffffu;
   value &= 0xffu;
 #ifdef HAVE_NANA_H
-  L("class opm_memory: put_8: fc=%d address=%#010lx value=%#04x\n",
-    fc, (unsigned long) address, value);
+  DL("class opm_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",
+    fc, address + 0UL, value);
 #endif
+
   if (fc != vm68k::SUPER_DATA)
     throw bus_error_exception(false, fc, address);
 
@@ -197,8 +198,8 @@ opm_memory::put_16(int fc, uint32_type address, uint_type value)
   address &= 0xffffffffu;
   value &= 0xffffu;
 #ifdef HAVE_NANA_H
-  L("class opm_memory: put_16: fc=%d address=%#010lx value=%#06x\n",
-    fc, (unsigned long) address, value);
+  DL("class opm_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
+     fc, address + 0UL, value);
 #endif
 
   this->put_8(fc, address | 0x1u, value);

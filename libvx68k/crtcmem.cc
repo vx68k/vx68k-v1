@@ -77,8 +77,9 @@ uint_type
 crtc_memory::get_16(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("class crtc_memory: get_16 fc=%d address=%#010x\n", fc, address);
+  DL("class crtc_memory: get_16: fc=%d address=0x%08lx\n", fc, address + 0UL);
 #endif
+
   address &= 0x1fff;
   switch (address) {
   case 0x28:
@@ -92,8 +93,9 @@ uint_type
 crtc_memory::get_8(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("class crtc_memory: get_8 fc=%d address=%#010x\n", fc, address);
+  DL("class crtc_memory: get_8: fc=%d address=0x%08lx\n", fc, address + 0UL);
 #endif
+
   uint_type w = get_16(fc, address & ~1u);
   if (address & 1u)
     return w >> 8 & 0xff;
@@ -102,19 +104,29 @@ crtc_memory::get_8(int fc, uint32_type address) const
 }
 
 void
-crtc_memory::put_16(int, uint32_type, uint_type)
+crtc_memory::put_16(int fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
-  L("class crtc_memory: FIXME: `put_16' not implemented\n");
+  DL("class crtc_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
+     fc, address + 0UL, value);
 #endif
+
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class crtc_memory: FIXME: `put_16' not implemented\n");
 }
 
 void
 crtc_memory::put_8(int, uint32_type, uint_type)
 {
 #ifdef HAVE_NANA_H
-  L("class crtc_memory: FIXME: `put_8' not implemented\n");
+  DL("class crtc_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",
+     fc, address + 0UL, value);
 #endif
+
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class crtc_memory: FIXME: `put_8' not implemented\n");
 }
 
 crtc_memory::~crtc_memory()

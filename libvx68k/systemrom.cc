@@ -444,7 +444,7 @@ namespace
     as->machine()->b_putc(ch);
   }
 
-  /* Handles a _B_PUTMES call.  */
+  /* Handles a _B_PUTMES IOCS call.  */
   void
   iocs_b_putmes(context &c, unsigned long data)
   {
@@ -453,9 +453,12 @@ namespace
       "%%d4:w=0x%04x %%a1=0x%08lx\n",
       byte_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]),
       word_size::get(c.regs.d[3]), word_size::get(c.regs.d[4]),
-      (unsigned long) long_word_size::get(c.regs.a[1]));
+      long_word_size::get(c.regs.a[1]) + 0UL);
 #endif
-    fprintf(stderr, "iocs_b_putmes: FIXME: not implemented\n");
+
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_b_putmes: FIXME: not implemented\n");
   }
 
   /* Handles a _B_READ call.  */
@@ -574,7 +577,7 @@ namespace
     fprintf(stderr, "iocs_b_write: FIXME: not implemented\n");
   }
 
-  /* Handles a _BITSNS call.  */
+  /* Handles a _BITSNS IOCS call.  */
   void
   iocs_bitsns(context &c, unsigned long data)
   {
@@ -582,7 +585,9 @@ namespace
     L("IOCS _BITSNS; %%d1:w=0x%04x\n", word_size::get(c.regs.d[1]));
 #endif
 
-    fprintf(stderr, "iocs_bitsns: FIXME: not implemented\n");
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_bitsns: FIXME: not implemented\n");
     long_word_size::put(c.regs.d[0], 0);
   }
 
@@ -959,7 +964,7 @@ namespace
     c.regs.d[0] = 0;
   }
 
-  /* Handles a _JOYGET call.  */
+  /* Handles a _JOYGET IOCS call.  */
   void
   iocs_joyget(context &c, unsigned long data)
   {
@@ -967,7 +972,9 @@ namespace
     L("IOCS _JOYGET; %%d1:w=0x%04x\n", word_size::get(c.regs.d[1]));
 #endif
 
-    fprintf(stderr, "iocs_joyget: FIXME: not implemented\n");
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_joyget: FIXME: not implemented\n");
     byte_size::put(c.regs.d[0], 0xff);
   }
 
@@ -983,7 +990,7 @@ namespace
     fprintf(stderr, "iocs_ledmod: FIXME: not implemented\n");
   }
 
-  /* Handles a _MS_CURGT call.  */
+  /* Handles a _MS_CURGT IOCS call.  */
   void
   iocs_ms_curgt(context &c, unsigned long data)
   {
@@ -991,7 +998,9 @@ namespace
     L("IOCS _MS_CURGT\n");
 #endif
 
-    fprintf(stderr, "iocs_ms_curgt: FIXME: not implemented\n");
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_ms_curgt: FIXME: not implemented\n");
     long_word_size::put(c.regs.d[0], 0);
   }
 
@@ -1006,7 +1015,7 @@ namespace
     fprintf(stderr, "iocs_ms_curst: FIXME: not implemented\n");
   }
 
-  /* Handles a _MS_GETDT call.  */
+  /* Handles a _MS_GETDT IOCS call.  */
   void
   iocs_ms_getdt(context &c, unsigned long data)
   {
@@ -1014,7 +1023,9 @@ namespace
     L("IOCS _MS_GETDT\n");
 #endif
 
-    fprintf(stderr, "iocs_ms_getdt: FIXME: not implemented\n");
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_ms_getdt: FIXME: not implemented\n");
     long_word_size::put(c.regs.d[0], 0);
   }
 

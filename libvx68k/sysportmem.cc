@@ -40,11 +40,14 @@ uint_type
 system_ports_memory::get_16(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("class system_ports_memory: get_16: fc=%d address=0x%08lx\n",
-    fc, (unsigned long) address);
+  DL("class system_ports_memory: get_16: fc=%d address=0x%08lx\n",
+     fc, address + 0UL);
 #endif
-  fprintf(stderr,
-	  "class system_ports_memory: FIXME: `get_16' not implemented\n");
+
+  static bool once;
+  if (!once++)
+    fprintf(stderr,
+	    "class system_ports_memory: FIXME: `get_16' not implemented\n");
   return 0;
 }
 
@@ -52,11 +55,14 @@ uint_type
 system_ports_memory::get_8(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("class system_ports_memory: get_8: fc=%d address=0x%08lx\n",
-    fc, (unsigned long) address);
+  DL("class system_ports_memory: get_8: fc=%d address=0x%08lx\n",
+     fc, address + 0UL);
 #endif
-  fprintf(stderr,
-	  "class system_ports_memory: FIXME: `get_8' not implemented\n");
+
+  static bool once;
+  if (!once++)
+    fprintf(stderr,
+	    "class system_ports_memory: FIXME: `get_8' not implemented\n");
   return 0;
 }
 
@@ -64,20 +70,26 @@ void
 system_ports_memory::put_16(int fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
-  L("class opm_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
-    fc, (unsigned long) address, value);
+  DL("class opm_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
+     fc, address + 0UL, value);
 #endif
-  fprintf(stderr,
-	  "class system_ports_memory: FIXME: `put_16' not implemented\n");
+
+  static bool once;
+  if (!once++)
+    fprintf(stderr,
+	    "class system_ports_memory: FIXME: `put_16' not implemented\n");
 }
 
 void
 system_ports_memory::put_8(int fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
-  L("class opm_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",
-    fc, (unsigned long) address, value);
+  DL("class opm_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",
+     fc, address + 0UL, value);
 #endif
-  fprintf(stderr,
-	  "class system_ports_memory: FIXME: `put_8' not implemented\n");
+
+  static bool once;
+  if (!once++)
+    fprintf(stderr,
+	    "class system_ports_memory: FIXME: `put_8' not implemented\n");
 }

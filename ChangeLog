@@ -1,5 +1,30 @@
 2000-08-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/mfpmem.cc (get_16, get_8, put_16, put_8): Use DL
+	instead of L.  Print a FIXME message only once.
+
+	* libvx68k/sysportmem.cc (get_16, get_8, put_16, put_8): Use DL
+	instead of L.  Print a FIXME message only once.
+
+	* libvx68k/opmmem.cc (get_8, get_16, put_8, put_16): Use DL
+	instead of L.
+
+	* libvx68k/palettemem.cc (get_16, put_16): Use DL instead of L at
+	the begining of the function.
+	(get_8): Use DL instead of L.
+	(put_8): Implemented using get_16 and put_16.
+
+	* libvx68k/crtcmem.cc (get_16, get_8): Use DL instead of L.
+	(put_16, put_8): Print a FIXME message once by fprintf.
+
+	* libvx68k/ppimem.cc (get_16, get_8): Use DL instead of L.
+	(put_16, put_8): Print a FIXME message once by fprintf.
+
+	* libvx68k/systemrom.cc (iocs_b_putmes): Modify comments.  Remove
+	C-style cast.  Print the FIXME message only once.
+	(iocs_bitsns, iocs_joyget, iocs_ms_curgt, iocs_ms_getdt): Modify
+	comments.  Print the FIXME message only once.
+
 	* include/vm68k/cpu.h (class status_register): Set member value on
 	assignment.
 

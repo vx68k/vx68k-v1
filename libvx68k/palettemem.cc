@@ -83,21 +83,16 @@ palettes_memory::get_16(int fc, uint32_type address) const
 {
   address &= 0xfffffffeu;
 #ifdef HAVE_NANA_H
-# if 0
-  L("class palettes_memory: get_16: fc=%d address=%#010lx\n",
-    fc, (unsigned long) address);
-# endif
+  DL("class palettes_memory: get_16: fc=%d address=0x%08lx\n",
+     fc, address + 0UL);
 #endif
+
   if (fc != SUPER_DATA)
     throw bus_error_exception(true, fc, address);
 
   uint32_type off = address & 0x1fff;
   if (off >= 2 * 256 * 2)
     {
-#ifdef HAVE_NANA_H
-      L("class palettes_memory: get_16: fc=%d address=%#010lx\n",
-	fc, (unsigned long) address);
-#endif
       switch (off)
 	{
 	case 0x400:
@@ -121,10 +116,6 @@ palettes_memory::get_16(int fc, uint32_type address) const
     }
   else
     {
-#ifdef HAVE_NANA_H
-      L("class palettes_memory: get_16: fc=%d address=%#010lx\n",
-	fc, (unsigned long) address);
-#endif
       return 0;
     }
 }
@@ -132,10 +123,12 @@ palettes_memory::get_16(int fc, uint32_type address) const
 unsigned int
 palettes_memory::get_8(int fc, uint32_type address) const
 {
+  address &= 0xffffffffU;
 #ifdef HAVE_NANA_H
-  L("class palettes_memory: get_8: fc=%d address=%#010lx\n",
-    fc, (unsigned long) address);
+  DL("class palettes_memory: get_8: fc=%d address=0x%08lx\n",
+     fc, address + 0UL);
 #endif
+
   uint_type w = get_16(fc, address);
   if (address % 2 != 0)
     return w >> 8 & 0xff;
@@ -149,21 +142,16 @@ palettes_memory::put_16(int fc, uint32_type address, uint_type value)
   address &= 0xfffffffeu;
   value &= 0xffffu;
 #ifdef HAVE_NANA_H
-# if 0
-  L("class palettes_memory: put_16: fc=%d address=%#010lx value=%#06x\n",
-    fc, (unsigned long) address, value);
-# endif
+  DL("class palettes_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
+     fc, address + 0UL, value);
 #endif
+
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);
 
   uint32_type off = address & 0x1fff;
   if (off >= 2 * 256 * 2)
     {
-#ifdef HAVE_NANA_H
-      L("class palettes_memory: put_16: fc=%d address=%#010lx value=%#06x\n",
-	fc, (unsigned long) address, value);
-#endif
       switch (off)
 	{
 	case 0x400:
@@ -189,19 +177,24 @@ palettes_memory::put_16(int fc, uint32_type address, uint_type value)
     }
   else
     {
-#ifdef HAVE_NANA_H
-      L("class palettes_memory: put_16: fc=%d address=%#010lx value=%#06x\n",
-	fc, (unsigned long) address, value);
-#endif
     }
 }
 
 void
-palettes_memory::put_8(int, uint32_type, unsigned int)
+palettes_memory::put_8(int fc, uint32_type address, unsigned int value)
 {
+  address &= 0xffffffffU;
+  value &= 0xff;
 #ifdef HAVE_NANA_H
-  L("class palettes_memory: FIXME: `put_8' not implemented\n");
+  DL("class palettes_memory: put_16: fc=%d address=0x%08lx value=0x%02x\n",
+     fc, address + 0UL, value);
 #endif
+
+  uint_type w = this->get_16(fc, address);
+  if (address % 2 != 0)
+    this->put_16(fc, address, w & 0xff | value << 8);
+  else
+    this->put_16(fc, address, w & ~0xff | value);
 }
 
 palettes_memory::~palettes_memory()

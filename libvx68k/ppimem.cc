@@ -39,8 +39,9 @@ uint_type
 ppi_memory::get_16(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("class ppi_memory: get_16 fc=%d address=%#010x\n", fc, address);
+  DL("class ppi_memory: get_16: fc=%d address=0x%08lx\n", fc, address + 0UL);
 #endif
+
   return get_8(fc, address | 1u);
 }
 
@@ -48,8 +49,9 @@ uint_type
 ppi_memory::get_8(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("class ppi_memory: get_8 fc=%d address=%#010x\n", fc, address);
+  DL("class ppi_memory: get_8: fc=%d address=0x%08lx\n", fc, address + 0UL);
 #endif
+
   address &= 0x1fff;
   switch (address) {
   default:
@@ -58,17 +60,27 @@ ppi_memory::get_8(int fc, uint32_type address) const
 }
 
 void
-ppi_memory::put_16(int, uint32_type, uint_type)
+ppi_memory::put_16(int fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
-  L("class ppi_memory: FIXME: `put_16' not implemented\n");
+  DL("class ppi_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
+     fc, address + 0UL, value);
 #endif
+
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class ppi_memory: FIXME: `put_16' not implemented\n");
 }
 
 void
-ppi_memory::put_8(int, uint32_type, uint_type)
+ppi_memory::put_8(int fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
-  L("class ppi_memory: FIXME: `put_8' not implemented\n");
+  DL("class ppi_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",
+     fc, address + 0UL, value);
 #endif
+
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class ppi_memory: FIXME: `put_8' not implemented\n");
 }
