@@ -1,5 +1,11 @@
 1999-05-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* Makefile.am (EXTRA_DIST): Add VERSION-ID.
+
+	* VERSION-ID: New file.
+
+	* NEWS: Modified.
+
 	* lib/vm68k/execunit.cc (movel_d_absl, movel_a_absl): Fix data
 	sizes for put.
 	(clrl, moveal, tstb, tstl): New function templates.

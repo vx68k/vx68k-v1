@@ -1,11 +1,12 @@
-User-Visible Changes
+Virtual X68000 User-Visible Changes
 
-$Format: "Version $Version$ ($ProjectDate$ -r $ProjectVersion$)" $
-Version 0.32 (Sun, 04 Apr 1999 21:43:39 +0900 -r 0.177)
+$Date: Fri, 21 May 1999 20:55:51 +0900 $
+
+Version 0.32
 
 * Some instructions are implemented using templates.
 
-* 122 instruction handlers are implemented though some do not update
+* 164 instruction handlers are implemented though some do not update
 the condition codes properly.
 
 * 7 DOS-call handlers are partially implemented.
