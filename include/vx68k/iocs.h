@@ -25,7 +25,7 @@ namespace vx68k
 {
   namespace iocs
   {
-    /* An abstract disk in the view of the IOCS.  */
+    /* Abstract disk in the view of the IOCS.  */
     class disk
     {
     public:

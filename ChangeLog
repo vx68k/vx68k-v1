@@ -1,5 +1,9 @@
 2000-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/machine.h (class text_vram_raster_iterator): New
+	class.
+	(class text_vram): Typedef raster_iterator.
+
 	* include/vx68k/Makefile.am (noinst_HEADERS): Add iocs.h.
 
 	* include/vx68k/iocs.h: New file.

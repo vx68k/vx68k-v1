@@ -93,10 +93,57 @@ namespace vx68k
     void connect(console *);
   };
 
+  /* Raster iterator for the text VRAM.  This class is used by the
+     video system to scan pixels on the text VRAM, and must be
+     efficient for a forward sequential access.
+
+     FIXME: this should be a random access iterator.  */
+  class text_vram_raster_iterator: public forward_iterator<uint_type, int>
+  {
+  private:
+    unsigned short *buf;
+    unsigned int pos;
+
+  public:
+    text_vram_raster_iterator()
+      : buf(NULL), pos(0) {}
+
+    text_vram_raster_iterator(unsigned short *b, unsigned int p)
+      : buf(b), pos(p) {}
+
+  public:
+    bool operator==(const text_vram_raster_iterator &another) const
+    {
+      /* BUF is not tested for speed.  */
+      return pos == another.pos;
+    }
+
+    bool operator!=(const text_vram_raster_iterator &another) const
+    {
+      return !(*this == another);
+    }
+
+  public:
+    uint_type operator*() const;
+
+  public:
+    text_vram_raster_iterator &operator++();
+
+    text_vram_raster_iterator operator++(int)
+    {
+      text_vram_raster_iterator tmp = *this;
+      ++(*this);
+      return tmp;
+    }
+  };
+
   /* Text VRAM.  */
   class text_vram
     : public memory
   {
+  public:
+    typedef text_vram_raster_iterator raster_iterator;
+
   private:
     unsigned short *buf;
     console *connected_console;
