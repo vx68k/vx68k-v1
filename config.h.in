@@ -15,6 +15,15 @@
 /* Define if you have the localtime_r function.  */
 #undef HAVE_LOCALTIME_R
 
+/* Define if you have the <GL/gl.h> header file.  */
+#undef HAVE_GL_GL_H
+
+/* Define if you have the <GL/glu.h> header file.  */
+#undef HAVE_GL_GLU_H
+
+/* Define if you have the <GL/glx.h> header file.  */
+#undef HAVE_GL_GLX_H
+
 /* Define if you have the <dlfcn.h> header file.  */
 #undef HAVE_DLFCN_H
 
