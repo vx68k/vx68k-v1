@@ -1,5 +1,14 @@
 2000-07-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (queue_key): Use class auto_lock.
+	(peek_key): Likewise.
+	(get_key): Likewise.
+
+	* include/vx68k/Makefile.am (vx68kinclude_HEADERS): Add utility.h.
+
+	* include/vx68k/utility.h: New file.
+	(class auto_lock): New class template.
+
 	* include/vx68k/Makefile.am (vx68kincludedir): New macro.
 	(vx68kinclude_HEADERS): Renamed from noinst_HEADERS.
 

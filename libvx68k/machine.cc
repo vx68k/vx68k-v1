@@ -26,6 +26,7 @@
 #undef inline
 
 #include <vx68k/machine.h>
+#include <vx68k/utility.h>
 
 #include <algorithm>
 #include <memory>
@@ -252,20 +253,10 @@ machine::boot()
 void
 machine::queue_key(uint_type key)
 {
-  pthread_mutex_lock(&key_queue_mutex);
+  auto_lock<pthread_mutex_t> lock(&key_queue_mutex);
 
-  try
-    {
-      key_queue.push(key);
-      pthread_cond_signal(&key_queue_not_empty);
-    }
-  catch (...)
-    {
-      pthread_mutex_unlock(&key_queue_mutex);
-      throw;
-    }
-
-  pthread_mutex_unlock(&key_queue_mutex);
+  key_queue.push(key);
+  pthread_cond_signal(&key_queue_not_empty);
 }
 
 uint_type
@@ -277,22 +268,13 @@ machine::peek_key()
       pthread_testcancel();
     }
 
-  uint_type key = 0;
+  auto_lock<pthread_mutex_t> lock(&key_queue_mutex);
 
-  pthread_mutex_lock(&key_queue_mutex);
-
-  try
-    {
-      if (!key_queue.empty())
-	key = key_queue.front();
-    }
-  catch (...)
-    {
-      pthread_mutex_unlock(&key_queue_mutex);
-      throw;
-    }
-
-  pthread_mutex_unlock(&key_queue_mutex);
+  uint_type key;
+  if (key_queue.empty())
+    key = 0;
+  else
+    key = key_queue.front();
 
   return key;
 }
@@ -300,25 +282,13 @@ machine::peek_key()
 uint_type
 machine::get_key()
 {
-  uint_type key;
+  auto_lock<pthread_mutex_t> lock(&key_queue_mutex);
 
-  pthread_mutex_lock(&key_queue_mutex);
+  while (key_queue.empty())
+    pthread_cond_wait(&key_queue_not_empty, &key_queue_mutex);
 
-  try
-    {
-      while (key_queue.empty())
-	pthread_cond_wait(&key_queue_not_empty, &key_queue_mutex);
-
-      key = key_queue.front();
-      key_queue.pop();
-    }
-  catch (...)
-    {
-      pthread_mutex_unlock(&key_queue_mutex);
-      throw;
-    }
-
-  pthread_mutex_unlock(&key_queue_mutex);
+  uint_type key = key_queue.front();
+  key_queue.pop();
 
   return key;
 }
