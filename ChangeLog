@@ -1,5 +1,9 @@
 1999-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (addil_d, movel_a_d): Remove fc.
+	(lslw_i_d, movel_d_d, tstl_d): New functions.
+	(install_instructions): Set instructions.
+
 	* lib/vx68k/dos.cc (seek, dos_seek): New function.
 	(dos): Add instruction.
 	* include/vx68k/human.h (class dos_exec_context): Add member seek.

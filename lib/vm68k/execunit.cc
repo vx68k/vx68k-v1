@@ -96,7 +96,6 @@ namespace
       int32 value2 = extsl(ec->fetchl(2));
       VL((" addil #%ld,%%d%d\n", (long) value2, d_reg));
 
-      int fc = ec->data_fc();
       int32 value1 = extsl(ec->regs.d[d_reg]);
       int32 value = extsw(value1 + value2);
       ec->regs.d[d_reg] = value;
@@ -271,6 +270,23 @@ namespace
       ec->regs.pc += 4;
     }
 
+  void lslw_i_d(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int d_reg = op & 0x7;
+      int count = op >> 9 & 0x7;
+      if (count == 0)
+	count = 8;
+      VL((" lslw #%d,%%d%d\n", count, d_reg));
+
+      unsigned int value = ec->regs.d[d_reg] << count;
+      const uint32 MASK = ((uint32) 1u << 16) - 1;
+      ec->regs.d[d_reg] = ec->regs.d[d_reg] & ~MASK | (uint32) value & MASK;
+      ec->regs.sr.set_cc(value); // FIXME.
+
+      ec->regs.pc += 2;
+    }
+
   void moveb_postinc_postinc(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -377,6 +393,20 @@ namespace
       ec->regs.pc += 2 + 4;
     }
 
+  void movel_d_d(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+      VL((" movel %%d%d,%%d%d\n", s_reg, d_reg));
+
+      int32 value = extsl(ec->regs.d[s_reg]);
+      ec->regs.d[d_reg] = value;
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2;
+    }
+
   void movel_a_d(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -384,7 +414,6 @@ namespace
       int d_reg = op >> 9 & 0x7;
       VL((" movel %%a%d,%%d%d\n", s_reg, d_reg));
 
-      int fc = ec->data_fc();
       int32 value = extsl(ec->regs.a[s_reg]);
       ec->regs.d[d_reg] = value;
       ec->regs.sr.set_cc(value);
@@ -641,6 +670,18 @@ namespace
       ec->regs.pc += 2;
     }
 
+  void tstl_d(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int s_reg = op & 0x7;
+      VL((" tstl %%d%d\n", s_reg));
+
+      int value = extsl(ec->regs.d[s_reg]);
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2;
+    }
+
   void unlk_a(int op, execution_context *ec)
     {
       int reg = op & 0x0007;
@@ -664,6 +705,7 @@ exec_unit::install_instructions(exec_unit *eu)
 
   eu->set_instruction(0x0680, 0x0007, &addil_d);
   eu->set_instruction(0x10d8, 0x0e07, &moveb_postinc_postinc);
+  eu->set_instruction(0x2000, 0x0e07, &movel_d_d);
   eu->set_instruction(0x2008, 0x0e07, &movel_a_d);
   eu->set_instruction(0x2028, 0x0e07, &movel_off_d);
   eu->set_instruction(0x2058, 0x0e07, &movel_postinc_a);
@@ -684,6 +726,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
   eu->set_instruction(0x4cd8, 0x0007, &moveml_postinc_r);
   eu->set_instruction(0x4a40, 0x0007, &tstw_d);
+  eu->set_instruction(0x4a80, 0x0007, &tstl_d);
   eu->set_instruction(0x4e50, 0x0007, &link_a);
   eu->set_instruction(0x4e58, 0x0007, &unlk_a);
   eu->set_instruction(0x4e75, 0x0000, &rts);
@@ -696,5 +739,6 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x6c00, 0x00ff, &bge);
   eu->set_instruction(0x7000, 0x0eff, &moveql_d);
   eu->set_instruction(0xd068, 0x0e07, &addw_off_d);
+  eu->set_instruction(0xe048, 0x0e07, &lslw_i_d);
 }
 
