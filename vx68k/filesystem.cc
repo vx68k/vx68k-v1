@@ -223,10 +223,55 @@ con_device_file::con_device_file(machine *m)
 string
 file_system::export_file_name(const string &dos_name)
 {
-  // FIXME
-  string name(dos_name);
-  string::size_type c = name.find_last_not_of(' '); // ???
-  name.erase(c + 1);
+  // FIXME.  Kanji must be handled.
+  string name;
+  string::size_type pos = dos_name.find_first_not_of(' ');
+
+  if (pos != string::npos && dos_name.at(pos) == '\\')
+    {
+      name.append(1, '/');
+      ++pos;
+    }
+
+  for (;;)
+    {
+      if (pos == string::npos || pos == dos_name.size())
+	break;
+
+      string::size_type next_pos = dos_name.find_first_of(".\\/", pos);
+      if (next_pos == string::npos)
+	break;
+
+      if (dos_name.at(next_pos) == '/')
+	name.append(dos_name.substr(pos, next_pos + 1 - pos));
+      else
+	{
+	  string::size_type end = next_pos - 1;
+	  if (next_pos != pos)
+	    {
+	      end = dos_name.find_last_not_of(' ', end);
+	      if (end == string::npos || end < pos - 1)
+		end = next_pos - 1;
+	    }
+	  name.append(dos_name.substr(pos, end + 1 - pos));
+	  char c = dos_name.at(next_pos);
+	  if (c == '\\')
+	    c = '/';
+	  name.append(1, c);
+	}
+
+      pos = next_pos + 1;
+    }
+
+  string::size_type end = dos_name.size() - 1;
+  if (dos_name.size() != pos)
+    {
+      end = dos_name.find_last_not_of(' ');
+      if (end == string::npos || end < pos - 1)
+	end = dos_name.size() - 1;
+    }
+  name.append(dos_name.substr(pos, end + 1 - pos));
+
   return name;
 }
 
