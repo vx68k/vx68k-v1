@@ -1,5 +1,5 @@
 /* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+   Copyright (C) 1998, 2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -183,8 +183,8 @@ namespace
   template <class Size, class Destination> void
   m68k_addi(uint_type op, context &c, instruction_data *data)
   {
-    typedef long_word_size::uvalue_type uvalue_type;
-    typedef long_word_size::svalue_type svalue_type;
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
 
     svalue_type value2 = Size::svalue(c.fetch(Size(), 2));
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
@@ -337,6 +337,31 @@ namespace
     ec.regs.pc += 2 + 4 + ea1.isize(4);
   }
 
+  /* Handles an ASL instruction with an immediate count.  */
+  template <class Size> void
+  m68k_asl_i(uint_type op, context &c, instruction_data *data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    unsigned int reg1 = op & 0x7;
+    unsigned int value2 = op >> 9 & 0x7;
+    if (value2 == 0)
+      value2 = 8;
+#ifdef TRACE_INSTRUCTIONS
+    L(" asl%s #%u", Size::suffix(), value2);
+    L(",%%d%u\n", reg1);
+#endif
+
+    svalue_type value1 = Size::svalue(Size::get(c.regs.d[reg1]));
+    svalue_type value = Size::svalue(Size::get(value1 << value2));
+    Size::put(c.regs.d[reg1], value);
+    c.regs.sr.set_cc_lsl(value, value1, value2 + (32 - Size::value_bit())); // FIXME?
+
+    c.regs.pc += 2;
+  }
+
+#if 0
   void
   asll_i(uint_type op, context &ec, instruction_data *data)
   {
@@ -356,6 +381,7 @@ namespace
 
     ec.regs.pc += 2;
   }
+#endif
 
   void
   asll_r(unsigned int op, context &ec, instruction_data *data)
@@ -3267,15 +3293,16 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0xe090, 0x0e07, &roxrl_i);
   eu.set_instruction(0xe0a0, 0x0e07, &asrl_r);
   eu.set_instruction(0xe0a8, 0x0e07, &lsrl_r);
+  eu.set_instruction(0xe100, 0x0e07, &m68k_asl_i<byte_size>);
   eu.set_instruction(0xe108, 0x0e07, &lslb_i);
   eu.set_instruction(0xe138, 0x0e07, &rolb_r);
+  eu.set_instruction(0xe140, 0x0e07, &m68k_asl_i<word_size>);
   eu.set_instruction(0xe148, 0x0e07, &lslw_i);
   eu.set_instruction(0xe158, 0x0e07, &rolw_i);
   eu.set_instruction(0xe168, 0x0e07, &lslw_r);
-  eu.set_instruction(0xe180, 0x0e07, &asll_i);
+  eu.set_instruction(0xe180, 0x0e07, &m68k_asl_i<long_word_size>);
   eu.set_instruction(0xe188, 0x0e07, &lsll_i);
   eu.set_instruction(0xe198, 0x0e07, &roll_i);
   eu.set_instruction(0xe1a0, 0x0e07, &asll_r);
   eu.set_instruction(0xe1a8, 0x0e07, &lsll_r);
 }
-

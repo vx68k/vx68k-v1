@@ -1,3 +1,10 @@
+2000-05-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/execunit.cc (m68k_addi): Use Size for typedefs.
+	(m68k_asl_i): New function.
+	[0] (asll_i): Disabled.
+	(install_instructions): Use the new ASL handler.
+
 2000-05-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* bin/main.cc (run_boot): Catch an illegal instruction.
