@@ -1,3 +1,7 @@
+1999-11-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (create_window): Add menu bar.
+
 1999-11-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* include/vm68k/addressing.h (class basic_index_indirect,

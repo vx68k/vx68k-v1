@@ -198,6 +198,19 @@ vx68k_app::create_window()
   {
     GtkWidget *vbox = gtk_vbox_new(false, 0);
     {
+      GtkItemFactory *ifactory
+	= gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<Window>", NULL);
+      GtkItemFactoryEntry entries[]
+	= {{_("/_File/E_xit"), NULL, &gtk_main_quit, 1, "<Item>"},
+	   {_("/_Help/_About..."), NULL, NULL, 0, "<Item>"}};
+      gtk_item_factory_create_items(ifactory,
+				    sizeof entries / sizeof entries[0],
+				    entries, window);
+      gtk_widget_show(ifactory->widget);
+      gtk_box_pack_start(GTK_BOX(vbox), ifactory->widget, false, false, 0);
+      //gtk_object_unref(GTK_OBJECT(ifactory));
+    }
+    {
       GtkWidget *statusbar = gtk_statusbar_new();
       gtk_widget_show(statusbar);
       gtk_box_pack_end(GTK_BOX(vbox), statusbar, false, false, 0);
