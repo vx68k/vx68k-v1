@@ -31,9 +31,9 @@ namespace vx68k
 
     public:
       static GdkVisual *best_visual();
-      static gl_context *create_context();
-      static void destroy_context(gl_context *c);
-      static void make_current(GdkDrawable *d, gl_context *c);
+      static gl_context create_context(GdkVisual *v);
+      static void destroy_context(gl_context c);
+      static void make_current(gl_context c, GdkDrawable *d);
       static void swap_buffers(GdkDrawable *d);
     };
   }

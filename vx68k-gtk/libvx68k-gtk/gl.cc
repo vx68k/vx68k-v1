@@ -50,11 +50,11 @@ namespace vx68k
       static bool initialized;
       if (!initialized)
 	{
-	  if (!glXQueryExtension(GDK_DISPLAY(),
-				 &glx_error_base, &glx_event_base))
+	  Display *d = GDK_DISPLAY();
+
+	  if (!glXQueryExtension(d, &glx_error_base, &glx_event_base))
 	    throw runtime_error("glXQueryExtension");
-	  if (!glXQueryVersion(GDK_DISPLAY(),
-			       &glx_major_version, &glx_minor_version))
+	  if (!glXQueryVersion(d, &glx_major_version, &glx_minor_version))
 	    throw runtime_error("glXQueryVersion");
 
 	  initialized = true;
@@ -64,22 +64,84 @@ namespace vx68k
     GdkVisual *
     gl::best_visual()
     {
-      initialize();
+      static GdkVisual *bv;
+      if (bv == 0)
+	{
+	  initialize();
 
-      int glx_attr[]
-	= {GLX_RGBA,
-	   GLX_DOUBLEBUFFER,
-	   GLX_RED_SIZE, 6,
-	   GLX_GREEN_SIZE, 6,
-	   GLX_BLUE_SIZE, 6,
-	   None};
+	  Display *d = GDK_DISPLAY();
+
+	  int glx_attr[]
+	    = {GLX_RGBA,
+	       GLX_DOUBLEBUFFER,
+	       GLX_RED_SIZE, 6,
+	       GLX_GREEN_SIZE, 6,
+	       GLX_BLUE_SIZE, 6,
+	       None};
+	  XVisualInfo *xvi = glXChooseVisual(d, DefaultScreen(d), glx_attr);
+	  if (xvi == NULL)
+	    throw runtime_error("glXChooseVisual");
+
+	  bv = gdkx_visual_get(xvi->visualid);
+
+	  XFree(xvi);
+	}
+
+      return bv;
+    }
+
+    gl_context
+    gl::create_context(GdkVisual *v)
+    {
       Display *d = GDK_DISPLAY();
-      XVisualInfo *xvi = glXChooseVisual(d, DefaultScreen(d), glx_attr);
-      if (xvi == NULL)
-	throw runtime_error("glXChooseVisual");
-      GdkVisual *v = gdkx_visual_get(xvi->visualid);
+
+      XVisualInfo xvit;
+      xvit.visualid = XVisualIDFromVisual(GDK_VISUAL_XVISUAL(v));
+      int n;
+      XVisualInfo *xvi = XGetVisualInfo(d, VisualIDMask, &xvit, &n);
+      if (xvi == 0)
+	throw runtime_error("XGetVisualInfo");
+
+      GLXContext xc = glXCreateContext(d, &xvi[0], 0, true);
+
       XFree(xvi);
-      return v;
+
+      return reinterpret_cast<gl_context>(xc);
+    }
+
+    void
+    gl::destroy_context(gl_context c)
+    {
+      if (c != 0)
+	{
+	  Display *d = GDK_DISPLAY();
+	  glXDestroyContext(d, reinterpret_cast<GLXContext>(c));
+	}
+    }
+
+    void
+    gl::make_current(gl_context c, GdkDrawable *d)
+    {
+      Display *dd;
+      Drawable dw;
+      if (c == 0)
+	{
+	  dd = GDK_DISPLAY();
+	  dw = None;
+	}
+      else if (d == 0)
+	{
+	  dd = GDK_DISPLAY();
+	  dw = GDK_ROOT_WINDOW();
+	}
+      else
+	{
+	  dd = GDK_WINDOW_XDISPLAY(d);
+	  dw = GDK_WINDOW_XWINDOW(d);
+	}
+
+      if (!glXMakeCurrent(dd, dw, reinterpret_cast<GLXContext>(c)))
+	throw runtime_error("glXMakeCurrent");
     }
   }
 }

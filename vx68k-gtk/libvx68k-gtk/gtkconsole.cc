@@ -36,6 +36,7 @@
 #include "gtk_gl.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include <GL/glu.h>
 #include <algorithm>
 #ifdef L
 # include <cstdio>
@@ -140,13 +141,9 @@ namespace vx68k
 	  if (h > height - y)
 	    h = height - y;
 
-#ifndef GDK_IMAGE
 	  guchar *p = rgb_buf + e->area.y * row_size + e->area.x * 3;
 	  gdk_draw_rgb_image(drawing_area->window, gc, x, y, w, h,
 			     GDK_RGB_DITHER_NORMAL, p, row_size);
-#else
-	  gdk_draw_image(drawing_area->window, gc, image, x, y, x, y, w, h);
-#endif
 	}
 
       gdk_gc_unref(gc);
@@ -420,54 +417,21 @@ namespace vx68k
 
     namespace
     {
-#ifndef GDK_IMAGE
       unsigned char rgb_table[0x10000 * 3];
       bool rgb_once;
-#else
-      guint32
-      pvalue(GdkImage *image, uint_type value)
-      {
-	unsigned int x = value & 0x1;
-	unsigned int r = value >> 5 & 0x3e | x;
-	unsigned int g = value >> 10 & 0x3e | x;
-	unsigned int b = value & 0x3f;
-
-	guint32 p = r * ((1 << image->visual->red_prec) - 1) / 0x3f << image->visual->red_shift;
-	p |= g * ((1 << image->visual->green_prec) - 1) / 0x3f << image->visual->green_shift;
-	p |= b * ((1 << image->visual->blue_prec) - 1) / 0x3f << image->visual->blue_shift;
-
-	return p;
-      }
-#endif
 
       class pixel_iterator: public output_iterator
       {
       private:
-#ifndef GDK_IMAGE
 	guchar *rgb_ptr;
-#else
-	GdkImage *image;
-	int x, y;
-	vector<guint32>::const_iterator table;
-#endif
 
       public:
-#ifndef GDK_IMAGE
 	pixel_iterator(guchar *p): rgb_ptr(p) {}
-#else
-	pixel_iterator(GdkImage *i, int xx, int yy,
-		       vector<guint32>::const_iterator t)
-	  : image(i), x(xx), y(yy), table(t) {}
-#endif
 
       public:
 	bool operator==(const pixel_iterator &another) const
 	{
-#ifndef GDK_IMAGE
 	  return rgb_ptr == another.rgb_ptr;
-#else
-	  return image == another.image && x == another.x && y == another.y;
-#endif
 	}
 
 	pixel_iterator &operator*()
@@ -477,43 +441,17 @@ namespace vx68k
 
 	pixel_iterator &operator=(uint16_type p)
 	{
-#ifndef GDK_IMAGE
 	  unsigned char *rgb = rgb_table + p * 3;
 	  rgb_ptr[0] = rgb[0];
 	  rgb_ptr[1] = rgb[1];
 	  rgb_ptr[2] = rgb[2];
-#else
-	  guint32 pp = table[p];
-	  unsigned char *ptr = (static_cast<unsigned char *>(image->mem)
-				+ y * image->bpl + x * image->bpp);
-	  if (image->byte_order == GDK_MSB_FIRST)
-	    {
-	      for (unsigned char *i = ptr + image->bpp; i != ptr; --i)
-		{
-		  i[-1] = pp;
-		  pp >>= 8;
-		}
-	    }
-	  else
-	    {
-	      for (unsigned char *i = ptr; i != ptr + image->bpp; ++i)
-		{
-		  *i = pp;
-		  pp >>= 8;
-		}
-	    }
-#endif
 
 	  return *this;
 	}
 
 	pixel_iterator &operator++()
 	{
-#ifndef GDK_IMAGE
 	  rgb_ptr += 3;
-#else
-	  ++x;
-#endif
 	  return *this;
 	}
 
@@ -538,61 +476,34 @@ namespace vx68k
 	typedef pixel_iterator iterator;
 
       private:
-#ifndef GDK_IMAGE
 	unsigned int width;
 	size_t row_size;
 	guchar *rgb_ptr;
-#else
-	GdkImage *image;
-	int y;
-	vector<guint32>::const_iterator table;
-#endif
 
       public:
-#ifndef GDK_IMAGE
 	row(guchar *p, unsigned int w, size_t n)
 	  : width(w), row_size(n), rgb_ptr(p) {}
-#else
-	row(GdkImage *i, int yy, vector<guint32>::const_iterator t)
-	  : image(i), y(yy), table(t) {}
-#endif
 
       public:
 	bool operator==(const row &another) const
 	{
-#ifndef GDK_IMAGE
 	  return rgb_ptr == another.rgb_ptr;
-#else
-	  return image == another.image && y == another.y;
-#endif
 	}
 
       public:
 	pixel_iterator begin()
 	{
-#ifndef GDK_IMAGE
 	  return pixel_iterator(rgb_ptr);
-#else
-	  return pixel_iterator(image, 0, y, table);
-#endif
 	}
 	pixel_iterator end()
 	{
-#ifndef GDK_IMAGE
 	  return pixel_iterator(rgb_ptr + width * 3);
-#else
-	  return pixel_iterator(image, image->width, y, table);
-#endif
 	}
 
       public:
 	void next()
 	{
-#ifndef GDK_IMAGE
 	  rgb_ptr += row_size;
-#else
-	  ++y;
-#endif
 	}
       };
 
@@ -602,13 +513,8 @@ namespace vx68k
 	row current;
 
       public:
-#ifndef GDK_IMAGE
 	row_iterator(guchar *ptr, unsigned int w, size_t n)
 	  : current(ptr, w, n) {}
-#else
-	row_iterator(GdkImage *i, int yy, vector<guint32>::const_iterator t)
-	  : current(i, yy, t) {}
-#endif
 
       public:
 	bool operator==(const row_iterator &another) const
@@ -637,13 +543,8 @@ namespace vx68k
 	{
 	  if (_m->row_changed(y) || u)
 	    {
-#ifndef GDK_IMAGE
 	      _m->scan_row(y, pixel_iterator(rgb_buf + y * row_size),
 			   pixel_iterator(rgb_buf + y * row_size + width * 3));
-#else
-	      _m->scan_row(y, pixel_iterator(image, 0, y, ctable.begin()),
-			   pixel_iterator(image, image->width, y, ctable.begin()));
-#endif
 
 	      for (vector<GtkWidget *>::const_iterator i = widgets.begin();
 		   i != widgets.end(); ++i)
@@ -708,29 +609,21 @@ namespace vx68k
 
       gdk_threads_leave();
 
-#ifndef GDK_IMAGE
       delete [] rgb_buf;
-#else
-      gdk_image_destroy(image);
-#endif
+      gl::destroy_context(_context);
     }
 
     gtk_console::gtk_console(machine *m)
       : _m(m),
 	width(768), height(512),
-#ifndef GDK_IMAGE
+	_context(0),
 	row_size(768 * 3),
 	rgb_buf(NULL),
-#else
-	image(0),
-	ctable(0x10000),
-#endif
 	counter(1),
 	timeout(0),
 	primary_font(NULL),
 	kanji16_font(NULL)
     {
-#ifndef GDK_IMAGE
       if (!rgb_once++)
 	{
 	  for (uint32_type i = 0; i != 0x10000; ++i)
@@ -742,18 +635,17 @@ namespace vx68k
 	    }
 	}
 
+      _context = gl::create_context(gl::best_visual());
+      gl::make_current(_context, 0);
+      glMatrixMode(GL_PROJECTION);
+      gluOrtho2D(0e0, 768e0, -512e0, 0e0);
+      glMatrixMode(GL_MODELVIEW);
+      glScaled(1e0, -1e0, -1e0); // Reverses the y- and z-axes.
+      gl::make_current(0, 0);
+
       rgb_buf = new guchar [height * row_size];
-#endif
 
       gdk_threads_enter();
-
-#ifdef GDK_IMAGE
-      image = gdk_image_new(GDK_IMAGE_FASTEST, gdk_visual_get_system(),
-			    width, height);
-      for (vector<guint32>::iterator i = ctable.begin();
-	   i != ctable.end(); ++i)
-	*i = pvalue(image, i - ctable.begin());
-#endif
 
       guint t = gdk_time_get();
       _m->check_timers(t);

@@ -1,3 +1,23 @@
+2001-07-15  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* libvx68k-gtk/gtkconsole.cc: Remove all GDK_IMAGE code.
+	(~gtk_context): Destroy the GL context.
+	(gtk_context): Create a GL context and initialize it.
+
+	* libvx68k-gtk/vx68k/gtk.h (class gtk_console): Remove all
+	GDK_IMAGE code.  Add new member _context.
+
+	* libvx68k-gtk/gl.cc (initialize): Use a variable for Display.
+	(best_visual): Cache the chosen visual.
+	(create_context): New function.
+	(destroy_context): New function.
+	(make_current): New function.
+
+	* libvx68k-gtk/gtk_gl.h (vx68k): Modify member functions.
+
+	* libvx68k-gtk/vx68k/gtk.h: Change gl_context to typedef unsigned
+	long.
+
 2001-07-12  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* libvx68k-gtk/gtkconsole.cc: Enclose in namespace blocks.

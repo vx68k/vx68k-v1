@@ -30,7 +30,7 @@ namespace vx68k
 
   namespace gtk
   {
-    struct gl_context;
+    typedef unsigned long gl_context;
 
     /* Console for GTK+.  */
     class gtk_console: public virtual console
@@ -40,13 +40,9 @@ namespace vx68k
     private:
       machine *_m;
       unsigned int width, height;
-#ifndef GDK_IMAGE
+      gl_context _context;
       size_t row_size;
       guchar *rgb_buf;
-#else
-      GdkImage *image;
-      vector<guint32> ctable;
-#endif
       unsigned int counter;
 
     private:
