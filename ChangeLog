@@ -1,3 +1,12 @@
+2000-05-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* NEWS: Modified.
+
+	* libvm68k/execunit.cc: Modify comments.
+	(m68k_sub_r): New function template.
+	(subl_r): Disabled in #if-#endif.
+	(initialize_instructions): Use the new functions.
+
 2000-05-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* bin/Makefile.am (vx68k_LDADD): Use libvx68k.la.

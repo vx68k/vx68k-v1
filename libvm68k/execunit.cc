@@ -1039,6 +1039,7 @@ namespace
     ec.regs.pc += 2 + 2 + ea1.isize(2);
   }
 
+  /* Handles a DBcc instruction.  */
   template <class Condition> void
   m68k_db(uint_type op, context &c, unsigned long data)
   {
@@ -1457,7 +1458,7 @@ namespace
       ec.regs.pc += 2 + ea1.isize(4) + ea2.isize(4);
     }
 
-  /* Handles an MOVE-from-USP instruction.  */
+  /* Handles a MOVE-from-USP instruction.  */
   void
   m68k_move_from_usp(uint_type op, context &c, unsigned long data)
   {
@@ -1480,7 +1481,7 @@ namespace
     c.regs.pc += 2;
   }
 
-  /* Handles an MOVEA instruction.  */
+  /* Handles a MOVEA instruction.  */
   template <class Size, class Source> void
   m68k_movea(uint_type op, context &c, unsigned long data)
   {
@@ -2111,6 +2112,30 @@ namespace
     ec.regs.pc += 2 + ea1.isize(2);
   }
 
+  /* Handles a SUB instruction (reverse).  */
+  template <class Size, class Destination> void
+  m68k_sub_r(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    Destination ea1(op & 0x7, 2);
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef TRACE_INSTRUCTIONS
+    L(" sub%s %%d%u,", Size::suffix(), reg2);
+    L("%s\n", ea1.text(c));
+#endif
+
+    svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
+    svalue_type value1 = ea1.get(c);
+    svalue_type value = Size::svalue(Size::get(value1 - value2));
+    ea1.put(c, value);
+    c.regs.sr.set_cc_sub(value, value1, value2);
+    ea1.finish(c);
+
+    c.regs.pc += 2 + ea1.extension_size();
+  }
+
   template <class Source> void
   subb(uint_type op, context &ec, unsigned long data)
   {
@@ -2173,6 +2198,7 @@ namespace
       ec.regs.pc += 2 + ea1.isize(4);
     }
 
+#if 0
   template <class Destination> void
   subl_r(uint_type op, context &ec, unsigned long data)
   {
@@ -2192,6 +2218,7 @@ namespace
 
     ec.regs.pc += 2 + ea1.isize(4);
   }
+#endif
 
   template <class Source> void
   subal(uint_type op, context &ec, unsigned long data)
@@ -2251,7 +2278,7 @@ namespace
     ec.regs.pc += 2 + 4 + ea1.isize(4);
   }
 
-  /* Handles an SUBQ instruction.  */
+  /* Handles a SUBQ instruction.  */
   template <class Size, class Destination> void
   m68k_subq(uint_type op, context &c, unsigned long data)
   {
@@ -2276,7 +2303,7 @@ namespace
     c.regs.pc += 2 + ea1.extension_size();
   }
 
-  /* Handles an SUBQ instruction (address register).  */
+  /* Handles a SUBQ instruction (address register).  */
   template <class Size> void
   m68k_subq_a(uint_type op, context &c, unsigned long data)
   {
@@ -3153,11 +3180,43 @@ namespace
     eu.set_instruction(0x90b0, 0x0e07, &subl<indexed_indirect>);
     eu.set_instruction(0x90b9, 0x0e00, &subl<absolute_long>);
     eu.set_instruction(0x90bc, 0x0e00, &subl<immediate>);
-    eu.set_instruction(0x9190, 0x0e07, &subl_r<indirect>);
-    eu.set_instruction(0x9198, 0x0e07, &subl_r<postinc_indirect>);
-    eu.set_instruction(0x91a0, 0x0e07, &subl_r<predec_indirect>);
-    eu.set_instruction(0x91a8, 0x0e07, &subl_r<disp_indirect>);
-    eu.set_instruction(0x91b9, 0x0e00, &subl_r<absolute_long>);
+    eu.set_instruction(0x9110, 0x0e07, &m68k_sub_r<byte_size, byte_indirect>);
+    eu.set_instruction(0x9118, 0x0e07,
+		       &m68k_sub_r<byte_size, byte_postinc_indirect>);
+    eu.set_instruction(0x9120, 0x0e07,
+		       &m68k_sub_r<byte_size, byte_predec_indirect>);
+    eu.set_instruction(0x9128, 0x0e07,
+		       &m68k_sub_r<byte_size, byte_disp_indirect>);
+    eu.set_instruction(0x9130, 0x0e07,
+		       &m68k_sub_r<byte_size, byte_index_indirect>);
+    eu.set_instruction(0x9138, 0x0e00, &m68k_sub_r<byte_size, byte_abs_short>);
+    eu.set_instruction(0x9139, 0x0e00, &m68k_sub_r<byte_size, byte_abs_long>);
+    eu.set_instruction(0x9150, 0x0e07, &m68k_sub_r<word_size, word_indirect>);
+    eu.set_instruction(0x9158, 0x0e07,
+		       &m68k_sub_r<word_size, word_postinc_indirect>);
+    eu.set_instruction(0x9160, 0x0e07,
+		       &m68k_sub_r<word_size, word_predec_indirect>);
+    eu.set_instruction(0x9168, 0x0e07,
+		       &m68k_sub_r<word_size, word_disp_indirect>);
+    eu.set_instruction(0x9170, 0x0e07,
+		       &m68k_sub_r<word_size, word_index_indirect>);
+    eu.set_instruction(0x9178, 0x0e00, &m68k_sub_r<word_size, word_abs_short>);
+    eu.set_instruction(0x9179, 0x0e00, &m68k_sub_r<word_size, word_abs_long>);
+    eu.set_instruction(0x9190, 0x0e07,
+		       &m68k_sub_r<long_word_size, long_word_indirect>);
+    eu.set_instruction(0x9198, 0x0e07,
+		       &m68k_sub_r<long_word_size,
+		                   long_word_postinc_indirect>);
+    eu.set_instruction(0x91a0, 0x0e07,
+		       &m68k_sub_r<long_word_size, long_word_predec_indirect>);
+    eu.set_instruction(0x91a8, 0x0e07,
+		       &m68k_sub_r<long_word_size, long_word_disp_indirect>);
+    eu.set_instruction(0x91b0, 0x0e07,
+		       &m68k_sub_r<long_word_size, long_word_index_indirect>);
+    eu.set_instruction(0x91b8, 0x0e00,
+		       &m68k_sub_r<long_word_size, long_word_abs_short>);
+    eu.set_instruction(0x91b9, 0x0e00,
+		       &m68k_sub_r<long_word_size, long_word_abs_long>);
     eu.set_instruction(0x91c0, 0x0e07, &subal<data_register>);
     eu.set_instruction(0x91c8, 0x0e07, &subal<address_register>);
     eu.set_instruction(0x91d0, 0x0e07, &subal<indirect>);

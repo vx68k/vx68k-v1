@@ -1,6 +1,6 @@
 News and History of User-Visible Changes in Virtual X68000
 
-$Date: Fri, 26 Nov 1999 21:32:58 +0900 $
+$Date: Sat, 27 May 2000 18:26:28 +0900 $
 
 Version 1.1.0 (not released)
 
@@ -8,8 +8,8 @@ Version 1.1.0 (not released)
 
 ** Some of common condition codes are implemented.
 
-** 781 instruction handlers are implemented though some do not update
-the condition codes properly.
+** More than 800 instruction handlers are implemented though some do
+not update the condition codes properly.
 
 ** It is close to run DIS source code generator for itself.
 
