@@ -51,15 +51,15 @@ namespace vx68k
   class system_rom: public memory
   {
   public:
-    typedef void (*iocs_handler_function)(context &, unsigned long);
-    typedef pair<iocs_handler_function, unsigned long> iocs_handler_type;
+    typedef void (*iocs_call_handler)(context &, unsigned long);
+    typedef pair<iocs_call_handler, unsigned long> iocs_call_type;
 
   protected:
-    static void invalid_iocs_function(context &, unsigned long);
+    static void invalid_iocs_call(context &, unsigned long);
 
   private:
     /* Table of the IOCS functions.  */
-    vector<iocs_handler_type> iocs_handlers;
+    vector<iocs_call_type> iocs_calls;
 
     /* Attached execution unit.  */
     exec_unit *attached_eu;
@@ -87,7 +87,7 @@ namespace vx68k
 
   public:
     /* Sets an IOCS function.  */
-    void set_iocs_handler(int, const iocs_handler_type &);
+    void set_iocs_call(int, const iocs_call_type &);
 
     /* Dispatch to an IOCS call handler.  */
     void call_iocs(int, context &);

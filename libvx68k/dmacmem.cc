@@ -96,7 +96,7 @@ void
 dmac_memory::install_iocs_calls(system_rom &rom)
 {
   unsigned long data = reinterpret_cast<unsigned long>(this);
-  rom.set_iocs_handler(0x8a, make_pair(&iocs_dmamove, data));
+  rom.set_iocs_call(0x8a, make_pair(&iocs_dmamove, data));
   // 0x8b: _DMAMOV_A
   // 0x8c: _DMAMOV_L
   // 0x8d: _DMAMODE

@@ -1,5 +1,18 @@
 2000-12-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (initialize_iocs_calls): Renamed from
+	initialize_iocs_handlers.  Also change all users.
+
+	* include/vx68k/memory.h (class system_rom): Rename
+	iocs_handler_function to iocs_call_handler.  Rename
+	iocs_handler_type to iocs_call_type.
+	(class system_rom): Rename member invalid_iocs_function to
+	invalid_iocs_call.  Also change all users.
+	(class system_rom): Rename member iocs_handlers to iocs_calls.
+	Also change all users.
+	(class system_rom): Rename member set_iocs_handler to
+	set_iocs_call.
+
 	* libvx68k/textvram.cc (fill_plane): New function.
 	(iocs_txfill): Write code.
 

@@ -116,12 +116,12 @@ system_rom::put_8(function_code fc, uint32_type address, int value)
 }
 
 void
-system_rom::set_iocs_handler(int funcno, const iocs_handler_type &f)
+system_rom::set_iocs_call(int funcno, const iocs_call_type &f)
 {
-  if (funcno < 0 || funcno >= iocs_handlers.size())
+  if (funcno < 0 || funcno >= iocs_calls.size())
     throw range_error("system_rom");
 
-  iocs_handlers[funcno] = f;
+  iocs_calls[funcno] = f;
 }
 
 void
@@ -129,10 +129,10 @@ system_rom::call_iocs(int funcno, context &c)
 {
   funcno %= 0x100;
 
-  iocs_handler_function handler = iocs_handlers[funcno].first;
+  iocs_call_handler handler = iocs_calls[funcno].first;
   I(handler != NULL);
 
-  (*handler)(c, iocs_handlers[funcno].second);
+  (*handler)(c, iocs_calls[funcno].second);
 }
 
 namespace
@@ -1049,54 +1049,54 @@ namespace
 
   /* Initializes the IOCS functions.  */
   void
-  initialize_iocs_handlers(system_rom *rom)
+  initialize_iocs_calls(system_rom *rom)
   {
-    rom->set_iocs_handler(0x00, make_pair(&iocs_b_keyinp, 0));
-    rom->set_iocs_handler(0x01, make_pair(&iocs_b_keysns, 0));
-    rom->set_iocs_handler(0x02, make_pair(&iocs_b_sftsns, 0));
-    rom->set_iocs_handler(0x04, make_pair(&iocs_bitsns, 0));
-    rom->set_iocs_handler(0x0d, make_pair(&iocs_ledmod, 0));
-    rom->set_iocs_handler(0x0e, make_pair(&iocs_tgusemd, 0));
-    rom->set_iocs_handler(0x10, make_pair(&iocs_crtmod, 0));
-    rom->set_iocs_handler(0x11, make_pair(&iocs_contrast, 0));
-    rom->set_iocs_handler(0x13, make_pair(&iocs_tpalet, 0));
-    rom->set_iocs_handler(0x15, make_pair(&iocs_tcolor, 0));
-    rom->set_iocs_handler(0x1d, make_pair(&iocs_scroll, 0));
-    rom->set_iocs_handler(0x20, make_pair(&iocs_b_putc, 0));
-    rom->set_iocs_handler(0x21, make_pair(&iocs_b_print, 0));
-    rom->set_iocs_handler(0x37, make_pair(&iocs_x37, 0));
-    rom->set_iocs_handler(0x38, make_pair(&iocs_x38, 0));
-    rom->set_iocs_handler(0x39, make_pair(&iocs_x39, 0));
-    rom->set_iocs_handler(0x3a, make_pair(&iocs_x3a, 0));
-    rom->set_iocs_handler(0x3b, make_pair(&iocs_joyget, 0));
-    rom->set_iocs_handler(0x3c, make_pair(&iocs_init_prn, 0));
-    rom->set_iocs_handler(0x45, make_pair(&iocs_b_write, 0));
-    rom->set_iocs_handler(0x46, make_pair(&iocs_b_read, 0));
-    rom->set_iocs_handler(0x47, make_pair(&iocs_b_recali, 0));
-    rom->set_iocs_handler(0x4a, make_pair(&iocs_b_readid, 0));
-    rom->set_iocs_handler(0x4e, make_pair(&iocs_b_drvchk, 0));
-    rom->set_iocs_handler(0x4f, make_pair(&iocs_b_eject, 0));
-    rom->set_iocs_handler(0x54, make_pair(&iocs_dateget, 0));
-    rom->set_iocs_handler(0x55, make_pair(&iocs_datebin, 0));
-    rom->set_iocs_handler(0x56, make_pair(&iocs_timeget, 0));
-    rom->set_iocs_handler(0x57, make_pair(&iocs_timebin, 0));
-    rom->set_iocs_handler(0x5a, make_pair(&iocs_dateasc, 0));
-    rom->set_iocs_handler(0x5b, make_pair(&iocs_timeasc, 0));
-    rom->set_iocs_handler(0x68, make_pair(&iocs_opmset, 0));
-    rom->set_iocs_handler(0x6a, make_pair(&iocs_opmintst, 0));
-    rom->set_iocs_handler(0x6b, make_pair(&iocs_timerdst, 0));
-    rom->set_iocs_handler(0x6c, make_pair(&iocs_vdispst, 0));
-    rom->set_iocs_handler(0x7d, make_pair(&iocs_skey_mod, 0));
-    rom->set_iocs_handler(0x7f, make_pair(&iocs_ontime, 0));
-    rom->set_iocs_handler(0x80, make_pair(&iocs_b_intvcs, 0));
-    rom->set_iocs_handler(0x81, make_pair(&iocs_b_super, 0));
-    rom->set_iocs_handler(0x84, make_pair(&iocs_b_lpeek, 0));
-    rom->set_iocs_handler(0x8e, make_pair(&iocs_bootinf, 0));
-    rom->set_iocs_handler(0x8f, make_pair(&iocs_romver, 0));
-    rom->set_iocs_handler(0x90, make_pair(&iocs_g_clr_on, 0));
-    rom->set_iocs_handler(0xac, make_pair(&iocs_sys_stat, 0));
-    rom->set_iocs_handler(0xae, make_pair(&iocs_os_curon, 0));
-    rom->set_iocs_handler(0xaf, make_pair(&iocs_os_curof, 0));
+    rom->set_iocs_call(0x00, make_pair(&iocs_b_keyinp, 0));
+    rom->set_iocs_call(0x01, make_pair(&iocs_b_keysns, 0));
+    rom->set_iocs_call(0x02, make_pair(&iocs_b_sftsns, 0));
+    rom->set_iocs_call(0x04, make_pair(&iocs_bitsns, 0));
+    rom->set_iocs_call(0x0d, make_pair(&iocs_ledmod, 0));
+    rom->set_iocs_call(0x0e, make_pair(&iocs_tgusemd, 0));
+    rom->set_iocs_call(0x10, make_pair(&iocs_crtmod, 0));
+    rom->set_iocs_call(0x11, make_pair(&iocs_contrast, 0));
+    rom->set_iocs_call(0x13, make_pair(&iocs_tpalet, 0));
+    rom->set_iocs_call(0x15, make_pair(&iocs_tcolor, 0));
+    rom->set_iocs_call(0x1d, make_pair(&iocs_scroll, 0));
+    rom->set_iocs_call(0x20, make_pair(&iocs_b_putc, 0));
+    rom->set_iocs_call(0x21, make_pair(&iocs_b_print, 0));
+    rom->set_iocs_call(0x37, make_pair(&iocs_x37, 0));
+    rom->set_iocs_call(0x38, make_pair(&iocs_x38, 0));
+    rom->set_iocs_call(0x39, make_pair(&iocs_x39, 0));
+    rom->set_iocs_call(0x3a, make_pair(&iocs_x3a, 0));
+    rom->set_iocs_call(0x3b, make_pair(&iocs_joyget, 0));
+    rom->set_iocs_call(0x3c, make_pair(&iocs_init_prn, 0));
+    rom->set_iocs_call(0x45, make_pair(&iocs_b_write, 0));
+    rom->set_iocs_call(0x46, make_pair(&iocs_b_read, 0));
+    rom->set_iocs_call(0x47, make_pair(&iocs_b_recali, 0));
+    rom->set_iocs_call(0x4a, make_pair(&iocs_b_readid, 0));
+    rom->set_iocs_call(0x4e, make_pair(&iocs_b_drvchk, 0));
+    rom->set_iocs_call(0x4f, make_pair(&iocs_b_eject, 0));
+    rom->set_iocs_call(0x54, make_pair(&iocs_dateget, 0));
+    rom->set_iocs_call(0x55, make_pair(&iocs_datebin, 0));
+    rom->set_iocs_call(0x56, make_pair(&iocs_timeget, 0));
+    rom->set_iocs_call(0x57, make_pair(&iocs_timebin, 0));
+    rom->set_iocs_call(0x5a, make_pair(&iocs_dateasc, 0));
+    rom->set_iocs_call(0x5b, make_pair(&iocs_timeasc, 0));
+    rom->set_iocs_call(0x68, make_pair(&iocs_opmset, 0));
+    rom->set_iocs_call(0x6a, make_pair(&iocs_opmintst, 0));
+    rom->set_iocs_call(0x6b, make_pair(&iocs_timerdst, 0));
+    rom->set_iocs_call(0x6c, make_pair(&iocs_vdispst, 0));
+    rom->set_iocs_call(0x7d, make_pair(&iocs_skey_mod, 0));
+    rom->set_iocs_call(0x7f, make_pair(&iocs_ontime, 0));
+    rom->set_iocs_call(0x80, make_pair(&iocs_b_intvcs, 0));
+    rom->set_iocs_call(0x81, make_pair(&iocs_b_super, 0));
+    rom->set_iocs_call(0x84, make_pair(&iocs_b_lpeek, 0));
+    rom->set_iocs_call(0x8e, make_pair(&iocs_bootinf, 0));
+    rom->set_iocs_call(0x8f, make_pair(&iocs_romver, 0));
+    rom->set_iocs_call(0x90, make_pair(&iocs_g_clr_on, 0));
+    rom->set_iocs_call(0xac, make_pair(&iocs_sys_stat, 0));
+    rom->set_iocs_call(0xae, make_pair(&iocs_os_curon, 0));
+    rom->set_iocs_call(0xaf, make_pair(&iocs_os_curof, 0));
   }
 } // namespace (unnamed)
 
@@ -1106,14 +1106,14 @@ system_rom::~system_rom()
 }
 
 system_rom::system_rom()
-  : iocs_handlers(0x100, make_pair(&invalid_iocs_function, 0)),
+  : iocs_calls(0x100, make_pair(&invalid_iocs_call, 0)),
     attached_eu(NULL)
 {
-  initialize_iocs_handlers(this);
+  initialize_iocs_calls(this);
 }
 
 void
-system_rom::invalid_iocs_function(context &c, unsigned long data)
+system_rom::invalid_iocs_call(context &c, unsigned long data)
 {
   fprintf(stderr, "system_rom: IOCS 0x%02x\n",
 	  byte_size::get(c.regs.d[0]) & 0xff);

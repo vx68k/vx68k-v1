@@ -301,9 +301,9 @@ void
 font_rom::install_iocs_calls(system_rom &rom)
 {
   unsigned long data = reinterpret_cast<unsigned long>(this);
-  rom.set_iocs_handler(0x0f, make_pair(&iocs_defchr, data));
-  rom.set_iocs_handler(0x16, make_pair(&iocs_fntadr, data));
-  rom.set_iocs_handler(0x19, make_pair(&iocs_fntget, data));
+  rom.set_iocs_call(0x0f, make_pair(&iocs_defchr, data));
+  rom.set_iocs_call(0x16, make_pair(&iocs_fntadr, data));
+  rom.set_iocs_call(0x19, make_pair(&iocs_fntget, data));
 }
 
 void

@@ -5,9 +5,9 @@
 @synindex vr fn
 @set VERSION 1.1
 @c $Format: "@set REVISION $Revision$" $
-@set REVISION 1.15
+@set REVISION 1.16
 @c $Format: "@set DATE $Date$" $
-@set DATE Tue, 12 Dec 2000 23:37:33 +0900
+@set DATE Wed, 13 Dec 2000 22:54:23 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -512,11 +512,11 @@ code @var{fc}.
 @deftypemethod system_rom void initialize (memory_address_space &@var{mm})
 @end deftypemethod
 
-@deftp Typedef system_rom::iocs_handler_type
+@deftp Typedef system_rom::iocs_call_type
 Type for IOCS call handlers.
 @end deftp
 
-@deftypemethod system_rom void set_iocs_handler (int @var{number}, const iocs_handler_type &@var{handler})
+@deftypemethod system_rom void set_iocs_call (int @var{number}, const iocs_call_type &@var{handler})
 Sets the handler for IOCS call @var{number} to @var{handler}.
 @end deftypemethod
 
@@ -529,7 +529,36 @@ Sets the handler for IOCS call @var{number} to @var{handler}.
 @cindex video memory, text
 
 @deftp Class text_video_memory
+Memory component for text video frame buffer.
 @end deftp
+
+@deftypemethod text_video_memory uint16_type get_16 (function_code @var{fc}, uint32_type @var{address}) const
+Returns the 16-bit value at address @var{address} using function code
+@var{fc}.
+@end deftypemethod
+
+@deftypemethod text_video_memory int get_8 (function_code @var{fc}, uint32_type @var{address}) const
+Returns the 8-bit value at address @var{address} using function code
+@var{fc}.
+@end deftypemethod
+
+@deftypemethod text_video_memory void put_16 (function_code @var{fc}, uint32_type @var{address}, uint16_type @var{value})
+Stores 16-bit value @var{value} at address @var{address} using function
+code @var{fc}.
+@end deftypemethod
+
+@deftypemethod text_video_memory void put_8 (function_code @var{fc}, uint32_type @var{address}, int @var{value})
+Stores 8-bit value @var{value} at address @var{address} using function
+code @var{fc}.
+@end deftypemethod
+
+@deftypemethod text_video_memory void install_iocs_calls (system_rom &@var{rom})
+@end deftypemethod
+
+@deftypemethod text_video_memory void fill_plane (int @var{left}, int @var{top}, int @var{right}, int @var{bottom}, int @var{plane}, uint16_type @var{pattern})
+Fills a rectangular area in a plane.  This method implements the
+function of an IOCS call @code{_TXFILL}.
+@end deftypemethod
 
 @node Graphic Video Memory, SCC, Text Video Memory, Machine
 @subsection Graphic Video Memory

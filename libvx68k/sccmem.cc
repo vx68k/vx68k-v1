@@ -287,20 +287,20 @@ void
 scc_memory::install_iocs_calls(system_rom &rom)
 {
   unsigned long data = reinterpret_cast<unsigned long>(this);
-  rom.set_iocs_handler(0x30, make_pair(&iocs_set232c, data));
+  rom.set_iocs_call(0x30, make_pair(&iocs_set232c, data));
   // 0x31: _LOF232C
   // 0x32: _INP232C
   // 0x33: _ISNS232C
   // 0x34: _OSNS232C
   // 0x35: _OUT232C
-  rom.set_iocs_handler(0x70, make_pair(&iocs_ms_init, data));
-  rom.set_iocs_handler(0x71, make_pair(&iocs_ms_curon, data));
-  rom.set_iocs_handler(0x72, make_pair(&iocs_ms_curof, data));
-  rom.set_iocs_handler(0x73, make_pair(&iocs_ms_stat, data));
-  rom.set_iocs_handler(0x74, make_pair(&iocs_ms_getdt, data));
-  rom.set_iocs_handler(0x75, make_pair(&iocs_ms_curgt, data));
-  rom.set_iocs_handler(0x76, make_pair(&iocs_ms_curst, data));
-  rom.set_iocs_handler(0x77, make_pair(&iocs_ms_limit, data));
+  rom.set_iocs_call(0x70, make_pair(&iocs_ms_init, data));
+  rom.set_iocs_call(0x71, make_pair(&iocs_ms_curon, data));
+  rom.set_iocs_call(0x72, make_pair(&iocs_ms_curof, data));
+  rom.set_iocs_call(0x73, make_pair(&iocs_ms_stat, data));
+  rom.set_iocs_call(0x74, make_pair(&iocs_ms_getdt, data));
+  rom.set_iocs_call(0x75, make_pair(&iocs_ms_curgt, data));
+  rom.set_iocs_call(0x76, make_pair(&iocs_ms_curst, data));
+  rom.set_iocs_call(0x77, make_pair(&iocs_ms_limit, data));
   // 0x78: _MS_OFFTM
   // 0x79: _MS_ONTM
   // 0x7a: _MS_PATST

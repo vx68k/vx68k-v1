@@ -1,3 +1,10 @@
+2000-12-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* vx68k.texi (IOCS and System ROM): Rename iocs_handler_type to
+	iocs_call_type.
+	(IOCS and System ROM): Rename set_iocs_handler to set_iocs_call.
+	(Text Video Memory): Add documentation.
+
 2000-12-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* Separate ChangeLog for doc.

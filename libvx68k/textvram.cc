@@ -454,27 +454,27 @@ text_video_memory::install_iocs_calls(system_rom &rom)
 {
   unsigned long data = reinterpret_cast<unsigned long>(this);
   // 0x1a: _TEXTGET
-  rom.set_iocs_handler(0x1b, make_pair(&iocs_textput, data));
+  rom.set_iocs_call(0x1b, make_pair(&iocs_textput, data));
   // 0x1c: _CLIPPUT
-  rom.set_iocs_handler(0x1e, make_pair(&iocs_b_curon, data));
-  rom.set_iocs_handler(0x1f, make_pair(&iocs_b_curoff, data));
+  rom.set_iocs_call(0x1e, make_pair(&iocs_b_curon, data));
+  rom.set_iocs_call(0x1f, make_pair(&iocs_b_curoff, data));
   // 0x20: _B_PUTC
   // 0x21: _B_PRINT
-  rom.set_iocs_handler(0x22, make_pair(&iocs_b_color, data));
-  rom.set_iocs_handler(0x23, make_pair(&iocs_b_locate, data));
+  rom.set_iocs_call(0x22, make_pair(&iocs_b_color, data));
+  rom.set_iocs_call(0x23, make_pair(&iocs_b_locate, data));
   // 0x24: _B_DOWN_S
   // 0x25: _B_UP_S
   // 0x26: _B_UP
   // 0x27: _B_DOWN
   // 0x28: _B_RIGHT
   // 0x29: _B_LEFT
-  rom.set_iocs_handler(0x2a, make_pair(&iocs_b_clr_st, data));
+  rom.set_iocs_call(0x2a, make_pair(&iocs_b_clr_st, data));
   // 0x2b: _B_ERA_ST
   // 0x2c: _B_INS
   // 0x2d: _B_DEL
-  rom.set_iocs_handler(0x2e, make_pair(&iocs_b_consol, data));
-  rom.set_iocs_handler(0x2f, make_pair(&iocs_b_putmes, data));
-  rom.set_iocs_handler(0xd7, make_pair(&iocs_txfill, data));
+  rom.set_iocs_call(0x2e, make_pair(&iocs_b_consol, data));
+  rom.set_iocs_call(0x2f, make_pair(&iocs_b_putmes, data));
+  rom.set_iocs_call(0xd7, make_pair(&iocs_txfill, data));
 }
 
 uint16_type
