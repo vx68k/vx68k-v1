@@ -38,7 +38,7 @@ namespace vx68k
     private:
       machine *_m;
       unsigned int width, height;
-#ifdef RGB
+#ifndef GDK_IMAGE
       size_t row_size;
       guchar *rgb_buf;
 #else

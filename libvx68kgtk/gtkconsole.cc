@@ -122,7 +122,7 @@ gtk_console::handle_expose_event(GtkWidget *drawing_area,
   GdkGC *gc = gdk_gc_new(drawing_area->window);
   gdk_gc_set_clip_rectangle(gc, &e->area);
 
-#ifdef RGB
+#ifndef GDK_IMAGE
   guchar *p = rgb_buf + e->area.y * row_size + e->area.x * 3;
   gdk_draw_rgb_image(drawing_area->window, gc,
 		     e->area.x, e->area.y, e->area.width, e->area.height,
@@ -420,65 +420,91 @@ namespace
 
   class pixel_iterator: public output_iterator
   {
-  public:
-    class ref
-    {
-    private:
-      unsigned char *ptr;
-      GdkByteOrder byte_order;
-      size_t bpp;
-      vector<guint32>::const_iterator table;
-
-    public:
-      ref(unsigned char *p, GdkByteOrder bo, size_t b,
-	  vector<guint32>::const_iterator t)
-	: ptr(p), byte_order(bo), bpp(b), table(t) {}
-
-    public:
-      ref &operator=(unsigned short p)
-      {
-	guint32 pp = table[p];
-	if (byte_order == GDK_MSB_FIRST)
-	  {
-	    for (unsigned char *i = ptr + bpp; i != ptr; --i)
-	      {
-		i[-1] = pp;
-		pp >>= 8;
-	      }
-	  }
-	else
-	  {
-	    for (unsigned char *i = ptr; i != ptr + bpp; ++i)
-	      {
-		*i = pp;
-		pp >>= 8;
-	      }
-	  }
-
-	return *this;
-      }
-    };
-
   private:
+#ifndef GDK_IMAGE
+    guchar *rgb_ptr;
+#else
     GdkImage *image;
     int x, y;
     vector<guint32>::const_iterator table;
+#endif
 
   public:
+#ifndef GDK_IMAGE
+    pixel_iterator(guchar *p): rgb_ptr(p) {}
+#else
     pixel_iterator(GdkImage *i, int xx, int yy,
 		   vector<guint32>::const_iterator t)
       : image(i), x(xx), y(yy), table(t) {}
+#endif
 
   public:
     bool operator==(const pixel_iterator &another) const
-    {return image == another.image && x == another.x && y == another.y;}
-    ref operator*() const
     {
-      unsigned char *p = (static_cast<unsigned char *>(image->mem)
-			  + y * image->bpl + x * image->bpp);
-      return ref(p, image->byte_order, image->bpp, table);
+#ifndef GDK_IMAGE
+      return rgb_ptr == another.rgb_ptr;
+#else
+      return image == another.image && x == another.x && y == another.y;
+#endif
     }
-    pixel_iterator &operator++() {++x;  return *this;}
+
+    pixel_iterator &operator*()
+    {
+      return *this;
+    }
+
+    pixel_iterator &operator=(unsigned short p)
+    {
+#ifndef GDK_IMAGE
+      unsigned int x = p & 0x1;
+      unsigned int r = p >> 5 & 0x3e | x;
+      unsigned int g = p >> 10 & 0x3e | x;
+      unsigned int b = p & 0x3f;
+
+      rgb_ptr[0] = r * 0xff / 0x3f;
+      rgb_ptr[1] = g * 0xff / 0x3f;
+      rgb_ptr[2] = b * 0xff / 0x3f;
+#else
+      guint32 pp = table[p];
+      unsigned char *ptr = (static_cast<unsigned char *>(image->mem)
+			    + y * image->bpl + x * image->bpp);
+      if (image->byte_order == GDK_MSB_FIRST)
+	{
+	  for (unsigned char *i = ptr + image->bpp; i != ptr; --i)
+	    {
+	      i[-1] = pp;
+	      pp >>= 8;
+	    }
+	}
+      else
+	{
+	  for (unsigned char *i = ptr; i != ptr + image->bpp; ++i)
+	    {
+	      *i = pp;
+	      pp >>= 8;
+	    }
+	}
+#endif
+
+      return *this;
+    }
+
+    pixel_iterator &operator++()
+    {
+#ifndef GDK_IMAGE
+      rgb_ptr += 3;
+#else
+      ++x;
+#endif
+      return *this;
+    }
+
+    pixel_iterator operator++(int)
+    {
+      pixel_iterator tmp = *this;
+      ++*this;
+      return tmp;
+    }
   };
 
   class row
@@ -488,24 +514,62 @@ namespace
     typedef pixel_iterator iterator;
 
   private:
+#ifndef GDK_IMAGE
+    unsigned int width;
+    size_t row_size;
+    guchar *rgb_ptr;
+#else
     GdkImage *image;
     int y;
     vector<guint32>::const_iterator table;
+#endif
 
   public:
+#ifndef GDK_IMAGE
+    row(guchar *p, unsigned int w, size_t n)
+      : width(w), row_size(n), rgb_ptr(p) {}
+#else
     row(GdkImage *i, int yy, vector<guint32>::const_iterator t)
       : image(i), y(yy), table(t) {}
+#endif
 
   public:
     bool operator==(const row &another) const
-    {return image == another.image && y == another.y;}
+    {
+#ifndef GDK_IMAGE
+      return rgb_ptr == another.rgb_ptr;
+#else
+      return image == another.image && y == another.y;
+#endif
+    }
 
   public:
-    pixel_iterator begin() {return pixel_iterator(image, 0, y, table);}
-    pixel_iterator end() {return pixel_iterator(image, image->width, y, table);}
+    pixel_iterator begin()
+    {
+#ifndef GDK_IMAGE
+      return pixel_iterator(rgb_ptr);
+#else
+      return pixel_iterator(image, 0, y, table);
+#endif
+    }
+    pixel_iterator end()
+    {
+#ifndef GDK_IMAGE
+      return pixel_iterator(rgb_ptr + width * 3);
+#else
+      return pixel_iterator(image, image->width, y, table);
+#endif
+    }
 
   public:
-    void next() {++y;}
+    void next()
+    {
+#ifndef GDK_IMAGE
+      rgb_ptr += row_size;
+#else
+      ++y;
+#endif
+    }
   };
 
   class row_iterator: public input_iterator<row, ptrdiff_t>
@@ -514,8 +578,13 @@ namespace
     row current;
 
   public:
+#ifndef GDK_IMAGE
+    row_iterator(guchar *ptr, unsigned int w, size_t n)
+      : current(ptr, w, n) {}
+#else
     row_iterator(GdkImage *i, int yy, vector<guint32>::const_iterator t)
       : current(i, yy, t) {}
+#endif
 
   public:
     bool operator==(const row_iterator &another) const
@@ -532,8 +601,10 @@ bool
 gtk_console::handle_timeout()
 {
   machine::rectangle area;
-#ifdef RGB
-  _m->update_image(rgb_buf, row_size, 768, 512, area);
+#ifndef GDK_IMAGE
+  _m->update_image(row_iterator(rgb_buf, width, row_size),
+		   row_iterator(rgb_buf + height * row_size, width, row_size),
+		   area);
 #else
   _m->update_image(row_iterator(image, 0, ctable.begin()),
 		   row_iterator(image, height, ctable.begin()), area);
@@ -606,7 +677,7 @@ gtk_console::~gtk_console()
 
   gdk_threads_leave();
 
-#ifdef RGB
+#ifndef GDK_IMAGE
   delete [] rgb_buf;
 #else
   gdk_image_destroy(image);
@@ -616,7 +687,7 @@ gtk_console::~gtk_console()
 gtk_console::gtk_console(machine *m)
   : _m(m),
     width(768), height(512),
-#ifdef RGB
+#ifndef GDK_IMAGE
     row_size(768 * 3),
     rgb_buf(NULL),
 #else
@@ -627,13 +698,13 @@ gtk_console::gtk_console(machine *m)
     primary_font(NULL),
     kanji16_font(NULL)
 {
-#ifdef RGB
+#ifndef GDK_IMAGE
   rgb_buf = new guchar [height * row_size];
 #endif
 
   gdk_threads_enter();
 
-#ifndef RGB
+#ifdef GDK_IMAGE
   image = gdk_image_new(GDK_IMAGE_FASTEST, gdk_visual_get_system(),
 			width, height);
   for (vector<guint32>::iterator i = ctable.begin();
@@ -657,4 +728,3 @@ gtk_console::gtk_console(machine *m)
   primary_font = base16_font_array();
   kanji16_font = kanji16_font_array();
 }
-

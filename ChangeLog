@@ -1,5 +1,14 @@
 2000-08-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/gtk.h (class gtk_console): Replace #if conditions
+	using GDK_IMAGE.
+	* libvx68kgtk/gtkconsole.cc (handle_expose_event): Likewise.
+	(class pixel_iterator): Remove nested class ref.  Modified for new
+	GdkRgb code.
+	(class row): Likewise.
+	(class row_iterator): Likewise.
+	(handle_timeout, ~gtk_console, gtk_console): Likewise.
+
 	* libvx68k/textvram.cc (put_16, put_8): Mark update area only if
 	really changed.
 
