@@ -1,3 +1,14 @@
+2001-07-12  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* libvx68k-gtk/vx68k/gtk.h (__VX68K_GTK_H): Renamed from
+	_VX68k_GTK_H.
+	(struct gl_context): New opaque struct.
+
+	* libvx68k-gtk/Makefile.am (noinst_HEADERS): New macro, adding
+	gtk_gl.h.
+
+	* libvx68k-gtk/gtk_gl.h: New file.
+
 2001-07-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* configure.in: Set VERSION to 1.1.9.
