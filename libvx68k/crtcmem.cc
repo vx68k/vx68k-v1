@@ -52,16 +52,25 @@ crtc_memory::check_timeouts(console::time_type t, context &c)
       vdisp_start_time += vdisp_interval;
 
       if (vdisp_interrupt_enabled())
-	c.interrupt(6, 0x4d);
+	{
+	  I(vdisp_counter_value > 0);
+	  if (--vdisp_counter_value == 0)
+	    {
+	      vdisp_counter_value = vdisp_counter_data;
+	      c.interrupt(6, 0x4d);
+	    }
+	}
     }
 }
 
 void
-crtc_memory::set_vdisp_interrupt_enabled(bool value)
+crtc_memory::set_vdisp_counter_data(unsigned int value)
 {
   auto_lock<pthread_mutex_t> lock(&mutex);
 
-  _vdisp_interrupt_enabled = value;
+  vdisp_counter_data = value;
+  if (vdisp_interrupt_enabled())
+    vdisp_counter_value = vdisp_counter_data;
 }
 
 uint_type
@@ -114,8 +123,8 @@ crtc_memory::~crtc_memory()
 }
 
 crtc_memory::crtc_memory()
-  : _vdisp_interrupt_enabled(false),
-    vdisp_interval(1000 / 55)
+  : vdisp_interval(1000 / 55),
+    vdisp_counter_data(0)
 {
   pthread_mutex_init(&mutex, NULL);
 }

@@ -1033,7 +1033,7 @@ namespace
 
     if (address == 0)
       {
-	as->machine()->set_vdisp_interrupt_enabled(false);
+	as->machine()->set_vdisp_counter_data(0);
 	long_word_size::put(c.regs.d[0], 0);
       }
     else
@@ -1047,7 +1047,7 @@ namespace
 	      count = 0x100;
 
 	    as->putl(SUPER_DATA, 0x4d * 4, address);
-	    as->machine()->set_vdisp_interrupt_enabled(true);
+	    as->machine()->set_vdisp_counter_data(count);
 	    long_word_size::put(c.regs.d[0], 0);
 	  }
       }

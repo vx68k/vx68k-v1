@@ -1,8 +1,8 @@
 TO DO List for Virtual X68000
 
-$Date: Sat, 12 Aug 2000 21:36:13 +0900 $
+$Date: Sat, 12 Aug 2000 22:03:48 +0900 $
 
-* Implement VDISP interrupt using counter.
+* Generalize interrupt handling.
 
 * Use GdkImage to improve screen update.
 
@@ -20,16 +20,12 @@ $Date: Sat, 12 Aug 2000 21:36:13 +0900 $
 
 * Improve console device behaviour using emulated keyboard input.
 
-* Implement the handler for instruction DBNE to make HAS work.
-
 * Implement minimum FLOAT calls.
 
 * Implement DOS calls _FILES and _NFILES.
 
 * Implement DOS drives.  This will require some run-time
 configuration.
-
-* Implements interrupts in `class context'.
 
 * Make `exec_unit::install_instructions' table-driven.  (trivial)
 

@@ -195,9 +195,6 @@ namespace vx68k
   class crtc_memory: public memory
   {
   private:
-    /* True if VDISP interrupts are enabled.  */
-    bool _vdisp_interrupt_enabled;
-
     /* Time interval between VDISP interrupts in milliseconds.  */
     console::time_type vdisp_interval;
 
@@ -205,6 +202,14 @@ namespace vx68k
        interrupt.  */
     console::time_type vdisp_start_time;
 
+    /* Reload value of the VDISP counter.  If this value is zero,
+       VDISP interrupts are disabled.  */
+    unsigned int vdisp_counter_data;
+
+    /* Current value of the VDISP counter.  */
+    unsigned int vdisp_counter_value;
+
+    /* Mutex for this object.  */
     pthread_mutex_t mutex;
 
   public:
@@ -221,8 +226,12 @@ namespace vx68k
     void put_8(int, uint32_type, uint_type);
 
   public:
-    bool vdisp_interrupt_enabled() const {return _vdisp_interrupt_enabled;}
-    void set_vdisp_interrupt_enabled(bool);
+    /* Returns true if VDISP interrupts are enabled.  */
+    bool vdisp_interrupt_enabled() const {return vdisp_counter_data != 0;}
+
+    /* Set the reload value of the VDISP counter.  If the value is
+       zero, VDISP interrupts are disabled.  */
+    void set_vdisp_counter_data(unsigned int);
 
   public:
     /* Resets internal timestamps.  */

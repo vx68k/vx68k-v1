@@ -208,8 +208,8 @@ namespace vx68k
 
     bool vdisp_interrupt_enabled() const
     {return crtc.vdisp_interrupt_enabled();}
-    void set_vdisp_interrupt_enabled(bool b)
-    {crtc.set_vdisp_interrupt_enabled(b);}
+    void set_vdisp_counter_data(unsigned int n)
+    {crtc.set_vdisp_counter_data(n);}
 
   public:
     void connect(console *con);

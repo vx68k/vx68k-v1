@@ -2,6 +2,26 @@
 
 	* TODO: Modified.
 
+	* libvx68k/systemrom.cc (iocs_vdispst): Set the VDISP counter
+	properly.
+
+	* libvx68k/crtcmem.cc (check_timeouts): Implement the VDISP
+	counter.
+	(set_vdisp_interrupt_enabled): Removed.
+	(set_vdisp_counter_data): New function.
+	(crtc_memory): Change initialization.
+
+	* include/vx68k/machine.h (class machine): Replace member
+	set_vdisp_interrupt_enabled with set_vdisp_counter_data.
+
+	* include/vx68k/memory.h (class crtc_memory): Add members
+	vdisp_counter_data, vdisp_counter_value, and
+	set_vdisp_counter_data.  Remove members _vdisp_interrupt_enabled,
+	and set_vdisp_interrupt_enabled.  Modify inline definition of
+	member vdisp_interrupt_enabled.
+
+	* TODO: Modified.
+
 	* libvx68k/gvideomem.cc: Fix erroneous casts in DL.
 
 	* libvx68k/systemrom.cc: Fix erroneous casts in DL.  Add variable
