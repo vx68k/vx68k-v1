@@ -1,3 +1,22 @@
+2000-07-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_b_sftsns): Get key modifiers.
+
+	* libvx68kgtk/gtkconsole.cc (handle_key_press_event): Add
+	modifiers handling.
+	(handle_key_release_event): New function.
+	(deliver_key_release_event): New function.
+	(create_widget): Add handler for key release events.
+
+	* libvx68k/machine.cc (set_key_modifiers): New function.
+	(machine): Initialize _key_modifiers.
+
+	* include/vx68k/gtk.h (class gtk_console): Add new methods
+	handle_key_release_event.
+
+	* include/vx68k/machine.h (class machine): Add new members
+	_key_modifiers, and methods set_key_modifiers and key_modifiers.
+
 2000-07-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* doc/vx68k.xml: Updated.

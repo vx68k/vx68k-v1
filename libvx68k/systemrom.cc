@@ -1,4 +1,4 @@
-/* Virtual X68000 - Sharp X68000 emulator
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
@@ -438,10 +438,13 @@ namespace
   iocs_b_sftsns(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    L("system_rom: _BSFTSNS\n");
+    L("IOCS _BSFTSNS\n");
 #endif
-    fprintf(stderr, "iocs_b_sftsns: FIXME: not implemented\n");
-    c.regs.d[0] = 0;
+    
+    x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
+    I(as != NULL);
+
+    long_word_size::put(c.regs.d[0], as->machine()->key_modifiers());
   }
 
   /* Handles a _B_WRITE call.  */

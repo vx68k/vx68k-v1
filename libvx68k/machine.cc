@@ -1,4 +1,4 @@
-/* Virtual X68000 - Sharp X68000 emulator
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
@@ -292,6 +292,12 @@ machine::get_key()
 
   return key;
 }
+
+void
+machine::set_key_modifiers(uint_type mask, uint_type value)
+{
+  _key_modifiers = (_key_modifiers & ~mask) ^ value;
+}
 
 void
 machine::load_fd(unsigned int u, int fildes)
@@ -365,6 +371,7 @@ machine::machine(size_t memory_size)
   : _memory_size(memory_size),
     mem(memory_size),
     _area_set(&mem),
+    _key_modifiers(0),
     curx(0), cury(0),
     saved_byte1(0)
 {

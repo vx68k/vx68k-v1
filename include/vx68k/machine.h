@@ -1,6 +1,6 @@
-/* -*-C++-*- */
-/* vx68k - Virtual X68000
-   Copyright (C) 1998, 2000 Hypercore Software Design, Ltd.
+/* -*- C++ -*- */
+/* Virtual X68000 - X68000 virtual machine
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -270,6 +270,9 @@ namespace vx68k
     /* Mutex for key_queue.  */
     pthread_mutex_t key_queue_mutex;
 
+    /* Key modifiers.  */
+    uint_type _key_modifiers;
+
     /* Floppy disks.  */
     iocs::disk *fd[NFDS];
 
@@ -312,6 +315,12 @@ namespace vx68k
 
     /* Gets a key input from the queue.  */
     uint_type get_key();
+
+    /* Sets the key modifiers.  */
+    void set_key_modifiers(uint_type mask, uint_type value);
+
+    /* Returns the key modifiers.  */
+    uint_type key_modifiers() const {return _key_modifiers;}
 
   public:
     /* Reads blocks from a FD unit.  */

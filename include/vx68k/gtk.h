@@ -1,6 +1,6 @@
-/* -*-C++-*- */
-/* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+/* -*- C++ -*- */
+/* Virtual X68000 - X68000 virtual machine
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -75,6 +75,9 @@ namespace vx68k
 
       /* Handles a GDK key press event E on widget W.  */
       bool handle_key_press_event(GtkWidget *w, GdkEventKey *e);
+
+      /* Handles a GDK key release event E on widget W.  */
+      bool handle_key_release_event(GtkWidget *w, GdkEventKey *e);
     };
   } // gtk
 } // vx68k

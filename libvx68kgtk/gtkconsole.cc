@@ -1,5 +1,5 @@
-/* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+/* Virtual X68000 - X68000 virtual machine
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -23,7 +23,10 @@
 #undef inline
 
 #include <vx68k/gtk.h>
+
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
+
 #include <algorithm>
 
 #ifdef HAVE_NANA_H
@@ -57,6 +60,45 @@ gtk_console::handle_key_press_event(GtkWidget *drawing_area,
       L("gtk_console: Key press %#x\n", key);
 #endif
       _m->queue_key(key);
+    }
+
+  switch (e->keyval)
+    {
+    case GDK_Shift_L:
+    case GDK_Shift_R:
+      _m->set_key_modifiers(0x01, 0x01);
+      break;
+
+    case GDK_Control_L:
+    case GDK_Control_R:
+      _m->set_key_modifiers(0x02, 0x02);
+      break;
+
+    default:
+      break;
+    }
+
+  return true;
+}
+
+bool
+gtk_console::handle_key_release_event(GtkWidget *drawing_area,
+				      GdkEventKey *e)
+{
+  switch (e->keyval)
+    {
+    case GDK_Shift_L:
+    case GDK_Shift_R:
+      _m->set_key_modifiers(0x01, 0x00);
+      break;
+
+    case GDK_Control_L:
+    case GDK_Control_R:
+      _m->set_key_modifiers(0x02, 0x00);
+      break;
+
+    default:
+      break;
     }
 
   return true;
@@ -110,7 +152,7 @@ namespace
     c->handle_destroy(w);
   }
 
-  /* Delivers a GDK key press event E to the asociated console.  */
+  /* Delivers a GDK key press event E to the associated console.  */
   gint
   deliver_key_press_event(GtkWidget *w, GdkEventKey *e,
 			  gpointer data) throw ()
@@ -119,6 +161,17 @@ namespace
     I(c != NULL);
 
     return c->handle_key_press_event(w, e);    
+  }
+
+  /* Delivers a GDK key release event E to the associated console.  */
+  gint
+  deliver_key_release_event(GtkWidget *w, GdkEventKey *e,
+			  gpointer data) throw ()
+  {
+    gtk_console *c = static_cast<gtk_console *>(data);
+    I(c != NULL);
+
+    return c->handle_key_release_event(w, e);    
   }
 } // (unnamed)
 
@@ -132,8 +185,11 @@ gtk_console::create_widget()
 		     GTK_SIGNAL_FUNC(&::handle_expose_event), this);
   gtk_signal_connect(GTK_OBJECT(drawing_area), "key_press_event",
 		     GTK_SIGNAL_FUNC(&deliver_key_press_event), this);
+  gtk_signal_connect(GTK_OBJECT(drawing_area), "key_release_event",
+		     GTK_SIGNAL_FUNC(&deliver_key_release_event), this);
   GTK_WIDGET_SET_FLAGS(drawing_area, GTK_CAN_FOCUS);
-  gtk_widget_add_events(drawing_area, GDK_KEY_PRESS_MASK);
+  gtk_widget_add_events(drawing_area,
+			GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
   {
     GtkStyle *style = gtk_style_copy(gtk_widget_get_style(drawing_area));
     style->bg[GTK_STATE_NORMAL] = style->black;
