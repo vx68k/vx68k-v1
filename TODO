@@ -1,24 +1,24 @@
 Virtual X68000 TO DO
 
-$Date: Fri, 09 Jul 1999 23:15:42 +0900 $
+$Date: Tue, 13 Jul 1999 23:09:03 +0900 $
 
 Version 0.36
 
 * Video hardware emulation.
 
+graphics_vram and text_vram.
+
 * Console device.
 
-* `--one-thread' option.
-
-This option may be useful to profile the code.
+Interface to GTK+ widget.
 
 Version 0.36 or later
 
-* IOCS handler.
+* IOCS function handlers.
 
 * File name translation.
 
-* More instructions must be implemented.
+* More instructions.
 
 * Instruction handlers must be changed into templates.
 
