@@ -1,5 +1,5 @@
 /* vx68k - Virtual X68000
-   Copyright (C) 1998, 2000 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -155,13 +155,13 @@ namespace
   }
 
   /* Handles an ADDA instruction.  */
-  template <class Size, class Destination> void
+  template <class Size, class Source> void
   m68k_adda(uint_type op, context &c, instruction_data *data)
   {
     typedef long_word_size::uvalue_type uvalue_type;
     typedef long_word_size::svalue_type svalue_type;
 
-    Destination ea1(op & 0x7, 2);
+    Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef TRACE_INSTRUCTIONS
     L(" adda%s %s", Size::suffix(), ea1.text(c));
@@ -1481,6 +1481,29 @@ namespace
       ec.regs.pc += 2 + ea1.isize(4) + ea2.isize(4);
     }
 
+  /* Handles an MOVEA instruction.  */
+  template <class Size, class Source> void
+  m68k_movea(uint_type op, context &c, instruction_data *data)
+  {
+    typedef long_word_size::uvalue_type uvalue_type;
+    typedef long_word_size::svalue_type svalue_type;
+
+    Source ea1(op & 0x7, 2);
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef TRACE_INSTRUCTIONS
+    L(" movea%s %s", Size::suffix(), ea1.text(c));
+    L(",%%a%u\n", reg2);
+#endif
+
+    // The condition codes are not affected by this instruction.
+    svalue_type value = ea1.get(c);
+    long_word_size::put(c.regs.a[reg2], value);
+    ea1.finish(c);
+
+    c.regs.pc += 2 + ea1.extension_size();
+  }
+
+#if 0
   template <class Source> void
   moveaw(uint_type op, context &c, instruction_data *data)
   {
@@ -1519,6 +1542,7 @@ namespace
 
       ec.regs.pc += 2 + ea1.isize(4) + ea2.isize(4);
     }
+#endif
 
   /* movem regs to EA (postdec).  */
   void
@@ -2616,16 +2640,30 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x2039, 0x0e00, &movel<absolute_long, data_register>);
   eu.set_instruction(0x203a, 0x0e00, &movel<disp_pc, data_register>);
   eu.set_instruction(0x203c, 0x0e00, &movel<immediate, data_register>);
-  eu.set_instruction(0x2040, 0x0e07, &moveal<data_register>);
-  eu.set_instruction(0x2048, 0x0e07, &moveal<address_register>);
-  eu.set_instruction(0x2050, 0x0e07, &moveal<indirect>);
-  eu.set_instruction(0x2058, 0x0e07, &moveal<postinc_indirect>);
-  eu.set_instruction(0x2060, 0x0e07, &moveal<predec_indirect>);
-  eu.set_instruction(0x2068, 0x0e07, &moveal<disp_indirect>);
-  eu.set_instruction(0x2070, 0x0e07, &moveal<indexed_indirect>);
-  eu.set_instruction(0x2079, 0x0e00, &moveal<absolute_long>);
-  eu.set_instruction(0x207a, 0x0e00, &moveal<disp_pc>);
-  eu.set_instruction(0x207c, 0x0e00, &moveal<immediate>);
+  eu.set_instruction(0x2040, 0x0e07,
+		     &m68k_movea<long_word_size, long_word_d_register>);
+  eu.set_instruction(0x2048, 0x0e07,
+		     &m68k_movea<long_word_size, long_word_a_register>);
+  eu.set_instruction(0x2050, 0x0e07,
+		     &m68k_movea<long_word_size, long_word_indirect>);
+  eu.set_instruction(0x2058, 0x0e07,
+		     &m68k_movea<long_word_size, long_word_postinc_indirect>);
+  eu.set_instruction(0x2060, 0x0e07,
+		     &m68k_movea<long_word_size, long_word_predec_indirect>);
+  eu.set_instruction(0x2068, 0x0e07,
+		     &m68k_movea<long_word_size, long_word_disp_indirect>);
+  eu.set_instruction(0x2070, 0x0e07,
+		     &m68k_movea<long_word_size, long_word_index_indirect>);
+  eu.set_instruction(0x2078, 0x0e00,
+		     &m68k_movea<long_word_size, long_word_abs_short>);
+  eu.set_instruction(0x2079, 0x0e00,
+		     &m68k_movea<long_word_size, long_word_abs_long>);
+  eu.set_instruction(0x207a, 0x0e00,
+		     &m68k_movea<long_word_size, long_word_disp_pc_indirect>);
+  eu.set_instruction(0x207b, 0x0e00,
+		     &m68k_movea<long_word_size, long_word_index_pc_indirect>);
+  eu.set_instruction(0x207c, 0x0e00,
+		     &m68k_movea<long_word_size, long_word_immediate>);
   eu.set_instruction(0x2080, 0x0e07, &movel<data_register, indirect>);
   eu.set_instruction(0x2088, 0x0e07, &movel<address_register, indirect>);
   eu.set_instruction(0x2090, 0x0e07, &movel<indirect, indirect>);
@@ -2669,6 +2707,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x21b0, 0x0e07, &movel<indexed_indirect, indexed_indirect>);
   eu.set_instruction(0x21b9, 0x0e00, &movel<absolute_long, indexed_indirect>);
   eu.set_instruction(0x21bc, 0x0e00, &movel<immediate, indexed_indirect>);
+  eu.set_instruction(0x21c8, 0x0007, &movel<address_register, absolute_short>);
   eu.set_instruction(0x23c0, 0x0007, &movel<data_register, absolute_long>);
   eu.set_instruction(0x23c8, 0x0007, &movel<address_register, absolute_long>);
   eu.set_instruction(0x23d0, 0x0007, &movel<indirect, absolute_long>);
@@ -2689,16 +2728,24 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x303a, 0x0e00, &movew<disp_pc, data_register>);
   eu.set_instruction(0x303b, 0x0e00, &movew<indexed_pc_indirect, data_register>);
   eu.set_instruction(0x303c, 0x0e00, &movew<immediate, data_register>);
-  eu.set_instruction(0x3040, 0x0e07, &moveaw<data_register>);
-  eu.set_instruction(0x3048, 0x0e07, &moveaw<address_register>);
-  eu.set_instruction(0x3050, 0x0e07, &moveaw<indirect>);
-  eu.set_instruction(0x3058, 0x0e07, &moveaw<postinc_indirect>);
-  eu.set_instruction(0x3060, 0x0e07, &moveaw<predec_indirect>);
-  eu.set_instruction(0x3068, 0x0e07, &moveaw<disp_indirect>);
-  eu.set_instruction(0x3070, 0x0e07, &moveaw<indexed_indirect>);
-  eu.set_instruction(0x3079, 0x0e00, &moveaw<absolute_long>);
-  eu.set_instruction(0x307a, 0x0e00, &moveaw<disp_pc>);
-  eu.set_instruction(0x307c, 0x0e00, &moveaw<immediate>);
+  eu.set_instruction(0x3040, 0x0e07, &m68k_movea<word_size, word_d_register>);
+  eu.set_instruction(0x3048, 0x0e07, &m68k_movea<word_size, word_a_register>);
+  eu.set_instruction(0x3050, 0x0e07, &m68k_movea<word_size, word_indirect>);
+  eu.set_instruction(0x3058, 0x0e07,
+		     &m68k_movea<word_size, word_postinc_indirect>);
+  eu.set_instruction(0x3060, 0x0e07,
+		     &m68k_movea<word_size, word_predec_indirect>);
+  eu.set_instruction(0x3068, 0x0e07,
+		     &m68k_movea<word_size, word_disp_indirect>);
+  eu.set_instruction(0x3070, 0x0e07,
+		     &m68k_movea<word_size, word_index_indirect>);
+  eu.set_instruction(0x3078, 0x0e00, &m68k_movea<word_size, word_abs_short>);
+  eu.set_instruction(0x3079, 0x0e00, &m68k_movea<word_size, word_abs_long>);
+  eu.set_instruction(0x307a, 0x0e00,
+		     &m68k_movea<word_size, word_disp_pc_indirect>);
+  eu.set_instruction(0x307b, 0x0e00,
+		     &m68k_movea<word_size, word_index_pc_indirect>);
+  eu.set_instruction(0x307c, 0x0e00, &m68k_movea<word_size, word_immediate>);
   eu.set_instruction(0x3080, 0x0e07, &movew<data_register, indirect>);
   eu.set_instruction(0x3088, 0x0e07, &movew<address_register, indirect>);
   eu.set_instruction(0x3090, 0x0e07, &movew<indirect, indirect>);

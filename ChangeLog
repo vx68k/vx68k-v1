@@ -1,5 +1,10 @@
 2000-05-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (m68k_adda): Change Destination to Source.
+	(m68k_movea): New function template.
+	[0] (moveaw, moveal): Disabled.
+	(install_instructions): Use the new template.
+
 	* libvx68k/iocsdisk.cc (read): Round up NBYTES.
 
 2000-05-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
