@@ -23,55 +23,140 @@
       </para>
       <para>....</para>
     </sect1>
-    <sect1>
-      <title>Running X68000 commands</title>
-      <refentry>
-	<refmeta>
-	  <refentrytitle>vx68k</refentrytitle>
-	  <manvolnum>1</manvolnum>
-	</refmeta>
-	<refnamediv>
-	  <refname>vx68k</refname>
-	  <refpurpose>run X68000 command on a virtual machine</refpurpose>
-	</refnamediv>
-	<refsynopsisdiv>
-	  <para><cmdsynopsis sepchar=" ">
-	      <command moreinfo="none">vx68k</command>
-	      <arg choice="opt" rep="norepeat">[<replaceable>option</replaceable>]...</arg>
-	      <arg choice="opt" rep="norepeat">[--]</arg>
-	      <arg choice="req" rep="norepeat"><replaceable>command</replaceable></arg>
-	      <arg choice="opt" rep="repeat">[<replaceable>argument</replaceable>]...</arg>
-	    </cmdsynopsis>
-	  </para>
-	</refsynopsisdiv>
-	<refsect1>
-	  <title>Description</title>
-	  <para>
-	    <command moreinfo="none">vx68k</command> runs X68000
-	    <replaceable>command</replaceable> on a virtual machine.
-	  </para>
-	  <para>...</para>
-	</refsect1>
-	<refsect1>
-	  <title>Options</title>
-	  <variablelist>
-	    <varlistentry>
-	      <term><option>-M <replaceable>n</replaceable></option></term>
-	      <term><option>--memory-size=<replaceable>n</replaceable></option></term>
-	      <listitem>
-		<para>Allocate <replaceable>n</replaceable> megabytes.</para>
-	      </listitem>
-	    </varlistentry>
-	  </variablelist>
-	</refsect1>
-      </refentry>
-    </sect1>
   </chapter>
+  <chapter><!--reference had problem with docbook2texi-->
+    <title>Command Reference</title>
+    <refentry>
+      <refmeta>
+	<refentrytitle>vx68k</refentrytitle>
+	<manvolnum>1</manvolnum>
+      </refmeta>
+      <refnamediv>
+	<refname>vx68k</refname>
+	<refpurpose>run X68000 command on a virtual machine</refpurpose>
+      </refnamediv>
+      <refsynopsisdiv>
+	<para><cmdsynopsis sepchar=" ">
+	    <command moreinfo="none">vx68k</command>
+	    <arg choice="opt" rep="norepeat">[<replaceable>option</replaceable>]...</arg>
+	    <arg choice="opt" rep="norepeat">[--]</arg>
+	    <arg choice="req" rep="norepeat"><replaceable>command</replaceable></arg>
+	    <arg choice="opt" rep="repeat">[<replaceable>argument</replaceable>]...</arg>
+	  </cmdsynopsis>
+	</para>
+      </refsynopsisdiv>
+      <refsect1>
+	<title>Description</title>
+	<para>
+	  <command moreinfo="none">vx68k</command> runs X68000
+	  <replaceable>command</replaceable> on a virtual machine.
+	</para>
+	<para>...</para>
+      </refsect1>
+      <refsect1>
+	<title>Options</title>
+	<variablelist>
+	  <varlistentry>
+	    <term><option>-M <replaceable>n</replaceable></option></term>
+	    <term><option>--memory-size=<replaceable>n</replaceable></option></term>
+	    <listitem>
+	      <para>Allocate <replaceable>n</replaceable> megabytes.</para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </refsect1>
+    </refentry>
+  </chapter>
+  <!--part had problems with docbook2texi-->
   <chapter>
     <title>Inside Virtual X68000</title>
     <comment>
-      This chapter describes internals of Virtual X68000.
+      The following chapters describes internals of Virtual X68000.
     </comment>
-    <para>....</para>
+    <sect1>
+      <title>Basic types</title>
+      <para>
+	Virtual X68000 defines several basic types to keep the program
+	portable.  These types are defined in namespace
+	<symbol>vm68k::types</symbol> and imported in namespace
+	<symbol>vm68k</symbol>.
+      </para>
+      <sect2>
+	<title>Unsigned integer types</title>
+	<para>
+	  <type>uint_type</type> is a natural unsigned type that can
+	  hold an unsigned word number on M68000.  This type is
+	  <type>unsigned int</type> on all host architectures.
+	</para>
+	<para>
+	  <type>uint32_type</type> is a natural unsigned type that can
+	  hold an unsigned long word number on M68000.  This type is
+	  <type>unsigned int</type> on host architectures that have
+	  <type>unsigned int</type> with at least 32-bit.
+	</para>
+      </sect2>
+      <sect2>
+	<title>Signed integer types</title>
+	<para>
+	  <type>sint_type</type> is a natural signed type that can
+	  hold a signed word number on M68000.  This type is
+	  <type>int</type> on most host architectures, but if the host
+	  architecture cannot represent -0x8000 in that type, i.e. it
+	  does not use 2's complement representation, it is <type>long
+	  int</type> instead.
+	</para>
+	<para>
+	  <type>sint32_type</type> is a natural signed type that can
+	  hold a signed long word number on M68000.  This type is
+	  <type>int</type> on host architectures that have
+	  <type>int</type> with at least 32-bit and that can represent
+	  -0x80000000 in that type.  Otherwise, it is <type>long
+	  int</type> if the type can hold -0x80000000, or <type>long
+	  long int</type> if the compiler is GCC.  If no type can hold
+	  -0x80000000 on the architecture, Virtual X68000 cannot be
+	  compiled.
+	</para>
+      </sect2>
+    </sect1>
+  </chapter>
+  <chapter>
+    <title>General purpose components</title>
+    <para>
+      General purpose components are provided by the libvm68k library.
+    </para>
+    <sect1>
+      <title>Address space</title>
+      <para>
+	Virtual X68000 uses a single address space to access memory
+	and peripheral devices.
+      </para>
+    </sect1>
+    <sect1>
+      <title>Processor</title>
+      <sect2>
+	<title>Execution unit</title>
+	<para>
+	  Virtual X68000 encapsulates non-dynamic aspects of a M68000
+	  processor into an execution unit.
+	</para>
+      </sect2>
+    </sect1>
+  </chapter>
+  <chapter>
+    <title>X68000 emulation</title>
+    <sect1>
+      <title>Machine</title>
+      <para>
+	In Virtual X68000, a machine is an abstraction of X68000
+	hardware and firmware BIOS.
+      </para>
+    </sect1>
+    <sect1>
+      <title>Human68k</title>
+      <para>
+	Virtual X68000 is unique as it also offers functions of the
+	basic operating system, Human68k.
+      </para>
+    </sect1>
   </chapter>
 </book>
