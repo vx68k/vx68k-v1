@@ -1,6 +1,6 @@
 READ ME
 
-$Date: Sat, 13 Mar 1999 23:31:54 +0900 $
+$Date: Mon, 15 Mar 1999 22:25:12 +0900 $
 
 >> DESCRIPTION
 
@@ -12,9 +12,16 @@ A generic m68k emulation library will also be provided.
 
 >> STATUS
 
-This version is still in early development and for developers only.
+This version is still in early development phase and for developers
+only.  It lacks many common instructions.
 
 >> REQUIREMENTS
+
+This program is written in C++ with exception handling and namespaces.
+
+This program will use POSIX threads.
+
+This program will use GTK+ for GUI.
 
 >> INSTALLATION
 

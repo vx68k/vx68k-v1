@@ -1,6 +1,6 @@
 /* -*-C++-*- */
 /* vx68k - Virtual X68000
-   Copyright (C) 1998 Hypercore Software Design, Ltd.
+   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -72,28 +72,31 @@ public:
   virtual void putw (int, uint32, uint16) throw (bus_error);
 };
 
-class address_space
-{
-public:
-#if 0
-  struct iterator: bidirectional_iterator <uint16, int32>
+  class address_space
   {
-  };
+  public:
+#if 0
+    struct iterator: bidirectional_iterator <uint16, int32>
+    {
+    };
 #endif
-  address_space ();
-  void set_pages (size_t begin, size_t end, memory_page *);
-  void read (int, uint32, void *, size_t) const throw (bus_error);
-  void write (int, uint32, const void *, size_t) throw (bus_error);
-  uint8 getb (int, uint32) const throw (bus_error);
-  uint16 getw (int, uint32) const throw (bus_error);
-  uint32 getl (int, uint32) const throw (bus_error);
-  void putb (int, uint32, uint8) throw (bus_error);
-  void putw (int, uint32, uint16) throw (bus_error);
-  void putl (int, uint32, uint32) throw (bus_error);
-private:
-  bus_error_page default_page;
-  memory_page *page_table[NPAGES];
-};
+    address_space ();
+    void set_pages (size_t begin, size_t end, memory_page *);
+    void read (int, uint32, void *, size_t) const throw (bus_error);
+    uint8 getb (int, uint32) const throw (bus_error);
+    uint16 getw (int, uint32) const throw (bus_error);
+    uint32 getl (int, uint32) const throw (bus_error);
+    int getb_signed(int, uint32) const throw (bus_error);
+    int getw_signed(int, uint32) const throw (bus_error);
+    int32 getl_signed(int, uint32) const throw (bus_error);
+    void write (int, uint32, const void *, size_t) throw (bus_error);
+    void putb (int, uint32, uint8) throw (bus_error);
+    void putw (int, uint32, uint16) throw (bus_error);
+    void putl (int, uint32, uint32) throw (bus_error);
+  private:
+    bus_error_page default_page;
+    memory_page *page_table[NPAGES];
+  };
 
 };				// namespace vm68k
 

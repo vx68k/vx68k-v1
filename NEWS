@@ -1,7 +1,9 @@
 User-Visible Changes
 
 $Format: "Version $Version$ ($ProjectDate$ -r $ProjectVersion$)" $
-Version 0.28 (Fri, 05 Feb 1999 23:24:16 +0900 -r 0.56)
+Version 0.31 (Mon, 15 Mar 1999 22:25:12 +0900 -r 0.85)
 
-No news yet.
+* Several instructions are implemented.
+
+* HU executables can be loaded on memory from files.
 

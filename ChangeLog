@@ -1,5 +1,14 @@
 1999-03-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/memory.h (class address_space): Add signed get
+	methods.
+
+	* TODO: Modifed.
+
+	* README: Modified.
+
+	* NEWS: Modified.
+
 	* lib/vm68k/statusreg.cc: New file.
 	* lib/vm68k/Makefile.am (libvm68k_a_SOURCES): Add the new file.
 
@@ -17,7 +26,8 @@
 	* configure.in: Change the AC_OUTPUT files.  Change the AC_INIT
 	test file.
 
-	* include/vm68k/cpu.h (status_register): New class.
+	* include/vm68k/cpu.h: Modify comments.
+	(status_register): New class.
 	(user_cpu_regs): Removed.
 	(cpu_regs): Reconstruct members.  Update all users.
 
