@@ -820,6 +820,27 @@ namespace
   }
 
   void
+  lsrw_r(unsigned int op, context &ec)
+  {
+    unsigned int reg1 = op & 0x7;
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef L
+    L(" lsrw %%d%u", reg2);
+    L(",%%d%u", reg1);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    uint_type count = ec.regs.d[reg2];
+    sint_type value1 = extsw(ec.regs.d[reg1]);
+    sint_type value = extsw((uint_type(value1) & 0xffffu) >> count);
+    const uint32_type MASK = (uint32_type(1) << 16) - 1;
+    ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
+    ec.regs.sr.set_cc_lsr(value, value1, count);
+
+    ec.regs.pc += 2;
+  }
+
+  void
   lsrl_i(unsigned int op, context &ec)
   {
     unsigned int reg1 = op & 0x7;
@@ -1158,9 +1179,9 @@ namespace
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
-    uint32_type value1 = uint32_type(ea1.getl(ec)) & 0xffffffffu;
-    uint32_type value2 = ec.regs.d[reg2];
-    uint32_type value = value2 | value1;
+    sint32_type value1 = ea1.getl(ec);
+    sint32_type value2 = extsl(ec.regs.d[reg2]);
+    sint32_type value = extsl(uint32_type(value2) | uint32_type(value1));
     ec.regs.d[reg2] = value;
     ec.regs.sr.set_cc(value);
     ea1.finishl(ec);
@@ -1785,6 +1806,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0xd1f9, 0x0e07, &addal<absolute_long>);
   eu.set_instruction(0xd1fc, 0x0e07, &addal<immediate>);
   eu.set_instruction(0xe048, 0x0e07, &lsrw_i);
+  eu.set_instruction(0xe068, 0x0e07, &lsrw_r);
   eu.set_instruction(0xe088, 0x0e07, &lsrl_i);
   eu.set_instruction(0xe138, 0x0e07, &rolb_r);
   eu.set_instruction(0xe148, 0x0e07, &lslw_i_d);
