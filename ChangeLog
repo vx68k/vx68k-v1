@@ -1,6 +1,11 @@
 1999-05-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* Makefile.am (dist-snapshot): Change the version number format.
+
+	* NEWS: Modified.
+
 	* configure.in: Remove PRCS-keyword substitution.
+	Set VERSION to 0.33.
 
 	* Makefile.am (EXTRA_DIST): Add VERSION-ID.
 

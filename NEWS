@@ -1,8 +1,8 @@
 Virtual X68000 User-Visible Changes
 
-$Date: Fri, 21 May 1999 20:55:51 +0900 $
+$Date: Fri, 21 May 1999 21:02:02 +0900 $
 
-Version 0.32
+Version 0.33
 
 * Some instructions are implemented using templates.
 

@@ -11,6 +11,6 @@ EXTRA_DIST = VERSION-ID
 
 SUBDIRS = include lib
 
-dist-snapshot:
-	${MAKE} VERSION=${VERSION}x.`date +%Y%m%d` dist
+dist-snapshot distcheck-snapshot:
+	${MAKE} VERSION=${VERSION}x`date +%Y%m%d` `echo $@ | sed -e 's/-snapshot//'`
 
