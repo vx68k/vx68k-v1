@@ -1,5 +1,14 @@
 2000-08-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/palettemem.cc (get_16, put_16): Change log output.
+	(get_16, put_16): Canonicalize address.
+	(get_8): Change return type.
+	(put_8): Change value type.
+
+	* libvm68k/execunit.cc (m68k_asr_i): New function template.
+	(asrl_i): #if'd out.
+	(initialize_instructions): Use new handlers.
+
 	* bin/main.cc (run_boot): Use vm's master context.
 
 	* libvx68k/systemrom.cc (iocs_vdispst): Implement.

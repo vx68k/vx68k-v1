@@ -549,6 +549,32 @@ namespace
   }
 #endif
 
+  /* Handles an ASR instruction with an immediate count.  */
+  template <class Size> void
+  m68k_asr_i(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    unsigned int reg1 = op & 0x7;
+    unsigned int value2 = op >> 9 & 0x7;
+    if (value2 == 0)
+      value2 = 8;
+#ifdef TRACE_INSTRUCTIONS
+    L("\tasr%s\t", Size::suffix());
+    L("#%u,", value2);
+    L("%%d%u\n", reg1);
+#endif
+
+    svalue_type value1 = Size::svalue(Size::get(c.regs.d[reg1]));
+    svalue_type value = Size::svalue(Size::get(value1 >> value2));
+    Size::put(c.regs.d[reg1], value);
+    c.regs.ccr.set_cc_asr(value, value1, value2);
+
+    c.regs.pc += 2;
+  }
+
+#if 0
   void
   asrl_i(uint_type op, context &c, unsigned long data)
   {
@@ -568,6 +594,7 @@ namespace
 
     c.regs.pc += 2;
   }
+#endif
 
   void
   asrl_r(uint_type op, context &ec, unsigned long data)
@@ -4956,13 +4983,18 @@ namespace
 		                  long_word_index_pc_indirect>);
     eu.set_instruction(0xd1fc, 0x0e00,
 		       &m68k_adda<long_word_size, long_word_immediate>);
+    eu.set_instruction(0xe000, 0x0e07,
+		       &m68k_asr_i<byte_size>);
     eu.set_instruction(0xe008, 0x0e07, &lsrb_i);
     eu.set_instruction(0xe018, 0x0e07, &m68k_ror_i<byte_size>);
+    eu.set_instruction(0xe040, 0x0e07,
+		       &m68k_asr_i<word_size>);
     eu.set_instruction(0xe048, 0x0e07, &lsrw_i);
     eu.set_instruction(0xe050, 0x0e07, &roxrw_i);
     eu.set_instruction(0xe058, 0x0e07, &m68k_ror_i<word_size>);
     eu.set_instruction(0xe068, 0x0e07, &lsrw_r);
-    eu.set_instruction(0xe080, 0x0e07, &asrl_i);
+    eu.set_instruction(0xe080, 0x0e07,
+		       &m68k_asr_i<long_word_size>);
     eu.set_instruction(0xe088, 0x0e07, &lsrl_i);
     eu.set_instruction(0xe090, 0x0e07, &roxrl_i);
     eu.set_instruction(0xe098, 0x0e07, &m68k_ror_i<long_word_size>);
