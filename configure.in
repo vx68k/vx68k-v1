@@ -34,6 +34,6 @@ AC_CHECK_FUNCS(localtime_r)
 ALL_LINGUAS=""
 AM_GNU_GETTEXT
 AC_OUTPUT(Makefile include/Makefile include/vx68k/Makefile \
-libvx68k/Makefile vx68kui/Makefile \
+libvx68k/Makefile libvx68kdos/Makefile vx68kui/Makefile \
 intl/Makefile bin/Makefile po/Makefile.in \
 doc/Makefile testsuite/Makefile)

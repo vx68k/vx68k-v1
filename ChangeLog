@@ -1,3 +1,28 @@
+2001-06-28  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* bin/Makefile.am (vx68k_LDADD): Change location of
+	libvx68kdos.la.
+
+	* Makefile.am (SUBDIRS): Add libvx68kdos.
+
+	* configure.in (ALL_LINGUAS): Add libvx68kdos/Makefile to
+	AC_OUTPUT.
+
+	* libvx68k/Makefile.am (lib_LTLIBRARIES): Remove libvx68kdos.la.
+	(libvx68kdos_la_LDFLAGS): Removed.
+	(libvx68kdos_la_SOURCES): Removed.
+	(CLEANFILES): Removed.
+	(SUFFIXES): Removed.
+	(.cc.gdb): Removed.
+
+	* libvx68kdos/Makefile.am: New file.
+
+	* libvx68kdos/dos.cc: Moved from libvx68k.
+	* libvx68kdos/shell.cc: Likewise.
+	* libvx68kdos/doscontext.cc: Likewise.
+	* libvx68kdos/filesystem.cc: Likewise.
+	* libvx68kdos/allocator.cc: Likewise.
+
 2001-06-27  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* NEWS: Updated.

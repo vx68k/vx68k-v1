@@ -4,7 +4,7 @@ INCLUDES = -I$(top_srcdir)/include -I$(prefix)/include
 
 LIBS =
 
-lib_LTLIBRARIES = libvx68k.la libvx68kdos.la
+lib_LTLIBRARIES = libvx68k.la
 
 libvx68k_la_LDFLAGS = $(LTLIBRELEASE) -version-info 0:1:0
 libvx68k_la_SOURCES = version.cc x68kaddr.cc machine.cc \
@@ -13,14 +13,3 @@ crtcmem.cc palettemem.cc dmacmem.cc areaset.cc mfpmem.cc sysportmem.cc \
 opmmem.cc msm6258vmem.cc fdcmem.cc sccmem.cc ppimem.cc \
 spritemem.cc sram.cc fontrom.cc \
 iocsdisk.cc systemrom.cc
-
-libvx68kdos_la_LDFLAGS = $(LTLIBRELEASE) -version-info 0:0:0
-libvx68kdos_la_SOURCES = dos.cc shell.cc doscontext.cc \
-filesystem.cc allocator.cc
-
-CLEANFILES = *.gdb
-
-SUFFIXES = .gdb
-
-.cc.gdb:
-	nana $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $<  > $@
