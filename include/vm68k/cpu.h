@@ -42,7 +42,7 @@ namespace vm68k
 
   inline int32 extsl(uint32 value)
     {
-      const uint32 M = 1u << 32;
+      const uint32 M = (uint32) 1u << 32;
       value &= M - 1;
       return value >= M >> 1 ? -(int32) (M - value) : (int32) value;
     }
