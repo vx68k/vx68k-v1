@@ -2,11 +2,12 @@
 @c %**start of header
 @setfilename vx68k.info
 @settitle Virtual X68000 Reference Manual
+@synindex vr fn
 @set VERSION 1.1
 @c $Format: "@set REVISION $Revision$" $
-@set REVISION 1.11
+@set REVISION 1.12
 @c $Format: "@set DATE $Date$" $
-@set DATE Sun, 10 Dec 2000 23:18:08 +0900
+@set DATE Mon, 11 Dec 2000 21:13:38 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -67,10 +68,10 @@ Manual, updated @value{DATE}.  This manual applies to Version
 * M68000 Architecture::         Quick look at the M68000 architecture.
 * Coding Conventions::          How code is written.
 * General purpose components::  Generic components.
-* X68000 emulation::            X68000 specific components.
+* X68000 Emulation::            X68000 specific components.
 * GTK+ User Interface::         
 * Sample Application::          
-* Function Index::              Index menu for functions and methods.
+* Function and Variable Index::  Index for functions and variables.
 * Data Type Index::             Index menu for data types and classes.
 * Concept Index::               Index menu for concepts.
 
@@ -108,14 +109,19 @@ Execution Unit
 
 * Instructions::                
 
-X68000 emulation
+X68000 Emulation
 
-* Machine::                     
-* Human68k::                    
+* Machine::                     Hardware and BIOS emulation.
+* Human68k::                    DOS emulation.
 
 Machine
 
-* Class machine::               
+* X68000 Components::           
+
+X68000 Components
+
+* Main Memory::                 The main memory.
+* System ROM::                  
 * SCC::                         
 
 @end detailmenu
@@ -229,7 +235,7 @@ long int} if the compiler is GCC. If no type can hold
 compiled.
 @end deftp
 
-@node General purpose components, X68000 emulation, Coding Conventions, Top
+@node General purpose components, X68000 Emulation, Coding Conventions, Top
 @chapter General purpose components
 General purpose components are provided by the library libvm68k.
 These components are declared in the namespace vm68k.
@@ -387,27 +393,24 @@ This method executes instructions in context @var{c}.
 An instruction is defined by a function.
 This function is called @dfn{instruction handler}.
 
-@node X68000 emulation, GTK+ User Interface, General purpose components, Top
-@chapter X68000 emulation
+@node X68000 Emulation, GTK+ User Interface, General purpose components, Top
+@chapter X68000 Emulation
+
+This chapter describes @acronym{UI}-independent part of Virtual X68000.
+
+They are available in library @file{libvx68k}.
+
 @menu
-* Machine::                     
-* Human68k::                    
+* Machine::                     Hardware and BIOS emulation.
+* Human68k::                    DOS emulation.
 @end menu
 
-@node Machine, Human68k, X68000 emulation, X68000 emulation
+@node Machine, Human68k, X68000 Emulation, X68000 Emulation
 @section Machine
 @cindex machine
 
 In Virtual X68000, a machine is an abstraction of X68000
 hardware and firmware BIOS.
-
-@menu
-* Class machine::               
-* SCC::                         
-@end menu
-
-@node Class machine, SCC, Machine, Machine
-@subsection Class machine
 
 These definitions are available in @file{<vx68k/machine.h>}.
 
@@ -420,12 +423,60 @@ hardware and firmware.
 This method constructs a machine.
 @end defop
 
+@deftypemethod machine size_t memory_size () const
+Returns the size of main memory.
+@end deftypemethod
+
+@deftypemethod machine {class exec_unit *} exec_unit () const
+Returns the pointer to the execution unit of this object.
+@end deftypemethod
+
+@deftypemethod machine {context *} master_context () const
+Returns the master context.
+@end deftypemethod
+
+@deftypemethod machine void connect (console *@var{c})
+Sets a @dfn{console} for this object.  A console is an
+abstract interface to the host system.
+@end deftypemethod
+
+@deftypemethod machine void configure (memory_address_space &@var{mm})
+Configures address space @var{mm} for this object. 
+@end deftypemethod
+
 @deftp {Abstract Class} console
 This class is an abstract interface to the host system.
 @end deftp
 
-@node SCC,  , Class machine, Machine
-@subsection Z8530 SCC
+@menu
+* X68000 Components::           
+@end menu
+
+@node X68000 Components,  , Machine, Machine
+@subsection X68000 Components
+
+@menu
+* Main Memory::                 The main memory.
+* System ROM::                  
+* SCC::                         
+@end menu
+
+@node Main Memory, System ROM, X68000 Components, X68000 Components
+@subsubsection Main Memory
+
+@deftp Class main_memory
+Memory component for the main memory.
+@end deftp
+
+@node System ROM, SCC, Main Memory, X68000 Components
+@subsubsection System ROM
+
+@deftp Class system_rom
+Memory component for the System ROM.
+@end deftp
+
+@node SCC,  , System ROM, X68000 Components
+@subsubsection Z8530 SCC
 @cindex SCC, Z8530
 @cindex serial communication controller, Z8530
 @cindex Z8530 SCC
@@ -435,14 +486,14 @@ This class is an abstract interface to the host system.
 X68000 uses a Zilog Z8530 SCC, or serial communication controller, for a
 COM port and a mouse port.
 
-@node Human68k,  , Machine, X68000 emulation
+@node Human68k,  , Machine, X68000 Emulation
 @section Human68k
 @cindex Human68k
 
 Virtual X68000 is unique as it also offers functions of the
 basic operating system, Human68k.
 
-@node GTK+ User Interface, Sample Application, X68000 emulation, Top
+@node GTK+ User Interface, Sample Application, X68000 Emulation, Top
 @chapter GTK+ User Interface
 
 This chapter describes the GTK+ implementation of user interface
@@ -455,19 +506,19 @@ All components described in this chapter is declared in namespace
 Implements a console using the GTK+ user interface toolkit.
 @end deftp
 
-@node Sample Application, Function Index, GTK+ User Interface, Top
+@node Sample Application, Function and Variable Index, GTK+ User Interface, Top
 @comment  node-name,  next,  previous,  up
 @chapter Sample Application
 
 This chapter describes the implementation of the sample application
 @code{vx68k}.
 
-@node Function Index, Data Type Index, Sample Application, Top
-@unnumbered Function Index
+@node Function and Variable Index, Data Type Index, Sample Application, Top
+@unnumbered Function and Variable Index
 
 @printindex fn
 
-@node Data Type Index, Concept Index, Function Index, Top
+@node Data Type Index, Concept Index, Function and Variable Index, Top
 @unnumbered Data Type Index
 
 @printindex tp

@@ -1,3 +1,13 @@
+2000-12-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/vx68k.texi: Merge the variable index to the function index.
+	(Top): Update the menu.
+	(X68000 Emulation): Rename the title.  Add documentation.
+	(Class machine): Merge into the parent.
+	(Machine): Add documentation.
+	(X68000 Components, Main Memory, System ROM): New node.
+	(Function and Variable Index): Rename the title.
+
 2000-12-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* doc/vx68k.texi: Add @direntry commands.  Sets flags VERSION,
