@@ -152,7 +152,10 @@ main(int argc, char **argv)
   gtk_init(&argc, &argv);
 
   if (!parse_options(argc, argv))
-    return EXIT_FAILURE;
+    {
+      fprintf(stderr, _("Try `%s --help' for more information.\n"), argv[0]);
+      return EXIT_FAILURE;
+    }
 
   if (opt_version)
     {
