@@ -1,6 +1,6 @@
 Virtual X68000 User-Visible Changes
 
-$Date: Sat, 10 Jul 1999 22:41:52 +0900 $
+$Date: Sat, 10 Jul 1999 23:14:41 +0900 $
 
 Version 0.36
 
@@ -8,14 +8,14 @@ Version 0.36
 
 ** Some of condition codes are implemented.
 
-** 624 instruction handlers are implemented though some do not update
+** 626 instruction handlers are implemented though some do not update
 the condition codes properly.
 
 * Changes in X68000 machine layer
 
 * Changes in Human68k DOS layer
 
-** 24 DOS-call handlers are partially implemented.
+** 25 DOS-call handlers are partially implemented.
 
 ** Memory management is implemented.
 

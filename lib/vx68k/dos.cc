@@ -291,6 +291,40 @@ namespace
   }
 
   void
+  dos_nameck(uint_type op, context &c, instruction_data *data)
+  {
+    uint32_type sp = c.regs.a[7];
+    uint32_type file = c.mem->getl(SUPER_DATA, sp + 0);
+    uint32_type buffer = c.mem->getl(SUPER_DATA, sp + 4);
+#ifdef L
+    L(" DOS _NAMECK\n");
+#endif
+
+    dos *d = dynamic_cast<dos *>(data);
+    I(d != NULL);
+
+    // FIXME
+    char buf[256];
+    c.mem->read(SUPER_DATA, file, buf, 256);
+    char *p = strrchr(buf, '/');
+    if (p == NULL)
+      {
+	c.mem->write(SUPER_DATA, buffer + 0, "./", 3);
+	c.mem->write(SUPER_DATA, buffer + 67, buf, strlen(buf) + 1);
+      }
+    else
+      {
+	++p;
+	c.mem->write(SUPER_DATA, buffer + 0, buf, p - buf);
+	c.mem->putb(SUPER_DATA, buffer + p - buf, 0);
+	c.mem->write(SUPER_DATA, buffer + 67, p, strlen(p) + 1);
+      }
+    c.regs.d[0] = 0;
+
+    c.regs.pc += 2;
+  }
+
+  void
   dos_open(unsigned int op, context &ec, instruction_data *data)
   {
     uint32_type sp = ec.regs.a[7];
@@ -448,6 +482,7 @@ dos::dos(machine *m)
   eu->set_instruction(0xff27, 0, &dos_gettim2, this);
   eu->set_instruction(0xff2a, 0, &dos_getdate, this);
   eu->set_instruction(0xff30, 0, &dos_vernum, this);
+  eu->set_instruction(0xff37, 0, &dos_nameck, this);
   eu->set_instruction(0xff3c, 0, &dos_create, this);
   eu->set_instruction(0xff3d, 0, &dos_open, this);
   eu->set_instruction(0xff3e, 0, &dos_close, this);

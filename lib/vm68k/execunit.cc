@@ -480,6 +480,24 @@ namespace
   }
 
   void
+  asrl_i(uint_type op, context &c, instruction_data *data)
+  {
+    unsigned int reg1 = op & 0x7;
+    unsigned int count = op >> 9 & 0x7;
+#ifdef L
+    L(" asrl #%u", count);
+    L(",%%d%u\n", reg1);
+#endif
+
+    sint32_type value1 = extsl(c.regs.d[reg1]);
+    sint32_type value = value1 >> count;
+    c.regs.d[reg1] = value;
+    c.regs.sr.set_cc_asr(value, value1, count);
+
+    c.regs.pc += 2;
+  }
+
+  void
   asrl_r(unsigned int op, context &ec, instruction_data *data)
   {
     unsigned int reg1 = op & 0x7;
@@ -2467,6 +2485,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x4840, 0x0007, &swapw);
   eu.set_instruction(0x4850, 0x0007, &pea<indirect>);
   eu.set_instruction(0x4868, 0x0007, &pea<disp_indirect>);
+  eu.set_instruction(0x4870, 0x0007, &pea<indexed_indirect>);
   eu.set_instruction(0x4878, 0x0000, &pea<absolute_short>);
   eu.set_instruction(0x4879, 0x0000, &pea<absolute_long>);
   eu.set_instruction(0x487a, 0x0000, &pea<disp_pc>);
@@ -2701,7 +2720,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0xc028, 0x0e07, &andb<disp_indirect>);
   eu.set_instruction(0xc030, 0x0e07, &andb<indexed_indirect>);
   eu.set_instruction(0xc039, 0x0e00, &andb<absolute_long>);
-  eu.set_instruction(0xc07c, 0x0e00, &andw<immediate>);
+  eu.set_instruction(0xc03c, 0x0e00, &andw<immediate>);
   eu.set_instruction(0xc040, 0x0e07, &andw<data_register>);
   eu.set_instruction(0xc050, 0x0e07, &andw<indirect>);
   eu.set_instruction(0xc058, 0x0e07, &andw<postinc_indirect>);
@@ -2783,6 +2802,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0xd1fc, 0x0e00, &addal<immediate>);
   eu.set_instruction(0xe048, 0x0e07, &lsrw_i);
   eu.set_instruction(0xe068, 0x0e07, &lsrw_r);
+  eu.set_instruction(0xe080, 0x0e07, &asrl_i);
   eu.set_instruction(0xe088, 0x0e07, &lsrl_i);
   eu.set_instruction(0xe0a0, 0x0e07, &asrl_r);
   eu.set_instruction(0xe0a8, 0x0e07, &lsrl_r);
