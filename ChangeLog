@@ -1,5 +1,11 @@
 1999-03-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* main.cc: Moved from vx68v/main.cc.
+	* Makefile.am (INCLUDES, bin_PROGRAMS, x68k_SOURCES,
+	x68v_LDADD): Added.
+	* vx68k/Makefile.am: Modify comments.
+	(bin_PROGRAMS, vx68k_SOURCES, vx68k_LDADD): Removed.
+
 	* vx68k/dos.cc: Modify comments.
 
 	* vm68k/execunit.cc (link, move_l_a_predec, movem_l_r_predec):
