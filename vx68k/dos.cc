@@ -54,17 +54,25 @@ dos::load_executable (const char *name)
     abort ();			// FIXME
   if (head[0] != 'H' || head[1] != 'U')
     abort ();			// FIXME
-  cerr << "Code size: " << getl (head + 12) << "\n";
-  cerr << "Data size: " << getl (head + 16) << "\n";
 
-  size_t load_size = getl (head + 12) + getl (head + 16);
-  char *buf = static_cast <char *> (malloc (load_size));
+  uint32 base = getl (head + 4);
+  uint32 start_offset = getl (head + 8);
+  size_t text_size = getl (head + 12);
+  size_t data_size = getl (head + 16);
+  size_t reloc_size = getl (head + 20);	// OK?
+  cerr << hex << "Base     : 0x" << base << "\n";
+  cerr << "Start    : 0x" << start_offset << "\n" << dec;
+  cerr << "Text size: " << text_size << "\n";
+  cerr << "Data size: " << data_size << "\n";
+  cerr << "Reloc    : " << reloc_size << "\n";
+
+  char *buf = static_cast <char *> (malloc (text_size + data_size));
   try
     {
-      is.read (buf, load_size);
+      is.read (buf, text_size + data_size);
       if (!is)
 	abort ();		// FIXME
-      main_ec.mem->write (SUPER_DATA, 0x8100, buf, load_size);
+      main_ec.mem->write (SUPER_DATA, 0x8100, buf, text_size + data_size);
     }
   catch (...)
     {

@@ -68,7 +68,7 @@ INCLUDES = -I${top_srcdir}/include
 noinst_LIBRARIES = libvx68k.a
 bin_PROGRAMS = vx68k
 
-libvx68k_a_SOURCES = memory.cc dos.cc loader.cc
+libvx68k_a_SOURCES = memory.cc dos.cc
 
 vx68k_SOURCES = main.cc
 vx68k_LDADD = libvx68k.a ../vm68k/libvm68k.a
@@ -83,7 +83,7 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libvx68k_a_LIBADD = 
-libvx68k_a_OBJECTS =  memory.o dos.o loader.o
+libvx68k_a_OBJECTS =  memory.o dos.o
 AR = ar
 PROGRAMS =  $(bin_PROGRAMS)
 
@@ -100,7 +100,7 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP = --best
-DEP_FILES =  .deps/dos.P .deps/loader.P .deps/main.P .deps/memory.P
+DEP_FILES =  .deps/dos.P .deps/main.P .deps/memory.P
 CXXMKDEP = $(CXX) -M $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CXXFLAGS)
 SOURCES = $(libvx68k_a_SOURCES) $(vx68k_SOURCES)
 OBJECTS = $(libvx68k_a_OBJECTS) $(vx68k_OBJECTS)

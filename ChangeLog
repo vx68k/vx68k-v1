@@ -1,5 +1,10 @@
 1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vx68k/Makefile.am (libvx68k_a_SOURCES): Remove loader.cc.
+	* vx68k/loader.cc: Removed.
+
+	* vx68k/dos.cc (load_executable): Get header information.
+
 	* vm68k/memory.cc (write): Defined.
 	(read): Defined.
 
