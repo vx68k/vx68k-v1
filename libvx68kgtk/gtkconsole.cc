@@ -58,6 +58,8 @@ gtk_console::handle_key_press_event(GtkWidget *drawing_area,
 #endif
       _m->queue_key(key);
     }
+
+  return true;
 }
 
 bool

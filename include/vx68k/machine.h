@@ -19,6 +19,7 @@
 #ifndef _VX68K_MACHINE_H
 #define _VX68K_MACHINE_H 1
 
+#include <vx68k/iocs.h>
 #include <vm68k/cpu.h>
 #include <pthread.h>
 #include <queue>
@@ -27,6 +28,9 @@ namespace vx68k
 {
   using namespace vm68k;
   using namespace std;
+
+  /* Number of FD units.  */
+  const size_t NFDS = 2;
 
   struct iocs_function_data
   {
@@ -180,8 +184,7 @@ namespace vx68k
   };
 
   /* Virtual machine of X68000.  */
-  class machine
-    : public instruction_data
+  class machine: public instruction_data
   {
   public:
     typedef void (*iocs_function_handler)(context &, machine &,
@@ -214,6 +217,9 @@ namespace vx68k
 
     /* Mutex for key_queue.  */
     pthread_mutex_t key_queue_mutex;
+
+    /* Floppy disks.  */
+    iocs::disk *fd[NFDS];
 
   public:
     explicit machine(size_t);

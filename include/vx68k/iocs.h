@@ -19,15 +19,14 @@
 #ifndef _VX68K_IOCS_H
 #define _VX68K_IOCS_H 1
 
-#include <vm68k/types.h>
-#include <cstddef>
+#include <vm68k/memory.h>
 
 namespace vx68k
 {
   namespace iocs
   {
+    using vm68k::address_space;
     using namespace vm68k::types;
-    using std::size_t;
 
     /* Abstract disk in the view of the IOCS.  This class is not that
        of disk units but of disk media.  */
@@ -38,15 +37,16 @@ namespace vx68k
 
     public:
       /* Reads records.  */
-      virtual sint32_type read(uint_type, uint32_type, void *, size_t) = 0;
+      virtual sint32_type read(uint_type, uint32_type, address_space &,
+			       uint32_type, uint32_type) = 0;
 
       /* Writes records.  */
-      virtual sint32_type write(uint_type, uint32_type, const void *, size_t)
-	= 0;
+      virtual sint32_type write(uint_type, uint32_type, const address_space &,
+				uint32_type, uint32_type) = 0;
 
       /* Verifies records by comparing the contents.  */
-      virtual sint32_type verify(uint_type, uint32_type, const void *, size_t)
-	= 0;
+      virtual sint32_type verify(uint_type, uint32_type, const address_space &,
+				 uint32_type, uint32_type) = 0;
     };
 
     /* Floppy disk that is simulated by an image file.  */
@@ -60,9 +60,12 @@ namespace vx68k
       ~image_file_floppy_disk();
 
     public:
-      sint32_type read(uint_type, uint32_type, void *, size_t);
-      sint32_type write(uint_type, uint32_type, const void *, size_t);
-      sint32_type verify(uint_type, uint32_type, const void *, size_t);
+      sint32_type read(uint_type, uint32_type, address_space &,
+		       uint32_type, uint32_type);
+      sint32_type write(uint_type, uint32_type, const address_space &,
+			uint32_type, uint32_type);
+      sint32_type verify(uint_type, uint32_type, const address_space &,
+			 uint32_type, uint32_type);
     };
   } // namespace iocs
 } // namespace vx68k

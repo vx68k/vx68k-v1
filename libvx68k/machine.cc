@@ -235,6 +235,9 @@ machine::get_image(int x, int y, int width, int height,
 
 machine::~machine()
 {
+  for (iocs::disk **i = fd + 0; i != fd + NFDS; ++i)
+    delete *i;
+
   pthread_mutex_destroy(&key_queue_mutex);
   pthread_cond_destroy(&key_queue_not_empty);
 }
@@ -250,7 +253,9 @@ machine::machine(size_t memory_size)
 
   fill(iocs_functions + 0, iocs_functions + 0x100,
        make_pair(&invalid_iocs_function, (iocs_function_data *) 0));
-  
+
+  fill(fd + 0, fd + NFDS, (iocs::disk *) NULL);
+
   as.set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &mem);
 #if 0
   as.set_pages(0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &graphic_vram);

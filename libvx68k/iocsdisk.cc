@@ -42,7 +42,8 @@ using namespace std;
 
 sint32_type
 image_file_floppy_disk::read(uint_type mode, uint32_type pos,
-			     void *buf, size_t nbytes)
+			     address_space &a,
+			     uint32_type buf, uint32_type nbytes)
 {
   I(image_fildes >= 0);
 
@@ -54,7 +55,8 @@ image_file_floppy_disk::read(uint_type mode, uint32_type pos,
 
 sint32_type
 image_file_floppy_disk::write(uint_type mode, uint32_type pos,
-			      const void *buf, size_t nbytes)
+			      const address_space &a,
+			      uint32_type buf, uint32_type nbytes)
 {
   I(image_fildes >= 0);
 
@@ -66,7 +68,8 @@ image_file_floppy_disk::write(uint_type mode, uint32_type pos,
 
 sint32_type
 image_file_floppy_disk::verify(uint_type mode, uint32_type pos,
-			       const void *buf, size_t nbytes)
+			       const address_space &a,
+			       uint32_type buf, uint32_type nbytes)
 {
   I(image_fildes >= 0);
 

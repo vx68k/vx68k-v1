@@ -1,5 +1,18 @@
 2000-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (machine): Initialize fd's.
+	(~machine): Delete fd's.
+
+	* include/vx68k/machine.h (class machine): Add new member fd.
+
+	* libvx68k/iocsdisk.cc (read, write, verify): Change arguments.
+
+	* include/vx68k/iocs.h (class disk): Change interface.
+	(class image_file_floppy_disk): Likewise.
+
+	* libvx68kgtk/gtkconsole.cc (handle_key_press_event): Return a
+	value.
+
 	* bin/main.cc (class vx68k_app): Add new members opt_fd0_image and
 	opt_fd1_image.
 	(parse_options): Handle new options.  Rewrite getopt loop.
