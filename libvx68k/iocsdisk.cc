@@ -22,6 +22,7 @@
 #undef inline
 
 #include <vx68k/iocs.h>
+#include <vm68k/cpu.h>
 
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
@@ -38,7 +39,46 @@
 #endif
 
 using namespace vx68k::iocs;
+using namespace vm68k;
 using namespace std;
+
+namespace
+{
+  /* Disk error.  */
+  class disk_error: public runtime_error
+  {
+  private:
+    sint32_type d0;
+
+  public:
+    disk_error(sint32_type id0)
+      : d0(id0) {}
+
+    sint32_type value() const
+    {return d0;}
+  };
+} // namespace (unnamed)
+
+off_t
+image_file_floppy_disk::record_offset(uint32_type pos)
+{
+  unsigned int n = pos >> 24 & 0xff;
+  unsigned int c = pos >> 16 & 0xff;
+  unsigned int h = pos >> 8 & 0xff;
+  unsigned int r = pos & 0xff;
+
+  if (n == 3)
+    {
+      if (c > 76 || h > 1
+	  || r < 1 || r > 8)
+	throw disk_error(long_word_size::svalue(0x40040000));
+    }
+  else
+    throw disk_error(0x40040000);
+
+  off_t off = ((off_t(c) * 2 + h) * 8 + (r - 1)) * 1024;
+  return off;
+}
 
 sint32_type
 image_file_floppy_disk::read(uint_type mode, uint32_type pos,
@@ -47,9 +87,32 @@ image_file_floppy_disk::read(uint_type mode, uint32_type pos,
 {
   I(image_fildes >= 0);
 
-#ifdef HAVE_NANA_H
-  L("image_file_floppy_disk: `read' not implemented.\n");
-#endif
+  try
+    {
+      off_t res = lseek(image_fildes, record_offset(pos), SEEK_SET);
+      I(res != -1);
+    }
+  catch (const disk_error &e)
+    {
+      return e.value() | (mode >> 8 & 0x3) << 24;
+    }
+
+  while (nbytes >= 1024)
+    {
+      unsigned char data[1024];
+
+      int res = ::read(image_fildes, data, 1024);
+      if (res == -1)
+	return long_word_size::svalue(0x40200000);
+      if (res != 1024)
+	return long_word_size::svalue(0x40202000);
+
+      a.write(SUPER_DATA, buf, data, 1024);
+
+      buf += 1024;
+      nbytes -= 1024;
+    }
+
   return 0;
 }
 
@@ -60,6 +123,15 @@ image_file_floppy_disk::write(uint_type mode, uint32_type pos,
 {
   I(image_fildes >= 0);
 
+  try
+    {
+      off_t res = lseek(image_fildes, record_offset(pos), SEEK_SET);
+      I(res != -1);
+    }
+  catch (const disk_error &e)
+    {
+      return e.value() | (mode >> 8 & 0x3) << 24;
+    }
 #ifdef HAVE_NANA_H
   L("image_file_floppy_disk: `write' not implemented.\n");
 #endif
@@ -73,6 +145,15 @@ image_file_floppy_disk::verify(uint_type mode, uint32_type pos,
 {
   I(image_fildes >= 0);
 
+  try
+    {
+      off_t res = lseek(image_fildes, record_offset(pos), SEEK_SET);
+      I(res != -1);
+    }
+  catch (const disk_error &e)
+    {
+      return e.value() | (mode >> 8 & 0x3) << 24;
+    }
 #ifdef HAVE_NANA_H
   L("image_file_floppy_disk: `verify' not implemented.\n");
 #endif

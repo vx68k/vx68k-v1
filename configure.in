@@ -18,6 +18,7 @@ if test "$with_nana" != no; then
   AC_CHECK_HEADERS(nana.h)
 fi
 
+AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 HS_CPLUSPLUS_EXCEPTIONS
 if test "$hs_cv_cplusplus_exceptions" = no; then

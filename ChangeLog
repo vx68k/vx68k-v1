@@ -1,3 +1,15 @@
+2000-04-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/iocsdisk.cc (class disk_error): New class.
+	(record_offset): New function.
+	(read): Add code.
+	(write, verify): Add seek code.
+
+	* include/vx68k/iocs.h (class image_file_floppy_disk): Add new
+	member record_offset.
+
+	* configure.in: Add AC_TYPE_OFF_T.
+
 2000-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* bin/main.cc (class vx68k_app): Add new member load_fd_image.

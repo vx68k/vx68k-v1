@@ -20,6 +20,7 @@
 #define _VX68K_IOCS_H 1
 
 #include <vm68k/memory.h>
+#include <sys/types.h>
 
 namespace vx68k
 {
@@ -58,6 +59,10 @@ namespace vx68k
     public:
       image_file_floppy_disk(int fildes);
       ~image_file_floppy_disk();
+
+    protected:
+      /* Returns offset for a record.  */
+      virtual off_t record_offset(uint32_type);
 
     public:
       sint32_type read(uint_type, uint32_type, address_space &,
