@@ -33,6 +33,7 @@
 #else
 # include <cassert>
 # define I assert
+# define VL(EXPR)
 #endif
 
 using namespace vm68k;
