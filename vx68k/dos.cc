@@ -64,7 +64,6 @@ namespace
   {
 #ifdef L
     L(" DOS _CLOSE\n");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
     uint32_type sp = ec.regs.a[7];
