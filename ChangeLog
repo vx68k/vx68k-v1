@@ -1,5 +1,8 @@
 1999-03-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/memory.h (class address_space): Remove _signed
+	member function, and add gets and puts.
+
 	* TODO: Modified.
 
 	* lib/vx68k/dos.cc (dos_open): Fix offset.

@@ -86,13 +86,12 @@ void putl (void *, uint32);
     unsigned int getb (int, uint32) const;
     unsigned int getw (int, uint32) const;
     uint32 getl (int, uint32) const;
-    int getb_signed(int, uint32) const;
-    int getw_signed(int, uint32) const;
-    int32 getl_signed(int, uint32) const;
+    size_t gets(int, uint32, char *, size_t) const;
     void write (int, uint32, const void *, size_t);
     void putb (int, uint32, unsigned int);
     void putw (int, uint32, unsigned int);
     void putl (int, uint32, uint32);
+    size_t puts(int, uint32, const char *);
   private:
     bus_error_page default_page;
     memory_page *page_table[NPAGES];
