@@ -62,14 +62,18 @@ address_space::read(int fc, uint32_type address,
 uint_type
 address_space::getw(int fc, uint32_type address) const
 {
-  // FIXME: Unaligned address must be handled.
+  if (address & 0x1)
+    throw bus_error(fc, address); // FIXME: address_error
+
   return getw_aligned(fc, address);
 }
 
 uint32_type
 address_space::getl(int fc, uint32_type address) const
 {
-  // FIXME: Unaligned address must be handled.
+  if (address & 0x1)
+    throw bus_error(fc, address); // FIXME: address_error
+
   address = canonical_address(address);
   uint32_type address2 = canonical_address(address + 2);
   const memory *p = find_page(address);
@@ -117,14 +121,18 @@ address_space::write(int fc, uint32_type address,
 void
 address_space::putw(int fc, uint32_type address, uint_type value)
 {
-  // FIXME: Unaligned address must be handled.
+  if (address & 0x1)
+    throw bus_error(fc, address); // FIXME: address_error
+
   putw_aligned(fc, address, value);
 }
 
 void
 address_space::putl(int fc, uint32_type address, uint32_type value)
 {
-  // FIXME: Unaligned address must be handled.
+  if (address & 0x1)
+    throw bus_error(fc, address); // FIXME: address_error
+
   address = canonical_address(address);
   uint32_type address2 = canonical_address(address + 2);
   memory *p = find_page(address);

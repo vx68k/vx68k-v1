@@ -1,5 +1,8 @@
 2000-06-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/addrspace.cc (getw, getl, putw, putl): Trap an
+	unaligned access.
+
 	* libvx68k/mainmem.cc (main_memory) [DUMP_MEMORY]: Dump memory
 	contents to a file.
 
