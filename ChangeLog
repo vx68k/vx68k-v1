@@ -1,5 +1,13 @@
 1999-06-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add process.cc.
+
+	* lib/vx68k/process.cc: New file.
+
+	* lib/vx68k/dos.cc (dos_close): Use process::close.
+	(dos_create): Use process::create.
+	(dos_open): Use process:open.
+
 	* include/Makefile.am (noinst_HEADERS): Remove all.
 
 	* debug.h: Removed.

@@ -70,15 +70,20 @@ namespace
 
   void
   dos_close(unsigned int op, context &ec, instruction_data *data)
-    {
-      VL((" DOS _CLOSE\n"));
+  {
+#ifdef L
+    L(" DOS _CLOSE\n");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
-      // FIXME.
-      int fd = extsw(ec.mem->getw(SUPER_DATA, ec.regs.a[7]));
-      ec.regs.d[0] = static_cast<dos_exec_context &>(ec).close(fd);
+    uint32_type sp = ec.regs.a[7];
+    sint_type fd = extsw(ec.mem->getw(SUPER_DATA, sp));
 
-      ec.regs.pc += 2;
-    }
+    process *p = static_cast<dos_exec_context &>(ec).current_process();
+    ec.regs.d[0] = p->close(fd);
+
+    ec.regs.pc += 2;
+  }
 
   void
   dos_create(unsigned int op, context &ec, instruction_data *data)
@@ -88,6 +93,16 @@ namespace
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
+    uint32_type sp = ec.regs.a[7];
+    uint32_type name_address = ec.mem->getl(SUPER_DATA, sp + 0);
+    sint_type attr = extsw(ec.mem->getw(SUPER_DATA, sp + 4));
+
+    // FIXME.
+    char name[256];
+    ec.mem->read(SUPER_DATA, name_address, name, 256);
+
+    process *p = static_cast<dos_exec_context &>(ec).current_process();
+    ec.regs.d[0] = p->create(name, attr);
     // FIXME.
     ec.regs.d[0] = open("create.out", O_RDWR | O_CREAT | O_TRUNC, 0666);
 
@@ -203,20 +218,25 @@ namespace
 
   void
   dos_open(unsigned int op, context &ec, instruction_data *data)
-    {
-      VL((" DOS _OPEN\n"));
+  {
+#ifdef L
+    L(" DOS _OPEN\n");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
-      // FIXME.
-      uint32 sp = ec.regs.a[7];
-      uint32 name_address = ec.mem->getl(SUPER_DATA, sp + 0);
-      unsigned int flags = ec.mem->getw(SUPER_DATA, sp + 4);
+    uint32_type sp = ec.regs.a[7];
+    uint32_type name_address = ec.mem->getl(SUPER_DATA, sp + 0);
+    sint_type flags = extsw(ec.mem->getw(SUPER_DATA, sp + 4));
 
-      char name[256];
-      ec.mem->read(SUPER_DATA, name_address, name, 256);
-      ec.regs.d[0] = static_cast<dos_exec_context &>(ec).open(name, flags);
+    // FIXME.
+    char name[256];
+    ec.mem->read(SUPER_DATA, name_address, name, 256);
 
-      ec.regs.pc += 2;
-    }
+    process *p = static_cast<dos_exec_context &>(ec).current_process();
+    ec.regs.d[0] = p->open(name, flags);
+
+    ec.regs.pc += 2;
+  }
 
   void
   dos_print(unsigned int op, context &ec, instruction_data *data)
