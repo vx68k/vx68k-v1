@@ -4,6 +4,17 @@
 @settitle Virtual X68000 Reference Manual
 @c %**end of header
 
+@dircategory Miscellaneous packages
+@direntry
+* Virtual X68000: (vx68k).      A Sharp X68000 virtual machine.
+@end direntry
+
+@dircategory Individual utilities
+@direntry
+* vx68k: (vx68k.info)Invoking vx68k.
+                                Execute X68000 programs.
+@end direntry
+
 @ifinfo
 This file documents Virtual X68000.
 
@@ -392,13 +403,13 @@ hardware and firmware.
 
 @node SCC,  , Class machine, Machine
 @subsection Z8530 SCC
-@cindex SCC
-@cindex serial communication controller
-@cindex Z8530
+@cindex SCC, Z8530
+@cindex serial communication controller, Z8530
+@cindex Z8530 SCC
 @cindex COM port
 @cindex mouse port
-X68000 uses a Z8530 SCC, or serial communication controller, for a COM
-port and a mouse port.
+X68000 uses a Zilog Z8530 SCC, or serial communication controller, for a
+COM port and a mouse port.
 
 @node Human68k,  , Machine, X68000 emulation
 @section Human68k

@@ -1,3 +1,14 @@
+2000-12-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/vx68k.texi: Add @direntry commands.
+	(SCC): Update documentation.
+
+	* bin/Makefile.am (noinst_LIBRARIES): Moved after bin_PROGRAMS.
+	(vx68k_SOURCES): Change the order of files.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Change the order of
+	files.
+
 2000-12-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Change the order.

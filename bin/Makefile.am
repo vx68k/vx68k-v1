@@ -4,12 +4,12 @@ INCLUDES = -I${top_srcdir}/include \
 -DLOCALEDIR=\"$(datadir)/locale\" \
 ${GTK_CFLAGS}
 
-noinst_LIBRARIES = libmisc.a
 bin_PROGRAMS = vx68k
+noinst_LIBRARIES = libmisc.a
 
 libmisc_a_SOURCES = getopt.c getopt1.c
 
-vx68k_SOURCES = gtkabout.cc gtkconwin.cc main.cc
+vx68k_SOURCES = main.cc gtkconwin.cc gtkabout.cc
 vx68k_LDADD = libmisc.a ../libvx68kgtk/libvx68kgtk.a \
 ../libvx68k/libvx68k.la ../libvm68k/libvm68k.la \
 ${GTK_LIBS}
