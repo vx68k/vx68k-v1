@@ -1,0 +1,9 @@
+1998-10-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* configure.in: Add include/vx68k/Makefile.
+
+	* include/vx68k/Makefile.am: New file.
+	* include/vx68k/memory.h: New file.
+
+	* ChangeLog: New file.
+
