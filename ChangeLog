@@ -1,3 +1,9 @@
+2000-12-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/vx68k.texi (X68000 Components): Removed.  Raise children's
+	levels.
+	(IOCS and System ROM): Rename the title and add documentation.
+
 2000-12-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* doc/vx68k.texi: Merge the variable index to the function index.

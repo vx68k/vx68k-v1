@@ -5,9 +5,9 @@
 @synindex vr fn
 @set VERSION 1.1
 @c $Format: "@set REVISION $Revision$" $
-@set REVISION 1.12
+@set REVISION 1.13
 @c $Format: "@set DATE $Date$" $
-@set DATE Mon, 11 Dec 2000 21:13:38 +0900
+@set DATE Tue, 12 Dec 2000 22:26:31 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -116,12 +116,8 @@ X68000 Emulation
 
 Machine
 
-* X68000 Components::           
-
-X68000 Components
-
 * Main Memory::                 The main memory.
-* System ROM::                  
+* IOCS and System ROM::         
 * SCC::                         
 
 @end detailmenu
@@ -449,34 +445,78 @@ This class is an abstract interface to the host system.
 @end deftp
 
 @menu
-* X68000 Components::           
-@end menu
-
-@node X68000 Components,  , Machine, Machine
-@subsection X68000 Components
-
-@menu
 * Main Memory::                 The main memory.
-* System ROM::                  
+* IOCS and System ROM::         
 * SCC::                         
 @end menu
 
-@node Main Memory, System ROM, X68000 Components, X68000 Components
-@subsubsection Main Memory
+@node Main Memory, IOCS and System ROM, Machine, Machine
+@subsection Main Memory
 
 @deftp Class main_memory
 Memory component for the main memory.
 @end deftp
 
-@node System ROM, SCC, Main Memory, X68000 Components
-@subsubsection System ROM
+@node IOCS and System ROM, SCC, Main Memory, Machine
+@subsection The IOCS and the System ROM
+@cindex IOCS
+@cindex input/output control sybsystem
+@cindex System ROM
+
+X68000 uses the @dfn{IOCS} for input/output and other
+primitive services.  The name IOCS stands for input/output
+control subsystem.  It is stored in the @dfn{System ROM}.
 
 @deftp Class system_rom
-Memory component for the System ROM.
+Memory component for the System ROM.  This class derives
+@code{vm68k::memory}.
+
+This class manages a table of IOCS call handlers, and
+dispatches IOCS calls to them.
 @end deftp
 
-@node SCC,  , System ROM, X68000 Components
-@subsubsection Z8530 SCC
+@deftypemethod system_rom uint16_type get_16 (function_code @var{fc}, uint32_type @var{address}) const
+Returns the 16-bit value at address @var{address} using function code
+@var{fc}.
+@end deftypemethod
+
+@deftypemethod system_rom int get_8 (function_code @var{fc}, uint32_type @var{address}) const
+Returns the 8-bit value at address @var{address} using function code
+@var{fc}.
+@end deftypemethod
+
+@deftypemethod system_rom void put_16 (function_code @var{fc}, uint32_type @var{address}, uint16_type @var{value})
+Stores 16-bit value @var{value} at address @var{address} using function
+code @var{fc}.
+@end deftypemethod
+
+@deftypemethod system_rom void put_8 (function_code @var{fc}, uint32_type @var{address}, int @var{value})
+Stores 8-bit value @var{value} at address @var{address} using function
+code @var{fc}.
+@end deftypemethod
+
+@deftypemethod system_rom void attach (exec_unit *@var{eu})
+@end deftypemethod
+
+@deftypemethod system_rom void detach (exec_unit *@var{eu})
+@end deftypemethod
+
+@deftypemethod system_rom void initialize (memory_address_space &@var{mm})
+@end deftypemethod
+
+@deftp Typedef system_rom::iocs_handler_type
+Type for IOCS call handlers.
+@end deftp
+
+@deftypemethod system_rom void set_iocs_handler (int @var{number}, const iocs_handler_type &@var{handler})
+Sets the handler for IOCS call @var{number} to @var{handler}.
+@end deftypemethod
+
+@deftypemethod system_rom void call_iocs (int @var{number}, context &@var{c})
+@end deftypemethod
+
+@node SCC,  , IOCS and System ROM, Machine
+@subsection Z8530 SCC
 @cindex SCC, Z8530
 @cindex serial communication controller, Z8530
 @cindex Z8530 SCC
