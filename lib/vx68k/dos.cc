@@ -24,9 +24,6 @@
 
 #include <vx68k/human.h>
 
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
 #include <ctime>
 #include <cstring>
 
@@ -60,6 +57,7 @@ dos::execute (const char *name, const char *const *argv)
   ec.regs.a[7] = ec.regs.a[0];	// FIXME
   uint_type st = ec.start(ec.regs.a[4], argv);
   delete p;
+  return st;
 }
 
 namespace
@@ -176,22 +174,14 @@ namespace
   {
 #ifdef L
     L(" DOS _FPUTS\n");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
     uint32_type sp = ec.regs.a[7];
     uint32_type mesptr = ec.mem->getl(SUPER_DATA, sp + 0);
     sint_type filno = extsw(ec.mem->getw(SUPER_DATA, sp + 4));
 
-    // FIXME.
-    unsigned char buf[1];
-    do
-      {
-	buf[0] = ec.mem->getb(SUPER_DATA, mesptr++);
-	if (buf[0] != 0)
-	  write(filno, buf, 1);
-      }
-    while (buf[0] != 0);
+    process *p = static_cast<dos_exec_context &>(ec).current_process();
+    ec.regs.d[0] = p->fputs(ec.mem, mesptr, filno);
 
     ec.regs.pc += 2;
   }
@@ -354,37 +344,35 @@ namespace
 
   void
   dos_print(unsigned int op, context &ec, instruction_data *data)
-    {
-      VL((" DOS _PRINT\n"));
+  {
+#ifdef L
+    L(" DOS _PRINT\n");
+#endif
 
-      uint32 address = ec.mem->getl(SUPER_DATA, ec.regs.a[7]);
+    uint32_type sp = ec.regs.a[7];
+    uint32_type mesptr = ec.mem->getl(SUPER_DATA, sp + 0);
 
-      // FIXME.
-      unsigned char buf[1];
-      do
-	{
-	  buf[0] = ec.mem->getb(SUPER_DATA, address++);
-	  if (buf[0] != 0)
-	    write(STDOUT_FILENO, buf, 1);
-	}
-      while (buf[0] != 0);
+    process *p = static_cast<dos_exec_context &>(ec).current_process();
+    p->fputs(ec.mem, mesptr, 1);
+    ec.regs.d[0] = 0;		// FIXME: is it correct?
 
-      ec.regs.pc += 2;
-    }
+    ec.regs.pc += 2;
+  }
 
   void
   dos_putchar(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
-    L(" DOS _PUTCHAR");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _PUTCHAR\n");
 #endif
 
     // FIXME.
-    uint32 sp = ec.regs.a[7];
-    char ch = extsw(ec.mem->getw(SUPER_DATA, sp));
-    write(STDOUT_FILENO, &ch, 1);
-    ec.regs.d[0] = 0;
+    uint32_type sp = ec.regs.a[7];
+    sint_type code = extsw(ec.mem->getw(SUPER_DATA, sp + 0));
+
+    process *p = static_cast<dos_exec_context &>(ec).current_process();
+    p->fputc(code, 1);
+    ec.regs.d[0] = 0;		// FIXME: is it correct?
 
     ec.regs.pc += 2;
   }

@@ -92,6 +92,8 @@ namespace vx68k
       sint32_type seek(sint_type, sint32_type, uint_type);
       sint_type dup(sint_type);
       sint_type dup2(sint_type, sint_type);
+      sint32_type fputs(const address_space *, uint32_type, sint_type);
+      sint32_type fputc(sint_type, sint_type);
     };
 
     class dos_exec_context

@@ -74,6 +74,34 @@ process::write(sint_type fd,
   return done;
 }
 
+sint32_type
+process::fputs(const address_space *mem, uint32_type mesptr, sint_type filno)
+{
+  // FIXME.
+  uint32_type ptr = mesptr;
+  unsigned char buf[1];
+  do
+    {
+      buf[0] = mem->getb(SUPER_DATA, ptr++);
+      if (buf[0] != 0)
+	::write(filno, buf, 1);
+    }
+  while (buf[0] != 0);
+
+  return ptr - 1 - mesptr;
+}
+
+sint32_type
+process::fputc(sint_type code, sint_type filno)
+{
+  // FIXME.
+  unsigned char buf[1];
+  buf[0] = code;
+  ::write(filno, buf, 1);
+
+  return 1;
+}
+
 /* Closes a DOS file descriptor.  */
 sint_type
 process::close(sint_type fd)
