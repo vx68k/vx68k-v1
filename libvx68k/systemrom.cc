@@ -165,6 +165,17 @@ system_rom::initialize(address_space &as)
 
 namespace
 {
+  /* Handles a _B_CONSOL call.  */
+  void
+  iocs_b_consol(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _B_CONSOL %%d1=%#010x %%d2=%#010x\n",
+      c.regs.d[1], c.regs.d[2]);
+#endif
+    fprintf(stderr, "iocs_b_consol: FIXME: not implemented\n");
+  }
+
   /* Handles a _B_LPEEK call.  */
   void
   iocs_b_lpeek(context &c, unsigned long data)
@@ -207,6 +218,17 @@ namespace
     // FIXME?
   }
 
+  /* Handles a _B_SFTSNS call.  */
+  void
+  iocs_b_sftsns(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _BSFTSNS\n");
+#endif
+    fprintf(stderr, "iocs_b_sftsns: FIXME: not implemented\n");
+    c.regs.d[0] = 0;
+  }
+
   /* Handles a _B_WRITE call.  */
   void
   iocs_b_write(context &c, unsigned long data)
@@ -228,6 +250,28 @@ namespace
     c.regs.d[0] = 0x90;
   }
 
+  /* Handles a _CRTMOD call.  */
+  void
+  iocs_crtmod(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _CRTMOD %%d1=%#010x\n", c.regs.d[1]);
+#endif
+    fprintf(stderr, "iocs_crtmod: FIXME: not implemented\n");
+    c.regs.d[0] = 16;
+  }
+
+  /* Handles a _INIT_PRN call.  */
+  void
+  iocs_init_prn(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _INIT_PRN %%d1=%#010x\n", c.regs.d[1]);
+#endif
+    fprintf(stderr, "iocs_init_prn: FIXME: not implemented\n");
+    c.regs.d[0] = 0;
+  }
+
   /* Handles a _OS_CUROF call.  */
   void
   iocs_os_curof(context &c, unsigned long data)
@@ -238,13 +282,40 @@ namespace
     fprintf(stderr, "iocs_os_curof: FIXME: not implemented\n");
   }
 
+  /* Handles a _SET232C call.  */
+  void
+  iocs_set232c(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _SET232C %%d1=%#010x\n", c.regs.d[1]);
+#endif
+    fprintf(stderr, "iocs_set232c: FIXME: not implemented\n");
+    c.regs.d[0] = 0;
+  }
+
+  /* Handles a 0x37 call.  */
+  void
+  iocs_x37(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: 0x37 %%d1=%#010x\n", c.regs.d[1]);
+#endif
+    fprintf(stderr, "iocs_x37: FIXME: not implemented\n");
+  }
+
   /* Initializes the IOCS functions.  */
   void
   initialize_iocs_functions(system_rom *rom)
   {
     typedef system_rom::iocs_function_type iocs_function_type;
 
+    rom->set_iocs_function(0x02, iocs_function_type(&iocs_b_sftsns, 0));
+    rom->set_iocs_function(0x10, iocs_function_type(&iocs_crtmod, 0));
     rom->set_iocs_function(0x21, iocs_function_type(&iocs_b_print, 0));
+    rom->set_iocs_function(0x2e, iocs_function_type(&iocs_b_consol, 0));
+    rom->set_iocs_function(0x30, iocs_function_type(&iocs_set232c, 0));
+    rom->set_iocs_function(0x37, iocs_function_type(&iocs_x37, 0));
+    rom->set_iocs_function(0x3c, iocs_function_type(&iocs_init_prn, 0));
     rom->set_iocs_function(0x45, iocs_function_type(&iocs_b_write, 0));
     rom->set_iocs_function(0x46, iocs_function_type(&iocs_b_read, 0));
     rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));

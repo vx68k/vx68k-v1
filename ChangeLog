@@ -1,5 +1,9 @@
 2000-05-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_b_consol, iocs_b_sftsns,
+	iocs_crtmod, iocs_init_prn, iocs_set232c, iocs_x37): New function.
+	(initialize_iocs_functions): Use the new functions.
+
 	* libvm68k/statusreg.cc: Use using declarations.
 	* libvm68k/context.cc: Likewise.
 
