@@ -1,7 +1,14 @@
 2000-12-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/Makefile.am (vx68k_LDADD): Replace libvx68kgtk.a with
+	libvx68kui_gtk.a.
+
+	* libvx68kgtk/Makefile.am (noinst_LIBRARIES): Rename libvx68kgtk.a
+	to libvx68kui_gtk.a.
+	(libvx68kui_gtk_a_SOURCES): Renamed.
+
 	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Replace addrspace.cc
-	to memory_map.cc.
+	with memory_map.cc.
 	(libvm68k_la_LDFLAGS): Modified.
 
 	* libvm68k/memory_map.cc: Renamed from addrspace.cc.

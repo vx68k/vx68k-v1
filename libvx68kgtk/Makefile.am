@@ -3,7 +3,7 @@
 INCLUDES = -I${top_srcdir}/include \
 ${GTK_CFLAGS}
 
-noinst_LIBRARIES = libvx68kgtk.a
+noinst_LIBRARIES = libvx68kui_gtk.a
 
-libvx68kgtk_a_SOURCES = gtkconsole.cc
+libvx68kui_gtk_a_SOURCES = gtkconsole.cc
 
