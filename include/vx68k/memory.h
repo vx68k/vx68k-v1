@@ -451,6 +451,9 @@ namespace vx68k
     };
 
   private:
+    /* Mouse bounds.  */
+    int mouse_left, mouse_top, mouse_right, mouse_bottom;
+
     /* Button states of the mouse.  */
     vector<bool> mouse_states;
 
@@ -460,6 +463,10 @@ namespace vx68k
     /* Second most recent X and Y position of the mouse.  */
     point old_mouse_position;
 
+    /* Mouse motion vector.  */
+    point _mouse_motion;
+
+    /* Mutex for this object.  */
     mutable pthread_mutex_t mutex;
 
   public:
@@ -474,6 +481,13 @@ namespace vx68k
     /* Writes data to this object.  */
     void put_16(function_code, uint32_type, uint_type);
     void put_8(function_code, uint32_type, unsigned int);
+
+  public:
+    /* Initializes mouse states.  */
+    void initialize_mouse();
+
+    /* Sets mouse bounds.  */
+    void set_mouse_bounds(int l, int t, int r, int b);
 
   public:
     /* Returns the state of a mouse button.  */

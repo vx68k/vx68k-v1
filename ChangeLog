@@ -1,3 +1,19 @@
+2000-09-05  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/sccmem.cc (set_mouse_position): Limit mouse position in
+	bounds.
+	(mouse_motion): Remove call to sched_yield and pthread_testcancel.
+	(mouse_motion): Return member _mouse_motion.
+	(track_mouse): Update member _mouse_motion.
+	(set_mouse_bounds, initialize_mouse): New function.
+	(iocs_ms_init): Call m->initialize_mouse.
+	(iocs_ms_limit): Call m->set_mouse_bounds.
+	(scc_memory): Initialize new members.
+
+	* include/vx68k/memory.h (class scc_memory): Add members
+	mouse_left, mouse_top, mouse_right, mouse_bottom, _mouse_motion,
+	initialize_mouse, and set_mouse_bounds.
+
 2000-09-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* include/vm68k/addressing.h (class data_register): Removed.

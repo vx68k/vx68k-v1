@@ -77,14 +77,14 @@ scc_memory::set_mouse_position(int x, int y)
 {
   mutex_lock lock(&mutex);
 
-  if (x < 0)
-    x = 0;
-  else if (x > 768)
-    x = 768;
-  if (y < 0)
-    y = 0;
-  else if (y > 512)
-    y = 512;
+  if (x < mouse_left)
+    x = mouse_left;
+  else if (x >= mouse_right)
+    x = mouse_right - 1;
+  if (y < mouse_top)
+    y = mouse_top;
+  else if (y >= mouse_bottom)
+    y = mouse_bottom - 1;
 
   _mouse_position.x = x;
   _mouse_position.y = y;
@@ -93,14 +93,9 @@ scc_memory::set_mouse_position(int x, int y)
 scc_memory::point
 scc_memory::mouse_motion() const
 {
-  sched_yield();
-  pthread_testcancel();
-
   mutex_lock lock(&mutex);
 
-  point p = {_mouse_position.x - old_mouse_position.x,
-	     _mouse_position.y - old_mouse_position.y};
-  return p;
+  return _mouse_motion;
 }
 
 void
@@ -108,7 +103,35 @@ scc_memory::track_mouse()
 {
   mutex_lock lock(&mutex);
 
+  _mouse_motion.x = _mouse_position.x - old_mouse_position.x;
+  _mouse_motion.y = _mouse_position.y - old_mouse_position.y;
+
   old_mouse_position = _mouse_position;
+}
+
+void
+scc_memory::set_mouse_bounds(int l, int t, int r, int b)
+{
+  mutex_lock lock(&mutex);
+
+  mouse_left = l;
+  mouse_top = t;
+  mouse_right = r;
+  mouse_bottom = b;
+}
+
+void
+scc_memory::initialize_mouse()
+{
+  mutex_lock lock(&mutex);
+
+  mouse_left = 0;
+  mouse_top = 0;
+  mouse_right = 768;
+  mouse_bottom = 512;
+
+  _mouse_motion.x = 0;
+  _mouse_motion.y = 0;
 }
 
 uint_type
@@ -236,29 +259,26 @@ namespace
   iocs_ms_init(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    LG(nana_iocs_call_trace,
-       "IOCS _MS_INIT\n");
+    LG(nana_iocs_call_trace, "IOCS _MS_INIT\n");
 #endif
+    scc_memory *m = reinterpret_cast<scc_memory *>(data);
 
-    static bool once;
-    if (!once++)
-      fprintf(stderr, "iocs_ms_init: FIXME: not implemented\n");
+    m->initialize_mouse();
   }
 
   /* Handles a _MS_LIMIT IOCS call.  */
   void
   iocs_ms_limit(context &c, unsigned long data)
   {
+    long_word_size::uvalue_type tl = long_word_size::get(c.regs.d[1]);
+    long_word_size::uvalue_type br = long_word_size::get(c.regs.d[2]);
 #ifdef HAVE_NANA_H
-    LG(nana_iocs_call_trace,
-       "IOCS _MS_LIMIT; %%d1=0x%08lx %%d2=0x%08lx\n",
-       long_word_size::get(c.regs.d[1]) + 0UL,
-       long_word_size::get(c.regs.d[2]) + 0UL);
+    LG(nana_iocs_call_trace, "IOCS _MS_LIMIT; %%d1=0x%08lx %%d2=0x%08lx\n",
+       topleft + 0UL, bottomright + 0UL);
 #endif
+    scc_memory *m = reinterpret_cast<scc_memory *>(data);
 
-    static bool once;
-    if (!once++)
-      fprintf(stderr, "iocs_ms_limit: FIXME: not implemented\n");
+    m->set_mouse_bounds(tl >> 16, tl & 0xffff, br >> 16, br & 0xffff);
   }
 
   /* Handles a _SET232C IOCS call.  */
@@ -308,7 +328,8 @@ scc_memory::~scc_memory()
 }
 
 scc_memory::scc_memory(system_rom &bios)
-  : mouse_states(2, false)
+  : mouse_left(0), mouse_top(0), mouse_right(768), mouse_bottom(512),
+    mouse_states(2, false)
 {
   pthread_mutex_init(&mutex, 0);
   install_iocs_calls(bios, reinterpret_cast<unsigned long>(this));
