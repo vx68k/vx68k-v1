@@ -1,3 +1,13 @@
+1999-11-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Modified.
+
+	* vm68k/Makefile.am (LIBS): Set to emtpy.
+
+	* doc/Makefile.am (${srcdir}/vx68k.texi): Test for @setfilename.
+
+	* vm68k/Makefile.am (lib_LTLIBRARIES): Add comments for releases.
+
 1999-11-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* TODO: Modified.

@@ -1,14 +1,10 @@
 To-Do List for Virtual X68000
 
-$Date: Thu, 18 Nov 1999 21:11:40 +0900 $
+$Date: Fri, 26 Nov 1999 19:52:22 +0900 $
 
-* Add comments about version information of libvm68k.la.
-
-* Modify vx68k.texi generation as rglclock does.
+* Implement the handler for instruction DBNE to make HAS work.
 
 * Rename directories for libraries as libXXX?
-
-* Make LIBS empty for libvm68k.la.
 
 * Use the GdkRgb visual.  This will initialize GdkRgb automagically.
 
