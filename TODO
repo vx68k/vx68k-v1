@@ -1,6 +1,6 @@
 TO DO
 
-$Date: Sat, 20 Mar 1999 21:44:04 +0900 $
+$Date: Mon, 22 Mar 1999 18:22:33 +0900 $
 
 * Instructions must be implemented.
 
@@ -22,6 +22,10 @@ M68k instructions can be categorized into three classes:
 (1) that change all five bits in CCR,
 (2) that change all bits except X, and
 (3) that change Z only (bit test).
+
+* Common code optimization.
+
+Some common code sequences (strcpy, memcpy, etc.) can be optimized.
 
 * Modular design.
 

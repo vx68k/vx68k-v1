@@ -1,5 +1,7 @@
 1999-03-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* TODO: Modified.
+
 	* NEWS: Modified.
 
 	* lib/vx68k/dos.cc (read, dos_read): New functions.
