@@ -441,7 +441,10 @@ namespace
 #ifdef HAVE_NANA_H
     L("IOCS _B_RECALI; %%d1:w=0x%04x\n", word_size::get(c.regs.d[1]));
 #endif
-    fprintf(stderr, "iocs_b_recali: FIXME: not implemented\n");
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_b_recali: FIXME: not implemented\n");
+
     if ((c.regs.d[1] & 0xf000) == 0x9000 &&
 	(c.regs.d[1] & 0x0f00) < 0x0200)
       long_word_size::put(c.regs.d[0], 0);

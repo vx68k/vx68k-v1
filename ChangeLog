@@ -1,5 +1,7 @@
 2000-09-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_b_recali): Print message only once.
+
 	* libvx68k/textvram.cc (draw_char): Modify the kanji handling.
 
 	* libvx68k/machine.cc (machine): Call install_iocs_calls on dmac
