@@ -95,14 +95,12 @@ namespace
     {
       assert(ec != NULL);
       int len = 2;
-      int32 disp = op & 0xff;
+      int disp = op & 0xff;
       if (disp == 0)
 	{
 	  len = 4;
 	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
-	  disp = ec->mem->getw(fc, ec->regs.pc + 2);
-	  if (disp >= 0x8000)
-	    disp -= 0x10000;
+	  disp = ec->mem->getw_signed(fc, ec->regs.pc + 2);
 	}
       else if (disp >= 0x80)
 	disp -= 0x100;
@@ -118,14 +116,12 @@ namespace
     {
       assert(ec != NULL);
       int len = 2;
-      int32 disp = op & 0xff;
+      int disp = op & 0xff;
       if (disp == 0)
 	{
 	  len = 4;
 	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
-	  disp = ec->mem->getw(fc, ec->regs.pc + 2);
-	  if (disp >= 0x8000)
-	    disp -= 0x10000;
+	  disp = ec->mem->getw_signed(fc, ec->regs.pc + 2);
 	}
       else if (disp >= 0x80)
 	disp -= 0x100;
@@ -163,9 +159,7 @@ namespace
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
-      int32 offset = ec->mem->getw(fc, ec->regs.pc + 2);
-      if (offset >= 0x8000)
-	offset -= 0x10000;
+      int offset = ec->mem->getw_signed(fc, ec->regs.pc + 2);
 #ifdef TRACE_STEPS
       fprintf(stderr, " lea %%a%d@(%ld),%%a%d\n", s_reg, (long) offset, d_reg);
 #endif
@@ -196,9 +190,7 @@ namespace
     {
       int reg = op & 0x0007;
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
-      int32 disp = ec->mem->getw(fc, ec->regs.pc + 2);
-      if (disp >= 0x8000)
-	disp -= 0x10000;
+      int disp = ec->mem->getw_signed(fc, ec->regs.pc + 2);
 #ifdef TRACE_STEPS
       fprintf(stderr, " link %%a%d,#%d\n", reg, disp);
 #endif

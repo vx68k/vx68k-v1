@@ -1,7 +1,12 @@
 1999-03-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (bne, bsr, lea_offset_a, link): Use
+	address_space::getw_signed.
+
 	* include/vm68k/memory.h (class address_space): Add signed get
 	methods.
+	* lib/vm68k/memory.cc (getb_signed, getw_signed, getl_signed): New
+	functions.
 
 	* TODO: Modifed.
 
