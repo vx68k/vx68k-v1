@@ -1618,6 +1618,30 @@ namespace
     ec.regs.pc += 2;
   }
 
+  template <class Size, class Source, class Destination> void
+  m68k_move(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    Source ea1(op & 0x7, 2);
+    Destination ea2(op >> 9 & 0x7, 2 + ea1.extension_size());
+#ifdef TRACE_INSTRUCTIONS
+    L("\tmove%s\t", Size::suffix());
+    L("%s,", ea1.text(c));
+    L("%s\n", ea2.text(c));
+#endif
+
+    svalue_type value = ea1.get(c);
+    ea2.put(c, value);
+    c.regs.ccr.set_cc(value);
+
+    ea1.finish(c);
+    ea2.finish(c);
+    c.regs.pc += 2 + ea1.extension_size() + ea2.extension_size();
+  }
+
+#if 0
   template <class Source, class Destination> void
   moveb(uint_type op, context &ec, unsigned long data)
   {
@@ -1674,6 +1698,7 @@ namespace
 
       ec.regs.pc += 2 + ea1.isize(4) + ea2.isize(4);
     }
+#endif /* 0 */
 
   /* Handles a MOVE-from-SR instruction.  */
   template <class Destination> void
@@ -3219,92 +3244,206 @@ namespace
     eu.set_instruction(0x0cb0, 0x0007, &cmpil<indexed_indirect>);
     eu.set_instruction(0x0cb8, 0x0000, &cmpil<absolute_short>);
     eu.set_instruction(0x0cb9, 0x0000, &cmpil<absolute_long>);
-    eu.set_instruction(0x1000, 0x0e07, &moveb<data_register, data_register>);
-    eu.set_instruction(0x1010, 0x0e07, &moveb<indirect, data_register>);
-    eu.set_instruction(0x1018, 0x0e07, &moveb<postinc_indirect, data_register>);
-    eu.set_instruction(0x1020, 0x0e07, &moveb<predec_indirect, data_register>);
-    eu.set_instruction(0x1028, 0x0e07, &moveb<disp_indirect, data_register>);
-    eu.set_instruction(0x1030, 0x0e07, &moveb<indexed_indirect, data_register>);
-    eu.set_instruction(0x1038, 0x0e00, &moveb<absolute_short, data_register>);
-    eu.set_instruction(0x1039, 0x0e00, &moveb<absolute_long, data_register>);
-    eu.set_instruction(0x103a, 0x0e00, &moveb<disp_pc, data_register>);
-    eu.set_instruction(0x103b, 0x0e00, &moveb<indexed_pc_indirect, data_register>);
-    eu.set_instruction(0x103c, 0x0e00, &moveb<immediate, data_register>);
-    eu.set_instruction(0x1080, 0x0e07, &moveb<data_register, indirect>);
-    eu.set_instruction(0x1090, 0x0e07, &moveb<indirect, indirect>);
-    eu.set_instruction(0x1098, 0x0e07, &moveb<postinc_indirect, indirect>);
-    eu.set_instruction(0x10a0, 0x0e07, &moveb<predec_indirect, indirect>);
-    eu.set_instruction(0x10a8, 0x0e07, &moveb<disp_indirect, indirect>);
-    eu.set_instruction(0x10b0, 0x0e07, &moveb<indexed_indirect, indirect>);
-    eu.set_instruction(0x10b8, 0x0e00, &moveb<absolute_short, indirect>);
-    eu.set_instruction(0x10b9, 0x0e00, &moveb<absolute_long, indirect>);
-    eu.set_instruction(0x10ba, 0x0e00, &moveb<disp_pc, indirect>);
-    eu.set_instruction(0x10bc, 0x0e00, &moveb<immediate, indirect>);
-    eu.set_instruction(0x10c0, 0x0e07, &moveb<data_register, postinc_indirect>);
-    eu.set_instruction(0x10d0, 0x0e07, &moveb<indirect, postinc_indirect>);
-    eu.set_instruction(0x10d8, 0x0e07, &moveb<postinc_indirect, postinc_indirect>);
-    eu.set_instruction(0x10e0, 0x0e07, &moveb<predec_indirect, postinc_indirect>);
-    eu.set_instruction(0x10e8, 0x0e07, &moveb<disp_indirect, postinc_indirect>);
-    eu.set_instruction(0x10f0, 0x0e07, &moveb<indexed_indirect, postinc_indirect>);
-    eu.set_instruction(0x10f8, 0x0e00, &moveb<absolute_short, postinc_indirect>);
-    eu.set_instruction(0x10f9, 0x0e00, &moveb<absolute_long, postinc_indirect>);
-    eu.set_instruction(0x10fa, 0x0e00, &moveb<disp_pc, postinc_indirect>);
-    eu.set_instruction(0x10fc, 0x0e00, &moveb<immediate, postinc_indirect>);
-    eu.set_instruction(0x1100, 0x0e07, &moveb<data_register, predec_indirect>);
-    eu.set_instruction(0x1110, 0x0e07, &moveb<indirect, predec_indirect>);
-    eu.set_instruction(0x1118, 0x0e07, &moveb<postinc_indirect, predec_indirect>);
-    eu.set_instruction(0x1120, 0x0e07, &moveb<predec_indirect, predec_indirect>);
-    eu.set_instruction(0x1128, 0x0e07, &moveb<disp_indirect, predec_indirect>);
-    eu.set_instruction(0x1130, 0x0e07, &moveb<indexed_indirect, predec_indirect>);
-    eu.set_instruction(0x1138, 0x0e00, &moveb<absolute_short, predec_indirect>);
-    eu.set_instruction(0x1139, 0x0e00, &moveb<absolute_long, predec_indirect>);
-    eu.set_instruction(0x113a, 0x0e00, &moveb<disp_pc, predec_indirect>);
-    eu.set_instruction(0x113c, 0x0e00, &moveb<immediate, predec_indirect>);
-    eu.set_instruction(0x1140, 0x0e07, &moveb<data_register, disp_indirect>);
-    eu.set_instruction(0x1150, 0x0e07, &moveb<indirect, disp_indirect>);
-    eu.set_instruction(0x1158, 0x0e07, &moveb<postinc_indirect, disp_indirect>);
-    eu.set_instruction(0x1160, 0x0e07, &moveb<predec_indirect, disp_indirect>);
-    eu.set_instruction(0x1168, 0x0e07, &moveb<disp_indirect, disp_indirect>);
-    eu.set_instruction(0x1170, 0x0e07, &moveb<indexed_indirect, disp_indirect>);
-    eu.set_instruction(0x1178, 0x0e00, &moveb<absolute_short, disp_indirect>);
-    eu.set_instruction(0x1179, 0x0e00, &moveb<absolute_long, disp_indirect>);
-    eu.set_instruction(0x117a, 0x0e00, &moveb<disp_pc, disp_indirect>);
-    eu.set_instruction(0x117c, 0x0e00, &moveb<immediate, disp_indirect>);
-    eu.set_instruction(0x1180, 0x0e07, &moveb<data_register, indexed_indirect>);
-    eu.set_instruction(0x1190, 0x0e07, &moveb<indirect, indexed_indirect>);
-    eu.set_instruction(0x1198, 0x0e07, &moveb<postinc_indirect, indexed_indirect>);
-    eu.set_instruction(0x11a0, 0x0e07, &moveb<predec_indirect, indexed_indirect>);
-    eu.set_instruction(0x11a8, 0x0e07, &moveb<disp_indirect, indexed_indirect>);
-    eu.set_instruction(0x11b0, 0x0e07, &moveb<indexed_indirect, indexed_indirect>);
-    eu.set_instruction(0x11b8, 0x0e00, &moveb<absolute_short, indexed_indirect>);
-    eu.set_instruction(0x11b9, 0x0e00, &moveb<absolute_long, indexed_indirect>);
-    eu.set_instruction(0x11ba, 0x0e00, &moveb<disp_pc, indexed_indirect>);
-    eu.set_instruction(0x11bc, 0x0e00, &moveb<immediate, indexed_indirect>);
-    eu.set_instruction(0x11c0, 0x0007, &moveb<data_register, absolute_short>);
-    eu.set_instruction(0x11f8, 0x0000, &moveb<absolute_short, absolute_short>);
-    eu.set_instruction(0x11f9, 0x0000, &moveb<absolute_long, absolute_short>);
-    eu.set_instruction(0x11fc, 0x0000, &moveb<immediate, absolute_short>);
-    eu.set_instruction(0x13c0, 0x0007, &moveb<data_register, absolute_long>);
-    eu.set_instruction(0x13d0, 0x0007, &moveb<indirect, absolute_long>);
-    eu.set_instruction(0x13d8, 0x0007, &moveb<postinc_indirect, absolute_long>);
-    eu.set_instruction(0x13e0, 0x0007, &moveb<predec_indirect, absolute_long>);
-    eu.set_instruction(0x13e8, 0x0007, &moveb<disp_indirect, absolute_long>);
-    eu.set_instruction(0x13f0, 0x0007, &moveb<indexed_indirect, absolute_long>);
-    eu.set_instruction(0x13f8, 0x0000, &moveb<absolute_short, absolute_long>);
-    eu.set_instruction(0x13f9, 0x0000, &moveb<absolute_long, absolute_long>);
-    eu.set_instruction(0x13fa, 0x0000, &moveb<disp_pc, absolute_long>);
-    eu.set_instruction(0x13fc, 0x0000, &moveb<immediate, absolute_long>);
-    eu.set_instruction(0x2000, 0x0e07, &movel<data_register, data_register>);
-    eu.set_instruction(0x2008, 0x0e07, &movel<address_register, data_register>);
-    eu.set_instruction(0x2010, 0x0e07, &movel<indirect, data_register>);
-    eu.set_instruction(0x2018, 0x0e07, &movel<postinc_indirect, data_register>);
-    eu.set_instruction(0x2020, 0x0e07, &movel<predec_indirect, data_register>);
-    eu.set_instruction(0x2028, 0x0e07, &movel<disp_indirect, data_register>);
-    eu.set_instruction(0x2030, 0x0e07, &movel<indexed_indirect, data_register>);
-    eu.set_instruction(0x2038, 0x0e00, &movel<absolute_short, data_register>);
-    eu.set_instruction(0x2039, 0x0e00, &movel<absolute_long, data_register>);
-    eu.set_instruction(0x203a, 0x0e00, &movel<disp_pc, data_register>);
-    eu.set_instruction(0x203c, 0x0e00, &movel<immediate, data_register>);
+    eu.set_instruction(0x1000, 0x0e07,
+		       &m68k_move<byte_size, byte_d_register, byte_d_register>);
+    eu.set_instruction(0x1010, 0x0e07,
+		       &m68k_move<byte_size, byte_indirect, byte_d_register>);
+    eu.set_instruction(0x1018, 0x0e07,
+		       &m68k_move<byte_size, byte_postinc_indirect, byte_d_register>);
+    eu.set_instruction(0x1020, 0x0e07,
+		       &m68k_move<byte_size, byte_predec_indirect, byte_d_register>);
+    eu.set_instruction(0x1028, 0x0e07,
+		       &m68k_move<byte_size, byte_disp_indirect, byte_d_register>);
+    eu.set_instruction(0x1030, 0x0e07,
+		       &m68k_move<byte_size, byte_index_indirect, byte_d_register>);
+    eu.set_instruction(0x1038, 0x0e00,
+		       &m68k_move<byte_size, byte_abs_short, byte_d_register>);
+    eu.set_instruction(0x1039, 0x0e00,
+		       &m68k_move<byte_size, byte_abs_long, byte_d_register>);
+    eu.set_instruction(0x103a, 0x0e00,
+		       &m68k_move<byte_size, byte_disp_pc_indirect, byte_d_register>);
+    eu.set_instruction(0x103b, 0x0e00,
+		       &m68k_move<byte_size, byte_index_pc_indirect, byte_d_register>);
+    eu.set_instruction(0x103c, 0x0e00,
+		       &m68k_move<byte_size, byte_immediate, byte_d_register>);
+    eu.set_instruction(0x1080, 0x0e07,
+		       &m68k_move<byte_size, byte_d_register, byte_indirect>);
+    eu.set_instruction(0x1090, 0x0e07,
+		       &m68k_move<byte_size, byte_indirect, byte_indirect>);
+    eu.set_instruction(0x1098, 0x0e07,
+		       &m68k_move<byte_size, byte_postinc_indirect, byte_indirect>);
+    eu.set_instruction(0x10a0, 0x0e07,
+		       &m68k_move<byte_size, byte_predec_indirect, byte_indirect>);
+    eu.set_instruction(0x10a8, 0x0e07,
+		       &m68k_move<byte_size, byte_disp_indirect, byte_indirect>);
+    eu.set_instruction(0x10b0, 0x0e07,
+		       &m68k_move<byte_size, byte_index_indirect, byte_indirect>);
+    eu.set_instruction(0x10b8, 0x0e00,
+		       &m68k_move<byte_size, byte_abs_short, byte_indirect>);
+    eu.set_instruction(0x10b9, 0x0e00,
+		       &m68k_move<byte_size, byte_abs_long, byte_indirect>);
+    eu.set_instruction(0x10ba, 0x0e00,
+		       &m68k_move<byte_size, byte_disp_pc_indirect, byte_indirect>);
+    eu.set_instruction(0x10bb, 0x0e00,
+		       &m68k_move<byte_size, byte_index_pc_indirect, byte_indirect>);
+    eu.set_instruction(0x10bc, 0x0e00,
+		       &m68k_move<byte_size, byte_immediate, byte_indirect>);
+    eu.set_instruction(0x10c0, 0x0e07,
+		       &m68k_move<byte_size, byte_d_register, byte_postinc_indirect>);
+    eu.set_instruction(0x10d0, 0x0e07,
+		       &m68k_move<byte_size, byte_indirect, byte_postinc_indirect>);
+    eu.set_instruction(0x10d8, 0x0e07,
+		       &m68k_move<byte_size, byte_postinc_indirect, byte_postinc_indirect>);
+    eu.set_instruction(0x10e0, 0x0e07,
+		       &m68k_move<byte_size, byte_predec_indirect, byte_postinc_indirect>);
+    eu.set_instruction(0x10e8, 0x0e07,
+		       &m68k_move<byte_size, byte_disp_indirect, byte_postinc_indirect>);
+    eu.set_instruction(0x10f0, 0x0e07,
+		       &m68k_move<byte_size, byte_index_indirect, byte_postinc_indirect>);
+    eu.set_instruction(0x10f8, 0x0e00,
+		       &m68k_move<byte_size, byte_abs_short, byte_postinc_indirect>);
+    eu.set_instruction(0x10f9, 0x0e00,
+		       &m68k_move<byte_size, byte_abs_long, byte_postinc_indirect>);
+    eu.set_instruction(0x10fa, 0x0e00,
+		       &m68k_move<byte_size, byte_disp_pc_indirect, byte_postinc_indirect>);
+    eu.set_instruction(0x10fb, 0x0e00,
+		       &m68k_move<byte_size, byte_index_pc_indirect, byte_postinc_indirect>);
+    eu.set_instruction(0x10fc, 0x0e00,
+		       &m68k_move<byte_size, byte_immediate, byte_postinc_indirect>);
+    eu.set_instruction(0x1100, 0x0e07,
+		       &m68k_move<byte_size, byte_d_register, byte_predec_indirect>);
+    eu.set_instruction(0x1110, 0x0e07,
+		       &m68k_move<byte_size, byte_indirect, byte_predec_indirect>);
+    eu.set_instruction(0x1118, 0x0e07,
+		       &m68k_move<byte_size, byte_postinc_indirect, byte_predec_indirect>);
+    eu.set_instruction(0x1120, 0x0e07,
+		       &m68k_move<byte_size, byte_predec_indirect, byte_predec_indirect>);
+    eu.set_instruction(0x1128, 0x0e07,
+		       &m68k_move<byte_size, byte_disp_indirect, byte_predec_indirect>);
+    eu.set_instruction(0x1130, 0x0e07,
+		       &m68k_move<byte_size, byte_index_indirect, byte_predec_indirect>);
+    eu.set_instruction(0x1138, 0x0e00,
+		       &m68k_move<byte_size, byte_abs_short, byte_predec_indirect>);
+    eu.set_instruction(0x1139, 0x0e00,
+		       &m68k_move<byte_size, byte_abs_long, byte_predec_indirect>);
+    eu.set_instruction(0x113a, 0x0e00,
+		       &m68k_move<byte_size, byte_disp_pc_indirect, byte_predec_indirect>);
+    eu.set_instruction(0x113b, 0x0e00,
+		       &m68k_move<byte_size, byte_index_pc_indirect, byte_predec_indirect>);
+    eu.set_instruction(0x113c, 0x0e00,
+		       &m68k_move<byte_size, byte_immediate, byte_predec_indirect>);
+    eu.set_instruction(0x1140, 0x0e07,
+		       &m68k_move<byte_size, byte_d_register, byte_disp_indirect>);
+    eu.set_instruction(0x1150, 0x0e07,
+		       &m68k_move<byte_size, byte_indirect, byte_disp_indirect>);
+    eu.set_instruction(0x1158, 0x0e07,
+		       &m68k_move<byte_size, byte_postinc_indirect, byte_disp_indirect>);
+    eu.set_instruction(0x1160, 0x0e07,
+		       &m68k_move<byte_size, byte_predec_indirect, byte_disp_indirect>);
+    eu.set_instruction(0x1168, 0x0e07,
+		       &m68k_move<byte_size, byte_disp_indirect, byte_disp_indirect>);
+    eu.set_instruction(0x1170, 0x0e07,
+		       &m68k_move<byte_size, byte_index_indirect, byte_disp_indirect>);
+    eu.set_instruction(0x1178, 0x0e00,
+		       &m68k_move<byte_size, byte_abs_short, byte_disp_indirect>);
+    eu.set_instruction(0x1179, 0x0e00,
+		       &m68k_move<byte_size, byte_abs_long, byte_disp_indirect>);
+    eu.set_instruction(0x117a, 0x0e00,
+		       &m68k_move<byte_size, byte_disp_pc_indirect, byte_disp_indirect>);
+    eu.set_instruction(0x117b, 0x0e00,
+		       &m68k_move<byte_size, byte_index_pc_indirect, byte_disp_indirect>);
+    eu.set_instruction(0x117c, 0x0e00,
+		       &m68k_move<byte_size, byte_immediate, byte_disp_indirect>);
+    eu.set_instruction(0x1180, 0x0e07,
+		       &m68k_move<byte_size, byte_d_register, byte_index_indirect>);
+    eu.set_instruction(0x1190, 0x0e07,
+		       &m68k_move<byte_size, byte_indirect, byte_index_indirect>);
+    eu.set_instruction(0x1198, 0x0e07,
+		       &m68k_move<byte_size, byte_postinc_indirect, byte_index_indirect>);
+    eu.set_instruction(0x11a0, 0x0e07,
+		       &m68k_move<byte_size, byte_predec_indirect, byte_index_indirect>);
+    eu.set_instruction(0x11a8, 0x0e07,
+		       &m68k_move<byte_size, byte_disp_indirect, byte_index_indirect>);
+    eu.set_instruction(0x11b0, 0x0e07,
+		       &m68k_move<byte_size, byte_index_indirect, byte_index_indirect>);
+    eu.set_instruction(0x11b8, 0x0e00,
+		       &m68k_move<byte_size, byte_abs_short, byte_index_indirect>);
+    eu.set_instruction(0x11b9, 0x0e00,
+		       &m68k_move<byte_size, byte_abs_long, byte_index_indirect>);
+    eu.set_instruction(0x11ba, 0x0e00,
+		       &m68k_move<byte_size, byte_disp_pc_indirect, byte_index_indirect>);
+    eu.set_instruction(0x11bb, 0x0e00,
+		       &m68k_move<byte_size, byte_index_pc_indirect, byte_index_indirect>);
+    eu.set_instruction(0x11bc, 0x0e00,
+		       &m68k_move<byte_size, byte_immediate, byte_index_indirect>);
+    eu.set_instruction(0x11c0, 0x0007,
+		       &m68k_move<byte_size, byte_d_register, byte_abs_short>);
+    eu.set_instruction(0x11d0, 0x0007,
+		       &m68k_move<byte_size, byte_indirect, byte_abs_short>);
+    eu.set_instruction(0x11d8, 0x0007,
+		       &m68k_move<byte_size, byte_postinc_indirect, byte_abs_short>);
+    eu.set_instruction(0x11e0, 0x0007,
+		       &m68k_move<byte_size, byte_predec_indirect, byte_abs_short>);
+    eu.set_instruction(0x11e8, 0x0007,
+		       &m68k_move<byte_size, byte_disp_indirect, byte_abs_short>);
+    eu.set_instruction(0x11f0, 0x0007,
+		       &m68k_move<byte_size, byte_index_indirect, byte_abs_short>);
+    eu.set_instruction(0x11f8, 0x0000,
+		       &m68k_move<byte_size, byte_abs_short, byte_abs_short>);
+    eu.set_instruction(0x11f9, 0x0000,
+		       &m68k_move<byte_size, byte_abs_long, byte_abs_short>);
+    eu.set_instruction(0x11fa, 0x0000,
+		       &m68k_move<byte_size, byte_disp_pc_indirect, byte_abs_short>);
+    eu.set_instruction(0x11fb, 0x0000,
+		       &m68k_move<byte_size, byte_index_pc_indirect, byte_abs_short>);
+    eu.set_instruction(0x11fc, 0x0000,
+		       &m68k_move<byte_size, byte_immediate, byte_abs_short>);
+    eu.set_instruction(0x13c0, 0x0007,
+		       &m68k_move<byte_size, byte_d_register, byte_abs_long>);
+    eu.set_instruction(0x13d0, 0x0007,
+		       &m68k_move<byte_size, byte_indirect, byte_abs_long>);
+    eu.set_instruction(0x13d8, 0x0007,
+		       &m68k_move<byte_size, byte_postinc_indirect, byte_abs_long>);
+    eu.set_instruction(0x13e0, 0x0007,
+		       &m68k_move<byte_size, byte_predec_indirect, byte_abs_long>);
+    eu.set_instruction(0x13e8, 0x0007,
+		       &m68k_move<byte_size, byte_disp_indirect, byte_abs_long>);
+    eu.set_instruction(0x13f0, 0x0007,
+		       &m68k_move<byte_size, byte_index_indirect, byte_abs_long>);
+    eu.set_instruction(0x13f8, 0x0000,
+		       &m68k_move<byte_size, byte_abs_short, byte_abs_long>);
+    eu.set_instruction(0x13f9, 0x0000,
+		       &m68k_move<byte_size, byte_abs_long, byte_abs_long>);
+    eu.set_instruction(0x13fa, 0x0000,
+		       &m68k_move<byte_size, byte_disp_pc_indirect, byte_abs_long>);
+    eu.set_instruction(0x13fb, 0x0000,
+		       &m68k_move<byte_size, byte_index_pc_indirect, byte_abs_long>);
+    eu.set_instruction(0x13fc, 0x0000,
+		       &m68k_move<byte_size, byte_immediate, byte_abs_long>);
+    eu.set_instruction(0x2000, 0x0e07,
+		       &m68k_move<long_word_size, long_word_d_register, long_word_d_register>);
+    eu.set_instruction(0x2008, 0x0e07,
+		       &m68k_move<long_word_size, long_word_a_register, long_word_d_register>);
+    eu.set_instruction(0x2010, 0x0e07,
+		       &m68k_move<long_word_size, long_word_indirect, long_word_d_register>);
+    eu.set_instruction(0x2018, 0x0e07,
+		       &m68k_move<long_word_size, long_word_postinc_indirect, long_word_d_register>);
+    eu.set_instruction(0x2020, 0x0e07,
+		       &m68k_move<long_word_size, long_word_predec_indirect, long_word_d_register>);
+    eu.set_instruction(0x2028, 0x0e07,
+		       &m68k_move<long_word_size, long_word_disp_indirect, long_word_d_register>);
+    eu.set_instruction(0x2030, 0x0e07,
+		       &m68k_move<long_word_size, long_word_index_indirect, long_word_d_register>);
+    eu.set_instruction(0x2038, 0x0e00,
+		       &m68k_move<long_word_size, long_word_abs_short, long_word_d_register>);
+    eu.set_instruction(0x2039, 0x0e00,
+		       &m68k_move<long_word_size, long_word_abs_long, long_word_d_register>);
+    eu.set_instruction(0x203a, 0x0e00,
+		       &m68k_move<long_word_size, long_word_disp_pc_indirect, long_word_d_register>);
+    eu.set_instruction(0x203b, 0x0e00,
+		       &m68k_move<long_word_size, long_word_index_pc_indirect, long_word_d_register>);
+    eu.set_instruction(0x203c, 0x0e00,
+		       &m68k_move<long_word_size, long_word_immediate, long_word_d_register>);
     eu.set_instruction(0x2040, 0x0e07,
 		       &m68k_movea<long_word_size, long_word_d_register>);
     eu.set_instruction(0x2048, 0x0e07,
@@ -3332,85 +3471,198 @@ namespace
 		                   long_word_index_pc_indirect>);
     eu.set_instruction(0x207c, 0x0e00,
 		       &m68k_movea<long_word_size, long_word_immediate>);
-    eu.set_instruction(0x2080, 0x0e07, &movel<data_register, indirect>);
-    eu.set_instruction(0x2088, 0x0e07, &movel<address_register, indirect>);
-    eu.set_instruction(0x2090, 0x0e07, &movel<indirect, indirect>);
-    eu.set_instruction(0x2098, 0x0e07, &movel<postinc_indirect, indirect>);
-    eu.set_instruction(0x20a0, 0x0e07, &movel<predec_indirect, indirect>);
-    eu.set_instruction(0x20a8, 0x0e07, &movel<disp_indirect, indirect>);
-    eu.set_instruction(0x20b0, 0x0e07, &movel<indexed_indirect, indirect>);
-    eu.set_instruction(0x20b8, 0x0e00, &movel<absolute_short, indirect>);
-    eu.set_instruction(0x20b9, 0x0e00, &movel<absolute_long, indirect>);
-    eu.set_instruction(0x20bc, 0x0e00, &movel<immediate, indirect>);
-    eu.set_instruction(0x20c0, 0x0e07, &movel<data_register, postinc_indirect>);
-    eu.set_instruction(0x20c8, 0x0e07, &movel<address_register, postinc_indirect>);
-    eu.set_instruction(0x20d0, 0x0e07, &movel<indirect, postinc_indirect>);
-    eu.set_instruction(0x20d8, 0x0e07, &movel<postinc_indirect, postinc_indirect>);
-    eu.set_instruction(0x20e0, 0x0e07, &movel<predec_indirect, postinc_indirect>);
-    eu.set_instruction(0x20e8, 0x0e07, &movel<disp_indirect, postinc_indirect>);
-    eu.set_instruction(0x20f0, 0x0e07, &movel<indexed_indirect, postinc_indirect>);
-    eu.set_instruction(0x20f8, 0x0e00, &movel<absolute_short, postinc_indirect>);
-    eu.set_instruction(0x20f9, 0x0e00, &movel<absolute_long, postinc_indirect>);
-    eu.set_instruction(0x20fc, 0x0e00, &movel<immediate, postinc_indirect>);
-    eu.set_instruction(0x2100, 0x0e07, &movel<data_register, predec_indirect>);
-    eu.set_instruction(0x2108, 0x0e07, &movel<address_register, predec_indirect>);
-    eu.set_instruction(0x2110, 0x0e07, &movel<indirect, predec_indirect>);
-    eu.set_instruction(0x2118, 0x0e07, &movel<postinc_indirect, predec_indirect>);
-    eu.set_instruction(0x2120, 0x0e07, &movel<predec_indirect, predec_indirect>);
-    eu.set_instruction(0x2128, 0x0e07, &movel<disp_indirect, predec_indirect>);
-    eu.set_instruction(0x2130, 0x0e07, &movel<indexed_indirect, predec_indirect>);
-    eu.set_instruction(0x2138, 0x0e00, &movel<absolute_short, predec_indirect>);
-    eu.set_instruction(0x2139, 0x0e00, &movel<absolute_long, predec_indirect>);
-    eu.set_instruction(0x213c, 0x0e00, &movel<immediate, predec_indirect>);
-    eu.set_instruction(0x2140, 0x0e07, &movel<data_register, disp_indirect>);
-    eu.set_instruction(0x2148, 0x0e07, &movel<address_register, disp_indirect>);
-    eu.set_instruction(0x2150, 0x0e07, &movel<indirect, disp_indirect>);
-    eu.set_instruction(0x2158, 0x0e07, &movel<postinc_indirect, disp_indirect>);
-    eu.set_instruction(0x2160, 0x0e07, &movel<predec_indirect, disp_indirect>);
-    eu.set_instruction(0x2168, 0x0e07, &movel<disp_indirect, disp_indirect>);
-    eu.set_instruction(0x2170, 0x0e07, &movel<indexed_indirect, disp_indirect>);
-    eu.set_instruction(0x2178, 0x0e00, &movel<absolute_short, disp_indirect>);
-    eu.set_instruction(0x2179, 0x0e00, &movel<absolute_long, disp_indirect>);
-    eu.set_instruction(0x217c, 0x0e00, &movel<immediate, disp_indirect>);
-    eu.set_instruction(0x2180, 0x0e07, &movel<data_register, indexed_indirect>);
-    eu.set_instruction(0x2188, 0x0e07, &movel<address_register, indexed_indirect>);
-    eu.set_instruction(0x2190, 0x0e07, &movel<indirect, indexed_indirect>);
-    eu.set_instruction(0x2198, 0x0e07, &movel<postinc_indirect, indexed_indirect>);
-    eu.set_instruction(0x21a0, 0x0e07, &movel<predec_indirect, indexed_indirect>);
-    eu.set_instruction(0x21a8, 0x0e07, &movel<disp_indirect, indexed_indirect>);
-    eu.set_instruction(0x21b0, 0x0e07, &movel<indexed_indirect, indexed_indirect>);
-    eu.set_instruction(0x21b8, 0x0e00, &movel<absolute_short, indexed_indirect>);
-    eu.set_instruction(0x21b9, 0x0e00, &movel<absolute_long, indexed_indirect>);
-    eu.set_instruction(0x21bc, 0x0e00, &movel<immediate, indexed_indirect>);
-    eu.set_instruction(0x21c0, 0x0007, &movel<data_register, absolute_short>);
-    eu.set_instruction(0x21c8, 0x0007, &movel<address_register, absolute_short>);
-    eu.set_instruction(0x21d0, 0x0007, &movel<indirect, absolute_short>);
-    eu.set_instruction(0x21d8, 0x0007, &movel<postinc_indirect, absolute_short>);
-    eu.set_instruction(0x21e8, 0x0007, &movel<disp_indirect, absolute_short>);
-    eu.set_instruction(0x21f0, 0x0007, &movel<indexed_indirect, absolute_short>);
-    eu.set_instruction(0x21fc, 0x0000, &movel<immediate, absolute_short>);
-    eu.set_instruction(0x23c0, 0x0007, &movel<data_register, absolute_long>);
-    eu.set_instruction(0x23c8, 0x0007, &movel<address_register, absolute_long>);
-    eu.set_instruction(0x23d0, 0x0007, &movel<indirect, absolute_long>);
-    eu.set_instruction(0x23d8, 0x0007, &movel<postinc_indirect, absolute_long>);
-    eu.set_instruction(0x23e0, 0x0007, &movel<predec_indirect, absolute_long>);
-    eu.set_instruction(0x23e8, 0x0007, &movel<disp_indirect, absolute_long>);
-    eu.set_instruction(0x23f0, 0x0007, &movel<indexed_indirect, absolute_long>);
-    eu.set_instruction(0x23f8, 0x0000, &movel<absolute_short, absolute_long>);
-    eu.set_instruction(0x23f9, 0x0000, &movel<absolute_long, absolute_long>);
-    eu.set_instruction(0x23fc, 0x0000, &movel<immediate, absolute_long>);
-    eu.set_instruction(0x3000, 0x0e07, &movew<data_register, data_register>);
-    eu.set_instruction(0x3008, 0x0e07, &movew<address_register, data_register>);
-    eu.set_instruction(0x3010, 0x0e07, &movew<indirect, data_register>);
-    eu.set_instruction(0x3018, 0x0e07, &movew<postinc_indirect, data_register>);
-    eu.set_instruction(0x3020, 0x0e07, &movew<predec_indirect, data_register>);
-    eu.set_instruction(0x3028, 0x0e07, &movew<disp_indirect, data_register>);
-    eu.set_instruction(0x3030, 0x0e07, &movew<indexed_indirect, data_register>);
-    eu.set_instruction(0x3038, 0x0e00, &movew<absolute_short, data_register>);
-    eu.set_instruction(0x3039, 0x0e00, &movew<absolute_long, data_register>);
-    eu.set_instruction(0x303a, 0x0e00, &movew<disp_pc, data_register>);
-    eu.set_instruction(0x303b, 0x0e00, &movew<indexed_pc_indirect, data_register>);
-    eu.set_instruction(0x303c, 0x0e00, &movew<immediate, data_register>);
+    eu.set_instruction(0x2080, 0x0e07,
+		       &m68k_move<long_word_size, long_word_d_register, long_word_indirect>);
+    eu.set_instruction(0x2088, 0x0e07,
+		       &m68k_move<long_word_size, long_word_a_register, long_word_indirect>);
+    eu.set_instruction(0x2090, 0x0e07,
+		       &m68k_move<long_word_size, long_word_indirect, long_word_indirect>);
+    eu.set_instruction(0x2098, 0x0e07,
+		       &m68k_move<long_word_size, long_word_postinc_indirect, long_word_indirect>);
+    eu.set_instruction(0x20a0, 0x0e07,
+		       &m68k_move<long_word_size, long_word_predec_indirect, long_word_indirect>);
+    eu.set_instruction(0x20a8, 0x0e07,
+		       &m68k_move<long_word_size, long_word_disp_indirect, long_word_indirect>);
+    eu.set_instruction(0x20b0, 0x0e07,
+		       &m68k_move<long_word_size, long_word_index_indirect, long_word_indirect>);
+    eu.set_instruction(0x20b8, 0x0e00,
+		       &m68k_move<long_word_size, long_word_abs_short, long_word_indirect>);
+    eu.set_instruction(0x20b9, 0x0e00,
+		       &m68k_move<long_word_size, long_word_abs_long, long_word_indirect>);
+    eu.set_instruction(0x20ba, 0x0e00,
+		       &m68k_move<long_word_size, long_word_disp_pc_indirect, long_word_indirect>);
+    eu.set_instruction(0x20bb, 0x0e00,
+		       &m68k_move<long_word_size, long_word_index_pc_indirect, long_word_indirect>);
+    eu.set_instruction(0x20bc, 0x0e00,
+		       &m68k_move<long_word_size, long_word_immediate, long_word_indirect>);
+    eu.set_instruction(0x20c0, 0x0e07,
+		       &m68k_move<long_word_size, long_word_d_register, long_word_postinc_indirect>);
+    eu.set_instruction(0x20c8, 0x0e07,
+		       &m68k_move<long_word_size, long_word_a_register, long_word_postinc_indirect>);
+    eu.set_instruction(0x20d0, 0x0e07,
+		       &m68k_move<long_word_size, long_word_indirect, long_word_postinc_indirect>);
+    eu.set_instruction(0x20d8, 0x0e07,
+		       &m68k_move<long_word_size, long_word_postinc_indirect, long_word_postinc_indirect>);
+    eu.set_instruction(0x20e0, 0x0e07,
+		       &m68k_move<long_word_size, long_word_predec_indirect, long_word_postinc_indirect>);
+    eu.set_instruction(0x20e8, 0x0e07,
+		       &m68k_move<long_word_size, long_word_disp_indirect, long_word_postinc_indirect>);
+    eu.set_instruction(0x20f0, 0x0e07,
+		       &m68k_move<long_word_size, long_word_index_indirect, long_word_postinc_indirect>);
+    eu.set_instruction(0x20f8, 0x0e00,
+		       &m68k_move<long_word_size, long_word_abs_short, long_word_postinc_indirect>);
+    eu.set_instruction(0x20f9, 0x0e00,
+		       &m68k_move<long_word_size, long_word_abs_long, long_word_postinc_indirect>);
+    eu.set_instruction(0x20fa, 0x0e00,
+		       &m68k_move<long_word_size, long_word_disp_pc_indirect, long_word_postinc_indirect>);
+    eu.set_instruction(0x20fb, 0x0e00,
+		       &m68k_move<long_word_size, long_word_index_pc_indirect, long_word_postinc_indirect>);
+    eu.set_instruction(0x20fc, 0x0e00,
+		       &m68k_move<long_word_size, long_word_immediate, long_word_postinc_indirect>);
+    eu.set_instruction(0x2100, 0x0e07,
+		       &m68k_move<long_word_size, long_word_d_register, long_word_predec_indirect>);
+    eu.set_instruction(0x2108, 0x0e07,
+		       &m68k_move<long_word_size, long_word_a_register, long_word_predec_indirect>);
+    eu.set_instruction(0x2110, 0x0e07,
+		       &m68k_move<long_word_size, long_word_indirect, long_word_predec_indirect>);
+    eu.set_instruction(0x2118, 0x0e07,
+		       &m68k_move<long_word_size, long_word_postinc_indirect, long_word_predec_indirect>);
+    eu.set_instruction(0x2120, 0x0e07,
+		       &m68k_move<long_word_size, long_word_predec_indirect, long_word_predec_indirect>);
+    eu.set_instruction(0x2128, 0x0e07,
+		       &m68k_move<long_word_size, long_word_disp_indirect, long_word_predec_indirect>);
+    eu.set_instruction(0x2130, 0x0e07,
+		       &m68k_move<long_word_size, long_word_index_indirect, long_word_predec_indirect>);
+    eu.set_instruction(0x2138, 0x0e00,
+		       &m68k_move<long_word_size, long_word_abs_short, long_word_predec_indirect>);
+    eu.set_instruction(0x2139, 0x0e00,
+		       &m68k_move<long_word_size, long_word_abs_long, long_word_predec_indirect>);
+    eu.set_instruction(0x213a, 0x0e00,
+		       &m68k_move<long_word_size, long_word_disp_pc_indirect, long_word_predec_indirect>);
+    eu.set_instruction(0x213b, 0x0e00,
+		       &m68k_move<long_word_size, long_word_index_pc_indirect, long_word_predec_indirect>);
+    eu.set_instruction(0x213c, 0x0e00,
+		       &m68k_move<long_word_size, long_word_immediate, long_word_predec_indirect>);
+    eu.set_instruction(0x2140, 0x0e07,
+		       &m68k_move<long_word_size, long_word_d_register, long_word_disp_indirect>);
+    eu.set_instruction(0x2148, 0x0e07,
+		       &m68k_move<long_word_size, long_word_a_register, long_word_disp_indirect>);
+    eu.set_instruction(0x2150, 0x0e07,
+		       &m68k_move<long_word_size, long_word_indirect, long_word_disp_indirect>);
+    eu.set_instruction(0x2158, 0x0e07,
+		       &m68k_move<long_word_size, long_word_postinc_indirect, long_word_disp_indirect>);
+    eu.set_instruction(0x2160, 0x0e07,
+		       &m68k_move<long_word_size, long_word_predec_indirect, long_word_disp_indirect>);
+    eu.set_instruction(0x2168, 0x0e07,
+		       &m68k_move<long_word_size, long_word_disp_indirect, long_word_disp_indirect>);
+    eu.set_instruction(0x2170, 0x0e07,
+		       &m68k_move<long_word_size, long_word_index_indirect, long_word_disp_indirect>);
+    eu.set_instruction(0x2178, 0x0e00,
+		       &m68k_move<long_word_size, long_word_abs_short, long_word_disp_indirect>);
+    eu.set_instruction(0x2179, 0x0e00,
+		       &m68k_move<long_word_size, long_word_abs_long, long_word_disp_indirect>);
+    eu.set_instruction(0x217a, 0x0e00,
+		       &m68k_move<long_word_size, long_word_disp_pc_indirect, long_word_disp_indirect>);
+    eu.set_instruction(0x217b, 0x0e00,
+		       &m68k_move<long_word_size, long_word_index_pc_indirect, long_word_disp_indirect>);
+    eu.set_instruction(0x217c, 0x0e00,
+		       &m68k_move<long_word_size, long_word_immediate, long_word_disp_indirect>);
+    eu.set_instruction(0x2180, 0x0e07,
+		       &m68k_move<long_word_size, long_word_d_register, long_word_index_indirect>);
+    eu.set_instruction(0x2188, 0x0e07,
+		       &m68k_move<long_word_size, long_word_a_register, long_word_index_indirect>);
+    eu.set_instruction(0x2190, 0x0e07,
+		       &m68k_move<long_word_size, long_word_indirect, long_word_index_indirect>);
+    eu.set_instruction(0x2198, 0x0e07,
+		       &m68k_move<long_word_size, long_word_postinc_indirect, long_word_index_indirect>);
+    eu.set_instruction(0x21a0, 0x0e07,
+		       &m68k_move<long_word_size, long_word_predec_indirect, long_word_index_indirect>);
+    eu.set_instruction(0x21a8, 0x0e07,
+		       &m68k_move<long_word_size, long_word_disp_indirect, long_word_index_indirect>);
+    eu.set_instruction(0x21b0, 0x0e07,
+		       &m68k_move<long_word_size, long_word_index_indirect, long_word_index_indirect>);
+    eu.set_instruction(0x21b8, 0x0e00,
+		       &m68k_move<long_word_size, long_word_abs_short, long_word_index_indirect>);
+    eu.set_instruction(0x21b9, 0x0e00,
+		       &m68k_move<long_word_size, long_word_abs_long, long_word_index_indirect>);
+    eu.set_instruction(0x21ba, 0x0e00,
+		       &m68k_move<long_word_size, long_word_disp_pc_indirect, long_word_index_indirect>);
+    eu.set_instruction(0x21bb, 0x0e00,
+		       &m68k_move<long_word_size, long_word_index_pc_indirect, long_word_index_indirect>);
+    eu.set_instruction(0x21bc, 0x0e00,
+		       &m68k_move<long_word_size, long_word_immediate, long_word_index_indirect>);
+    eu.set_instruction(0x21c0, 0x0007,
+		       &m68k_move<long_word_size, long_word_d_register, long_word_abs_short>);
+    eu.set_instruction(0x21c8, 0x0007,
+		       &m68k_move<long_word_size, long_word_a_register, long_word_abs_short>);
+    eu.set_instruction(0x21d0, 0x0007,
+		       &m68k_move<long_word_size, long_word_indirect, long_word_abs_short>);
+    eu.set_instruction(0x21d8, 0x0007,
+		       &m68k_move<long_word_size, long_word_postinc_indirect, long_word_abs_short>);
+    eu.set_instruction(0x21e0, 0x0007,
+		       &m68k_move<long_word_size, long_word_predec_indirect, long_word_abs_short>);
+    eu.set_instruction(0x21e8, 0x0007,
+		       &m68k_move<long_word_size, long_word_disp_indirect, long_word_abs_short>);
+    eu.set_instruction(0x21f0, 0x0007,
+		       &m68k_move<long_word_size, long_word_index_indirect, long_word_abs_short>);
+    eu.set_instruction(0x21f8, 0x0000,
+		       &m68k_move<long_word_size, long_word_abs_short, long_word_abs_short>);
+    eu.set_instruction(0x21f9, 0x0000,
+		       &m68k_move<long_word_size, long_word_abs_long, long_word_abs_short>);
+    eu.set_instruction(0x21fa, 0x0000,
+		       &m68k_move<long_word_size, long_word_disp_pc_indirect, long_word_abs_short>);
+    eu.set_instruction(0x21fb, 0x0000,
+		       &m68k_move<long_word_size, long_word_index_pc_indirect, long_word_abs_short>);
+    eu.set_instruction(0x21fc, 0x0000,
+		       &m68k_move<long_word_size, long_word_immediate, long_word_abs_short>);
+    eu.set_instruction(0x23c0, 0x0007,
+		       &m68k_move<long_word_size, long_word_d_register, long_word_abs_long>);
+    eu.set_instruction(0x23c8, 0x0007,
+		       &m68k_move<long_word_size, long_word_a_register, long_word_abs_long>);
+    eu.set_instruction(0x23d0, 0x0007,
+		       &m68k_move<long_word_size, long_word_indirect, long_word_abs_long>);
+    eu.set_instruction(0x23d8, 0x0007,
+		       &m68k_move<long_word_size, long_word_postinc_indirect, long_word_abs_long>);
+    eu.set_instruction(0x23e0, 0x0007,
+		       &m68k_move<long_word_size, long_word_predec_indirect, long_word_abs_long>);
+    eu.set_instruction(0x23e8, 0x0007,
+		       &m68k_move<long_word_size, long_word_disp_indirect, long_word_abs_long>);
+    eu.set_instruction(0x23f0, 0x0007,
+		       &m68k_move<long_word_size, long_word_index_indirect, long_word_abs_long>);
+    eu.set_instruction(0x23f8, 0x0000,
+		       &m68k_move<long_word_size, long_word_abs_short, long_word_abs_long>);
+    eu.set_instruction(0x23f9, 0x0000,
+		       &m68k_move<long_word_size, long_word_abs_long, long_word_abs_long>);
+    eu.set_instruction(0x23fa, 0x0000,
+		       &m68k_move<long_word_size, long_word_disp_pc_indirect, long_word_abs_long>);
+    eu.set_instruction(0x23fb, 0x0000,
+		       &m68k_move<long_word_size, long_word_index_pc_indirect, long_word_abs_long>);
+    eu.set_instruction(0x23fc, 0x0000,
+		       &m68k_move<long_word_size, long_word_immediate, long_word_abs_long>);
+    eu.set_instruction(0x3000, 0x0e07,
+		       &m68k_move<word_size, word_d_register, word_d_register>);
+    eu.set_instruction(0x3008, 0x0e07,
+		       &m68k_move<word_size, word_a_register, word_d_register>);
+    eu.set_instruction(0x3010, 0x0e07,
+		       &m68k_move<word_size, word_indirect, word_d_register>);
+    eu.set_instruction(0x3018, 0x0e07,
+		       &m68k_move<word_size, word_postinc_indirect, word_d_register>);
+    eu.set_instruction(0x3020, 0x0e07,
+		       &m68k_move<word_size, word_predec_indirect, word_d_register>);
+    eu.set_instruction(0x3028, 0x0e07,
+		       &m68k_move<word_size, word_disp_indirect, word_d_register>);
+    eu.set_instruction(0x3030, 0x0e07,
+		       &m68k_move<word_size, word_index_indirect, word_d_register>);
+    eu.set_instruction(0x3038, 0x0e00,
+		       &m68k_move<word_size, word_abs_short, word_d_register>);
+    eu.set_instruction(0x3039, 0x0e00,
+		       &m68k_move<word_size, word_abs_long, word_d_register>);
+    eu.set_instruction(0x303a, 0x0e00,
+		       &m68k_move<word_size, word_disp_pc_indirect, word_d_register>);
+    eu.set_instruction(0x303b, 0x0e00,
+		       &m68k_move<word_size, word_index_pc_indirect, word_d_register>);
+    eu.set_instruction(0x303c, 0x0e00,
+		       &m68k_move<word_size, word_immediate, word_d_register>);
     eu.set_instruction(0x3040, 0x0e07,
 		       &m68k_movea<word_size, word_d_register>);
     eu.set_instruction(0x3048, 0x0e07,
@@ -3431,75 +3683,174 @@ namespace
     eu.set_instruction(0x307b, 0x0e00,
 		       &m68k_movea<word_size, word_index_pc_indirect>);
     eu.set_instruction(0x307c, 0x0e00, &m68k_movea<word_size, word_immediate>);
-    eu.set_instruction(0x3080, 0x0e07, &movew<data_register, indirect>);
-    eu.set_instruction(0x3088, 0x0e07, &movew<address_register, indirect>);
-    eu.set_instruction(0x3090, 0x0e07, &movew<indirect, indirect>);
-    eu.set_instruction(0x3098, 0x0e07, &movew<postinc_indirect, indirect>);
-    eu.set_instruction(0x30a0, 0x0e07, &movew<predec_indirect, indirect>);
-    eu.set_instruction(0x30a8, 0x0e07, &movew<disp_indirect, indirect>);
-    eu.set_instruction(0x30b0, 0x0e07, &movew<indexed_indirect, indirect>);
-    eu.set_instruction(0x30b8, 0x0e00, &movew<absolute_short, indirect>);
-    eu.set_instruction(0x30b9, 0x0e00, &movew<absolute_long, indirect>);
-    eu.set_instruction(0x30bc, 0x0e00, &movew<immediate, indirect>);
-    eu.set_instruction(0x30c0, 0x0e07, &movew<data_register, postinc_indirect>);
-    eu.set_instruction(0x30c8, 0x0e07, &movew<address_register, postinc_indirect>);
-    eu.set_instruction(0x30d0, 0x0e07, &movew<indirect, postinc_indirect>);
-    eu.set_instruction(0x30d8, 0x0e07, &movew<postinc_indirect, postinc_indirect>);
-    eu.set_instruction(0x30e0, 0x0e07, &movew<predec_indirect, postinc_indirect>);
-    eu.set_instruction(0x30e8, 0x0e07, &movew<disp_indirect, postinc_indirect>);
-    eu.set_instruction(0x30f0, 0x0e07, &movew<indexed_indirect, postinc_indirect>);
-    eu.set_instruction(0x30f8, 0x0e00, &movew<absolute_short, postinc_indirect>);
-    eu.set_instruction(0x30f9, 0x0e00, &movew<absolute_long, postinc_indirect>);
-    eu.set_instruction(0x30fc, 0x0e00, &movew<immediate, postinc_indirect>);
-    eu.set_instruction(0x3100, 0x0e07, &movew<data_register, predec_indirect>);
-    eu.set_instruction(0x3108, 0x0e07, &movew<address_register, predec_indirect>);
-    eu.set_instruction(0x3110, 0x0e07, &movew<indirect, predec_indirect>);
-    eu.set_instruction(0x3118, 0x0e07, &movew<postinc_indirect, predec_indirect>);
-    eu.set_instruction(0x3120, 0x0e07, &movew<predec_indirect, predec_indirect>);
-    eu.set_instruction(0x3128, 0x0e07, &movew<disp_indirect, predec_indirect>);
-    eu.set_instruction(0x3130, 0x0e07, &movew<indexed_indirect, predec_indirect>);
-    eu.set_instruction(0x3138, 0x0e00, &movew<absolute_short, predec_indirect>);
-    eu.set_instruction(0x3139, 0x0e00, &movew<absolute_long, predec_indirect>);
-    eu.set_instruction(0x313a, 0x0e00, &movew<disp_pc, predec_indirect>);
-    eu.set_instruction(0x313c, 0x0e00, &movew<immediate, predec_indirect>);
-    eu.set_instruction(0x3140, 0x0e07, &movew<data_register, disp_indirect>);
-    eu.set_instruction(0x3148, 0x0e07, &movew<address_register, disp_indirect>);
-    eu.set_instruction(0x3150, 0x0e07, &movew<indirect, disp_indirect>);
-    eu.set_instruction(0x3158, 0x0e07, &movew<postinc_indirect, disp_indirect>);
-    eu.set_instruction(0x3160, 0x0e07, &movew<predec_indirect, disp_indirect>);
-    eu.set_instruction(0x3168, 0x0e07, &movew<disp_indirect, disp_indirect>);
-    eu.set_instruction(0x3170, 0x0e07, &movew<indexed_indirect, disp_indirect>);
-    eu.set_instruction(0x3178, 0x0e00, &movew<absolute_short, disp_indirect>);
-    eu.set_instruction(0x3179, 0x0e00, &movew<absolute_long, disp_indirect>);
-    eu.set_instruction(0x317a, 0x0e00, &movew<disp_pc, disp_indirect>);
-    eu.set_instruction(0x317c, 0x0e00, &movew<immediate, disp_indirect>);
-    eu.set_instruction(0x3180, 0x0e07, &movew<data_register, indexed_indirect>);
-    eu.set_instruction(0x3188, 0x0e07, &movew<address_register, indexed_indirect>);
-    eu.set_instruction(0x3190, 0x0e07, &movew<indirect, indexed_indirect>);
-    eu.set_instruction(0x3198, 0x0e07, &movew<postinc_indirect, indexed_indirect>);
-    eu.set_instruction(0x31a0, 0x0e07, &movew<predec_indirect, indexed_indirect>);
-    eu.set_instruction(0x31a8, 0x0e07, &movew<disp_indirect, indexed_indirect>);
-    eu.set_instruction(0x31b0, 0x0e07, &movew<indexed_indirect, indexed_indirect>);
-    eu.set_instruction(0x31b8, 0x0e00, &movew<absolute_short, indexed_indirect>);
-    eu.set_instruction(0x31b9, 0x0e00, &movew<absolute_long, indexed_indirect>);
-    eu.set_instruction(0x31bc, 0x0e00, &movew<immediate, indexed_indirect>);
-    eu.set_instruction(0x31c0, 0x0007, &movew<data_register, absolute_short>);
-    eu.set_instruction(0x31d8, 0x0007, &movew<postinc_indirect, absolute_short>);
-    eu.set_instruction(0x31e8, 0x0007, &movew<disp_indirect, absolute_short>);
-    eu.set_instruction(0x31f0, 0x0007, &movew<indexed_indirect, absolute_short>);
-    eu.set_instruction(0x31f8, 0x0000, &movew<absolute_short, absolute_short>);
-    eu.set_instruction(0x31f9, 0x0000, &movew<absolute_long, absolute_short>);
-    eu.set_instruction(0x31fc, 0x0000, &movew<immediate, absolute_short>);
-    eu.set_instruction(0x33c0, 0x0007, &movew<data_register, absolute_long>);
-    eu.set_instruction(0x33c8, 0x0007, &movew<address_register, absolute_long>);
-    eu.set_instruction(0x33d0, 0x0007, &movew<indirect, absolute_long>);
-    eu.set_instruction(0x33d8, 0x0007, &movew<postinc_indirect, absolute_long>);
-    eu.set_instruction(0x33e0, 0x0007, &movew<predec_indirect, absolute_long>);
-    eu.set_instruction(0x33e8, 0x0007, &movew<disp_indirect, absolute_long>);
-    eu.set_instruction(0x33f0, 0x0007, &movew<indexed_indirect, absolute_long>);
-    eu.set_instruction(0x33f8, 0x0000, &movew<absolute_short, absolute_long>);
-    eu.set_instruction(0x33f9, 0x0000, &movew<absolute_long, absolute_long>);
-    eu.set_instruction(0x33fc, 0x0000, &movew<immediate, absolute_long>);
+    eu.set_instruction(0x3080, 0x0e07,
+		       &m68k_move<word_size, word_d_register, word_indirect>);
+    eu.set_instruction(0x3088, 0x0e07,
+		       &m68k_move<word_size, word_a_register, word_indirect>);
+    eu.set_instruction(0x3090, 0x0e07,
+		       &m68k_move<word_size, word_indirect, word_indirect>);
+    eu.set_instruction(0x3098, 0x0e07,
+		       &m68k_move<word_size, word_postinc_indirect, word_indirect>);
+    eu.set_instruction(0x30a0, 0x0e07,
+		       &m68k_move<word_size, word_predec_indirect, word_indirect>);
+    eu.set_instruction(0x30a8, 0x0e07,
+		       &m68k_move<word_size, word_disp_indirect, word_indirect>);
+    eu.set_instruction(0x30b0, 0x0e07,
+		       &m68k_move<word_size, word_index_indirect, word_indirect>);
+    eu.set_instruction(0x30b8, 0x0e00,
+		       &m68k_move<word_size, word_abs_short, word_indirect>);
+    eu.set_instruction(0x30b9, 0x0e00,
+		       &m68k_move<word_size, word_abs_long, word_indirect>);
+    eu.set_instruction(0x30ba, 0x0e00,
+		       &m68k_move<word_size, word_disp_pc_indirect, word_indirect>);
+    eu.set_instruction(0x30bb, 0x0e00,
+		       &m68k_move<word_size, word_index_pc_indirect, word_indirect>);
+    eu.set_instruction(0x30bc, 0x0e00,
+		       &m68k_move<word_size, word_immediate, word_indirect>);
+    eu.set_instruction(0x30c0, 0x0e07,
+		       &m68k_move<word_size, word_d_register, word_postinc_indirect>);
+    eu.set_instruction(0x30c8, 0x0e07,
+		       &m68k_move<word_size, word_a_register, word_postinc_indirect>);
+    eu.set_instruction(0x30d0, 0x0e07,
+		       &m68k_move<word_size, word_indirect, word_postinc_indirect>);
+    eu.set_instruction(0x30d8, 0x0e07,
+		       &m68k_move<word_size, word_postinc_indirect, word_postinc_indirect>);
+    eu.set_instruction(0x30e0, 0x0e07,
+		       &m68k_move<word_size, word_predec_indirect, word_postinc_indirect>);
+    eu.set_instruction(0x30e8, 0x0e07,
+		       &m68k_move<word_size, word_disp_indirect, word_postinc_indirect>);
+    eu.set_instruction(0x30f0, 0x0e07,
+		       &m68k_move<word_size, word_index_indirect, word_postinc_indirect>);
+    eu.set_instruction(0x30f8, 0x0e00,
+		       &m68k_move<word_size, word_abs_short, word_postinc_indirect>);
+    eu.set_instruction(0x30f9, 0x0e00,
+		       &m68k_move<word_size, word_abs_long, word_postinc_indirect>);
+    eu.set_instruction(0x30fa, 0x0e00,
+		       &m68k_move<word_size, word_disp_pc_indirect, word_postinc_indirect>);
+    eu.set_instruction(0x30fb, 0x0e00,
+		       &m68k_move<word_size, word_index_pc_indirect, word_postinc_indirect>);
+    eu.set_instruction(0x30fc, 0x0e00,
+		       &m68k_move<word_size, word_immediate, word_postinc_indirect>);
+    eu.set_instruction(0x3100, 0x0e07,
+		       &m68k_move<word_size, word_d_register, word_predec_indirect>);
+    eu.set_instruction(0x3108, 0x0e07,
+		       &m68k_move<word_size, word_a_register, word_predec_indirect>);
+    eu.set_instruction(0x3110, 0x0e07,
+		       &m68k_move<word_size, word_indirect, word_predec_indirect>);
+    eu.set_instruction(0x3118, 0x0e07,
+		       &m68k_move<word_size, word_postinc_indirect, word_predec_indirect>);
+    eu.set_instruction(0x3120, 0x0e07,
+		       &m68k_move<word_size, word_predec_indirect, word_predec_indirect>);
+    eu.set_instruction(0x3128, 0x0e07,
+		       &m68k_move<word_size, word_disp_indirect, word_predec_indirect>);
+    eu.set_instruction(0x3130, 0x0e07,
+		       &m68k_move<word_size, word_index_indirect, word_predec_indirect>);
+    eu.set_instruction(0x3138, 0x0e00,
+		       &m68k_move<word_size, word_abs_short, word_predec_indirect>);
+    eu.set_instruction(0x3139, 0x0e00,
+		       &m68k_move<word_size, word_abs_long, word_predec_indirect>);
+    eu.set_instruction(0x313a, 0x0e00,
+		       &m68k_move<word_size, word_disp_pc_indirect, word_predec_indirect>);
+    eu.set_instruction(0x313b, 0x0e00,
+		       &m68k_move<word_size, word_index_pc_indirect, word_predec_indirect>);
+    eu.set_instruction(0x313c, 0x0e00,
+		       &m68k_move<word_size, word_immediate, word_predec_indirect>);
+    eu.set_instruction(0x3140, 0x0e07,
+		       &m68k_move<word_size, word_d_register, word_disp_indirect>);
+    eu.set_instruction(0x3148, 0x0e07,
+		       &m68k_move<word_size, word_a_register, word_disp_indirect>);
+    eu.set_instruction(0x3150, 0x0e07,
+		       &m68k_move<word_size, word_indirect, word_disp_indirect>);
+    eu.set_instruction(0x3158, 0x0e07,
+		       &m68k_move<word_size, word_postinc_indirect, word_disp_indirect>);
+    eu.set_instruction(0x3160, 0x0e07,
+		       &m68k_move<word_size, word_predec_indirect, word_disp_indirect>);
+    eu.set_instruction(0x3168, 0x0e07,
+		       &m68k_move<word_size, word_disp_indirect, word_disp_indirect>);
+    eu.set_instruction(0x3170, 0x0e07,
+		       &m68k_move<word_size, word_index_indirect, word_disp_indirect>);
+    eu.set_instruction(0x3178, 0x0e00,
+		       &m68k_move<word_size, word_abs_short, word_disp_indirect>);
+    eu.set_instruction(0x3179, 0x0e00,
+		       &m68k_move<word_size, word_abs_long, word_disp_indirect>);
+    eu.set_instruction(0x317a, 0x0e00,
+		       &m68k_move<word_size, word_disp_pc_indirect, word_disp_indirect>);
+    eu.set_instruction(0x317b, 0x0e00,
+		       &m68k_move<word_size, word_index_pc_indirect, word_disp_indirect>);
+    eu.set_instruction(0x317c, 0x0e00,
+		       &m68k_move<word_size, word_immediate, word_disp_indirect>);
+    eu.set_instruction(0x3180, 0x0e07,
+		       &m68k_move<word_size, word_d_register, word_index_indirect>);
+    eu.set_instruction(0x3188, 0x0e07,
+		       &m68k_move<word_size, word_a_register, word_index_indirect>);
+    eu.set_instruction(0x3190, 0x0e07,
+		       &m68k_move<word_size, word_indirect, word_index_indirect>);
+    eu.set_instruction(0x3198, 0x0e07,
+		       &m68k_move<word_size, word_postinc_indirect, word_index_indirect>);
+    eu.set_instruction(0x31a0, 0x0e07,
+		       &m68k_move<word_size, word_predec_indirect, word_index_indirect>);
+    eu.set_instruction(0x31a8, 0x0e07,
+		       &m68k_move<word_size, word_disp_indirect, word_index_indirect>);
+    eu.set_instruction(0x31b0, 0x0e07,
+		       &m68k_move<word_size, word_index_indirect, word_index_indirect>);
+    eu.set_instruction(0x31b8, 0x0e00,
+		       &m68k_move<word_size, word_abs_short, word_index_indirect>);
+    eu.set_instruction(0x31b9, 0x0e00,
+		       &m68k_move<word_size, word_abs_long, word_index_indirect>);
+    eu.set_instruction(0x31ba, 0x0e00,
+		       &m68k_move<word_size, word_disp_pc_indirect, word_index_indirect>);
+    eu.set_instruction(0x31bb, 0x0e00,
+		       &m68k_move<word_size, word_index_pc_indirect, word_index_indirect>);
+    eu.set_instruction(0x31bc, 0x0e00,
+		       &m68k_move<word_size, word_immediate, word_index_indirect>);
+    eu.set_instruction(0x31c0, 0x0007,
+		       &m68k_move<word_size, word_d_register, word_abs_short>);
+    eu.set_instruction(0x31c8, 0x0007,
+		       &m68k_move<word_size, word_a_register, word_abs_short>);
+    eu.set_instruction(0x31d0, 0x0007,
+		       &m68k_move<word_size, word_indirect, word_abs_short>);
+    eu.set_instruction(0x31d8, 0x0007,
+		       &m68k_move<word_size, word_postinc_indirect, word_abs_short>);
+    eu.set_instruction(0x31e0, 0x0007,
+		       &m68k_move<word_size, word_predec_indirect, word_abs_short>);
+    eu.set_instruction(0x31e8, 0x0007,
+		       &m68k_move<word_size, word_disp_indirect, word_abs_short>);
+    eu.set_instruction(0x31f0, 0x0007,
+		       &m68k_move<word_size, word_index_indirect, word_abs_short>);
+    eu.set_instruction(0x31f8, 0x0000,
+		       &m68k_move<word_size, word_abs_short, word_abs_short>);
+    eu.set_instruction(0x31f9, 0x0000,
+		       &m68k_move<word_size, word_abs_long, word_abs_short>);
+    eu.set_instruction(0x31fa, 0x0000,
+		       &m68k_move<word_size, word_disp_pc_indirect, word_abs_short>);
+    eu.set_instruction(0x31fb, 0x0000,
+		       &m68k_move<word_size, word_index_pc_indirect, word_abs_short>);
+    eu.set_instruction(0x31fc, 0x0000,
+		       &m68k_move<word_size, word_immediate, word_abs_short>);
+    eu.set_instruction(0x33c0, 0x0007,
+		       &m68k_move<word_size, word_d_register, word_abs_long>);
+    eu.set_instruction(0x33c8, 0x0007,
+		       &m68k_move<word_size, word_a_register, word_abs_long>);
+    eu.set_instruction(0x33d0, 0x0007,
+		       &m68k_move<word_size, word_indirect, word_abs_long>);
+    eu.set_instruction(0x33d8, 0x0007,
+		       &m68k_move<word_size, word_postinc_indirect, word_abs_long>);
+    eu.set_instruction(0x33e0, 0x0007,
+		       &m68k_move<word_size, word_predec_indirect, word_abs_long>);
+    eu.set_instruction(0x33e8, 0x0007,
+		       &m68k_move<word_size, word_disp_indirect, word_abs_long>);
+    eu.set_instruction(0x33f0, 0x0007,
+		       &m68k_move<word_size, word_index_indirect, word_abs_long>);
+    eu.set_instruction(0x33f8, 0x0000,
+		       &m68k_move<word_size, word_abs_short, word_abs_long>);
+    eu.set_instruction(0x33f9, 0x0000,
+		       &m68k_move<word_size, word_abs_long, word_abs_long>);
+    eu.set_instruction(0x33fa, 0x0000,
+		       &m68k_move<word_size, word_disp_pc_indirect, word_abs_long>);
+    eu.set_instruction(0x33fb, 0x0000,
+		       &m68k_move<word_size, word_index_pc_indirect, word_abs_long>);
+    eu.set_instruction(0x33fc, 0x0000,
+		       &m68k_move<word_size, word_immediate, word_abs_long>);
     eu.set_instruction(0x40c0, 0x0007, &m68k_move_from_sr<word_d_register>);
     eu.set_instruction(0x40d0, 0x0007,
 		       &m68k_move_from_sr<word_indirect>);
@@ -3714,6 +4065,8 @@ namespace
     eu.set_instruction(0x4eb0, 0x0007, &jsr<indexed_indirect>);
     eu.set_instruction(0x4eb8, 0x0000, &jsr<absolute_short>);
     eu.set_instruction(0x4eb9, 0x0000, &jsr<absolute_long>);
+    eu.set_instruction(0x4eba, 0x0000, &jsr<disp_pc>);
+    eu.set_instruction(0x4ebb, 0x0000, &jsr<indexed_pc_indirect>);
     eu.set_instruction(0x4ed0, 0x0007, &jmp<indirect>);
     eu.set_instruction(0x4ee8, 0x0007, &jmp<disp_indirect>);
     eu.set_instruction(0x4ef0, 0x0007, &jmp<indexed_indirect>);
