@@ -1,5 +1,5 @@
-/* vx68k - Virtual X68000
-   Copyright (C) 2000 Hypercore Software Design, Ltd.
+/* Virtual X68000 - X68000 virtual machine
+   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -17,16 +17,18 @@
    02111-1307, USA.  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include <config.h>
 #endif
 #undef const
+#undef inline
 
-#include <vx68k/version.h>
+#include <vx68k/version>
 
-using namespace vx68k;
-
-const char *
-vx68k::library_version() throw ()
+namespace vx68k
 {
-  return VERSION;
+  const char *
+  library_version() throw ()
+  {
+    return VERSION;
+  }
 }

@@ -1,5 +1,13 @@
 2002-05-12  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Remove version.cc.
+	(INCLUDES): Add libvx68kdos.
+
+	* libvx68kdos/Makefile.am (libvx68kdos_la_SOURCES): Add version.cc.
+	(INCLUDES): Make empty.
+
+	* libvx68kdos/version.cc: Moved from libvx68k.
+
 	* include/vx68k/Makefile.am (vx68kinclude_HEADERS): Remove
 	version.h.
 

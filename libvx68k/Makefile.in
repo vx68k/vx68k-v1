@@ -102,14 +102,14 @@ USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 
-INCLUDES = -I$(top_srcdir)/include
+INCLUDES = -I$(top_srcdir)/libvx68kdos -I$(top_srcdir)/include
 
 LIBS = 
 
 lib_LTLIBRARIES = libvx68k.la
 
 libvx68k_la_LDFLAGS = $(LTLIBRELEASE) -version-info 1:3:0
-libvx68k_la_SOURCES = version.cc x68kaddr.cc machine.cc mainmem.cc gvideomem.cc textvram.cc crtcmem.cc palettemem.cc dmacmem.cc areaset.cc mfpmem.cc sysportmem.cc opmmem.cc msm6258vmem.cc fdcmem.cc sccmem.cc ppimem.cc spritemem.cc sram.cc fontrom.cc iocsdisk.cc systemrom.cc
+libvx68k_la_SOURCES = x68kaddr.cc machine.cc mainmem.cc gvideomem.cc textvram.cc crtcmem.cc palettemem.cc dmacmem.cc areaset.cc mfpmem.cc sysportmem.cc opmmem.cc msm6258vmem.cc fdcmem.cc sccmem.cc ppimem.cc spritemem.cc sram.cc fontrom.cc iocsdisk.cc systemrom.cc
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
@@ -121,10 +121,10 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 libvx68k_la_LIBADD = 
-libvx68k_la_OBJECTS =  version.lo x68kaddr.lo machine.lo mainmem.lo \
-gvideomem.lo textvram.lo crtcmem.lo palettemem.lo dmacmem.lo areaset.lo \
-mfpmem.lo sysportmem.lo opmmem.lo msm6258vmem.lo fdcmem.lo sccmem.lo \
-ppimem.lo spritemem.lo sram.lo fontrom.lo iocsdisk.lo systemrom.lo
+libvx68k_la_OBJECTS =  x68kaddr.lo machine.lo mainmem.lo gvideomem.lo \
+textvram.lo crtcmem.lo palettemem.lo dmacmem.lo areaset.lo mfpmem.lo \
+sysportmem.lo opmmem.lo msm6258vmem.lo fdcmem.lo sccmem.lo ppimem.lo \
+spritemem.lo sram.lo fontrom.lo iocsdisk.lo systemrom.lo
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -142,7 +142,7 @@ DEP_FILES =  .deps/areaset.P .deps/crtcmem.P .deps/dmacmem.P \
 .deps/machine.P .deps/mainmem.P .deps/mfpmem.P .deps/msm6258vmem.P \
 .deps/opmmem.P .deps/palettemem.P .deps/ppimem.P .deps/sccmem.P \
 .deps/spritemem.P .deps/sram.P .deps/sysportmem.P .deps/systemrom.P \
-.deps/textvram.P .deps/version.P .deps/x68kaddr.P
+.deps/textvram.P .deps/x68kaddr.P
 SOURCES = $(libvx68k_la_SOURCES)
 OBJECTS = $(libvx68k_la_OBJECTS)
 

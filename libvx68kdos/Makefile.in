@@ -102,14 +102,14 @@ USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 
-INCLUDES = -I$(top_srcdir)/include
+INCLUDES = 
 
 LIBS = 
 
 lib_LTLIBRARIES = libvx68kdos.la
 
 libvx68kdos_la_LDFLAGS = $(LTLIBRELEASE) -version-info 1:3:0
-libvx68kdos_la_SOURCES = dos.cc shell.cc doscontext.cc filesystem.cc allocator.cc
+libvx68kdos_la_SOURCES = version.cc dos.cc shell.cc doscontext.cc filesystem.cc allocator.cc
 
 
 SUBDIRS = vx68k
@@ -123,8 +123,8 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 libvx68kdos_la_LIBADD = 
-libvx68kdos_la_OBJECTS =  dos.lo shell.lo doscontext.lo filesystem.lo \
-allocator.lo
+libvx68kdos_la_OBJECTS =  version.lo dos.lo shell.lo doscontext.lo \
+filesystem.lo allocator.lo
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -138,7 +138,7 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = tar
 GZIP_ENV = --best
 DEP_FILES =  .deps/allocator.P .deps/dos.P .deps/doscontext.P \
-.deps/filesystem.P .deps/shell.P
+.deps/filesystem.P .deps/shell.P .deps/version.P
 SOURCES = $(libvx68kdos_la_SOURCES)
 OBJECTS = $(libvx68kdos_la_OBJECTS)
 
