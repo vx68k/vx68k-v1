@@ -1,5 +1,9 @@
 1999-03-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* main.cc: Modify comments.
+
+	* TODO: Modified.
+
 	* README: Modified.
 
 	* libvm68k/execunit.cc: Modify comments.

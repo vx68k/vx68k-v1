@@ -1,14 +1,11 @@
 TO DO
 
-$Date: Fri, 05 Feb 1999 23:24:16 +0900 $
+$Date: Sat, 13 Mar 1999 23:37:00 +0900 $
 
-* X68000 Executable loader.
+* DOS memory management
 
-An executable loader must be implemented.  The loader also have to
-handle relocations.
-
-Since Human68k is not loaded, an executable can be loaded at as low
-address as 0x8000, so that unused memory can be reduced.
+The DOS memory management must be implemented.  Currently, the
+executable is loaded at a constant address.
 
 * Efficient CCR update.
 
