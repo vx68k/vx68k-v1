@@ -243,14 +243,19 @@ vx68k_app::run()
   if (opt_one_thread)
     {
       run_machine();
+
+      gdk_threads_enter();
       gtk_main();
+      gdk_threads_leave();
     }
   else
     {
       pthread_t vm_thread;
       pthread_create(&vm_thread, NULL, &run_machine_thread, this);
 
+      gdk_threads_enter();
       gtk_main();
+      gdk_threads_leave();
 
       pthread_join(vm_thread, NULL);
     }
@@ -270,6 +275,7 @@ vx68k_app::vx68k_app(const char *const *a)
 int
 main(int argc, char **argv)
 {
+  g_thread_init(NULL);
   gtk_set_locale();
   gtk_init(&argc, &argv);
   gdk_rgb_init();

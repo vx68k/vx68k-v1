@@ -3,13 +3,13 @@ AC_INIT(lib/vx68k/dos.cc)
 AM_INIT_AUTOMAKE(vx68k, 1.1.0)
 AM_CONFIG_HEADER(config.h)
 AC_DEFINE(_GNU_SOURCE)
-AC_DEFINE(_REENTRANT)
+dnl AC_DEFINE(_REENTRANT)
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_RANLIB
-AC_SEARCH_LIBS(pthread_create, pthread)
-AM_PATH_GTK(1.2.0)
+dnl AC_SEARCH_LIBS(pthread_create, pthread)
+AM_PATH_GTK(1.2.0,,, gthread)
 AC_CHECK_HEADERS(fcntl.h unistd.h)
 AC_ARG_WITH(nana,
 [  --with-nana             use GNU Nana for testing [no]],, with_nana=no)

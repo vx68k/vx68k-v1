@@ -247,6 +247,7 @@ gtk_console::handle_timeout()
 {
   _m->get_image(0, 0, width, height, rgb_buf, row_size);
 
+  gdk_threads_enter();
   for (vector<GtkWidget *>::const_iterator i = widgets.begin();
        i != widgets.end();
        ++i)
@@ -254,6 +255,7 @@ gtk_console::handle_timeout()
       I(*i != NULL);
       gtk_widget_queue_draw(*i);
     }
+  gdk_threads_leave();
 
   return true;
 }
@@ -273,6 +275,7 @@ namespace
 
 gtk_console::~gtk_console()
 {
+  gdk_threads_enter();
   for (vector<GtkWidget *>::iterator i = widgets.begin();
        i != widgets.end();
        ++i)
@@ -280,6 +283,7 @@ gtk_console::~gtk_console()
       I(*i != NULL);
       gtk_signal_disconnect_by_data(GTK_OBJECT(*i), this);
     }
+  gdk_threads_leave();
 
   delete [] kanji16_font;
   delete [] primary_font;
