@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE book PUBLIC "-//Norman Walsh//DTD DocBk XML V3.1.3//EN"
-          "docbookx.dtd">
+                      "docbookx.dtd">
 <book>
   <title>Virtual X68000 Reference Manual</title>
   <bookinfo>
@@ -133,6 +133,21 @@
     </sect1>
     <sect1>
       <title>Processor</title>
+      <para>
+	A processor is made of a pair of a context and an execution
+	unit.  A context represents the dynamic state, which is
+	updated by program execution.  An execution unit represents
+	the static setting that is not changed while program
+	execution.
+      </para>
+      <sect2>
+	<title>Context</title>
+	<para>
+	  The state of the processor is stored in a context.  Major
+	  components of a context are a set of registers and a
+	  reference to an address space.
+	</para>
+      </sect2>
       <sect2>
 	<title>Execution unit</title>
 	<para>

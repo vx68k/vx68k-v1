@@ -1,4 +1,4 @@
-/* vx68k - Virtual X68000
+/* Virtual X68000 - Sharp X68000 emulator
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
@@ -95,11 +95,41 @@ exec_unit::set_instruction(int code, int mask, const instruction_type &in)
 namespace
 {
   using vm68k::SUPER_DATA;
-  using vm68k::extsb;
-  using vm68k::extsw;
-  using vm68k::extsl;
   using namespace vm68k::condition;
   using namespace vm68k::addressing;
+
+  /* Returns the signed 8-bit value that is equivalent to unsigned
+     value VALUE.  */
+  inline int
+  extsb(unsigned int value)
+  {
+    const unsigned int N = 1u << 7;
+    const unsigned int M = (N << 1) - 1;
+    value &= M;
+    return value >= N ? -int(M - value) - 1 : int(value);
+  }
+
+  /* Returns the signed 16-bit value that is equivalent to unsigned
+     value VALUE.  */
+  inline sint_type
+  extsw(uint_type value)
+  {
+    const uint_type N = uint_type(1) << 15;
+    const uint_type M = (N << 1) - 1;
+    value &= M;
+    return value >= N ? -sint_type(M - value) - 1 : sint_type(value);
+  }
+
+  /* Returns the signed 32-bit value that is equivalent to unsigned
+     value VALUE.  */
+  inline sint32_type
+  extsl(uint32_type value)
+  {
+    const uint32_type N = uint32_type(1) << 31;
+    const uint32_type M = (N << 1) - 1;
+    value &= M;
+    return value >= N ? -sint32_type(M - value) - 1 : sint32_type(value);
+  }
 
   /* Handles an ADD instruction.  */
   template <class Size, class Source> void
@@ -3002,6 +3032,7 @@ namespace
     eu.set_instruction(0x1160, 0x0e07, &moveb<predec_indirect, disp_indirect>);
     eu.set_instruction(0x1168, 0x0e07, &moveb<disp_indirect, disp_indirect>);
     eu.set_instruction(0x1170, 0x0e07, &moveb<indexed_indirect, disp_indirect>);
+    eu.set_instruction(0x1178, 0x0e00, &moveb<absolute_short, disp_indirect>);
     eu.set_instruction(0x1179, 0x0e00, &moveb<absolute_long, disp_indirect>);
     eu.set_instruction(0x117a, 0x0e00, &moveb<disp_pc, disp_indirect>);
     eu.set_instruction(0x117c, 0x0e00, &moveb<immediate, disp_indirect>);
@@ -3112,6 +3143,7 @@ namespace
     eu.set_instruction(0x21c0, 0x0007, &movel<data_register, absolute_short>);
     eu.set_instruction(0x21c8, 0x0007, &movel<address_register, absolute_short>);
     eu.set_instruction(0x21d0, 0x0007, &movel<indirect, absolute_short>);
+    eu.set_instruction(0x21e8, 0x0007, &movel<disp_indirect, absolute_short>);
     eu.set_instruction(0x21fc, 0x0000, &movel<immediate, absolute_short>);
     eu.set_instruction(0x23c0, 0x0007, &movel<data_register, absolute_long>);
     eu.set_instruction(0x23c8, 0x0007, &movel<address_register, absolute_long>);

@@ -1,5 +1,13 @@
 2000-07-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (extsb, extsw, extsl): New inline function.
+	(initialize_instructions): Add missing handlers.
+
+	* doc/Makefile.am (${srcdir}/vx68k.texi): Suppress output of grep.
+
+	* doc/vx68k.xml: Updated.
+	* doc/vx68k.texi: Regenerated.
+
 	* libvx68k/systemrom.cc (iocs_os_curon): New function.
 	(initialize_iocs_functions): Add new handler.
 
