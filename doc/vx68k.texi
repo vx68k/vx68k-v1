@@ -131,12 +131,37 @@ compiled.
 
 @node General purpose components
 @chapter General purpose components
-General purpose components are provided by the libvm68k library.
+General purpose components are provided by the library libvm68k.
+These components are declared in the namespace vm68k.
 
 @menu
+* Memory::	
 * Address space::	
 * Processor::	
 @end menu
+
+@node Memory
+@section Memory
+Memory is an object that can be mapped in an address space.
+The class @code{memory} is the abstract base
+class for all memory.
+
+@menu
+* @code{memory}: memory.	
+@end menu
+
+@node memory
+@subsection @code{memory}
+This class has methods @code{get_16},
+@code{get_8}, @code{get_32},
+@code{put_16}, @code{put_8}, and
+@code{put_32}. The methods
+@code{get_16}, @code{get_8},
+@code{put_16}, and @code{put_8}
+are pure virtual and must be overridden in derived classes.
+Default implementations for @code{get_32} and
+@code{put_32} are provided but a derived class
+can override those for better performance.
 
 @node Address space
 @section Address space

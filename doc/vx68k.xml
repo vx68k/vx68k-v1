@@ -143,7 +143,7 @@
 	class for all memory.
       </para>
       <sect2>
-	<title>class <classname>memory</classname></title>
+	<title><classname>memory</classname></title>
 	<para>
 	  This class has methods <function>get_16</function>,
 	  <function>get_8</function>, <function>get_32</function>,
