@@ -1,5 +1,8 @@
 1999-10-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/execunit.cc (install_instructions): Add missing
+	instruction.
+
 	* vx68k/filesystem.cc (export_file_name): Implement translation.
 
 	* vx68k/dos.cc (dos_super): New function.

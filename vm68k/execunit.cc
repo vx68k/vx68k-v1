@@ -2840,6 +2840,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x4218, 0x0007, &clrb<postincrement_indirect>);
   eu.set_instruction(0x4220, 0x0007, &clrb<predecrement_indirect>);
   eu.set_instruction(0x4228, 0x0007, &clrb<disp_indirect>);
+  eu.set_instruction(0x4230, 0x0007, &clrb<indexed_indirect>);
   eu.set_instruction(0x4239, 0x0000, &clrb<absolute_long>);
   eu.set_instruction(0x4240, 0x0007, &clrw<data_register>);
   eu.set_instruction(0x4250, 0x0007, &clrw<indirect>);
