@@ -1,5 +1,9 @@
 2000-12-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Change the order.
+
+2000-12-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
 	* doc/vx68k.texi: Fix misspelling.  Put @contents in @ifnothtml.
 	(Top): Move @menu out of @ifnottex.
 	(Introduction): Modify documentation.
