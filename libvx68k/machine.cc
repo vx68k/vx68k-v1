@@ -272,7 +272,10 @@ uint_type
 machine::peek_key()
 {
   if (key_queue.empty())
-    sched_yield();
+    {
+      sched_yield();
+      pthread_testcancel();
+    }
 
   uint_type key = 0;
 

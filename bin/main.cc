@@ -233,6 +233,8 @@ namespace
 void
 gtk_app::boot()
 {
+  vm_status = 0;
+
   if (opt_single_threaded)
     run_boot();
   else
@@ -243,6 +245,7 @@ void
 gtk_app::run(const char *const *args)
 {
   vm_args = args;
+  vm_status = 0;
 
   if (opt_single_threaded)
     run_machine();
@@ -255,6 +258,7 @@ gtk_app::join(int *status)
 {
   if (vm_thread != pthread_self())
     {
+      pthread_cancel(vm_thread);
       pthread_join(vm_thread, NULL);
       vm_thread = pthread_self();
     }
@@ -515,7 +519,6 @@ const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
 gtk_app::gtk_app()
   : vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE),
     con(&vm),
-    vm_status(0),
     main_window(NULL)
 {
   vm_thread = pthread_self();

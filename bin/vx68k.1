@@ -1,25 +1,35 @@
 '\"
-.\" $Format: ".TH VX68K 1 \"$Date$\"" $
-.TH VX68K 1 "Wed, 19 Jul 2000 22:54:14 +0900"
+.\" $Format: ".TH VX68K 1 \"$Date$\" \"Virtual X68000\"" $
+.TH VX68K 1 "Thu, 20 Jul 2000 22:09:36 +0900" "Virtual X68000"
 .SH NAME
 vx68k \- X68000 virtual machine
 .SH SYNOPSIS
-\fBvx68k\fR [\fIOPTION\fR]... [\fIPROGRAM\fR [\fIARG\fR]...]
+.B vx68k
+.RI [ OPTION ]...
+.RI [ PROGRAM
+.RI [ ARG ]...]
 .SH DESCRIPTION
-\fBvx68k\fR runs X68000 programs in a virtual machine.
+.B vx68k
+runs X68000 programs in a virtual machine.
 .SH OPTIONS
 .TP
 \fB-b\fR, \fB--boot\fR
 Boot a virtual machine from floppy disk unit 0.
 .TP
 \fB-0\fR, \fB--fd0-image=\fIFILE\fR
-Load \fIFILE\fR on floppy disk unit 0.
+Load
+.I FILE
+on floppy disk unit 0.
 .TP
 \fB-1\fR, \fB--fd1-image=\fIFILE\fR
-Load \fIFILE\fR on floppy disk unit 1.
+Load
+.I FILE
+on floppy disk unit 1.
 .TP
 \fB-m\fR, \fB--memory-size=\fIN\fR
-Allocate \fIN\fR megabytes for the main memory.
+Allocate
+.I N
+megabytes for the main memory.
 .TP
 \fB--one-thread\fR
 Run in one thread for debugging.

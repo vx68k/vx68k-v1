@@ -1,3 +1,13 @@
+2000-07-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/vx68k.1: Updated.
+
+	* libvx68k/machine.cc (peek_key): Call pthread_testcancel.
+
+	* bin/main.cc (join): Call pthread_cancel.
+	(boot, run): Set vm_status to 0.
+	(gtk_app): Remove initialization of vm_status.
+
 2000-07-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* Version 1.1.1.
