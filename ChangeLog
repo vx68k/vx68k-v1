@@ -1,5 +1,18 @@
 2000-08-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/palettemem.cc (palettes_memory): Initialize more
+	entries in the text palette.
+
+	* libvx68k/systemrom.cc (iocs_ms_getdt): New function.
+	(initialize_iocs_functions): Add new handler.
+
+	* include/vm68k/addressing.h (class basic_index_indirect): Fix a
+	bug by operators' priority.
+	(class basic_index_pc_indirect): Likewise.
+
+	* libvm68k/execunit.cc (moveml_mr): Add parens around bitwise and
+	operator.
+
 	* libvx68k/systemrom.cc: Replace nana::iocs_call_trace with
 	nana_iocs_call_trace.  Also change all users.
 

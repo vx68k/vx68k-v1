@@ -300,7 +300,7 @@ namespace vm68k
 	uint_type w = c.fetch(word_size(), offset);
 	unsigned int r = w >> 12 & 0xf;
 	uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
-	if (w & 0x800 != 0)
+	if (w & 0x800)
 	  return (c.regs.a[reg]
 		  + byte_size::svalue(byte_size::get(w))
 		  + long_word_size::svalue(long_word_size::get(x)));
@@ -470,7 +470,7 @@ namespace vm68k
 	  uint_type w = c.fetch(word_size(), offset);
 	  unsigned int r = w >> 12 & 0xf;
 	  uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
-	  if (w & 0x800 != 0)
+	  if (w & 0x800)
 	    return (c.regs.pc + offset
 		    + byte_size::svalue(byte_size::get(w))
 		    + long_word_size::svalue(long_word_size::get(x)));

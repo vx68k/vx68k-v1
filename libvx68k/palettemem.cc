@@ -216,7 +216,9 @@ palettes_memory::palettes_memory()
   _tpalette[0] = 0;
   _tpalette[1] = 0xf83e;
   _tpalette[2] = 0xffc0;
-  _tpalette[3] = 0xffff;
+  _tpalette[3] = 0xfffe;
+  fill(_tpalette.begin() + 4, _tpalette.begin() + 8, 0xde6c);
+  fill(_tpalette.begin() + 8, _tpalette.begin() + 16, 0x4022);
 
   pthread_mutex_init(&mutex, NULL);
 }

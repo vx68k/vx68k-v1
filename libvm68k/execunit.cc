@@ -2036,7 +2036,7 @@ namespace
       int fc = ec.data_fc();
       for (uint32_type *i = ec.regs.d + 0; i != ec.regs.d + 8; ++i)
 	{
-	  if (bitmap & 1 != 0)
+	  if ((bitmap & 1) != 0)
 	    {
 	      *i = ec.mem->getl(fc, address);
 	      address += 4;
@@ -2045,7 +2045,7 @@ namespace
 	}
       for (uint32_type *i = ec.regs.a + 0; i != ec.regs.a + 8; ++i)
 	{
-	  if (bitmap & 1 != 0)
+	  if ((bitmap & 1) != 0)
 	    {
 	      *i = ec.mem->getl(fc, address);
 	      address += 4;

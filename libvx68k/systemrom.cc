@@ -713,6 +713,18 @@ namespace
     fprintf(stderr, "iocs_ms_curst: FIXME: not implemented\n");
   }
 
+  /* Handles a _MS_GETDT call.  */
+  void
+  iocs_ms_getdt(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _MS_GETDT\n");
+#endif
+
+    fprintf(stderr, "iocs_ms_getdt: FIXME: not implemented\n");
+    long_word_size::put(c.regs.d[0], 0);
+  }
+
   /* Handles a _MS_INIT call.  */
   void
   iocs_ms_init(context &c, unsigned long data)
@@ -1152,6 +1164,7 @@ namespace
     rom->set_iocs_function(0x6b, iocs_function_type(&iocs_timerdst, 0));
     rom->set_iocs_function(0x6c, iocs_function_type(&iocs_vdispst, 0));
     rom->set_iocs_function(0x70, iocs_function_type(&iocs_ms_init, 0));
+    rom->set_iocs_function(0x74, iocs_function_type(&iocs_ms_getdt, 0));
     rom->set_iocs_function(0x76, iocs_function_type(&iocs_ms_curst, 0));
     rom->set_iocs_function(0x77, iocs_function_type(&iocs_ms_limit, 0));
     rom->set_iocs_function(0x7d, iocs_function_type(&iocs_skey_mod, 0));
