@@ -1,5 +1,12 @@
 1999-03-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* Move libvm68k to lib/vm68k and libvx68k to libvx68k.
+	* lib/Makefile.am: New file.
+	* Makefile.am (SUBDIRS): Replace libvm68k and libvx68k with lib.
+	(vx68k_LDADD): Adjust the directories.
+	* configure.in: Change the AC_OUTPUT files.  Change the AC_INIT
+	test file.
+
 	* include/vm68k/cpu.h (status_register): New class.
 	(user_cpu_regs): Removed.
 	(cpu_regs): Reconstruct members.  Update all users.
