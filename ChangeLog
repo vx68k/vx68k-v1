@@ -1,5 +1,12 @@
 1999-03-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/dos.cc: Include <fcntl.h> and <unistd.h> if available.
+	(close, open): Add test code.
+
+	* configure.in: Add checks for <fcntl.h> and <unistd.h>.
+
+	* lib/vm68k/execunit.cc (pea_absl): Fix address register.
+
 	* lib/vx68k/dos.cc (quit_loop): New struct.
 	(start): Handle quit_loop exception.
 	(exit2): New function.

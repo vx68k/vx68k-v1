@@ -421,8 +421,9 @@ namespace
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
       ec->mem->putl(fc, ec->regs.a[7] - 4, address);
+      ec->regs.a[7] -= 4;
 
-      ec->regs.pc += 6;
+      ec->regs.pc += 2 + 4;
     }
 
   void rts(int op, execution_context *ec)

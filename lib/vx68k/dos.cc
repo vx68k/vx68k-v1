@@ -24,6 +24,12 @@
 
 #include "vx68k/human.h"
 
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
@@ -174,7 +180,12 @@ namespace
       I(ec != NULL);
       VL((" DOS _CLOSE\n"));
 
-      ec->regs.d[0] = 0u;	// FIXME.
+      // FIXME.
+      int fd = ec->mem->getw(SUPER_DATA, ec->regs.a[7]);
+      if (::close(fd) == -1)
+	ec->regs.d[0] = -1u;
+      else
+	ec->regs.d[0] = 0u;	// FIXME.
 
       ec->regs.pc += 2;
     }
@@ -192,7 +203,16 @@ namespace
       I(ec != NULL);
       VL((" DOS _OPEN\n"));
 
-      ec->regs.d[0] = -2u;	// FIXME.
+      // FIXME.
+      char buf[256];
+      uint32 address = ec->mem->getl(SUPER_DATA, ec->regs.a[7]);
+      ec->mem->read(SUPER_DATA, address, buf, 256);
+      VL(("Opening %s\n", buf));
+      int fd = ::open(buf, O_RDONLY); // FIXME.
+      if (fd == -1)
+	ec->regs.d[0] = -2u;	// FIXME.
+      else
+	ec->regs.d[0] = fd;
 
       ec->regs.pc += 2;
     }
