@@ -64,6 +64,8 @@ class vx68k_app
 {
 public:
   /* Program options.  */
+  static const char *opt_fd0_image;
+  static const char *opt_fd1_image;
   static size_t opt_memory_size;
   static int opt_single_threaded;
   static int opt_debug_level;
@@ -112,6 +114,8 @@ public:
   void show_about_dialog();
 };
 
+const char *vx68k_app::opt_fd0_image = "";
+const char *vx68k_app::opt_fd1_image = "";
 size_t vx68k_app::opt_memory_size = 0;
 int vx68k_app::opt_single_threaded = false;
 int vx68k_app::opt_debug_level = 0;
@@ -453,28 +457,34 @@ vx68k_app::vx68k_app()
 
 namespace
 {
+  /* Boot mode.  */
+  int opt_boot = false;
+
   int opt_help = false;
   int opt_version = false;
 
   bool
   parse_options(int argc, char **argv)
   {
-    static const struct option longopts[] =
-    {
-      {"memory-size", required_argument, NULL, 'm'},
-      {"one-thread", no_argument, &vx68k_app::opt_single_threaded, true},
-      {"help", no_argument, &opt_help, true},
-      {"version", no_argument, &opt_version, true},
-      {"debug", no_argument, &vx68k_app::opt_debug_level, 1},
-      {NULL, 0, NULL, 0}
-    };
+    static const struct option longopts[]
+      = {{"boot", no_argument, &opt_boot, true},
+	 {"fd0-image", required_argument, NULL, '0'},
+	 {"fd1-image", required_argument, NULL, '1'},
+	 {"memory-size", required_argument, NULL, 'm'},
+	 {"one-thread", no_argument, &vx68k_app::opt_single_threaded, true},
+	 {"debug", no_argument, &vx68k_app::opt_debug_level, 1},
+	 {"help", no_argument, &opt_help, true},
+	 {"version", no_argument, &opt_version, true},
+	 {NULL, 0, NULL, 0}};
 
-    int optc;
-    do
+    for (;;)
       {
 	int index;
-	optc = getopt_long(argc, argv, "m:", longopts, &index);
-	switch (optc)
+	int opt = getopt_long(argc, argv, "m:0:1:", longopts, &index);
+	if (opt == -1)		// no more options
+	  break;
+
+	switch (opt)
 	  {
 	  case 'm':
 	    {
@@ -490,16 +500,25 @@ namespace
 	    }
 	  break;
 
+	  case '0':
+	    vx68k_app::opt_fd0_image = optarg;
+	    break;
+
+	  case '1':
+	    vx68k_app::opt_fd1_image = optarg;
+	    break;
+
+	  case 0:		// long option
+	    break;
+
 	  case '?':		// unknown option
 	    return false;
-	  case 0:		// long option
-	  case -1:		// no more options
-	    break;
+
 	  default:
+	    // logic error
 	    abort();
 	  }
       }
-    while (optc != -1);
 
     return true;
   }
@@ -508,9 +527,12 @@ namespace
   display_help(const char *arg0)
   {
     // XXX `--debug' is undocumented
-    printf(_("Usage: %s [OPTION]... [--] COMMAND [ARGUMENT]...\n"), arg0);
+    printf(_("Usage: %s [OPTION]... [--] [COMMAND [ARGUMENT]...]\n"), arg0);
     printf(_("Run X68000 COMMAND on a virtual machine.\n"));
     printf("\n");
+    printf(_("      --boot            boot from media\n"));
+    printf(_("  -0, --fd0-image=FILE  load FILE on FD unit 0 as an image\n"));
+    printf(_("  -1, --fd1-image=FILE  load FILE on FD unit 1 as an image\n"));
     printf(_("  -M, --memory-size=N   allocate N megabytes for main memory\n"));
     printf(_("      --one-thread      run in one thread\n"));
     printf(_("      --help            display this help and exit\n"));
@@ -564,8 +586,15 @@ main(int argc, char **argv)
       GtkWidget *window = app.create_window();
       gtk_widget_show(window);
 
-      if (optind < argc)
-	app.run(argv + optind);
+      if (opt_boot)
+	{
+	  app.boot();
+	}
+      else
+	{
+	  if (optind < argc)
+	    app.run(argv + optind);
+	}
 
       gdk_threads_enter();
       gtk_main();
