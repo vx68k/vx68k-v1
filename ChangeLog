@@ -1,4 +1,13 @@
+2000-08-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/vx68k.texi (Human68k): Updated.
+
 2000-08-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/Makefile.am (${srcdir}/vx68k.texi): Removed.
+	(EXTRA_DIST): Removed.
+	(MAINTAINERCLEANFILES): Removed.
+	(DOCBOOK2TEXI): Removed.
 
 	* include/vx68k/gtk.h (class gtk_console): Replace #if conditions
 	using GDK_IMAGE.
