@@ -164,7 +164,8 @@ namespace
 
     // The condition codes are not affected by this instruction.
     svalue_type value1 = ea1.get(c);
-    svalue_type value2 = long_word_size::get(c.regs.a[reg2]);
+    svalue_type value2
+      = long_word_size::svalue(long_word_size::get(c.regs.a[reg2]));
     svalue_type value
       = long_word_size::svalue(long_word_size::get(value2 + value1));
     long_word_size::put(c.regs.a[reg2], value);
@@ -238,7 +239,8 @@ namespace
 #endif
 
     // The condition codes are not affected by this instruction.
-    svalue_type value1 = long_word_size::get(c.regs.a[reg1]);
+    svalue_type value1
+      = long_word_size::svalue(long_word_size::get(c.regs.a[reg1]));
     svalue_type value
       = long_word_size::svalue(long_word_size::get(value1 + value2));
     long_word_size::put(c.regs.a[reg1], value);
@@ -246,7 +248,29 @@ namespace
     c.regs.pc += 2;
   }
 
-  /* FIXME m68k_addx is missing.  */
+  /* Handles an ADDX instruction (register).  */
+  template <class Size> void
+  m68k_addx_r(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    unsigned int reg1 = op & 0x7;
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef TRACE_INSTRUCTIONS
+    L(" addx%s %%d%u,", Size::suffix(), reg1);
+    L("%%d%u\n", reg2);
+#endif
+
+    svalue_type value1 = Size::svalue(Size::get(c.regs.d[reg1]));
+    svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
+    svalue_type value
+      = Size::svalue(Size::get(value2 + value1 + c.regs.sr.x()));
+    Size::put(c.regs.d[reg2], value);
+    c.regs.sr.set_cc_as_add(value, value2, value1);
+
+    c.regs.pc += 2;
+  }
 
   /* Handles an AND instruction.  */
   template <class Size, class Source> void
@@ -2374,7 +2398,8 @@ namespace
 #endif
 
     // This instruction does not affect the condition codes.
-    svalue_type value1 = long_word_size::get(c.regs.a[reg1]);
+    svalue_type value1
+      = long_word_size::svalue(long_word_size::get(c.regs.a[reg1]));
     svalue_type value
       = long_word_size::svalue(long_word_size::get(value1 - value2));
     long_word_size::put(c.regs.a[reg1], value);
@@ -3524,6 +3549,7 @@ namespace
     eu.set_instruction(0xd0fb, 0x0e00,
 		       &m68k_adda<word_size, word_index_pc_indirect>);
     eu.set_instruction(0xd0fc, 0x0e00, &m68k_adda<word_size, word_immediate>);
+    eu.set_instruction(0xd100, 0x0e07, &m68k_addx_r<byte_size>);
     eu.set_instruction(0xd110, 0x0e07, &m68k_add_r<byte_size, byte_indirect>);
     eu.set_instruction(0xd118, 0x0e07,
 		       &m68k_add_r<byte_size, byte_postinc_indirect>);
@@ -3535,6 +3561,7 @@ namespace
 		       &m68k_add_r<byte_size, byte_index_indirect>);
     eu.set_instruction(0xd138, 0x0e00, &m68k_add_r<byte_size, byte_abs_short>);
     eu.set_instruction(0xd139, 0x0e00, &m68k_add_r<byte_size, byte_abs_long>);
+    eu.set_instruction(0xd140, 0x0e07, &m68k_addx_r<word_size>);
     eu.set_instruction(0xd150, 0x0e07, &m68k_add_r<word_size, word_indirect>);
     eu.set_instruction(0xd158, 0x0e07,
 		       &m68k_add_r<word_size, word_postinc_indirect>);
@@ -3546,6 +3573,7 @@ namespace
 		       &m68k_add_r<word_size, word_index_indirect>);
     eu.set_instruction(0xd178, 0x0e00, &m68k_add_r<word_size, word_abs_short>);
     eu.set_instruction(0xd179, 0x0e00, &m68k_add_r<word_size, word_abs_long>);
+    eu.set_instruction(0xd180, 0x0e07, &m68k_addx_r<long_word_size>);
     eu.set_instruction(0xd190, 0x0e07,
 		       &m68k_add_r<long_word_size, long_word_indirect>);
     eu.set_instruction(0xd198, 0x0e07,

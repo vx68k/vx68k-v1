@@ -1,5 +1,10 @@
 2000-06-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (m68k_adda, m68k_addq_a, m68k_subq_a): Use
+	long_word_size::svalue for value1/value2.
+	(m68k_addx_r): New function template.
+	(initialize_instructions): Use the new handlers.
+
 	* libvx68k/doscontext.cc (load_executable): Modify the PSP setup.
 
 	* include/vm68k/addressing.h (class basic_postinc_indirect, class
