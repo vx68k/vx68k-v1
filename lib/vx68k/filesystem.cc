@@ -41,20 +41,57 @@ namespace
 } // (unnamed namespace)
 
 sint32_type
-regular_file::read(address_space *, uint32_type, uint32_type)
+regular_file::read(address_space *as, uint32_type dataptr, uint32_type size)
 {
-  return -1;
+  // FIXME.
+  unsigned char *data = new unsigned char [size];
+
+  ssize_t result = ::read(fd, data, size);
+  if (result == -1)
+    {
+      delete [] data;
+      return -6;			// FIXME.
+    }
+
+  as->write(SUPER_DATA, dataptr, data, result);
+  delete [] data;
+  return result;
 }
 
 sint32_type
-regular_file::write(const address_space *, uint32_type, uint32_type)
+regular_file::write(const address_space *as, uint32_type dataptr,
+		    uint32_type size)
 {
-  return -1;
+  // FIXME.
+  unsigned char *data = new unsigned char [size];
+  as->read(SUPER_DATA, dataptr, data, size);
+
+  ssize_t result = ::write(fd, data, size);
+  if (result == -1)
+    {
+      delete [] data;
+      return -6;			// FIXME.
+    }
+
+  delete [] data;
+  return result;
 }
 
 regular_file::~regular_file()
 {
   close(fd);
+}
+
+regular_file::regular_file(int f)
+  : fd(f)
+{
+}
+
+void
+file_system::unref(file *f)
+{
+  // FIXME
+  delete f;
 }
 
 sint_type

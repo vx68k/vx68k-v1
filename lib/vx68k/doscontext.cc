@@ -31,6 +31,7 @@
 # include <unistd.h>
 #endif
 #include <fstream>
+#include <algorithm>
 #include <cstdlib>
 #include <cstdio>
 
@@ -356,6 +357,18 @@ dos_exec_context::getenv(uint32_type getname, uint32_type env,
   return 0;
 }
 
+dos_exec_context::~dos_exec_context()
+{
+  for (reverse_iterator<file **> i(files + NFILES);
+       i != reverse_iterator<file **>(files + 0);
+       ++i)
+    _fs->unref(*i);
+  for (reverse_iterator<file **> i(std_files + 5);
+       i != reverse_iterator<file **>(std_files + 0);
+       ++i)
+    _fs->unref(*i);
+}
+
 dos_exec_context::dos_exec_context(address_space *m, exec_unit *eu,
 				   memory_allocator *a)
   : context(m, eu),
@@ -364,5 +377,7 @@ dos_exec_context::dos_exec_context(address_space *m, exec_unit *eu,
     debug_level(0)
 {
   current_pdb = _allocator->root();
+  fill(std_files + 0, std_files + 5, (file *) 0);
+  fill(files + 0, files + NFILES, (file *) 0);
 }
 

@@ -2,6 +2,8 @@
 
 	* lib/vx68k/doscontext.cc (mfree): Fix code to return a value.
 	(getenv): New function.
+	(~dos_exec_context): New function.
+	(dos_exec_context): Clear std_files and files.
 
 	* lib/vx68k/dos.cc (dos_chmod): Changed to use file_system::chmod.
 	(dos_getenv): Changed to use dos_exec_context::getenv.
@@ -11,7 +13,7 @@
 	(class file): Add virtual functions and friends.
 	(class regular_file): New class.
 	(class dos_exec_context): Add members: _fs, std_files, files, and
-	getenv.
+	getenv.  Also add destructor.
 	(class dos): Rename member fs to _fs, and add new member function
 	fs.
 

@@ -87,8 +87,7 @@ namespace vx68k
     private:
       int fd;
     public:
-      regular_file(int f)
-	: fd(f) {}
+      regular_file(int f);
     protected:
       ~regular_file();
     public:
@@ -113,6 +112,7 @@ namespace vx68k
 
     public:
       dos_exec_context(address_space *, exec_unit *, memory_allocator *);
+      ~dos_exec_context();
 
     public:
       uint32_type getpdb() const
