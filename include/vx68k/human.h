@@ -47,7 +47,7 @@ namespace vx68k
     public:
       sint32_type alloc(uint32_type len, uint32_type parent);
       sint32_type alloc_largest(uint32_type parent);
-      sint_type free(uint32_type memptr);
+      sint16_type free(uint32_type memptr);
       void free_by_parent(uint32_type parent);
       sint32_type resize(uint32_type memptr, uint32_type newlen);
 
@@ -70,15 +70,15 @@ namespace vx68k
 
     public:
       string export_file_name(const string &);
-      sint_type chmod(const memory_map *, uint32_type, sint_type);
+      sint16_type chmod(const memory_map *, uint32_type, sint16_type);
 
     public:
-      sint_type create(file *&, const memory_map *,
-		       uint32_type, sint_type);
+      sint16_type create(file *&, const memory_map *,
+			 uint32_type, sint16_type);
       void open(file *&, int);
-      sint_type open(file *&, const string &, uint_type);
-      sint_type open(file *&, const memory_map *,
-		     uint32_type, sint_type);
+      sint16_type open(file *&, const string &, uint16_type);
+      sint16_type open(file *&, const memory_map *,
+		       uint32_type, sint16_type);
       file *ref(file *);
       void unref(file *);
     };
@@ -90,13 +90,13 @@ namespace vx68k
     protected:
       virtual ~file() {}
     public:
-      virtual sint32_type seek(sint32_type, uint_type) {return -1;}
+      virtual sint32_type seek(sint32_type, uint16_type) {return -1;}
       virtual sint32_type read(memory_map *,
 			       uint32_type, uint32_type) = 0;
       virtual sint32_type write(const memory_map *,
 				uint32_type, uint32_type) = 0;
-      virtual sint_type fgetc() = 0;
-      virtual sint_type fputc(sint_type) = 0;
+      virtual sint16_type fgetc() = 0;
+      virtual sint16_type fputc(sint16_type) = 0;
       virtual sint32_type fputs(const memory_map *, uint32_type) = 0;
     };
 
@@ -111,12 +111,12 @@ namespace vx68k
     protected:
       ~regular_file();
     public:
-      sint32_type seek(sint32_type, uint_type);
+      sint32_type seek(sint32_type, uint16_type);
       sint32_type read(memory_map *, uint32_type, uint32_type);
       sint32_type write(const memory_map *,
 			uint32_type, uint32_type);
-      sint_type fgetc();
-      sint_type fputc(sint_type);
+      sint16_type fgetc();
+      sint16_type fputc(sint16_type);
       sint32_type fputs(const memory_map *, uint32_type);
     };
 
@@ -146,7 +146,7 @@ namespace vx68k
 	{return current_pdb;}
       void setpdb(uint32_type pdb)
 	{current_pdb = pdb;}
-      sint_type getenv(uint32_type, uint32_type, uint32_type);
+      sint16_type getenv(uint32_type, uint32_type, uint32_type);
 
       uint32_type load(const char *name, uint32_type arg, uint32_type env);
       void exit(unsigned int);
@@ -154,26 +154,26 @@ namespace vx68k
     public:
       sint32_type malloc(uint32_type len)
 	{return _allocator->alloc(len, current_pdb);}
-      sint_type mfree(uint32_type);
+      sint16_type mfree(uint32_type);
       sint32_type setblock(uint32_type memptr, uint32_type newlen)
 	{return _allocator->resize(memptr, newlen);}
 
     public:
-      sint_type create(uint32_type nameptr, uint_type attr);
-      sint_type open(uint32_type nameptr, uint_type);
-      sint_type dup(uint_type);
-      sint_type close(uint_type);
-      sint32_type read(uint_type, uint32_type, uint32_type);
-      sint32_type write(uint_type, uint32_type, uint32_type);
-      sint32_type seek(uint_type, sint32_type, uint_type);
+      sint16_type create(uint32_type nameptr, uint16_type attr);
+      sint16_type open(uint32_type nameptr, uint16_type);
+      sint16_type dup(uint16_type);
+      sint16_type close(uint16_type);
+      sint32_type read(uint16_type, uint32_type, uint32_type);
+      sint32_type write(uint16_type, uint32_type, uint32_type);
+      sint32_type seek(uint16_type, sint32_type, uint16_type);
 
-      sint_type fgetc(uint_type);
-      sint_type fputc(sint_type, uint_type);
-      sint32_type fputs(uint32_type, uint_type);
+      sint16_type fgetc(uint16_type);
+      sint16_type fputc(sint16_type, uint16_type);
+      sint32_type fputs(uint32_type, uint16_type);
 
     public:
       uint32_type load_executable(const char *, uint32_type address);
-      uint_type start(uint32_type, const char *const *);
+      uint16_type start(uint32_type, const char *const *);
 
     public:
       void set_debug_level(int lev)

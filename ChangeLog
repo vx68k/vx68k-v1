@@ -1,3 +1,28 @@
+2001-06-27  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* NEWS: Updated.
+
+	* bin/main.cc: Remove use of uint_type and sint_type.
+	* libvx68k/mainmem.cc: Likewise.
+	* include/vx68k/human.h: Likewise.
+	* libvx68k/dos.cc: Likewise.
+	* libvx68k/doscontext.cc: Likewise.
+	* libvx68k/allocator.cc: Likewise.
+	* libvx68k/machine.cc: Likewise.
+	* include/vx68k/machine.h: Likewise.
+	* libvx68k/shell.cc: Likewise.
+	* libvx68k/filesystem.cc: Likewise.
+	* vx68kui/gtkconsole.cc: Likewise.
+	* libvx68k/textvram.cc: Likewise.
+	* include/vx68k/iocs.h: Likewise.
+	* libvx68k/iocsdisk.cc: Likewise.
+	* libvx68k/systemrom.cc: Likewise.
+	* libvx68k/sram.cc: Likewise.
+	* libvx68k/areaset.cc: Likewise.
+	* libvx68k/crtcmem.cc: Likewise.
+	* libvx68k/palettemem.cc: Likewise.
+	* libvx68k/fontrom.cc: Likewise.
+
 2001-06-24  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* Version 1.1.6.

@@ -44,7 +44,7 @@ using namespace vm68k;
 using namespace std;
 
 sint32_type
-dos_exec_context::read(uint_type fd, uint32_type dataptr, uint32_type size)
+dos_exec_context::read(uint16_type fd, uint32_type dataptr, uint32_type size)
 {
   if (fd >= NFILES || files[fd] == NULL)
     return -6;
@@ -53,7 +53,7 @@ dos_exec_context::read(uint_type fd, uint32_type dataptr, uint32_type size)
 }
 
 sint32_type
-dos_exec_context::write(uint_type fd, uint32_type dataptr, uint32_type size)
+dos_exec_context::write(uint16_type fd, uint32_type dataptr, uint32_type size)
 {
   if (fd >= NFILES || files[fd] == NULL)
     return -6;
@@ -61,8 +61,8 @@ dos_exec_context::write(uint_type fd, uint32_type dataptr, uint32_type size)
   return files[fd]->write(mem, dataptr, size);
 }
 
-sint_type
-dos_exec_context::fgetc(uint_type fd)
+sint16_type
+dos_exec_context::fgetc(uint16_type fd)
 {
   if (fd >= NFILES || files[fd] == NULL)
     return -6;
@@ -70,8 +70,8 @@ dos_exec_context::fgetc(uint_type fd)
   return files[fd]->fgetc();
 }
 
-sint_type
-dos_exec_context::fputc(sint_type code, uint_type filno)
+sint16_type
+dos_exec_context::fputc(sint16_type code, uint16_type filno)
 {
   if (filno >= NFILES || files[filno] == NULL)
     return -6;
@@ -80,7 +80,7 @@ dos_exec_context::fputc(sint_type code, uint_type filno)
 }
 
 sint32_type
-dos_exec_context::fputs(uint32_type mesptr, uint_type filno)
+dos_exec_context::fputs(uint32_type mesptr, uint16_type filno)
 {
   if (filno < 0 || filno >= NFILES || files[filno] == NULL)
     return -6;
@@ -89,7 +89,7 @@ dos_exec_context::fputs(uint32_type mesptr, uint_type filno)
 }
 
 sint32_type
-dos_exec_context::seek(uint_type fd, sint32_type offset, uint_type mode)
+dos_exec_context::seek(uint16_type fd, sint32_type offset, uint16_type mode)
 {
   if (fd >= NFILES || files[fd] == NULL)
     return -6;
@@ -98,8 +98,8 @@ dos_exec_context::seek(uint_type fd, sint32_type offset, uint_type mode)
 }
 
 /* Closes a DOS file descriptor.  */
-sint_type
-dos_exec_context::close(uint_type fd)
+sint16_type
+dos_exec_context::close(uint16_type fd)
 {
   if (fd >= NFILES || files[fd] == NULL)
     return -6;
@@ -109,8 +109,8 @@ dos_exec_context::close(uint_type fd)
   return 0;
 }
 
-sint_type
-dos_exec_context::dup(uint_type filno)
+sint16_type
+dos_exec_context::dup(uint16_type filno)
 {
   if (filno >= NFILES || files[filno] == NULL)
     return -6;
@@ -124,30 +124,30 @@ dos_exec_context::dup(uint_type filno)
 }
 
 /* Opens a file.  */
-sint_type
-dos_exec_context::open(uint32_type nameptr, uint_type mode)
+sint16_type
+dos_exec_context::open(uint32_type nameptr, uint16_type mode)
 {
   file **found = find(files + 0, files + NFILES, (file *) 0);
   if (found == files + NFILES)
     return -4;
 
-  sint_type err = _fs->open(*found, mem, nameptr, mode);
+  sint16_type err = _fs->open(*found, mem, nameptr, mode);
   return err < 0 ? err : found - (files + 0);
 }
 
 /* Creates a file.  */
-sint_type
-dos_exec_context::create(uint32_type nameptr, uint_type atr)
+sint16_type
+dos_exec_context::create(uint32_type nameptr, uint16_type atr)
 {
   file **found = find(files + 0, files + NFILES, (file *) 0);
   if (found == files + NFILES)
     return -4;
 
-  sint_type err = _fs->create(*found, mem, nameptr, atr);
+  sint16_type err = _fs->create(*found, mem, nameptr, atr);
   return err < 0 ? err : found - (files + 0);
 }
 
-sint_type
+sint16_type
 dos_exec_context::mfree(uint32_type memptr)
 {
   if (memptr == 0)
@@ -163,8 +163,8 @@ namespace
 {
   struct quit_loop
   {
-    uint_type status;
-    quit_loop(uint_type s): status(s) {};
+    uint16_type status;
+    quit_loop(uint16_type s): status(s) {};
   };
 }
 
@@ -175,7 +175,7 @@ dos_exec_context::exit(unsigned int status)
   throw quit_loop(status);
 }
 
-uint_type
+uint16_type
 dos_exec_context::start(uint32_type address, const char *const *argv)
 {
   /* Program must be started in user state.  */
@@ -183,7 +183,7 @@ dos_exec_context::start(uint32_type address, const char *const *argv)
   set_supervisor_state(false);
 
   regs.pc = address;
-  uint_type status = 0;
+  uint16_type status = 0;
   try
     {
       _eu->run(*this);
@@ -195,13 +195,13 @@ dos_exec_context::start(uint32_type address, const char *const *argv)
     }
   catch (illegal_instruction_exception &e)
     {
-      uint_type op = mem->get_16(regs.pc, memory::SUPER_DATA);
+      uint16_type op = mem->get_16(regs.pc, memory::SUPER_DATA);
       fprintf(stderr, "vm68k illegal instruction (op = %#06x)\n", op);
       status = 0xff;
     }
   catch (memory_exception &x)
     {
-      uint_type op = mem->get_16(regs.pc, memory::SUPER_DATA);
+      uint16_type op = mem->get_16(regs.pc, memory::SUPER_DATA);
       if (x.vecno == 3u)
 	fprintf(stderr, "vm68k address error (fc = %#x, address = %#lx, op = %#x)\n",
 		x.status, (unsigned long) x.address, op);
@@ -327,7 +327,7 @@ dos_exec_context::load(const char *name, uint32_type arg, uint32_type env)
   return pdb;
 }
 
-sint_type
+sint16_type
 dos_exec_context::getenv(uint32_type getname, uint32_type env,
 			 uint32_type getbuf)
 {

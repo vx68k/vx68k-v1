@@ -93,7 +93,7 @@ namespace vx68k
     unsigned char saved_byte1;
 
     /* Key input queue.  */
-    queue<uint_type> key_queue;
+    queue<uint16_type> key_queue;
 
     /* Ready condition for key_queue.  */
     pthread_cond_t key_queue_not_empty;
@@ -102,7 +102,7 @@ namespace vx68k
     pthread_mutex_t key_queue_mutex;
 
     /* Key modifiers.  */
-    uint_type _key_modifiers;
+    uint16_type _key_modifiers;
 
     /* Floppy disks.  */
     iocs::disk *fd[NFDS];
@@ -162,33 +162,33 @@ namespace vx68k
     void unload_fd(unsigned int u);
 
   public:
-    void b_putc(uint_type);
+    void b_putc(uint16_type);
     void b_print(const memory_map *as, uint32_type);
 
   public:			// Keyboard Input
     /* Queues a key input.  */
-    void queue_key(uint_type key);
+    void queue_key(uint16_type key);
 
     /* Peeks a key input.  */
-    uint_type peek_key();
+    uint16_type peek_key();
 
     /* Gets a key input from the queue.  */
-    uint_type get_key();
+    uint16_type get_key();
 
     /* Sets the key modifiers.  */
-    void set_key_modifiers(uint_type mask, uint_type value);
+    void set_key_modifiers(uint16_type mask, uint16_type value);
 
     /* Returns the key modifiers.  */
-    uint_type key_modifiers() const {return _key_modifiers;}
+    uint16_type key_modifiers() const {return _key_modifiers;}
 
   public:
     /* Reads blocks from a FD unit.  */
-    sint32_type read_disk(memory_map &, uint_type u, uint32_type pos,
+    sint32_type read_disk(memory_map &, uint16_type u, uint32_type pos,
 			  uint32_type buf, uint32_type nbytes);
 
     /* Writes blocks from a FD unit.  */
     sint32_type write_disk(const memory_map &,
-			   uint_type u, uint32_type pos,
+			   uint16_type u, uint32_type pos,
 			   uint32_type buf, uint32_type nbytes) const;
 
     /* Boots up this machine using an address space.  */
@@ -207,7 +207,7 @@ namespace vx68k
     text_video_memory::raster_iterator r = tvram.raster(0, y);
     for (; first != last; ++r, ++first)
       {
-	uint_type color = text_colors[*r];
+	uint16_type color = text_colors[*r];
 	if (color != 0)
 	  *first = color;
 	else

@@ -82,7 +82,7 @@ main_memory::get_16(uint32_type address, function_code fc) const
     throw bus_error_exception(true, fc, address);
 
   uint32_type i = address % 0x1000000U / 2;
-  uint_type value = data[i];
+  uint16_type value = data[i];
   assert(value <= 0xffff);
 
   return value;
@@ -96,8 +96,8 @@ main_memory::get_32(uint32_type address, function_code fc) const
     throw bus_error_exception(true, fc, address);
 
   uint32_type i = address % 0x1000000U / 2;
-  uint_type value0 = data[i];
-  uint_type value1 = data[i + 1];
+  uint16_type value0 = data[i];
+  uint16_type value1 = data[i + 1];
   assert(value0 <= 0xffff);
   assert(value1 <= 0xffff);
 

@@ -38,16 +38,16 @@ namespace vx68k
 
     public:
       /* Reads records.  */
-      virtual sint32_type read(uint_type, uint32_type, memory_map &,
+      virtual sint32_type read(uint16_type, uint32_type, memory_map &,
 			       uint32_type, uint32_type) = 0;
 
       /* Writes records.  */
-      virtual sint32_type write(uint_type, uint32_type,
+      virtual sint32_type write(uint16_type, uint32_type,
 				const memory_map &,
 				uint32_type, uint32_type) = 0;
 
       /* Verifies records by comparing the contents.  */
-      virtual sint32_type verify(uint_type, uint32_type,
+      virtual sint32_type verify(uint16_type, uint32_type,
 				 const memory_map &,
 				 uint32_type, uint32_type) = 0;
     };
@@ -67,11 +67,11 @@ namespace vx68k
       virtual off_t record_offset(uint32_type);
 
     public:
-      sint32_type read(uint_type, uint32_type, memory_map &,
+      sint32_type read(uint16_type, uint32_type, memory_map &,
 		       uint32_type, uint32_type);
-      sint32_type write(uint_type, uint32_type, const memory_map &,
+      sint32_type write(uint16_type, uint32_type, const memory_map &,
 			uint32_type, uint32_type);
-      sint32_type verify(uint_type, uint32_type, const memory_map &,
+      sint32_type verify(uint16_type, uint32_type, const memory_map &,
 			 uint32_type, uint32_type);
     };
   } // namespace iocs

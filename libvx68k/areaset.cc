@@ -68,7 +68,7 @@ area_set::put_8(uint32_type address, int value, function_code fc)
   if (fc != memory::SUPER_DATA)
     throw bus_error_exception(false, fc, address);
 
-  uint_type i = address & 0x1fff;
+  int i = address & 0x1fff;
   switch (i)
     {
     case 0x1:

@@ -88,7 +88,7 @@ regular_file::write(const memory_map *as, uint32_type dataptr,
   return result;
 }
 
-sint_type
+sint16_type
 regular_file::fgetc()
 {
   unsigned char data[1];
@@ -99,8 +99,8 @@ regular_file::fgetc()
   return data[0];
 }
 
-sint_type
-regular_file::fputc(sint_type code)
+sint16_type
+regular_file::fputc(sint16_type code)
 {
   // FIXME.
   unsigned char data[1];
@@ -127,7 +127,7 @@ regular_file::fputs(const memory_map *as, uint32_type mesptr)
 }
 
 sint32_type
-regular_file::seek(sint32_type offset, uint_type mode)
+regular_file::seek(sint32_type offset, uint16_type mode)
 {
   // FIXME.
   sint32_type pos = lseek(fd, offset, mode);
@@ -161,8 +161,8 @@ namespace
   public:
     sint32_type read(memory_map *, uint32_type, uint32_type);
     sint32_type write(const memory_map *, uint32_type, uint32_type);
-    sint_type fgetc();
-    sint_type fputc(sint_type);
+    sint16_type fgetc();
+    sint16_type fputc(sint16_type);
     sint32_type fputs(const memory_map *, uint32_type);
   };
 } // (unnamed namespace)
@@ -193,7 +193,7 @@ con_device_file::write(const memory_map *as,
   return size;
 }
 
-sint_type
+sint16_type
 con_device_file::fgetc()
 {
   /* FIXME.  This function must be implemented via class machine.  */
@@ -202,8 +202,8 @@ con_device_file::fgetc()
   return 1;
 }
 
-sint_type
-con_device_file::fputc(sint_type code)
+sint16_type
+con_device_file::fputc(sint16_type code)
 {
   _m->b_putc(code);
   return 1;
@@ -316,8 +316,8 @@ file_system::open(file *&ret, int fd)
   ret = f;
 }
 
-sint_type
-file_system::open(file *&ret, const string &name, uint_type mode)
+sint16_type
+file_system::open(file *&ret, const string &name, uint16_type mode)
 {
   if ((mode & 0xf) > 2)
     return -12;			// FIXME.
@@ -357,19 +357,19 @@ file_system::open(file *&ret, const string &name, uint_type mode)
   return 0;
 }
 
-sint_type
+sint16_type
 file_system::open(file *&ret, const memory_map *as,
 		  uint32_type nameptr,
-		  sint_type mode)
+		  sint16_type mode)
 {
   string name = as->get_string(nameptr, memory::SUPER_DATA);
 
   return open(ret, name, mode);
 }
 
-sint_type
+sint16_type
 file_system::create(file *&ret, const memory_map *as,
-		    uint32_type nameptr, sint_type atr)
+		    uint32_type nameptr, sint16_type atr)
 {
   string name = export_file_name(as->get_string(nameptr, memory::SUPER_DATA));
 
@@ -390,9 +390,9 @@ file_system::create(file *&ret, const memory_map *as,
   return 0;
 }
 
-sint_type
+sint16_type
 file_system::chmod(const memory_map *as,
-		   uint32_type nameptr, sint_type atr)
+		   uint32_type nameptr, sint16_type atr)
 {
   string name = export_file_name(as->get_string(nameptr, memory::SUPER_DATA));
 
@@ -413,7 +413,7 @@ file_system::chmod(const memory_map *as,
       }
 
   // FIXME.
-  sint_type a = 0;
+  sint16_type a = 0;
   if (S_ISDIR(stbuf.st_mode))
     a |= 0x10;
   else

@@ -55,7 +55,7 @@ sram::get_16(uint32_type address, function_code fc) const
   L("class sram: get_16 fc=%d address=%#010x\n", fc, address);
 #endif
   address &= 0x3fff;
-  uint_type value = ::getw(buf + address);
+  uint16_type value = ::getw(buf + address);
   return value;
 }
 
@@ -66,7 +66,7 @@ sram::get_8(uint32_type address, function_code fc) const
   L("class sram: get_8 fc=%d address=%#010x\n", fc, address);
 #endif
   address &= 0x3fff;
-  uint_type value = *(buf + address) & 0xffu;
+  int value = *(buf + address) & 0xffu;
   return value;
 }
 

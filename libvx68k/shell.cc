@@ -93,7 +93,7 @@ shell::exec(const char *name, const char *const *argv,
   _context->regs.a[7] = pdb + 0x2000;
   uint32_type child_pdb = _context->load(name, pdb_base + 0x100, env);
   _context->setpdb(child_pdb);
-  sint_type status = _context->start(_context->regs.a[4], argv);
+  sint16_type status = _context->start(_context->regs.a[4], argv);
 
   return status;
 }

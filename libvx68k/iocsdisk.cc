@@ -82,7 +82,7 @@ image_file_floppy_disk::record_offset(uint32_type pos)
 }
 
 sint32_type
-image_file_floppy_disk::read(uint_type mode, uint32_type pos,
+image_file_floppy_disk::read(uint16_type mode, uint32_type pos,
 			     memory_map &a,
 			     uint32_type buf, uint32_type nbytes)
 {
@@ -119,7 +119,7 @@ image_file_floppy_disk::read(uint_type mode, uint32_type pos,
 }
 
 sint32_type
-image_file_floppy_disk::write(uint_type mode, uint32_type pos,
+image_file_floppy_disk::write(uint16_type mode, uint32_type pos,
 			      const memory_map &a,
 			      uint32_type buf, uint32_type nbytes)
 {
@@ -141,7 +141,7 @@ image_file_floppy_disk::write(uint_type mode, uint32_type pos,
 }
 
 sint32_type
-image_file_floppy_disk::verify(uint_type mode, uint32_type pos,
+image_file_floppy_disk::verify(uint16_type mode, uint32_type pos,
 			       const memory_map &a,
 			       uint32_type buf, uint32_type nbytes)
 {

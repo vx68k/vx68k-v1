@@ -68,7 +68,7 @@ palettes_memory::get_text_colors(unsigned int first, unsigned int last,
 
   while (first != last)
     {
-      uint_type value = _tpalette[first++];
+      uint16_type value = _tpalette[first++];
       if (value == 0)
 	{
 	  *out++ = 0;
@@ -123,7 +123,7 @@ palettes_memory::get_16(uint32_type address, function_code fc) const
   else if (off >= 256 * 2)
     {
       unsigned int i = (off - 256 * 2) / 2;
-      uint_type value = _tpalette[i];
+      uint16_type value = _tpalette[i];
       return value;
     }
   else
@@ -141,7 +141,7 @@ palettes_memory::get_8(uint32_type address, function_code fc) const
      fc, address + 0UL);
 #endif
 
-  uint_type w = get_16(address, fc);
+  uint16_type w = get_16(address, fc);
   if (address % 2 != 0)
     return w >> 8 & 0xff;
   else
@@ -206,7 +206,7 @@ palettes_memory::put_8(uint32_type address, int value, function_code fc)
      fc, address + 0UL, value);
 #endif
 
-  uint_type w = this->get_16(address, fc);
+  uint16_type w = this->get_16(address, fc);
   if (address % 2 != 0)
     this->put_16(address, w & 0xff | value << 8, fc);
   else

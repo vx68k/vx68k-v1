@@ -1,5 +1,12 @@
 List of user-visible changes in Virtual X68000.
 
+* Version 1.1.7
+
+** Updates for Libvm68k 1.0.5
+
+The removed types were substituted by the proper ones.  This broke
+binary compatibility of the libraries.
+
 * Version 1.1.6
 
 ** Code was modified to fix errors detected by GCC 3.0.

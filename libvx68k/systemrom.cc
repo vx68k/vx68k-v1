@@ -154,7 +154,7 @@ namespace
 #ifdef HAVE_NANA_H
 	DL("iocs_trap: Installed TRAP handler used\n");
 #endif
-	uint_type oldsr = c.sr();
+	uint16_type oldsr = c.sr();
 	c.set_supervisor_state(true);
 	c.regs.a[7] -= 6;
 	c.mem->put_32(c.regs.a[7] + 2, c.regs.pc + 2, memory::SUPER_DATA);
@@ -173,7 +173,7 @@ namespace
 #ifdef HAVE_NANA_H
 	    DL("iocs_trap: Installed IOCS call handler used\n");
 #endif
-	    uint_type oldsr = c.sr();
+	    uint16_type oldsr = c.sr();
 	    c.set_supervisor_state(true);
 	    c.regs.a[7] -= 10;
 	    c.mem->put_32(c.regs.a[7] + 6, c.regs.pc + 2, memory::SUPER_DATA);
@@ -202,7 +202,7 @@ namespace
     system_rom *rom = reinterpret_cast<system_rom *>(data);
     I(rom != NULL);
 
-    uint_type callno = (c.regs.pc - 0xfe0400) / 4;
+    int callno = (c.regs.pc - 0xfe0400) / 4;
     rom->call_iocs(callno, c);
 
     c.regs.pc = long_word_size::get(*c.mem, memory::SUPER_DATA,
@@ -306,7 +306,7 @@ namespace
       word_size::get(c.regs.d[1]),
       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
-    uint_type vecno = word_size::get(c.regs.d[1]);
+    uint16_type vecno = word_size::get(c.regs.d[1]);
     uint32_type addr = long_word_size::get(c.regs.a[1]);
 
     if (vecno > 0x1ff)
@@ -333,7 +333,7 @@ namespace
     x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
     I(as != NULL);
 
-    uint_type key = as->machine()->get_key();
+    uint16_type key = as->machine()->get_key();
     long_word_size::put(c.regs.d[0], key);
   }
 
@@ -348,7 +348,7 @@ namespace
     x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
     I(as != NULL);
 
-    uint_type key = as->machine()->peek_key();
+    uint16_type key = as->machine()->peek_key();
     if (key == 0)
       long_word_size::put(c.regs.d[0], 0);
     else
@@ -390,7 +390,7 @@ namespace
 #ifdef HAVE_NANA_H
     L("IOCS _B_PUTC; %%d1:w=0x%04x\n", word_size::get(c.regs.d[1]));
 #endif
-    uint_type ch = word_size::get(c.regs.d[1]);
+    uint16_type ch = word_size::get(c.regs.d[1]);
 
     x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
     as->machine()->b_putc(ch);
@@ -426,7 +426,7 @@ namespace
       (unsigned long) long_word_size::get(c.regs.d[3]),
       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
-    uint_type pda_mode = word_size::get(c.regs.d[1]);
+    uint16_type pda_mode = word_size::get(c.regs.d[1]);
 
     fprintf(stderr, "iocs_b_readid: FIXME: not implemented\n");
     if ((pda_mode & 0xf000) == 0x9000 && (pda_mode & 0x0f00) <= 0x0100)

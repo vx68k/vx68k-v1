@@ -176,7 +176,7 @@ text_video_memory::draw_char(int x, int y, unsigned int c)
   if (ch1 >= 0x21 && ch1 <= 0x7e)
     {
       unsigned char img[16 * 2];
-      connected_console->get_k16_image(uint_type(ch1) << 8 | ch2, img, 2);
+      connected_console->get_k16_image(uint16_type(ch1) << 8 | ch2, img, 2);
 
       for (unsigned char *plane = buf;
 	   plane != buf + 2 * PLANE_SIZE;
@@ -484,7 +484,7 @@ text_video_memory::get_16(uint32_type address, function_code fc) const
     throw bus_error_exception(true, fc, address);
 
   address &= PLANE_MAX * PLANE_SIZE - 1u;
-  uint_type value = vm68k::getw(buf + address);
+  uint16_type value = vm68k::getw(buf + address);
   return value;
 }
 
@@ -495,7 +495,7 @@ text_video_memory::get_8(uint32_type address, function_code fc) const
     throw bus_error_exception(true, fc, address);
 
   address &= PLANE_MAX * PLANE_SIZE - 1u;
-  uint_type value = *(buf + address);
+  uint16_type value = *(buf + address);
   return value;
 }
 

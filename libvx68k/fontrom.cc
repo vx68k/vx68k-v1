@@ -103,7 +103,7 @@ namespace
   void
   iocs_fntadr(context &c, unsigned long data)
   {
-    uint_type ch = word_size::get(c.regs.d[1]);
+    uint16_type ch = word_size::get(c.regs.d[1]);
     uint32_type size = long_word_size::get(c.regs.d[2]);
 #ifdef HAVE_NANA_H
     LG(nana_iocs_call_trace, "IOCS _FNTADR; %%d1:w=0x%04x %%d2=0x%08lx\n",
@@ -332,7 +332,7 @@ font_rom::get_16(uint32_type address, function_code fc) const
   else
     {
       uint32_type i = address / 2;
-      uint_type value = vm68k::getw(data + 2 * i);
+      uint16_type value = vm68k::getw(data + 2 * i);
       return value;
     }
 }
@@ -348,7 +348,7 @@ font_rom::get_8(uint32_type address, function_code fc) const
     return 0;
   else
     {
-      uint_type value = data[address];
+      uint16_type value = data[address];
       return value;
     }
 }

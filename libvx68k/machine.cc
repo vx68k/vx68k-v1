@@ -45,7 +45,7 @@ using namespace std;
 #endif
 
 void
-machine::b_putc(uint_type code)
+machine::b_putc(uint16_type code)
 {
   /* FIXME.  This function must handle double-byte character.  */
   if (code <= 0x1f || code == 0x7f)
@@ -124,10 +124,10 @@ machine::b_print(const memory_map *as, uint32_type strptr)
 }
 
 sint32_type
-machine::read_disk(memory_map &as, uint_type mode, uint32_type pos,
+machine::read_disk(memory_map &as, uint16_type mode, uint32_type pos,
 		   uint32_type buf, uint32_type nbytes)
 {
-  uint_type u = mode >> 8 & 0xf;
+  int u = mode >> 8 & 0xf;
 
   switch (mode >> 12)
     {
@@ -144,10 +144,10 @@ machine::read_disk(memory_map &as, uint_type mode, uint32_type pos,
 
 sint32_type
 machine::write_disk(const memory_map &as,
-		    uint_type mode, uint32_type pos,
+		    uint16_type mode, uint32_type pos,
 		    uint32_type buf, uint32_type nbytes) const
 {
-  uint_type u = mode >> 8 & 0xf;
+  int u = mode >> 8 & 0xf;
 
 #ifdef HAVE_NANA_H
   L("machine: writing disk %#x %#x %#x %#x\n", mode, pos, buf, nbytes);
@@ -187,11 +187,11 @@ machine::boot(context &c)
     }
   catch (illegal_instruction_exception &e)
     {
-      uint_type op = c.mem->get_16(c.regs.pc, memory::SUPER_DATA);
+      uint16_type op = c.mem->get_16(c.regs.pc, memory::SUPER_DATA);
 
       if ((op & 0xf000u) == 0xf000u)
 	{
-	  uint_type oldsr = c.sr();
+	  uint16_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 6;
 	  c.mem->put_32(c.regs.a[7] + 2, c.regs.pc, memory::SUPER_DATA);
@@ -203,7 +203,7 @@ machine::boot(context &c)
 	{
 	  c.regs.pc += 2;
 
-	  uint_type oldsr = c.sr();
+	  uint16_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 6;
 	  c.mem->put_32(c.regs.a[7] + 2, c.regs.pc, memory::SUPER_DATA);
@@ -224,7 +224,7 @@ machine::boot(context &c)
 #ifdef HAVE_NANA_H
 	  L("machine: Installed bus/address error handler used\n");
 #endif
-	  uint_type oldsr = c.sr();
+	  uint16_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 14;
 	  c.mem->put_32(c.regs.a[7] + 10, c.regs.pc, memory::SUPER_DATA);
@@ -249,7 +249,7 @@ machine::boot()
 }
 
 void
-machine::queue_key(uint_type key)
+machine::queue_key(uint16_type key)
 {
   mutex_lock lock(&key_queue_mutex);
 
@@ -257,7 +257,7 @@ machine::queue_key(uint_type key)
   pthread_cond_signal(&key_queue_not_empty);
 }
 
-uint_type
+uint16_type
 machine::peek_key()
 {
   if (key_queue.empty())
@@ -268,7 +268,7 @@ machine::peek_key()
 
   mutex_lock lock(&key_queue_mutex);
 
-  uint_type key;
+  uint16_type key;
   if (key_queue.empty())
     key = 0;
   else
@@ -277,7 +277,7 @@ machine::peek_key()
   return key;
 }
 
-uint_type
+uint16_type
 machine::get_key()
 {
   mutex_lock lock(&key_queue_mutex);
@@ -285,14 +285,14 @@ machine::get_key()
   while (key_queue.empty())
     pthread_cond_wait(&key_queue_not_empty, &key_queue_mutex);
 
-  uint_type key = key_queue.front();
+  uint16_type key = key_queue.front();
   key_queue.pop();
 
   return key;
 }
 
 void
-machine::set_key_modifiers(uint_type mask, uint_type value)
+machine::set_key_modifiers(uint16_type mask, uint16_type value)
 {
   _key_modifiers = (_key_modifiers & ~mask) ^ value;
 }

@@ -98,7 +98,7 @@ crtc_memory::get_8(uint32_type address, function_code fc) const
   DL("class crtc_memory: get_8: fc=%d address=0x%08lx\n", fc, address + 0UL);
 #endif
 
-  uint_type w = get_16(address & ~1u, fc);
+  uint16_type w = get_16(address & ~1u, fc);
   if (address & 1u)
     return w >> 8 & 0xff;
   else

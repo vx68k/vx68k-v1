@@ -83,7 +83,7 @@ memory_allocator::free_by_parent(uint32_type parent)
     }
 }
 
-sint_type
+sint16_type
 memory_allocator::free(uint32_type memptr)
 {
 #ifdef L

@@ -67,7 +67,7 @@ gtk_console::handle_key_press_event(GtkWidget *drawing_area,
   for (gchar *i = e->string + 0; i != e->string + e->length; ++i)
     {
       // FIXME character code translation?
-      uint_type key = *i;
+      uint16_type key = *i;
 #ifdef HAVE_NANA_H
       L("gtk_console: Key press %#x\n", key);
 #endif
@@ -469,7 +469,7 @@ namespace
       return *this;
     }
 
-    pixel_iterator &operator=(uint_type p)
+    pixel_iterator &operator=(uint16_type p)
     {
 #ifndef GDK_IMAGE
       unsigned char *rgb = rgb_table + p * 3;
