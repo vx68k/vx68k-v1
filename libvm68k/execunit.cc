@@ -38,7 +38,13 @@
 # undef TRACE_INSTRUCTIONS
 #endif
 
-using namespace vm68k;
+using vm68k::exec_unit;
+using vm68k::context;
+using vm68k::instruction_data;
+using vm68k::byte_size;
+using vm68k::word_size;
+using vm68k::long_word_size;
+using namespace vm68k::types;
 using namespace std;
 
 void
@@ -86,25 +92,14 @@ exec_unit::set_instruction(int code, int mask, instruction_handler h,
 	}
     }
 }
-
-exec_unit::exec_unit()
-{
-  fill(instructions + 0, instructions + 0x10000,
-       make_pair(&illegal, (instruction_data *) 0));
-  install_instructions(*this);
-}
-
-/* Executes an illegal instruction.  */
-void
-exec_unit::illegal(unsigned int op, context &ec, instruction_data *data)
-{
-  throw illegal_instruction();
-}
-
+
 namespace
 {
-  using namespace condition;
-  using namespace addressing;
+  using vm68k::extsb;
+  using vm68k::extsw;
+  using vm68k::extsl;
+  using namespace vm68k::condition;
+  using namespace vm68k::addressing;
 
   /* Handles an ADD instruction.  */
   template <class Size, class Source> void
@@ -3364,6 +3359,20 @@ namespace
     eu.set_instruction(0xe1a8, 0x0e07, &lsll_r);
   }
 } // (unnamed namespace)
+
+exec_unit::exec_unit()
+{
+  fill(instructions + 0, instructions + 0x10000,
+       make_pair(&illegal, (instruction_data *) 0));
+  install_instructions(*this);
+}
+
+/* Executes an illegal instruction.  */
+void
+exec_unit::illegal(unsigned int op, context &ec, instruction_data *data)
+{
+  throw illegal_instruction();
+}
 
 /* Installs instructions into the execution unit.  */
 void
