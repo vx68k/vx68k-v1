@@ -10,7 +10,7 @@ lib_LTLIBRARIES = libvm68k.la
 libvm68k_la_LDFLAGS = -version-info 0:0:0 -release ${VERSION}
 libvm68k_la_SOURCES = execunit.cc inst0.cc inst1to3.cc inst4.cc inst5.cc \
 inst6.cc inst7.cc inst8.cc inst9.cc inst11.cc inst12.cc inst13.cc inst14.cc \
-context.cc statusreg.cc memory_map.cc defaultmem.cc memory.cc
+context.cc condition_code.cc memory_map.cc defaultmem.cc memory.cc
 
 noinst_HEADERS = instr.h
 

@@ -1,5 +1,10 @@
 2000-12-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Replace statusreg.cc
+	with condition_code.cc.
+
+	* libvm68k/condition_code.cc: Renamed from statusreg.cc.
+
 	* libvm68k/Makefile.am (noinst_HEADERS): Replace inst.h with
 	instr.h.
 
