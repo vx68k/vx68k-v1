@@ -239,8 +239,8 @@ namespace
   iocs_b_intvcs(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    L("system_rom: _INTVCS %%d1=%#010x %%d2=%#010x\n",
-      c.regs.d[1], c.regs.d[2]);
+    L("system_rom: _B_INTVCS %%d1=%#010x %%a1=%#010x\n",
+      c.regs.d[1], c.regs.a[1]);
 #endif
     uint_type vecno = word_size::get(c.regs.d[1]);
     uint32_type addr = long_word_size::get(c.regs.a[1]);

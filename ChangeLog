@@ -1,6 +1,7 @@
 2000-06-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/systemrom.cc (putw, putb): Throw a bus_error.
+	(iocs_b_intvcs): Fix the diagnostic message.
 
 	* libvx68k/allocator.cc (make_block): Use PREV to get NEXT.
 
