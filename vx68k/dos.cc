@@ -88,7 +88,7 @@ dos::load_executable (const char *name)
 }
 
 uint16
-dos::start (uint32 address)
+dos::start (uint32 address, const char *const *argv)
 {
   main_ec.regs.pc = address;
   uint16 status = 0;
@@ -109,9 +109,9 @@ dos::start (uint32 address)
 }
 
 uint16
-dos::execute (const char *name)
+dos::execute (const char *name, const char *const *argv)
 {
-  return start (load_executable (name));
+  return start (load_executable (name), argv);
 }
 
 dos::dos (address_space *as, size_t)

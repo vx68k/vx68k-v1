@@ -33,8 +33,8 @@ class dos
 public:
   dos (address_space *, size_t);
   uint32 load_executable (const char *);
-  uint16 start (uint32);
-  uint16 execute (const char *);
+  uint16 start (uint32, const char *const *);
+  uint16 execute (const char *, const char *const *);
 private:
   vm68k::cpu main_cpu;
   vm68k::execution_context main_ec;

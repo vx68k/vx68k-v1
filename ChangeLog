@@ -1,3 +1,11 @@
+1998-11-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* vx68k/main.cc (main): Update dos::execute call.
+
+	* vx68k/dos.cc (start): Add argument: argv.
+	(execute): Likewise.
+	* include/vx68k/human.h (class dos): Update.
+
 1998-11-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* vx68k/dos.cc (load_executable): Fix reloc_size offset.

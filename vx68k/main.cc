@@ -34,6 +34,6 @@ main (int argc, char **argv)
   address_space mem (MEMSIZE);
 
   dos env (&mem, MEMSIZE);
-  return env.execute (argv[1]);	// FIXME
+  return env.execute (argv[1], argv + 2); // FIXME
 }
 
