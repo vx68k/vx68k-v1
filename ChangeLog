@@ -1,5 +1,7 @@
 2000-06-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/doscontext.cc (load_executable): Modify the PSP setup.
+
 	* include/vm68k/addressing.h (class basic_postinc_indirect, class
 	basic_index_indirect): Write the actual address in text.
 	(class postinc_indirect, class indexed_indirect): Likewise.

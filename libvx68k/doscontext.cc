@@ -297,7 +297,8 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
   free(fixup_buf);
 
   // PSP setup.
-  mem->puts(SUPER_DATA, load_address - 128, name);
+  mem->putl(SUPER_DATA, load_address - 0x100 + 0x80, 0);
+  mem->puts(SUPER_DATA, load_address - 0x100 + 0xc4, name);
   regs.a[0] = load_address - 0x100;
   regs.a[1] = load_address + text_size + data_size + bss_size;
 
