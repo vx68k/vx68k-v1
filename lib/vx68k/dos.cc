@@ -57,6 +57,7 @@ dos::execute (const char *name, const char *const *argv)
   dos_exec_context ec(vm->exec_unit(), vm->address_space(), NULL);
   ec.set_debug_level(debug_level);
   process *p = load(name, ec);
+  ec.regs.a[7] = ec.regs.a[0];	// FIXME
   uint_type st = ec.start(ec.regs.a[4], argv);
   delete p;
 }

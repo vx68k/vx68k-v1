@@ -83,7 +83,6 @@ uint16
 dos_exec_context::start(uint32 address, const char *const *argv)
 {
   regs.pc = address;
-  regs.a[7] = 0x8000;		// FIXME.
   uint16 status = 0;
   try
     {

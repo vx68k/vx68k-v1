@@ -1,7 +1,13 @@
 1999-06-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/allocator.cc (memory_allocator): Reserve 0x2000 - 0x10
+	bytes for initial stack.
+
+	* lib/vx68k/doscontext.cc (start): Remove initialization of sp.
+
 	* lib/vx68k/dos.cc (load): Pass pdb to load_executable.
 	(dos_getpdb): Get real pdb from process.
+	(execute): Set initial sp.
 
 	* lib/vx68k/process.cc (~process, process): Modified for pdb.
 
