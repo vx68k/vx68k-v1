@@ -25,6 +25,7 @@
 #include "vx68k/human.h"
 #include "vx68k/memory.h"
 #include "getopt.h"
+#include <pthread.h>
 #include <exception>
 #include <cstdlib>
 #include <cstdio>
@@ -70,6 +71,27 @@ namespace
 
       return true;
     }
+
+  struct machine_data
+  {
+    machine *vm;
+    const char *const *argv;
+    int status;
+  };
+
+  void *
+  run_machine(void *data)
+  {
+    machine_data *md = static_cast<machine_data *>(data);
+
+    human::dos env(md->vm);
+    if (opt_debug)
+      env.set_debug_level(1);
+
+    md->status = env.execute(md->argv[1], md->argv + 2); // FIXME
+
+    pthread_exit(NULL);
+  }
 } // (unnamed namespace)
 
 /* vx68k main.  */
@@ -101,11 +123,17 @@ main (int argc, char **argv)
     {
       const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
       machine vm(MEMSIZE);
-      human::dos env(&vm);
 
-      if (opt_debug)
-	env.set_debug_level(1);
-      return env.execute(argv[1], argv + 2); // FIXME
+      pthread_t vm_thread;
+      machine_data *md = new machine_data;
+      md->vm = &vm;
+      md->argv = argv;
+      pthread_create(&vm_thread, NULL, &run_machine, &md);
+
+      pthread_join(vm_thread, NULL);
+      int status = md->status;
+      delete md;
+      return status;
     }
   catch (exception &x)
     {
