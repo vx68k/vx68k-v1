@@ -511,6 +511,43 @@ namespace
 
     ec.regs.pc += 2;
   }
+
+  void
+  add_instructions(exec_unit &eu, dos *data)
+  {
+    eu.set_instruction(0xff02, 0, &dos_putchar, data);
+    eu.set_instruction(0xff08, 0, &dos_getc, data);
+    eu.set_instruction(0xff09, 0, &dos_print, data);
+    eu.set_instruction(0xff0d, 0, &dos_fflush, data);
+    eu.set_instruction(0xff1b, 0, &dos_fgetc, data);
+    eu.set_instruction(0xff1e, 0, &dos_fputs, data);
+    eu.set_instruction(0xff20, 0, &dos_super, data);
+    eu.set_instruction(0xff25, 0, &dos_intvcs, data);
+    eu.set_instruction(0xff27, 0, &dos_gettim2, data);
+    eu.set_instruction(0xff2a, 0, &dos_getdate, data);
+    eu.set_instruction(0xff30, 0, &dos_vernum, data);
+    eu.set_instruction(0xff37, 0, &dos_nameck, data);
+    eu.set_instruction(0xff3c, 0, &dos_create, data);
+    eu.set_instruction(0xff3d, 0, &dos_open, data);
+    eu.set_instruction(0xff3e, 0, &dos_close, data);
+    eu.set_instruction(0xff3f, 0, &dos_read, data);
+    eu.set_instruction(0xff40, 0, &dos_write, data);
+    eu.set_instruction(0xff41, 0, &dos_delete, data);
+    eu.set_instruction(0xff42, 0, &dos_seek, data);
+    eu.set_instruction(0xff43, 0, &dos_chmod, data);
+    eu.set_instruction(0xff44, 0, &dos_ioctrl, data);
+    eu.set_instruction(0xff45, 0, &dos_dup, data);
+    eu.set_instruction(0xff48, 0, &dos_malloc, data);
+    eu.set_instruction(0xff4a, 0, &dos_setblock, data);
+    eu.set_instruction(0xff4c, 0, &dos_exit2, data);
+    eu.set_instruction(0xff51, 0, &dos_getpdb, data);
+    eu.set_instruction(0xff53, 0, &dos_getenv, data);
+    eu.set_instruction(0xff57, 0, &dos_filedate, data);
+
+    eu.set_instruction(0xff81, 0, &dos_getpdb, data);
+    eu.set_instruction(0xff83, 0, &dos_getenv, data);
+    eu.set_instruction(0xff87, 0, &dos_filedate, data);
+  }
 } // (unnamed namespace)
 
 dos_exec_context *
@@ -530,40 +567,7 @@ dos::dos(machine *m)
     _fs(vm),
     debug_level(0)
 {
-  exec_unit *eu = vm->exec_unit();
-
-  eu->set_instruction(0xff02, 0, &dos_putchar, this);
-  eu->set_instruction(0xff08, 0, &dos_getc, this);
-  eu->set_instruction(0xff09, 0, &dos_print, this);
-  eu->set_instruction(0xff0d, 0, &dos_fflush, this);
-  eu->set_instruction(0xff1b, 0, &dos_fgetc, this);
-  eu->set_instruction(0xff1e, 0, &dos_fputs, this);
-  eu->set_instruction(0xff20, 0, &dos_super, this);
-  eu->set_instruction(0xff25, 0, &dos_intvcs, this);
-  eu->set_instruction(0xff27, 0, &dos_gettim2, this);
-  eu->set_instruction(0xff2a, 0, &dos_getdate, this);
-  eu->set_instruction(0xff30, 0, &dos_vernum, this);
-  eu->set_instruction(0xff37, 0, &dos_nameck, this);
-  eu->set_instruction(0xff3c, 0, &dos_create, this);
-  eu->set_instruction(0xff3d, 0, &dos_open, this);
-  eu->set_instruction(0xff3e, 0, &dos_close, this);
-  eu->set_instruction(0xff3f, 0, &dos_read, this);
-  eu->set_instruction(0xff40, 0, &dos_write, this);
-  eu->set_instruction(0xff41, 0, &dos_delete, this);
-  eu->set_instruction(0xff42, 0, &dos_seek, this);
-  eu->set_instruction(0xff43, 0, &dos_chmod, this);
-  eu->set_instruction(0xff44, 0, &dos_ioctrl, this);
-  eu->set_instruction(0xff45, 0, &dos_dup, this);
-  eu->set_instruction(0xff48, 0, &dos_malloc, this);
-  eu->set_instruction(0xff4a, 0, &dos_setblock, this);
-  eu->set_instruction(0xff4c, 0, &dos_exit2, this);
-  eu->set_instruction(0xff51, 0, &dos_getpdb, this);
-  eu->set_instruction(0xff53, 0, &dos_getenv, this);
-  eu->set_instruction(0xff57, 0, &dos_filedate, this);
-
-  eu->set_instruction(0xff81, 0, &dos_getpdb, this);
-  eu->set_instruction(0xff83, 0, &dos_getenv, this);
-  eu->set_instruction(0xff87, 0, &dos_filedate, this);
+  add_instructions(*vm->exec_unit(), this);
 
   // Dummy NUL device.  LHA scans this for TwentyOne?
   vm->address_space()->putl(SUPER_DATA, 0x6900 +  0, 0x6a00);

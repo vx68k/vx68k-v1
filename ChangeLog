@@ -2,6 +2,8 @@
 
 	* vx68k/dos.cc (dos_super): New function.
 	(dos): Install dos_super.
+	(add_instructions): New function.
+	(dos): Use add_instructions.
 
 	* vx68k/doscontext.cc (start): Clear the supervisor state.
 	(exit): Add comments.
