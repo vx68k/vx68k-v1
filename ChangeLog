@@ -3,6 +3,9 @@
 	* bin/main.cc (show_about_dialog): Add "report bugs" paragraph.
 	(main): Print copyright for `--version'.
 	(main): Modify "unhandled exception" message.
+	(show_about_dialog): Show the dialog at the end.
+	(create_window): Set the title and add an accel group.  Do not
+	show the window here.
 
 2000-02-29  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 

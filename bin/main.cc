@@ -185,7 +185,6 @@ void
 vx68k_app::show_about_dialog()
 {
   GtkWidget *dialog = gtk_dialog_new();
-  gtk_widget_show(dialog);
   gtk_window_set_policy(GTK_WINDOW(dialog), false, false, false);
   gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
   if (main_window != NULL)
@@ -281,6 +280,8 @@ vx68k_app::show_about_dialog()
   gtk_signal_connect(GTK_OBJECT(ok_button), "clicked",
 		     GTK_SIGNAL_FUNC(&handle_about_ok_clicked), this);
   gtk_window_set_focus(GTK_WINDOW(dialog), ok_button);
+
+  gtk_widget_show(dialog);
 }
 
 namespace
@@ -322,9 +323,13 @@ vx68k_app::create_window()
   if (main_window == NULL)
     {
       main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+      gtk_window_set_title(GTK_WINDOW(main_window), PROGRAM);
       gtk_signal_connect(GTK_OBJECT(main_window), "delete_event",
-			 GTK_SIGNAL_FUNC(&gtk_main_quit), NULL);
-      gtk_widget_show(main_window);
+			 GTK_SIGNAL_FUNC(&gtk_main_quit), this);
+
+      GtkAccelGroup *ag1 = gtk_accel_group_new();
+      gtk_window_add_accel_group(GTK_WINDOW(main_window), ag1);
+      gtk_accel_group_unref(ag1);
 
       {
 	GtkWidget *vbox = gtk_vbox_new(false, 0);
@@ -332,7 +337,7 @@ vx68k_app::create_window()
 	gtk_container_add(GTK_CONTAINER(main_window), vbox);
 	{
 	  GtkItemFactory *ifactory
-	    = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<Window>", NULL);
+	    = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<Window>", ag1);
 #define ITEM_FACTORY_CALLBACK(f) (reinterpret_cast<GtkItemFactoryCallback>(f))
 	  GtkItemFactoryEntry entries[]
 	    = {{_("/_File/_Run..."), NULL,
@@ -355,6 +360,7 @@ vx68k_app::create_window()
 	  gtk_item_factory_create_items(ifactory,
 					sizeof entries / sizeof entries[0],
 					entries, this);
+
 	  gtk_widget_show(ifactory->widget);
 	  gtk_box_pack_start(GTK_BOX(vbox), ifactory->widget, false, false, 0);
 	  //gtk_object_unref(GTK_OBJECT(ifactory));
