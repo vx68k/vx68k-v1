@@ -1,5 +1,10 @@
 1999-03-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/addrspace.cc: New file.
+	* lib/vm68k/Makefile.am (libvm68k_a_SOURCES): Add the new file.
+	* lib/vm68k/memory.cc: Move address_space methods to
+	addrspace.cc.
+
 	* lib/vm68k/memory.cc (read, write, getb, putb, getw, putw, getl,
 	putl): Remove throw-specs.
 	(getb, putb, getw, putw): Change the value types to unsigned int.
