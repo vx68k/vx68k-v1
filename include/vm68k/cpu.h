@@ -160,9 +160,15 @@ namespace vm68k
     void set_cc_lsr(sint32_type r, sint32_type d, uint_type s)
       {set_cc_asr(r, d, s);}
     void set_cc_lsl(sint32_type, sint32_type, uint_type);
+
   public:
+    /* Returns whether supervisor state.  */
     bool supervisor_state() const
       {return (value & S) != 0;}
+
+    /* Sets the S bit.  */
+    void set_s_bit(bool s)
+      {if (s) value |= S; else value &= ~S;}
   };
 
   /* CPU registers (mc68000).  */
@@ -213,6 +219,9 @@ struct exception_listener
     /* Returns the FC for data in the current state.  */
     int data_fc() const
       {return dfc;}
+
+    /* Sets the supervisor state to STATE.  */
+    void set_supervisor_state(bool state);
 
   public:
     uint_type fetchw(int disp) const

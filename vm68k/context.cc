@@ -35,6 +35,35 @@
 using namespace vm68k;
 using namespace std;
 
+void
+context::set_supervisor_state(bool state)
+{
+  if (state)
+    {
+      if (!regs.sr.supervisor_state())
+	{
+	  regs.usp = regs.a[7];
+	  regs.sr.set_s_bit(true);
+	  regs.a[7] = regs.ssp;
+
+	  pfc = SUPER_PROGRAM;
+	  dfc = SUPER_DATA;
+	}
+    }
+  else
+    {
+      if (regs.sr.supervisor_state())
+	{
+	  regs.ssp = regs.a[7];
+	  regs.sr.set_s_bit(false);
+	  regs.a[7] = regs.usp;
+
+	  pfc = USER_PROGRAM;
+	  dfc = USER_DATA;
+	}
+    }
+}
+
 context::context(address_space *m)
   : mem(m),
     pfc(regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM),

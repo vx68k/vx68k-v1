@@ -1,5 +1,11 @@
 1999-10-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/context.cc (set_supervisor_state): New function.
+
+	* include/vm68k/cpu.h (class context): Add method
+	set_supervisor_state.
+	(class status_register): Add method set_s_bit.
+
 	* include/vm68k/Makefile.am (vm68kinclude_HEADERS): Renamed from
 	noinst_HEADERS.
 	(vm68kincludedir): New macro.
