@@ -187,11 +187,14 @@ system_rom::initialize(address_space &as)
 #endif
 
   uint32_type f = 0xfc0000;
-  for (uint32_type i = 0; i != 0x200; ++i)
+  for (uint32_type i = 0u; i != 0x800u; i += 4)
     {
-      as.putl(SUPER_DATA, i * 4u, f);
+      as.putl(SUPER_DATA, i, f);
       f += 4;
     }
+
+  for (uint32_type i = 0x800u; i != 0x1000u; i += 4)
+    as.putl(SUPER_DATA, i, 0);
 }
 
 namespace

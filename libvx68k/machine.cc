@@ -190,22 +190,30 @@ machine::boot(context &c)
     {
       uint_type op = c.mem->getw(SUPER_DATA, c.regs.pc);
 
-      switch (op >> 12)
+      if ((op & 0xf000u) == 0xf000u)
 	{
-	case 0xf:
-	  {
-	    uint_type status = c.regs.ccr;
-	    c.set_supervisor_state(true);
-	    c.regs.a[7] -= 6;
-	    c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
-	    c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, status);
-	    c.regs.pc = c.mem->getl(SUPER_DATA, 0x02c);
-	    goto rerun;
-	  }
-
-	default:
-	  throw;
+	  uint_type oldsr = c.sr();
+	  c.set_supervisor_state(true);
+	  c.regs.a[7] -= 6;
+	  c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	  c.regs.pc = c.mem->getl(SUPER_DATA, 11u * 4u);
+	  goto rerun;
 	}
+      else if ((op & 0xfff0u) == 0x4e40)
+	{
+	  c.regs.pc += 2;
+
+	  uint_type oldsr = c.sr();
+	  c.set_supervisor_state(true);
+	  c.regs.a[7] -= 6;
+	  c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	  c.regs.pc = c.mem->getl(SUPER_DATA, ((op & 0xfu) + 32) * 4u);
+	  goto rerun;
+	}
+      else
+	throw;
     }
 }
 
