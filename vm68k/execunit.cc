@@ -75,21 +75,44 @@ exec_unit::illegal(int op, execution_context *)
 namespace
 {
 
-  /* movem regs to EA (postdec).  */
-  void movem_l_r_postdec(int op, execution_context *ec)
+  void link(int op, execution_context *ec)
     {
+      int reg = op & 0x0007;
+      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+      int32 disp = ec->mem->getw(fc, ec->regs.pc + 2);
+      if (disp >= 0x8000)
+	disp -= 0x10000;
+      fprintf(stderr, " link a%d,#%d\n", reg, disp);
+
+      // FIXME.
+      // ec->mem->putl(fc, ec->regs.a[7] - 4, ec->regs.a[reg]);
+      ec->regs.a[7] -= 4;
+      ec->regs.a[reg] = ec->regs.a[7];
+      ec->regs.a[7] += disp;
+
+      ec->regs.pc += 4;
+    }
+
+  /* movem regs to EA (postdec).  */
+  void movem_l_r_predec(int op, execution_context *ec)
+    {
+      int reg = op & 0x0007;
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
       unsigned int bitmap = ec->mem->getw(fc, ec->regs.pc + 2);
-      ec->regs.pc += 4;
-      fprintf(stderr, "movem_l_r_pd 0x%x\n", bitmap);
+      fprintf(stderr, " movem.l #0x%x,-(a%d)\n", bitmap, reg);
+
       for (int i = 0; i != 16; ++i)
 	{
 	  if (bitmap & 1 != 0)
 	    {
-				// FIXME.
+	      // FIXME.
+	      // ec->mem->putl(fc, ec->regs.a[reg] - 4, ec->regs.d[15 - i]);
+	      ec->regs.a[reg] -= 4;
 	    }
 	  bitmap >>= 1;
 	}
+
+      ec->regs.pc += 4;
     }
 
 } // (unnamed namespace)
@@ -99,6 +122,7 @@ void
 exec_unit::install_instructions(exec_unit *eu)
 {
   assert(eu != NULL);
-  eu->set_instruction(0x48e0, 0x0007, &movem_l_r_postdec);
+  eu->set_instruction(0x48e0, 0x0007, &movem_l_r_predec);
+  eu->set_instruction(0x4e50, 0x0007, &link);
 }
 

@@ -1,5 +1,12 @@
 1999-03-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/execunit.cc (link): New function.
+	(movem_l_r_predec): Renamed from movem_r_postdec.  Update all refs.
+	(movem_l_r_predec): Add decrements.
+	(movem_l_r_predec): Move the PC increment.
+	(movem_l_r_predec): Modify the stderr message.
+	(install_instructions): Set &link.
+
 	* include/vm68k/cpu.h (user_cpu_regs): Rename members.
 
 	* vm68k/execunit.cc (movem_l_r_postdec): New function.
