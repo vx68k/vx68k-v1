@@ -122,16 +122,25 @@ gtk_console::handle_expose_event(GtkWidget *drawing_area,
   GdkGC *gc = gdk_gc_new(drawing_area->window);
   gdk_gc_set_clip_rectangle(gc, &e->area);
 
+  int x = e->area.x;
+  int y = e->area.y;
+  if (x < width && y < height)
+    {
+      unsigned int w = e->area.width;
+      unsigned int h = e->area.height;
+      if (w > width - x)
+	w = width - x;
+      if (h > height - y)
+	h = height - y;
+
 #ifndef GDK_IMAGE
-  guchar *p = rgb_buf + e->area.y * row_size + e->area.x * 3;
-  gdk_draw_rgb_image(drawing_area->window, gc,
-		     e->area.x, e->area.y, e->area.width, e->area.height,
-		     GDK_RGB_DITHER_NORMAL, p, row_size);
+      guchar *p = rgb_buf + e->area.y * row_size + e->area.x * 3;
+      gdk_draw_rgb_image(drawing_area->window, gc, x, y, w, h,
+			 GDK_RGB_DITHER_NORMAL, p, row_size);
 #else
-  gdk_draw_image(drawing_area->window, gc, image,
-		 e->area.x, e->area.y, e->area.x, e->area.y,
-		 e->area.width, e->area.height);
+      gdk_draw_image(drawing_area->window, gc, image, x, y, x, y, w, h);
 #endif
+    }
 
   gdk_gc_unref(gc);
 

@@ -162,7 +162,7 @@ namespace
       }
     else
       {
-	unsigned int callno = byte_size::get(c.regs.d[0]);
+	unsigned int callno = byte_size::uvalue(byte_size::get(c.regs.d[0]));
 
 	uint32_type call_address = (callno + 0x100U) * 4U;
 	uint32_type call_handler = c.mem->get_32(memory::SUPER_DATA, call_address);
@@ -173,9 +173,10 @@ namespace
 #endif
 	    uint_type oldsr = c.sr();
 	    c.set_supervisor_state(true);
-	    c.regs.a[7] -= 6;
-	    c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc + 2);
-	    c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	    c.regs.a[7] -= 10;
+	    c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 6, c.regs.pc + 2);
+	    c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 4, oldsr);
+	    c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 0, 0xfe0000);
 
 	    c.regs.pc = call_handler;
 	  }

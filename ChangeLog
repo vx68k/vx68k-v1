@@ -1,5 +1,12 @@
 2000-08-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_trap): Make the IOCS call number
+	unsigned.
+	(iocs_trap): Fix stack frames for IOCS call handlers.
+
+	* libvx68kgtk/gtkconsole.cc (handle_expose_event): Test the expose
+	area to avoid drawing outside of the screen area.
+
 	* doc/vx68k.texi (Human68k): Updated.
 
 2000-08-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
