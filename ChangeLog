@@ -1,3 +1,7 @@
+1999-07-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* configure.in: Change config.h's location.
+
 1999-07-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* TODO: Modified.
