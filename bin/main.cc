@@ -89,6 +89,19 @@ namespace
       return true;
     }
 
+  void
+  display_help(const char *arg0)
+  {
+    printf(_("Usage: %s [OPTION]... [--] EXECUTABLE [ARGUMENT]...\n"), arg0);
+    printf(_("Run X68000 EXECUTABLE with ARGUMENTs.\n"));
+    printf("\n");
+    printf(_("  -M, --memory-size=N   allocate N megabytes for main memory\n"));
+    printf(_("      --help            display this help and exit\n"));
+    printf(_("      --version         output version information and exit\n"));
+    printf("\n");
+    printf(_("Report bugs to vx68k@lists.hypercore.co.jp\n"));
+  }
+
   struct machine_data
   {
     machine *vm;
@@ -129,7 +142,7 @@ main (int argc, char **argv)
 
   if (opt_help)
     {
-      // FIXME.
+      display_help(argv[0]);
       return EXIT_SUCCESS;
     }
 

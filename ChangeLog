@@ -1,5 +1,8 @@
 1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (display_help): New function.
+	(main): Handle `--help'.
+
 	* lib/vx68k/doscontext.cc (read, write, fgetc, fputc, fputs, seek,
 	close, open, create): Change code to use files.
 
