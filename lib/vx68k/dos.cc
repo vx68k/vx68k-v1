@@ -115,6 +115,20 @@ namespace
       static_cast<dos_exec_context &>(ec).exit(status);
     }
 
+  void
+  dos_filedate(unsigned int op, context &ec)
+  {
+#ifdef L
+    L(" DOS _FILEDATE");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    // FIXME.
+    ec.regs.d[0] = 0;
+
+    ec.regs.pc += 2;
+  }
+
   void dos_fgetc(unsigned int op, context &ec)
     {
       VL((" DOS _FGETC\n"));
@@ -174,6 +188,23 @@ namespace
 
       ec.regs.pc += 2;
     }
+
+  void
+  dos_putchar(unsigned int op, context &ec)
+  {
+#ifdef L
+    L(" DOS _PUTCHAR");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    // FIXME.
+    uint32 sp = ec.regs.a[7];
+    int ch = extsw(ec.mem->getw(SUPER_DATA, sp));
+    putchar(ch);
+    ec.regs.d[0] = 0;
+
+    ec.regs.pc += 2;
+  }
 
   void dos_read(unsigned int op, context &ec)
     {
@@ -239,6 +270,7 @@ namespace
 dos::dos(address_space *m, size_t)
   : mem(m)
 {
+  main_cpu.set_instruction(0xff02, 0, &dos_putchar);
   main_cpu.set_instruction(0xff09, 0, &dos_print);
   main_cpu.set_instruction(0xff1b, 0, &dos_fgetc);
   main_cpu.set_instruction(0xff3c, 0, &dos_create);
@@ -252,5 +284,6 @@ dos::dos(address_space *m, size_t)
   main_cpu.set_instruction(0xff44, 0, &dos_ioctrl);
   main_cpu.set_instruction(0xff4a, 0, &dos_setblock);
   main_cpu.set_instruction(0xff4c, 0, &dos_exit2);
+  main_cpu.set_instruction(0xff57, 0, &dos_filedate);
 }
 
