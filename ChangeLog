@@ -1,5 +1,20 @@
 2000-09-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (machine): Call install_iocs_calls for
+	tvram.
+
+	* libvx68k/systemrom.cc: Removed functions moved to textvram.cc.
+	(initialize_iocs_functions): Remove calls to removed functions.
+
+	* libvx68k/textvram.cc: Include cstdio unconditionally.
+	(iocs_b_clr_st, iocs_b_color, iocs_b_consol, iocs_b_curoff,
+	iocs_b_curon, iocs_b_locate, iocs_b_putmes, iocs_textput,
+	iocs_txfill): Moved from systemrom.cc.
+	(install_iocs_calls): New function.
+
+	* include/vx68k/memory.h (class text_video_memory): Change value
+	types for get_8 and put_8.  Add member install_iocs_calls.
+
 	* libvm68k/execunit.cc: Include cstdio unconditionally.  Remove
 	moved functions.
 	(exec_unit): Install instructions using new functions.

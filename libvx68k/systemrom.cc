@@ -264,59 +264,6 @@ namespace
 # define L_DEFAULT_GUARD nana_iocs_call_trace
 #endif
 
-  /* Handles a _B_CLR_ST call.  */
-  void
-  iocs_b_clr_st(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _B_CLR_ST; %%d1:b=0x%02x\n", byte_size::get(c.regs.d[1]));
-#endif
-    fprintf(stderr, "iocs_b_clr_st: FIXME: not implemented\n");
-  }
-
-  /* Handles a _B_COLOR call.  */
-  void
-  iocs_b_color(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _B_COLOR; %%d1:w=0x%04x\n", word_size::get(c.regs.d[1]));
-#endif
-    fprintf(stderr, "iocs_b_color: FIXME: not implemented\n");
-    byte_size::put(c.regs.d[0], 3);
-  }
-
-  /* Handles a _B_CONSOL call.  */
-  void
-  iocs_b_consol(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _B_CONSOL; %%d1=0x%08lx %%d2=0x%08lx\n",
-      (unsigned long) long_word_size::get(c.regs.d[1]),
-      (unsigned long) long_word_size::get(c.regs.d[2]));
-#endif
-    fprintf(stderr, "iocs_b_consol: FIXME: not implemented\n");
-  }
-
-  /* Handles a _B_CUROFF call.  */
-  void
-  iocs_b_curoff(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _B_CUROFF\n");
-#endif
-    fprintf(stderr, "iocs_b_curoff: FIXME: not implemented\n");
-  }
-
-  /* Handles a _B_CURON call.  */
-  void
-  iocs_b_curon(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _B_CURON\n");
-#endif
-    fprintf(stderr, "iocs_b_curon: FIXME: not implemented\n");
-  }
-
   /* Handles a _B_DRVCHK call.  */
   void
   iocs_b_drvchk(context &c, unsigned long data)
@@ -407,17 +354,6 @@ namespace
       long_word_size::put(c.regs.d[0], 0x10000 | key);
   }
 
-  /* Handles a _B_LOCATE call.  */
-  void
-  iocs_b_locate(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _B_LOCATE; %%d1:w=0x%04x %%d2:w=0x%04x\n",
-      word_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]));
-#endif
-    fprintf(stderr, "iocs_b_locate: FIXME: not implemented\n");
-  }
-
   /* Handles a _B_LPEEK call.  */
   void
   iocs_b_lpeek(context &c, unsigned long data)
@@ -457,23 +393,6 @@ namespace
 
     x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
     as->machine()->b_putc(ch);
-  }
-
-  /* Handles a _B_PUTMES IOCS call.  */
-  void
-  iocs_b_putmes(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _B_PUTMES; %%d1:b=0x%02x %%d2:w=0x%04x %%d3:w=0x%04x "
-      "%%d4:w=0x%04x %%a1=0x%08lx\n",
-      byte_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]),
-      word_size::get(c.regs.d[3]), word_size::get(c.regs.d[4]),
-      long_word_size::get(c.regs.a[1]) + 0UL);
-#endif
-
-    static bool once;
-    if (!once++)
-      fprintf(stderr, "iocs_b_putmes: FIXME: not implemented\n");
   }
 
   /* Handles a _B_READ call.  */
@@ -1114,18 +1033,6 @@ namespace
     fprintf(stderr, "iocs_tcolor: FIXME: not implemented\n");
   }
 
-  /* Handles a _TEXTPUT call.  */
-  void
-  iocs_textput(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _TEXTPUT; %%d1:w=0x%04x %%d2:w=0x%04x %%a1=0x%08lx\n",
-      word_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]),
-      (unsigned long) long_word_size::get(c.regs.a[1]));
-#endif
-    fprintf(stderr, "iocs_textput: FIXME: not implemented\n");
-  }
-
   /* Handles a _TGUSEMD call.  */
   void
   iocs_tgusemd(context &c, unsigned long data)
@@ -1231,18 +1138,6 @@ namespace
       (unsigned long) long_word_size::get(c.regs.d[2]));
 #endif
     fprintf(stderr, "iocs_tpalet: FIXME: not implemented\n");
-  }
-
-  /* Handles a _TXFILL call.  */
-  void
-  iocs_txfill(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _TXFILL; %%a1=0x%08lx\n", long_word_size::get(c.regs.a[1]) + 0UL);
-#endif
-    static bool once;
-    if (!once++)
-      fprintf(stderr, "iocs_txfill: FIXME: not implemented\n");
   }
 
   /* Handles a _VDISPST call.  */
@@ -1351,17 +1246,9 @@ namespace
     rom->set_iocs_function(0x15, iocs_function_type(&iocs_tcolor, 0));
     rom->set_iocs_function(0x16, iocs_function_type(&iocs_fntadr, 0));
     rom->set_iocs_function(0x19, iocs_function_type(&iocs_fntget, 0));
-    rom->set_iocs_function(0x1b, iocs_function_type(&iocs_textput, 0));
     rom->set_iocs_function(0x1d, iocs_function_type(&iocs_scroll, 0));
-    rom->set_iocs_function(0x1e, iocs_function_type(&iocs_b_curon, 0));
-    rom->set_iocs_function(0x1f, iocs_function_type(&iocs_b_curoff, 0));
     rom->set_iocs_function(0x20, iocs_function_type(&iocs_b_putc, 0));
     rom->set_iocs_function(0x21, iocs_function_type(&iocs_b_print, 0));
-    rom->set_iocs_function(0x22, iocs_function_type(&iocs_b_color, 0));
-    rom->set_iocs_function(0x23, iocs_function_type(&iocs_b_locate, 0));
-    rom->set_iocs_function(0x2a, iocs_function_type(&iocs_b_clr_st, 0));
-    rom->set_iocs_function(0x2e, iocs_function_type(&iocs_b_consol, 0));
-    rom->set_iocs_function(0x2f, iocs_function_type(&iocs_b_putmes, 0));
     rom->set_iocs_function(0x37, iocs_function_type(&iocs_x37, 0));
     rom->set_iocs_function(0x38, iocs_function_type(&iocs_x38, 0));
     rom->set_iocs_function(0x39, iocs_function_type(&iocs_x39, 0));
@@ -1395,7 +1282,6 @@ namespace
     rom->set_iocs_function(0xac, iocs_function_type(&iocs_sys_stat, 0));
     rom->set_iocs_function(0xae, iocs_function_type(&iocs_os_curon, 0));
     rom->set_iocs_function(0xaf, iocs_function_type(&iocs_os_curof, 0));
-    rom->set_iocs_function(0xd7, iocs_function_type(&iocs_txfill, 0));
   }
 } // namespace (unnamed)
 

@@ -453,4 +453,5 @@ machine::machine(size_t memory_size)
   fill(fd + 0, fd + NFDS, (iocs::disk *) NULL);
 
   rom.attach(&eu);
+  tvram.install_iocs_calls(rom);
 }

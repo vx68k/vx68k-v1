@@ -25,10 +25,10 @@
 #include <vm68k/mutex.h>
 
 #include <algorithm>
+#include <cstdio>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
-# include <cstdio>
 #else
 # include <cassert>
 # define I assert
@@ -44,6 +44,10 @@ using namespace std;
 const size_t ROW_SIZE = 1024 / 8;
 const size_t PLANE_SIZE = 1024 * ROW_SIZE;
 const size_t PLANE_MAX = 4;
+
+#ifdef HAVE_NANA_H
+extern bool nana_iocs_call_trace;
+#endif
 
 inline void
 advance_row(unsigned char *&ptr)
@@ -234,7 +238,167 @@ text_video_memory::raster(unsigned int x, unsigned int y)
 {
   return raster_iterator(buf + y * ROW_SIZE, x);
 }
+
+namespace
+{
+  using vm68k::byte_size;
+  using vm68k::word_size;
+  using vm68k::long_word_size;
+  using vm68k::context;
 
+  /* Handles a _B_CLR_ST IOCS call.  */
+  void
+  iocs_b_clr_st(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace, "IOCS _B_CLR_ST; %%d1:b=0x%02x\n",
+       byte_size::get(c.regs.d[1]));
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_b_clr_st: FIXME: not implemented\n");
+  }
+
+  /* Handles a _B_COLOR IOCS call.  */
+  void
+  iocs_b_color(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace, "IOCS _B_COLOR; %%d1:w=0x%04x\n",
+       word_size::get(c.regs.d[1]));
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_b_color: FIXME: not implemented\n");
+
+    byte_size::put(c.regs.d[0], 3);
+  }
+
+  /* Handles a _B_CONSOL IOCS call.  */
+  void
+  iocs_b_consol(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace, "IOCS _B_CONSOL; %%d1=0x%08lx %%d2=0x%08lx\n",
+       long_word_size::get(c.regs.d[1]) + 0UL,
+       long_word_size::get(c.regs.d[2]) + 0UL);
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_b_consol: FIXME: not implemented\n");
+  }
+
+  /* Handles a _B_CUROFF IOCS call.  */
+  void
+  iocs_b_curoff(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace, "IOCS _B_CUROFF\n");
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_b_curoff: FIXME: not implemented\n");
+  }
+
+  /* Handles a _B_CURON IOCS call.  */
+  void
+  iocs_b_curon(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace, "IOCS _B_CURON\n");
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_b_curon: FIXME: not implemented\n");
+  }
+
+  /* Handles a _B_LOCATE IOCS call.  */
+  void
+  iocs_b_locate(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace, "IOCS _B_LOCATE; %%d1:w=0x%04x %%d2:w=0x%04x\n",
+      word_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]));
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_b_locate: FIXME: not implemented\n");
+  }
+
+  /* Handles a _B_PUTMES IOCS call.  */
+  void
+  iocs_b_putmes(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace,
+       "IOCS _B_PUTMES; %%d1:b=0x%02x %%d2:w=0x%04x %%d3:w=0x%04x "
+       "%%d4:w=0x%04x %%a1=0x%08lx\n",
+       byte_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]),
+       word_size::get(c.regs.d[3]), word_size::get(c.regs.d[4]),
+       long_word_size::get(c.regs.a[1]) + 0UL);
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_b_putmes: FIXME: not implemented\n");
+  }
+
+  /* Handles a _TEXTPUT IOCS call.  */
+  void
+  iocs_textput(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace,
+       "IOCS _TEXTPUT; %%d1:w=0x%04x %%d2:w=0x%04x %%a1=0x%08lx\n",
+       word_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]),
+       long_word_size::get(c.regs.a[1]) + 0UL);
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_textput: FIXME: not implemented\n");
+  }
+
+  /* Handles a _TXFILL IOCS call.  */
+  void
+  iocs_txfill(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace, "IOCS _TXFILL; %%a1=0x%08lx\n",
+       long_word_size::get(c.regs.a[1]) + 0UL);
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_txfill: FIXME: not implemented\n");
+  }
+}
+
+void
+text_video_memory::install_iocs_calls(system_rom &rom)
+{
+  unsigned long data = reinterpret_cast<unsigned long>(this);
+  // 0x1a: _TEXTGET
+  rom.set_iocs_function(0x1b, make_pair(&iocs_textput, data));
+  // 0x1c: _CLIPPUT
+  rom.set_iocs_function(0x1e, make_pair(&iocs_b_curon, data));
+  rom.set_iocs_function(0x1f, make_pair(&iocs_b_curoff, data));
+  // 0x20: _B_PUTC
+  // 0x21: _B_PRINT
+  rom.set_iocs_function(0x22, make_pair(&iocs_b_color, data));
+  rom.set_iocs_function(0x23, make_pair(&iocs_b_locate, data));
+  // 0x24: _B_DOWN_S
+  // 0x25: _B_UP_S
+  // 0x26: _B_UP
+  // 0x27: _B_DOWN
+  // 0x28: _B_RIGHT
+  // 0x29: _B_LEFT
+  rom.set_iocs_function(0x2a, make_pair(&iocs_b_clr_st, data));
+  // 0x2b: _B_ERA_ST
+  // 0x2c: _B_INS
+  // 0x2d: _B_DEL
+  rom.set_iocs_function(0x2e, make_pair(&iocs_b_consol, data));
+  rom.set_iocs_function(0x2f, make_pair(&iocs_b_putmes, data));
+  rom.set_iocs_function(0xd7, make_pair(&iocs_txfill, data));
+}
+
 uint_type
 text_video_memory::get_16(function_code fc, uint32_type address) const
 {

@@ -205,10 +205,13 @@ namespace vx68k
 
   public:
     uint_type get_16(function_code, uint32_type) const;
-    uint_type get_8(function_code, uint32_type) const;
+    unsigned int get_8(function_code, uint32_type) const;
 
     void put_16(function_code, uint32_type, uint_type);
-    void put_8(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, unsigned int);
+
+  public:
+    void install_iocs_calls(system_rom &);
 
   public:
     /* Draw a character CODE at [X Y].  */
