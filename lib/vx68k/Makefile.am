@@ -4,6 +4,6 @@ INCLUDES = -I${top_srcdir}/include
 
 noinst_LIBRARIES = libvx68k.a
 
-libvx68k_a_SOURCES = memory.cc machine.cc \
+libvx68k_a_SOURCES = mainmem.cc machine.cc \
 allocator.cc filesystem.cc doscontext.cc shell.cc dos.cc
 
