@@ -4,8 +4,8 @@ INCLUDES = -I${top_srcdir}/include \
 -DLOCALEDIR=\"$(datadir)/locale\" \
 ${GTK_CFLAGS}
 
-bin_PROGRAMS = vx68k
 noinst_LIBRARIES = libmisc.a
+bin_PROGRAMS = vx68k
 
 libmisc_a_SOURCES = getopt.c getopt1.c
 
