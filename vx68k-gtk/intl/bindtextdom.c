@@ -1,0 +1,1 @@
+/usr/share/gettext/intl/bindtextdom.c

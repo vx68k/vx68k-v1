@@ -1,0 +1,199 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2001-07-19 21:58+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: bin/getopt.c:677
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr ""
+
+#: bin/getopt.c:702
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr ""
+
+#: bin/getopt.c:707
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr ""
+
+#: bin/getopt.c:725 bin/getopt.c:898
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr ""
+
+#. --option
+#: bin/getopt.c:754
+#, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr ""
+
+#. +option or -option
+#: bin/getopt.c:758
+#, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr ""
+
+#. 1003.2 specifies the format of this message.
+#: bin/getopt.c:784
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr ""
+
+#: bin/getopt.c:787
+#, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr ""
+
+#. 1003.2 specifies the format of this message.
+#: bin/getopt.c:817 bin/getopt.c:947
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr ""
+
+#: bin/getopt.c:864
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr ""
+
+#: bin/getopt.c:882
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr ""
+
+#: bin/gtkconwin.cc:158
+msgid "Virtual X68000"
+msgstr ""
+
+#. Menu bar items.
+#: bin/gtkconwin.cc:186
+msgid "_File"
+msgstr ""
+
+#: bin/gtkconwin.cc:188
+msgid "_Help"
+msgstr ""
+
+#: bin/gtkconwin.cc:194
+msgid "File"
+msgstr ""
+
+#: bin/gtkconwin.cc:200
+msgid "_Load Floppy..."
+msgstr ""
+
+#: bin/gtkconwin.cc:202
+msgid "_Eject Floppy"
+msgstr ""
+
+#: bin/gtkconwin.cc:205
+msgid "_Run..."
+msgstr ""
+
+#: bin/gtkconwin.cc:208
+msgid "E_xit"
+msgstr ""
+
+#: bin/gtkconwin.cc:213
+msgid "Help"
+msgstr ""
+
+#: bin/gtkconwin.cc:219
+msgid "_About..."
+msgstr ""
+
+#: bin/gtkconwin.cc:225
+msgid "Eject Floppy"
+msgstr ""
+
+#: bin/gtkconwin.cc:233
+msgid "Unit _0"
+msgstr ""
+
+#: bin/gtkconwin.cc:236
+msgid "Unit _1"
+msgstr ""
+
+#: bin/main.cc:164 bin/main.cc:207
+#, c-format
+msgid "Unhandled exception in thread: %s\n"
+msgstr ""
+
+#: bin/main.cc:357
+#, c-format
+msgid "%s: invalid memory size `%s'\n"
+msgstr ""
+
+#. XXX `--debug' is undocumented
+#: bin/main.cc:385
+#, c-format
+msgid "Usage: %s [OPTION]... [--] [COMMAND [ARGUMENT]...]\n"
+msgstr ""
+
+#: bin/main.cc:386
+msgid "Run X68000 COMMAND on a virtual machine.\n"
+msgstr ""
+
+#: bin/main.cc:388
+msgid "  -b, --boot            boot from media\n"
+msgstr ""
+
+#: bin/main.cc:389
+msgid "  -0, --fd0-image=FILE  load FILE on FD unit 0 as an image\n"
+msgstr ""
+
+#: bin/main.cc:390
+msgid "  -1, --fd1-image=FILE  load FILE on FD unit 1 as an image\n"
+msgstr ""
+
+#: bin/main.cc:391
+msgid "  -m, --memory-size=N   allocate N megabytes for main memory\n"
+msgstr ""
+
+#: bin/main.cc:392
+msgid "      --one-thread      run in one thread\n"
+msgstr ""
+
+#: bin/main.cc:393
+msgid "      --help            display this help and exit\n"
+msgstr ""
+
+#: bin/main.cc:394
+msgid "      --version         output version information and exit\n"
+msgstr ""
+
+#: bin/main.cc:396
+msgid "Report bugs to <vx68k@lists.hypercore.co.jp>.\n"
+msgstr ""
+
+#: bin/main.cc:415 bin/main.cc:437
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr ""
+
+#: bin/main.cc:422
+#, c-format
+msgid "Copyright (C) %s Hypercore Software Design, Ltd.\n"
+msgstr ""
+
+#: bin/main.cc:436
+#, c-format
+msgid "%s: missing command argument\n"
+msgstr ""
+
+#: bin/main.cc:490
+#, c-format
+msgid "%s: unhandled exception: %s\n"
+msgstr ""
