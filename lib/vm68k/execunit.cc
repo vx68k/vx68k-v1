@@ -92,6 +92,24 @@ namespace
       ec->regs.pc += 2 + 2;
     }
 
+  template <class Destination> void addal(unsigned int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      Destination ea1(op & 0x7, 2);
+      int reg2 = op >> 9 & 0x7;
+      VL((" addal %s", ea1.textl(ec)));
+      VL((",%%a%d\n", reg2));
+
+      int32 value1 = ea1.getl(ec);
+      int32 value2 = extsl(ec->regs.a[reg2]);
+      int32 value = extsl(value2 + value1);
+      ec->regs.a[reg2] = value;
+      ea1.finishl(ec);
+      // XXX: The condition codes are not affected.
+
+      ec->regs.pc += 2 + ea1.isize(4);
+    }
+
   template <class Destination> void addil(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -777,6 +795,7 @@ namespace
       ec->regs.pc += 2 + 2;
     }
 
+#if 0
   void movew_absl_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -792,6 +811,7 @@ namespace
 
       ec->regs.pc += 2 + 4;
     }
+#endif /* 0 */
 
   void movew_d_postinc(unsigned int op, execution_context *ec)
     {
@@ -886,6 +906,7 @@ namespace
     void movel<Source, address_register>(unsigned int op, execution_context *ec);
 #endif
 
+#if 0
   void movel_d_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -931,6 +952,7 @@ namespace
 
       ec->regs.pc += 2;
     }
+#endif /* 0 */
 
   void movel_off_d(unsigned int op, execution_context *ec)
     {
@@ -1328,15 +1350,14 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x10c0, 0x0e07, &moveb_d_postinc);
   eu->set_instruction(0x10d8, 0x0e07, &moveb_postinc_postinc);
   eu->set_instruction(0x13c0, 0x0007, &moveb<data_register, absolute_long>);
-  eu->set_instruction(0x2000, 0x0e07, &movel_d_d);
-  eu->set_instruction(0x2008, 0x0e07, &movel_a_d);
+  eu->set_instruction(0x2000, 0x0e07, &movel<data_register, data_register>);
+  eu->set_instruction(0x2008, 0x0e07, &movel<address_register, data_register>);
   eu->set_instruction(0x2010, 0x0e07, &movel<indirect, data_register>);
   eu->set_instruction(0x2018, 0x0e07, &movel<postincrement_indirect, data_register>);
   eu->set_instruction(0x2020, 0x0e07, &movel<predecrement_indirect, data_register>);
+  eu->set_instruction(0x2028, 0x0e07, &movel_off_d);
   eu->set_instruction(0x2039, 0x0e00, &movel<absolute_long, data_register>);
   eu->set_instruction(0x203c, 0x0e00, &movel<immediate, data_register>);
-  eu->set_instruction(0x2018, 0x0e07, &movel_postinc_d);
-  eu->set_instruction(0x2028, 0x0e07, &movel_off_d);
   eu->set_instruction(0x2058, 0x0e07, &movel_postinc_a);
   eu->set_instruction(0x20c0, 0x0e07, &movel_d_postinc);
   eu->set_instruction(0x2100, 0x0e07, &movel_d_predec);
@@ -1345,8 +1366,14 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x23c0, 0x0007, &movel_d_absl);
   eu->set_instruction(0x23c8, 0x0007, &movel_a_absl);
   eu->set_instruction(0x23fc, 0x0000, &movel<immediate, absolute_long>);
+  eu->set_instruction(0x3000, 0x0e07, &movew<data_register, data_register>);
+  eu->set_instruction(0x3008, 0x0e07, &movew<address_register, data_register>);
+  eu->set_instruction(0x3010, 0x0e07, &movew<indirect, data_register>);
+  eu->set_instruction(0x3018, 0x0e07, &movew<postincrement_indirect, data_register>);
+  eu->set_instruction(0x3020, 0x0e07, &movew<predecrement_indirect, data_register>);
   eu->set_instruction(0x3028, 0x0e07, &movew_off_d);
-  eu->set_instruction(0x3039, 0x0e00, &movew_absl_d);
+  eu->set_instruction(0x3039, 0x0e00, &movew<absolute_long, data_register>);
+  eu->set_instruction(0x303c, 0x0e00, &movew<immediate, data_register>);
   eu->set_instruction(0x30c0, 0x0e07, &movew_d_postinc);
   eu->set_instruction(0x3100, 0x0e07, &movew_d_predec);
   eu->set_instruction(0x3139, 0x0e00, &movew_absl_predec);
@@ -1408,6 +1435,13 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0xb0b9, 0x0e00, &cmpl<absolute_long>);
   eu->set_instruction(0xc0bc, 0x0e00, &andl_i_d);
   eu->set_instruction(0xd068, 0x0e07, &addw_off_d);
+  eu->set_instruction(0xd1c0, 0x0e07, &addal<data_register>);
+  eu->set_instruction(0xd1c8, 0x0e07, &addal<address_register>);
+  eu->set_instruction(0xd1d0, 0x0e07, &addal<indirect>);
+  eu->set_instruction(0xd1d8, 0x0e07, &addal<postincrement_indirect>);
+  eu->set_instruction(0xd1e0, 0x0e07, &addal<predecrement_indirect>);
+  eu->set_instruction(0xd1f9, 0x0e07, &addal<absolute_long>);
+  eu->set_instruction(0xd1fc, 0x0e07, &addal<immediate>);
   eu->set_instruction(0xe048, 0x0e07, &lsrw_i_d);
   eu->set_instruction(0xe088, 0x0e07, &lsrl_i);
   eu->set_instruction(0xe148, 0x0e07, &lslw_i_d);

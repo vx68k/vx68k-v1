@@ -1,8 +1,9 @@
 1999-04-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* lib/vm68k/execunit.cc (moveb): New function.
+	* lib/vm68k/execunit.cc (moveb, addal): New function.
 	(movew): Remove unneccessary extsw.
 	(movel): Remove unneccessary extsl.
+	(movel_d_d, movel_a_d, movel_postinc_d, movew_absl_d): #if'd out.
 	(install_instructions): Updated with new functions.
 
 	* NEWS: Modfied.
