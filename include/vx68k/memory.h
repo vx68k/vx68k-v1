@@ -128,9 +128,23 @@ namespace vx68k
     raster_iterator raster(unsigned int, unsigned int);
   };
 
-  /* CRTC registers memory.  */
+  /* CRTC input/output port memory.  This object also generates VDISP
+     interrupts.  */
   class crtc_memory: public memory
   {
+  private:
+    console *_console;
+    bool _vdisp_interrupt_enabled;
+
+    console::time_type vdisp_interval;
+
+    console::time_type vdisp_start_time;
+
+  public:
+    crtc_memory();
+    explicit crtc_memory(console *);
+    ~crtc_memory();
+
   public:
     /* Reads data from this object.  */
     uint_type get_16(int, uint32_type) const;
@@ -139,6 +153,15 @@ namespace vx68k
     /* Writes data to this object.  */
     void put_16(int, uint32_type, uint_type);
     void put_8(int, uint32_type, uint_type);
+
+  public:
+    void add_console(console *);
+
+  public:
+    bool vdisp_interrupt_enabled() const {return _vdisp_interrupt_enabled;}
+    void set_vdisp_interrupt_enabled(bool);
+
+    void check_timeout(context &c);
   };
 
   /* Palettes and video controller registers memory.  */

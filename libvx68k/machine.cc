@@ -353,8 +353,18 @@ machine::get_image(int x, int y, int width, int height,
 void
 machine::check_timers(uint32_type t)
 {
+  crtc.check_timeout(*master_context());
   opm.check_timeout(*master_context());
   last_check_time = t;
+}
+
+void
+machine::connect(console *c)
+{
+  crtc.add_console(c);
+  opm.add_console(c);
+  tvram.connect(c);
+  font.copy_data(c);
 }
 
 void

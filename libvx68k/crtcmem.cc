@@ -1,4 +1,4 @@
-/* vx68k - Virtual X68000
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,35 @@ using vx68k::crtc_memory;
 using namespace vm68k::types;
 using namespace std;
 
+void
+crtc_memory::check_timeout(context &c)
+{
+  if (_console == NULL)
+    return;
+
+  console::time_type t = _console->current_time();
+  if (t - vdisp_start_time >= vdisp_interval)
+    {
+      vdisp_start_time += vdisp_interval;
+
+      if (vdisp_interrupt_enabled())
+	c.interrupt(6, 0x46);
+    }
+}
+
+void
+crtc_memory::add_console(console *c)
+{
+  _console = c;
+  vdisp_start_time = _console->current_time();
+}
+
+void
+crtc_memory::set_vdisp_interrupt_enabled(bool value)
+{
+  _vdisp_interrupt_enabled = value;
+}
+
 uint_type
 crtc_memory::get_16(int fc, uint32_type address) const
 {
@@ -77,4 +106,23 @@ crtc_memory::put_8(int, uint32_type, uint_type)
 #ifdef HAVE_NANA_H
   L("class crtc_memory: FIXME: `put_8' not implemented\n");
 #endif
+}
+
+crtc_memory::~crtc_memory()
+{
+}
+
+crtc_memory::crtc_memory()
+  : _console(NULL),
+    _vdisp_interrupt_enabled(false),
+    vdisp_interval(1000 / 55)
+{
+}
+
+crtc_memory::crtc_memory(console *c)
+  : _console(c),
+    _vdisp_interrupt_enabled(false),
+    vdisp_interval(1000 / 55)
+{
+  vdisp_start_time = _console->current_time();
 }

@@ -1,5 +1,21 @@
 2000-08-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (check_timers): Call crtc.check_timeout.
+	(connect): New function.
+
+	* libvx68k/crtcmem.cc (check_timeout, add_console,
+	set_vdisp_interrupt_enabled, ~crtc_memory, crtc_memory): New
+	function.
+
+	* include/vx68k/machine.h (class machine): Add members
+	vdisp_interrupt_enabled and set_vdisp_interrupt_enabled.  Make
+	member connect out-of-line.
+
+	* include/vx68k/memory.h (class crtc_memory): Add members
+	_console, _vdisp_interrupt_enabled, vdisp_interval,
+	vdisp_start_time, add_console, vdisp_interrupt_enabled,
+	set_vdisp_interrupt_enabled, and check_timeout.
+
 	* libvm68k/context.cc (handle_interrupts): Remove comments.
 
 	* libvx68k/opmmem.cc (set_reg): Remove comments.

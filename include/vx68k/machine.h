@@ -217,9 +217,13 @@ namespace vx68k
     bool opm_interrupt_enabled() const {return opm.interrupt_enabled();}
     void set_opm_interrupt_enabled(bool b) {opm.set_interrupt_enabled(b);}
 
+    bool vdisp_interrupt_enabled() const
+    {return crtc.vdisp_interrupt_enabled();}
+    void set_vdisp_interrupt_enabled(bool b)
+    {crtc.set_vdisp_interrupt_enabled(b);}
+
   public:
-    void connect(console *con)
-      {opm.add_console(con); tvram.connect(con); font.copy_data(con);}
+    void connect(console *con);
 
     /* Checks timers.  */
     void check_timers(uint32_type t);
