@@ -19,4 +19,3 @@ noinst_HEADERS = getopt.h gtkapp.h
 man_MANS = vx68k.1
 
 EXTRA_DIST = ${man_MANS}
-

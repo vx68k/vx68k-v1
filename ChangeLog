@@ -1,5 +1,14 @@
 2001-06-28  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* Version 1.1.7.
+
+	* libvx68k/Makefile.am (libvx68k_la_LDFLAGS): Update the version
+	information.
+	* libvx68kdos/Makefile.am (libvx68kdos_la_LDFLAGS): Likewise.
+
+	* configure.in: Set VERSION 1.1.7.  Change the test file for
+	AC_INIT.
+
 	* README: Updated.
 
 	* NEWS: Modified.
