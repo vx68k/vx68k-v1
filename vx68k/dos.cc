@@ -68,23 +68,66 @@ dos::load_executable (const char *name)
   cerr << "BSS  : " << bss_size << "\n";
   cerr << "Reloc: " << reloc_size << "\n";
 
+  uint32 load_address = 0x8100;	// FIXME.
+
   char *buf = static_cast <char *> (malloc (text_size + data_size));
   try
     {
       is.read (buf, text_size + data_size);
       if (!is)
 	abort ();		// FIXME
-      main_ec.mem->write (SUPER_DATA, 0x8100, buf, text_size + data_size);
+      main_ec.mem->write (SUPER_DATA, load_address,
+			  buf, text_size + data_size);
     }
   catch (...)
     {
       free (buf);
+      throw;
     }
   free (buf);
 
+  /* Fix-up.  */
+  char *fixup_buf = static_cast<char *>(malloc(reloc_size));
+  try
+    {
+      is.read(fixup_buf, reloc_size);
+      if (!is)
+	abort();		// FIXME.
+
+      const char *p = fixup_buf;
+      uint32 address = load_address;
+      while (p != fixup_buf + reloc_size)
+	{
+	  uint32 d = getw(p);
+	  p += 2;
+	  if (d == 1)		// Prefix for long offset.
+	    {
+	      d = getl(p);
+	      p += 4;
+	    }
+	  if (d % 2 != 0)
+	    {
+	      cerr << "Illegal fixup at an odd address\n";
+	      abort();		// FIXME.
+	    }
+	  address += d;
+	  uint32 value = main_ec.mem->getl(SUPER_DATA, address);
+	  main_ec.mem->putl(SUPER_DATA, address, value + load_address - base);
+	  cerr << "Fixup at 0x" << hex << address
+	       << " (0x" << value << " -> 0x" << value + load_address - base
+	       << dec << ")\n";
+	}
+    }
+  catch (...)
+    {
+      free(fixup_buf);
+      throw;
+    }
+  free(fixup_buf);
+
   // Fix relocations here.
 
-  return 0x8100;		// FIXME
+  return load_address + start_offset;
 }
 
 uint16

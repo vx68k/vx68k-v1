@@ -180,6 +180,23 @@ address_space::putw (int fc, uint32 address, uint16 value)
   page_table[p]->putw (fc, address, value);
 }
 
+/* Returns the long word value.  */
+uint32
+address_space::getl(int fc, uint32 address) const
+  throw (bus_error)
+{
+  return getw(fc, address + 0) << 16 | getw(fc, address + 2);
+}
+
+/* Stores the long word value.  */
+void
+address_space::putl(int fc, uint32 address, uint32 value)
+  throw (bus_error)
+{
+  putw(fc, address + 0, value >> 16);
+  putw(fc, address + 2, value);
+}
+
 void
 address_space::set_pages (size_t first, size_t last, memory_page *p)
 {

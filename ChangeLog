@@ -1,5 +1,9 @@
 1999-03-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vx68k/dos.cc (load_executable): Make address fixup.
+
+	* vm68k/memory.cc (getl, putl): New function.
+
 	* Makefile.am (dist-snapshot): Add `x' to the version number.
 
 1999-02-05  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
