@@ -526,6 +526,16 @@ namespace
     fprintf(stderr, "iocs_os_curof: FIXME: not implemented\n");
   }
 
+  /* Handles a _OS_CURON call.  */
+  void
+  iocs_os_curon(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _OS_CURON\n");
+#endif
+    fprintf(stderr, "iocs_os_curon: FIXME: not implemented\n");
+  }
+
   /* Handles a _ROMVER call.  */
   void
   iocs_romver(context &c, unsigned long data)
@@ -742,6 +752,7 @@ namespace
     rom->set_iocs_function(0x8e, iocs_function_type(&iocs_bootinf, 0));
     rom->set_iocs_function(0x8f, iocs_function_type(&iocs_romver, 0));
     rom->set_iocs_function(0xac, iocs_function_type(&iocs_sys_stat, 0));
+    rom->set_iocs_function(0xae, iocs_function_type(&iocs_os_curon, 0));
     rom->set_iocs_function(0xaf, iocs_function_type(&iocs_os_curof, 0));
   }
 } // namespace (unnamed)

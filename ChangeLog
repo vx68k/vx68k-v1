@@ -1,3 +1,8 @@
+2000-07-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_os_curon): New function.
+	(initialize_iocs_functions): Add new handler.
+
 2000-06-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvm68k/execunit.cc (m68k_bclr_i): Fix the instruction size.
