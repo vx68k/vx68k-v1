@@ -323,14 +323,17 @@ namespace
       long_word_size::put(c.regs.d[0], 0x02);
   }
 
-  /* Handles a _B_EJECT call.  */
+  /* Handles a _B_EJECT IOCS call.  */
   void
   iocs_b_eject(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
     L("IOCS _B_EJECT; %%d1:w=0x%04x\n", word_size::get(c.regs.d[1]));
 #endif
-    fprintf(stderr, "iocs_b_eject: FIXME: not implemented\n");
+
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_b_eject: FIXME: not implemented\n");
     long_word_size::put(c.regs.d[0], 0);
   }
 

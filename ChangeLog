@@ -22,8 +22,9 @@
 
 	* libvx68k/systemrom.cc (iocs_b_putmes): Modify comments.  Remove
 	C-style cast.  Print the FIXME message only once.
-	(iocs_bitsns, iocs_joyget, iocs_ms_curgt, iocs_ms_getdt): Modify
-	comments.  Print the FIXME message only once.
+	(iocs_bitsns, iocs_joyget, iocs_ms_curgt, iocs_ms_getdt,
+	iocs_b_eject): Modify comments.  Print the FIXME message only
+	once.
 
 	* include/vm68k/cpu.h (class status_register): Set member value on
 	assignment.
