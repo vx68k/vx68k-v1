@@ -986,12 +986,34 @@ namespace
   iocs_vdispst(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    L("IOCS _VDISPST: %%d1=%#010lx %%a1=%#010lx\n",
-      (unsigned long) long_word_size::get(c.regs.d[1]),
+    L("IOCS _VDISPST: %%d1:w=%#06x %%a1=%#010lx\n",
+      word_size::get(c.regs.d[1]),
       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
-    fprintf(stderr, "iocs_vdispst: FIXME: not implemented\n");
-    long_word_size::put(c.regs.d[0], 0);
+    uint32_type address = long_word_size::get(c.regs.a[1]);
+
+    x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
+
+    if (address == 0)
+      {
+	as->machine()->set_vdisp_interrupt_enabled(false);
+	long_word_size::put(c.regs.d[0], 0);
+      }
+    else
+      {
+	if (as->machine()->vdisp_interrupt_enabled())
+	    long_word_size::put(c.regs.d[0], 1);
+	else
+	  {
+	    unsigned int count = byte_size::get(c.regs.d[1]);
+	    if (count == 0)
+	      count = 0x100;
+
+	    as->putl(SUPER_DATA, 0x46 * 4, address);
+	    as->machine()->set_vdisp_interrupt_enabled(true);
+	    long_word_size::put(c.regs.d[0], 0);
+	  }
+      }
   }
 
   /* Handles a 0x37 call.  */

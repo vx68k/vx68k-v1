@@ -44,6 +44,7 @@ context::interrupt(int prio, unsigned int vecno)
 
   vecno &= 0xffu;
   interrupt_queues[7 - prio].push(vecno);
+  a_interrupted = true;
 }
 
 void
