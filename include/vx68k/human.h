@@ -48,14 +48,16 @@ namespace vx68k
       void remove_block(uint32_type block);
     };
 
+    class file;
+
+    class file_system
+    {
+    };
+
     class file
     {
     public:
       virtual ~file() {}
-    };
-
-    class file_system
-    {
     };
 
     /* Process */
