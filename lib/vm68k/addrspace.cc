@@ -60,15 +60,14 @@ address_space::getw(int fc, uint32_type address) const
   return getw_aligned(fc, address);
 }
 
-/* Returns the long word value.  */
-uint32
-address_space::getl(int fc, uint32 address) const
+uint32_type
+address_space::getl(int fc, uint32_type address) const
 {
   // FIXME: Unaligned address must be handled.
   address = canonical_address(address);
   uint32_type address2 = canonical_address(address + 2);
-  memory_page *p = page_table[address >> PAGE_SHIFT];
-  memory_page *p2 = page_table[address2 >> PAGE_SHIFT];
+  memory_page *p = find_page(address);
+  memory_page *p2 = find_page(address2);
   if (p2 != p)
     return p->getw(fc, address) << 16 | p2->getw(fc, address2);
   else
@@ -93,29 +92,27 @@ address_space::write(int fc, uint32 address, const void *data, size_t size)
 }
 
 void
-address_space::putb(int fc, uint32 address, unsigned int value)
+address_space::putw(int fc, uint32_type address, uint_type value)
 {
-  address &= ((uint32) 1 << ADDRESS_BIT) - 1;
-  uint32 p = address >> PAGE_SHIFT;
-  page_table[p]->putb(fc, address, value);
+  // FIXME: Unaligned address must be handled.
+  putw_aligned(fc, address, value);
 }
 
-/* Put a word to memory.  */
 void
-address_space::putw (int fc, uint32 address, unsigned int value)
+address_space::putl(int fc, uint32_type address, uint32_type value)
 {
-  address &= ((uint32) 1 << ADDRESS_BIT) - 1;
-  uint32 p = address >> PAGE_SHIFT;
-  page_table[p]->putw (fc, address, value);
-}
-
-/* Stores the long word value.  */
-void
-address_space::putl(int fc, uint32 address, uint32 value)
-{
-  // FIXME: memroy_page::putl should be used.
-  putw(fc, address + 0, value >> 16);
-  putw(fc, address + 2, value);
+  // FIXME: Unaligned address must be handled.
+  address = canonical_address(address);
+  uint32_type address2 = canonical_address(address + 2);
+  memory_page *p = find_page(address);
+  memory_page *p2 = find_page(address2);
+  if (p2 != p)
+    {
+      p->putw(fc, address, value >> 16);
+      p2->putw(fc, address2, value);
+    }
+  else
+    p->putl(fc, address, value);
 }
 
 void

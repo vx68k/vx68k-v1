@@ -90,36 +90,67 @@ void putl (void *, uint32);
     void set_pages (size_t begin, size_t end, memory_page *);
 
   public:
-    /* Returns one byte at ADDRESS in this address space.  */
+    /* Returns one byte at address ADDRESS in this address space.  */
     uint_type getb(int fc, uint32_type address) const
       {
 	address = canonical_address(address);
-	memory_page *p = page_table[address >> PAGE_SHIFT];
+	memory_page *p = find_page(address);
 	return p->getb(fc, address);
       }
 
-    /* Returns one word at ADDRESS in this address space.  ADDRESS
-       must be word-aligned.  */
+    /* Returns one word at address ADDRESS in this address space.
+       The address must be word-aligned.  */
     uint_type getw_aligned(int fc, uint32_type address) const
       {
 	address = canonical_address(address);
-	memory_page *p = page_table[address >> PAGE_SHIFT];
+	memory_page *p = find_page(address);
 	return p->getw(fc, address);
       }
 
-    /* Returns one word at ADDRESS in this address space.  Unaligned
-       address will be handled.  */
+    /* Returns one word at address ADDRESS in this address space.  Any
+       unaligned address will be handled.  */
     uint_type getw(int fc, uint32_type address) const;
 
+    /* Returns one long word at address ADDRESS in this address space.
+       Any unaligned address will be handled.  */
+    uint32_type getl(int fc, uint32_type address) const;
+
     void read (int, uint32, void *, size_t) const;
-    uint32 getl (int, uint32) const;
     size_t gets(int, uint32, char *, size_t) const;
 
+    /* Stores byte VALUE at address ADDRESS in this address space.  */
+    void putb(int fc, uint32_type address, uint_type value)
+      {
+	address = canonical_address(address);
+	memory_page *p = find_page(address);
+	p->putb(fc, address, value);
+      }
+
+    /* Stores word VALUE at address ADDRESS in this address space.
+       The address must be word-aligned.  */
+    void putw_aligned(int fc, uint32_type address, uint_type value)
+      {
+	address = canonical_address(address);
+	memory_page *p = find_page(address);
+	p->putw(fc, address, value);
+      }
+
+    /* Stores word VALUE at address ADDRESS in this address space.
+       Any unaligned address will be handled.  */
+    void putw(int fc, uint32_type address, uint_type value);
+
+    /* Stores long word VALUE at address ADDRESS in this address
+       space.  Any unaligned address will be handled.  */
+    void putl(int fc, uint32_type address, uint32_type value);
+
     void write (int, uint32, const void *, size_t);
-    void putb (int, uint32, unsigned int);
-    void putw (int, uint32, unsigned int);
-    void putl (int, uint32, uint32);
     size_t puts(int, uint32, const char *);
+
+  protected:
+    /* Finds a page that contains canonical address ADDRESS.  */
+    memory_page *find_page(uint32_type address) const
+      {return page_table[address >> PAGE_SHIFT];}
+
   private:
     bus_error_page default_page;
     memory_page *page_table[NPAGES];

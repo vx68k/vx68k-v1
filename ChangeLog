@@ -1,5 +1,14 @@
 1999-06-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/addrspace.cc (getl): Use find_page.
+	(putw): Use putw_aligned.
+	(putl): Use memory_page::putl in the case that address does not
+	cross page boundaries.
+
+	* include/vm68k/memory.h (class address_space): Add
+	canonical_address and putw_aligned.
+	(class address_space): Make putb inline.
+
 	* include/vm68k/cpu.h (class context): Use getw_aligned in fetchw.
 
 	* lib/vm68k/addrspace.cc (getb): Move to the header as inline.
