@@ -92,6 +92,20 @@ namespace
     ec.regs.pc += 2;
   }
 
+  void
+  dos_delete(unsigned int op, context &ec)
+  {
+#ifdef L
+    L(" DOS _DELETE");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    // FIXME.
+    ec.regs.d[0] = 0;
+
+    ec.regs.pc += 2;
+  }
+
   void dos_exit2(unsigned int op, context &ec)
     {
       VL((" DOS _EXIT2\n"));
@@ -212,7 +226,11 @@ namespace
 #endif
 
     // FIXME.
-    ec.regs.d[0] = 0;
+    uint32_type sp = ec.regs.a[7];
+    int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
+    uint32_type data = ec.mem->getl(SUPER_DATA, sp + 2);
+    uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
+    ec.regs.d[0] = size;
 
     ec.regs.pc += 2;
   }
@@ -228,6 +246,7 @@ dos::dos(address_space *m, size_t)
   main_cpu.set_instruction(0xff3e, 0, &dos_close);
   main_cpu.set_instruction(0xff3f, 0, &dos_read);
   main_cpu.set_instruction(0xff40, 0, &dos_write);
+  main_cpu.set_instruction(0xff41, 0, &dos_delete);
   main_cpu.set_instruction(0xff42, 0, &dos_seek);
   main_cpu.set_instruction(0xff43, 0, &dos_chmod);
   main_cpu.set_instruction(0xff44, 0, &dos_ioctrl);
