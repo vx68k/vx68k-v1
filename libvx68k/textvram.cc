@@ -119,6 +119,9 @@ text_video_memory::scroll()
   fill(copy(buf + 1 * 16 * ROW_SIZE, buf + 31 * 16 * ROW_SIZE, buf),
        buf + 31 * 16 * ROW_SIZE, 0);
 
+  fill(copy(buf + PLANE_SIZE + 1 * 16 * ROW_SIZE, buf + PLANE_SIZE + 31 * 16 * ROW_SIZE, buf + PLANE_SIZE),
+       buf + PLANE_SIZE + 31 * 16 * ROW_SIZE, 0);
+
   mark_update_area(0, 0, ROW_SIZE * 8, 31 * 16);
 }
 
