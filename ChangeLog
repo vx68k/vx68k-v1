@@ -1,3 +1,11 @@
+2000-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (class vx68k_app): Add new members opt_fd0_image and
+	opt_fd1_image.
+	(parse_options): Handle new options.  Rewrite getopt loop.
+	(display_help): Add new options.
+	(main): Handle opt_boot.
+
 2000-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* bin/main.cc (class vx68k_app): Remove members args and
