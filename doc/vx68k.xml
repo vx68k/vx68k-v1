@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//Norman Walsh//DTD DocBk XML V3.1.3//EN"
           "docbookx.dtd">
 <book>
-  <title>Virtual X68000</title>
+  <title>Virtual X68000 Reference Manual</title>
   <bookinfo>
     <author>
       <firstname>Kaz</firstname>
@@ -17,7 +17,54 @@
     <title>Using Virtual X68000</title>
     <sect1>
       <title>Introdution</title>
+      <para>
+	Virtual X68000 is a host-architecture independent emulator of
+	Sharp X68000 written in C++.
+      </para>
       <para>....</para>
+    </sect1>
+    <sect1>
+      <title>Running X68000 commands</title>
+      <refentry>
+	<refmeta>
+	  <refentrytitle>vx68k</refentrytitle>
+	  <manvolnum>1</manvolnum>
+	</refmeta>
+	<refnamediv>
+	  <refname>vx68k</refname>
+	  <refpurpose>run X68000 command on a virtual machine</refpurpose>
+	</refnamediv>
+	<refsynopsisdiv>
+	  <para><cmdsynopsis sepchar=" ">
+	      <command moreinfo="none">vx68k</command>
+	      <arg choice="opt" rep="norepeat">[<replaceable>option</replaceable>]...</arg>
+	      <arg choice="opt" rep="norepeat">[--]</arg>
+	      <arg choice="req" rep="norepeat"><replaceable>command</replaceable></arg>
+	      <arg choice="opt" rep="repeat">[<replaceable>argument</replaceable>]...</arg>
+	    </cmdsynopsis>
+	  </para>
+	</refsynopsisdiv>
+	<refsect1>
+	  <title>Description</title>
+	  <para>
+	    <command moreinfo="none">vx68k</command> runs X68000
+	    <replaceable>command</replaceable> on a virtual machine.
+	  </para>
+	  <para>...</para>
+	</refsect1>
+	<refsect1>
+	  <title>Options</title>
+	  <variablelist>
+	    <varlistentry>
+	      <term><option>-M <replaceable>n</replaceable></option></term>
+	      <term><option>--memory-size=<replaceable>n</replaceable></option></term>
+	      <listitem>
+		<para>Allocate <replaceable>n</replaceable> megabytes.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</refsect1>
+      </refentry>
     </sect1>
   </chapter>
   <chapter>
