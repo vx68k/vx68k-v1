@@ -1,8 +1,8 @@
 To-Do List for Virtual X68000
 
-$Date: Fri, 26 Nov 1999 20:11:28 +0900 $
+$Date: Fri, 26 Nov 1999 20:21:23 +0900 $
 
-* Implement the handler for instruction DBNE to make HAS work.
+* Display indication when the process exits.
 
 * Implement key event handling to the GTK+ console.
 
@@ -15,6 +15,8 @@ $Date: Fri, 26 Nov 1999 20:11:28 +0900 $
 ** Implement text scrolling, or at least prepare for it.
 
 * Improve console device behaviour.
+
+* Implement the handler for instruction DBNE to make HAS work.
 
 * Implement minimum FLOAT calls.
 
