@@ -1,5 +1,8 @@
 1999-06-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (eorb_r, eorw_r): New functions.
+	(install_instructions): Add new handlers.
+
 	* lib/vx68k/dos.cc (dos_delete): New function.
 	(dos_write): Change the return value.
 	(dos): Add new handlers.
