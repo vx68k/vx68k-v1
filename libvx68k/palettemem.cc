@@ -184,8 +184,11 @@ palettes_memory::put_16(function_code fc, uint32_type address, uint_type value)
       mutex_lock lock(&mutex);
 
       unsigned int i = (off - 256 * 2) / 2;
-      _tpalette[i] = value;
-      text_colors_modified = true;
+      if (value != _tpalette[i])
+	{
+	  _tpalette[i] = value;
+	  text_colors_modified = true;
+	}
     }
   else
     {

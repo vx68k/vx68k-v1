@@ -1,3 +1,8 @@
+2000-08-29  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/palettemem.cc (put_16): Set text_color_modified only if
+	the value really changes.
+
 2000-08-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68kgtk/gtkconsole.cc (handle_expose_event): Use GdkImage.
