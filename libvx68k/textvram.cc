@@ -22,8 +22,8 @@
 #undef inline
 
 #include <vx68k/memory.h>
+#include <vm68k/iterator.h>
 #include <vm68k/mutex.h>
-
 #include <algorithm>
 #include <cstdio>
 
@@ -484,7 +484,8 @@ text_video_memory::get_16(uint32_type address, function_code fc) const
     throw bus_error_exception(true, fc, address);
 
   address &= PLANE_MAX * PLANE_SIZE - 1u;
-  uint16_type value = vm68k::getw(buf + address);
+  unsigned char *ptr = buf + address;
+  uint16_type value = *uint16_iterator(ptr);
   return value;
 }
 
@@ -507,9 +508,10 @@ text_video_memory::put_16(uint32_type address, uint16_type value,
     throw bus_error_exception(false, fc, address);
 
   address &= PLANE_MAX * PLANE_SIZE - 1u;
-  if ((value & 0xffff) != vm68k::getw(buf + address))
+  unsigned char *ptr = buf + address;
+  if ((value & 0xffff) != *uint16_iterator(ptr))
     {
-      vm68k::putw(buf + address, value & 0xffffu);
+      *uint16_iterator(ptr) = value & 0xffffu;
 
       unsigned int x = address % ROW_SIZE * 8;
       unsigned int y = address / ROW_SIZE % 1024u;

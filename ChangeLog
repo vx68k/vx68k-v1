@@ -1,3 +1,13 @@
+2001-06-30  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* libvx68k/fontrom.cc: Avoid vm68k::getw.
+
+	* libvx68k/sram.cc: Avoid vm68k::getw and vm68k::putl.
+
+	* libvx68k/textvram.cc: Avoid vm68k::getw and vm68k::putw.
+
+	* libvx68kdos/doscontext.cc: Avoid vm68k::getw and vm68k::getl.
+
 2001-06-29  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* configure.in (ALL_LINGUAS): Add AC_C_CONST.  Add tests for the

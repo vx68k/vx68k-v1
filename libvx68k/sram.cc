@@ -22,7 +22,7 @@
 #undef inline
 
 #include <vx68k/memory.h>
-
+#include <vm68k/iterator.h>
 #include <sys/mman.h>
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
@@ -42,9 +42,8 @@
 #endif
 
 using vx68k::sram;
-using vm68k::getw;
-using vm68k::getl;
-using vm68k::putl;
+using vm68k::uint16_iterator;
+using vm68k::uint32_iterator;
 using namespace vm68k::types;
 using namespace std;
 
@@ -55,7 +54,8 @@ sram::get_16(uint32_type address, function_code fc) const
   L("class sram: get_16 fc=%d address=%#010x\n", fc, address);
 #endif
   address &= 0x3fff;
-  uint16_type value = ::getw(buf + address);
+  unsigned char *ptr = buf + address;
+  uint16_type value = *uint16_iterator(ptr);
   return value;
 }
 
@@ -105,8 +105,9 @@ sram::sram()
   buf = (unsigned char *) mmap(0, 16 * 1024, PROT_READ | PROT_WRITE,
 			       MAP_SHARED, fildes, 0);
 
-  if (::getl(buf + 8) == 0)
-    ::putl(buf + 8, 4 * 1024 * 1024);
+  unsigned char *ptr = buf + 8;
+  if (*uint32_iterator(ptr) == 0)
+    *uint32_iterator(ptr) = 4 * 1024 * 1024;
 
   if (*(buf + 0x1d) == 0)
     *(buf + 0x1d) = 16;

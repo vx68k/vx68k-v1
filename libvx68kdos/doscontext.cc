@@ -23,7 +23,7 @@
 #undef inline
 
 #include <vx68k/human.h>
-
+#include <vm68k/iterator.h>
 #include <fstream>
 #include <algorithm>
 #include <stdexcept>
@@ -220,19 +220,21 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
   ifstream is (name, ios::in | ios::binary);
   if (!is)
     throw runtime_error("open error");
-  char head[64];
+  unsigned char head[64];
   is.read (head, 64);
   if (!is)
     throw runtime_error("read error");
   if (head[0] != 'H' || head[1] != 'U')
     throw runtime_error("exec format error");
 
-  uint32_type base = getl (head + 4);
-  uint32_type start_offset = getl (head + 8);
-  size_t text_size = getl (head + 12);
-  size_t data_size = getl (head + 16);
-  size_t bss_size = getl (head + 20);
-  size_t reloc_size = getl (head + 24);
+  unsigned char *ptr = head + 4;
+  uint32_iterator i(ptr);
+  uint32_type base = i[0];
+  uint32_type start_offset = i[1];
+  size_t text_size = i[2];
+  size_t data_size = i[3];
+  size_t bss_size = i[4];
+  size_t reloc_size = i[5];
   if (debug_level >= 1)
     {
       fprintf(stderr, "Base : 0x%lx\n", (unsigned long) base);
@@ -261,23 +263,22 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
   free (buf);
 
   /* Fix-up.  */
-  char *fixup_buf = static_cast<char *>(::malloc(reloc_size));
+  unsigned char *fixup_buf
+    = static_cast<unsigned char *>(::malloc(reloc_size));
   try
     {
       is.read(fixup_buf, reloc_size);
       if (!is)
 	throw runtime_error("read error");
 
-      const char *p = fixup_buf;
+      const unsigned char *p = fixup_buf;
       uint32_type address = load_address;
       while (p != fixup_buf + reloc_size)
 	{
-	  uint32_type d = getw(p);
-	  p += 2;
+	  uint32_type d = *const_uint16_iterator(p)++;
 	  if (d == 1)		// Prefix for long offset.
 	    {
-	      d = getl(p);
-	      p += 4;
+	      d = *const_uint32_iterator(p)++;
 	    }
 	  if (d % 2 != 0)
 	    {

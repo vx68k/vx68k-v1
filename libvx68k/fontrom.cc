@@ -22,7 +22,7 @@
 #undef inline
 
 #include <vx68k/memory.h>
-
+#include <vm68k/iterator.h>
 #include <cstdio>
 
 #ifdef HAVE_NANA_H
@@ -33,6 +33,7 @@
 #endif
 
 using vx68k::font_rom;
+using vm68k::uint16_iterator;
 using namespace vm68k::types;
 using namespace std;
 
@@ -332,7 +333,8 @@ font_rom::get_16(uint32_type address, function_code fc) const
   else
     {
       uint32_type i = address / 2;
-      uint16_type value = vm68k::getw(data + 2 * i);
+      unsigned char *ptr = data + 2 * i;
+      uint16_type value = *uint16_iterator(ptr);
       return value;
     }
 }
