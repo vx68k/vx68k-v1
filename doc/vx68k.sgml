@@ -1,0 +1,29 @@
+<!DOCTYPE book PUBLIC "-//Davenport//DTD DocBook V3.0//EN">
+<book>
+  <title>Virtual X68000</title>
+  <bookinfo>
+    <author>
+      <firstname>Kaz</firstname>
+      <surname>Sasayama</surname>
+    </author>
+    <copyright>
+      <year>1999</year>
+      <holder>Hypercore Software Design, Ltd.</holder>
+    </copyright>
+  </bookinfo>
+  <chapter>
+    <title>Using Virtual X68000</title>
+    <sect1>
+      <title>Introdution</title>
+      <para>....</para>
+    </sect1>
+  </chapter>
+  <chapter>
+    <title>Inside Virtual X68000</title>
+    <comment>
+      This chapter describes internals of Virtual X68000.
+    </comment>
+    <para>....</para>
+  </chapter>
+</book>
+
