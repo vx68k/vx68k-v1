@@ -26,6 +26,10 @@ namespace vx68k
   using namespace vm68k;
   using namespace std;
 
+  struct iocs_function_data
+  {
+  };
+
   class main_memory
     : public memory
   {
@@ -111,12 +115,22 @@ namespace vx68k
   };
 
   class machine
+    : public instruction_data
   {
+  public:
+    typedef void (*iocs_function_handler)(context &, iocs_function_data *);
+
+  protected:
+    static void invalid_iocs_function(context &, iocs_function_data *);
+    static void iocs(uint_type, context &, instruction_data *);
+
   private:
     size_t _memory_size;
     main_memory main_mem;
     class address_space as;
     class exec_unit eu;
+    pair<iocs_function_handler, iocs_function_data *> iocs_functions[0x100];
+
   public:
     explicit machine(size_t);
   public:
@@ -126,6 +140,10 @@ namespace vx68k
       {return &as;}
     class exec_unit *exec_unit()
       {return &eu;}
+
+  public:
+    void set_iocs_function(unsigned int, iocs_function_handler,
+			   iocs_function_data *);
   };
 } // vx68k
 

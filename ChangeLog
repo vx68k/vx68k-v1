@@ -1,5 +1,15 @@
 1999-07-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/machine.h (struct iocs_function_data): New class.
+	(class machine): Add typedef iocs_function_handler and member
+	iocs_functions, and update with new members.
+
+	* lib/vx68k/machine.cc: Add using namespace vm68k and Nana
+	support.
+	(invalid_iocs_function, set_iocs_function, set_iocs_functions,
+	iocs): New functions.
+	(machine): Fill array iocs_functions.
+
 	* lib/vx68k/dos.cc (dos_chmod, dos_fflush, dos_nameck): Change
 	dynamic_cast to static_cast.
 

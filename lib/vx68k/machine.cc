@@ -23,18 +23,74 @@
 
 #include <vx68k/machine.h>
 
+#include <algorithm>
+#include <stdexcept>
+
 using namespace vx68k;
+using namespace vm68k;
 using namespace std;
+
+#ifdef HAVE_NANA_H
+# include <nana.h>
+# include <cstdio>
+#else
+# include <cassert>
+# define I assert
+#endif
+
+namespace
+{
+  void
+  set_iocs_functions(machine &m)
+  {
+  }
+} // (unnamed namespace)
+
+void
+machine::invalid_iocs_function(context &c, iocs_function_data *data)
+{
+  throw runtime_error("invalid iocs function");	// FIXME
+}
+
+void
+machine::iocs(uint_type op, context &c, instruction_data *data)
+{
+  unsigned int funcno = c.regs.d[0] & 0xffu;
+#ifdef L
+  L(" trap #15\t| IOCS %#4x\n", funcno);
+#endif
+
+  machine *m = static_cast<machine *>(data);
+  I(m != NULL);
+  (*m->iocs_functions[funcno].first)(c, m->iocs_functions[funcno].second);
+
+  c.regs.pc += 2;
+}
+
+void
+machine::set_iocs_function(unsigned int i, iocs_function_handler handler,
+			   iocs_function_data *data)
+{
+  if (i > 0xffu)
+    throw range_error("iocs function must be between 0 and 0xff");
+
+  iocs_functions[i] = make_pair(handler, data);
+}
 
 machine::machine(size_t memory_size)
   : _memory_size(memory_size),
     main_mem(memory_size)
 {
-  using vm68k::PAGE_SHIFT;
-
+  fill(iocs_functions + 0, iocs_functions + 0x100,
+       make_pair(&invalid_iocs_function, (iocs_function_data *) 0));
+  
   as.set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &main_mem);
 #if 0
   as.set_pages(0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &graphic_vram);
   as.set_pages(0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &text_vram);
 #endif
+
+  eu.set_instruction(0x4e4f, 0, &iocs, this);
+
+  set_iocs_functions(*this);
 }
