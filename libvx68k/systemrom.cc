@@ -543,6 +543,18 @@ namespace
     fprintf(stderr, "iocs_b_write: FIXME: not implemented\n");
   }
 
+  /* Handles a _BITSNS call.  */
+  void
+  iocs_bitsns(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _BITSNS; %%d1:w=0x%04x\n", word_size::get(c.regs.d[1]));
+#endif
+
+    fprintf(stderr, "iocs_bitsns: FIXME: not implemented\n");
+    long_word_size::put(c.regs.d[0], 0);
+  }
+
   /* Handles a _BOOTINF call.  */
   void
   iocs_bootinf(context &c, unsigned long data)
@@ -690,6 +702,18 @@ namespace
     c.regs.d[0] = 0;
   }
 
+  /* Handles a _JOYGET call.  */
+  void
+  iocs_joyget(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _JOYGET; %%d1:w=0x%04x\n", word_size::get(c.regs.d[1]));
+#endif
+
+    fprintf(stderr, "iocs_joyget: FIXME: not implemented\n");
+    byte_size::put(c.regs.d[0], 0xff);
+  }
+
   /* Handles a _LEDMOD call.  */
   void
   iocs_ledmod(context &c, unsigned long data)
@@ -700,6 +724,18 @@ namespace
       byte_size::get(c.regs.d[2]));
 #endif
     fprintf(stderr, "iocs_ledmod: FIXME: not implemented\n");
+  }
+
+  /* Handles a _MS_CURGT call.  */
+  void
+  iocs_ms_curgt(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _MS_CURGT\n");
+#endif
+
+    fprintf(stderr, "iocs_ms_curgt: FIXME: not implemented\n");
+    long_word_size::put(c.regs.d[0], 0);
   }
 
   /* Handles a _MS_CURST call.  */
@@ -1124,6 +1160,7 @@ namespace
     rom->set_iocs_function(0x00, iocs_function_type(&iocs_b_keyinp, 0));
     rom->set_iocs_function(0x01, iocs_function_type(&iocs_b_keysns, 0));
     rom->set_iocs_function(0x02, iocs_function_type(&iocs_b_sftsns, 0));
+    rom->set_iocs_function(0x04, iocs_function_type(&iocs_bitsns, 0));
     rom->set_iocs_function(0x0d, iocs_function_type(&iocs_ledmod, 0));
     rom->set_iocs_function(0x0e, iocs_function_type(&iocs_tgusemd, 0));
     rom->set_iocs_function(0x0f, iocs_function_type(&iocs_defchr, 0));
@@ -1146,6 +1183,7 @@ namespace
     rom->set_iocs_function(0x38, iocs_function_type(&iocs_x38, 0));
     rom->set_iocs_function(0x39, iocs_function_type(&iocs_x39, 0));
     rom->set_iocs_function(0x3a, iocs_function_type(&iocs_x3a, 0));
+    rom->set_iocs_function(0x3b, iocs_function_type(&iocs_joyget, 0));
     rom->set_iocs_function(0x3c, iocs_function_type(&iocs_init_prn, 0));
     rom->set_iocs_function(0x45, iocs_function_type(&iocs_b_write, 0));
     rom->set_iocs_function(0x46, iocs_function_type(&iocs_b_read, 0));
@@ -1165,6 +1203,7 @@ namespace
     rom->set_iocs_function(0x6c, iocs_function_type(&iocs_vdispst, 0));
     rom->set_iocs_function(0x70, iocs_function_type(&iocs_ms_init, 0));
     rom->set_iocs_function(0x74, iocs_function_type(&iocs_ms_getdt, 0));
+    rom->set_iocs_function(0x75, iocs_function_type(&iocs_ms_curgt, 0));
     rom->set_iocs_function(0x76, iocs_function_type(&iocs_ms_curst, 0));
     rom->set_iocs_function(0x77, iocs_function_type(&iocs_ms_limit, 0));
     rom->set_iocs_function(0x7d, iocs_function_type(&iocs_skey_mod, 0));

@@ -1,6 +1,8 @@
 TO DO List for Virtual X68000
 
-$Date: Sat, 12 Aug 2000 22:03:48 +0900 $
+$Date: Sun, 13 Aug 2000 01:51:39 +0900 $
+
+* Implement a mouse.
 
 * Generalize interrupt handling.
 
