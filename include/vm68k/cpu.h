@@ -182,13 +182,16 @@ struct exception_listener
     exception_listener *exception;
   private:
     const exec_unit *eu;
+    int pfc, dfc;
+
   public:
     context(address_space *, const exec_unit *);
+
   public:
     int program_fc() const
-      {return regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM;}
+      {return pfc;}
     int data_fc() const
-      {return regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA;}
+      {return dfc;}
 
   public:
     uint_type fetchw(int disp) const

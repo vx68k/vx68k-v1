@@ -56,7 +56,9 @@ context::run()
 
 context::context(address_space *m, const exec_unit *e)
   : mem(m),
-    eu(e)
+    eu(e),
+    pfc(regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM),
+    dfc(regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA)
 {
 }
 

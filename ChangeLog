@@ -1,5 +1,10 @@
 1999-06-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/context.cc (context): Initialize pfc and dfc.
+
+	* include/vm68k/cpu.h (class context): Add members pfc, dfc.
+	(class context): Change program_fc and data_fc to use new members.
+
 	* lib/vx68k/allocator.cc (memory_allocator): Reserve 0x2000 - 0x10
 	bytes for initial stack.
 
