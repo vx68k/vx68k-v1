@@ -1,3 +1,15 @@
+2002-05-12  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
+
+	* include/vx68k/Makefile.am (vx68kinclude_HEADERS): Remove human.h.
+
+	* libvx68kdos/vx68k/Makefile.am (vx68kincludedir): New macro.
+	(vx68kinclude_HEADERS): New macro.
+
+	* libvx68kdos/vx68k/dos: Moved from include/vx68k/human.h.  Also
+	change all users.
+	(class dos_machine): New class.
+	(namespace dos): Renamed from human.  Also change all users.
+
 2002-05-07  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* configure.in: Add ja to ALL_LINGUAS.

@@ -1,6 +1,6 @@
 /* -*-C++-*- */
-/* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+/* Virtual X68000 - X68000 virtual machine
+   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,29 +16,36 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef _VX68K_HUMAN_H
-#define _VX68K_HUMAN_H 1
+#ifndef _VX68K_DOS
+#define _VX68K_DOS 1
 
-#include <vx68k/machine.h>
+#include <vm68k/processor.h>
+
 #include <map>
 
 namespace vx68k
 {
   using namespace vm68k;
-  using namespace std;
 
-  namespace human
+  class dos_machine
+  {
+  private:
+    bus _bus;
+    processor _processor;
+  };
+
+  namespace dos
   {
     class memory_allocator
     {
     private:
-      memory_map *_as;
+      bus *_as;
       uint32_type limit;
       uint32_type root_block;
       uint32_type last_block;
 
     public:
-      memory_allocator(memory_map *, uint32_type, uint32_type);
+      memory_allocator(bus *, uint32_type, uint32_type);
 
     public:
       uint32_type root() const
@@ -62,22 +69,22 @@ namespace vx68k
     class file_system
     {
     private:
-      machine *_m;
-      map<file *, int> files;
+      dos_machine *_m;
+      std::map<file *, int> files;
 
     public:
-      explicit file_system(machine *);
+      explicit file_system(dos_machine *);
 
     public:
-      string export_file_name(const string &);
-      sint16_type chmod(const memory_map *, uint32_type, sint16_type);
+      std::string export_file_name(const std::string &);
+      sint16_type chmod(const bus *, uint32_type, sint16_type);
 
     public:
-      sint16_type create(file *&, const memory_map *,
+      sint16_type create(file *&, const bus *,
 			 uint32_type, sint16_type);
       void open(file *&, int);
-      sint16_type open(file *&, const string &, uint16_type);
-      sint16_type open(file *&, const memory_map *,
+      sint16_type open(file *&, const std::string &, uint16_type);
+      sint16_type open(file *&, const bus *,
 		       uint32_type, sint16_type);
       file *ref(file *);
       void unref(file *);
@@ -91,13 +98,13 @@ namespace vx68k
       virtual ~file() {}
     public:
       virtual sint32_type seek(sint32_type, uint16_type) {return -1;}
-      virtual sint32_type read(memory_map *,
+      virtual sint32_type read(bus *,
 			       uint32_type, uint32_type) = 0;
-      virtual sint32_type write(const memory_map *,
+      virtual sint32_type write(const bus *,
 				uint32_type, uint32_type) = 0;
       virtual sint16_type fgetc() = 0;
       virtual sint16_type fputc(sint16_type) = 0;
-      virtual sint32_type fputs(const memory_map *, uint32_type) = 0;
+      virtual sint32_type fputs(const bus *, uint32_type) = 0;
     };
 
     /* Regular file that maps onto a POSIX file.  */
@@ -112,12 +119,12 @@ namespace vx68k
       ~regular_file();
     public:
       sint32_type seek(sint32_type, uint16_type);
-      sint32_type read(memory_map *, uint32_type, uint32_type);
-      sint32_type write(const memory_map *,
+      sint32_type read(bus *, uint32_type, uint32_type);
+      sint32_type write(const bus *,
 			uint32_type, uint32_type);
       sint16_type fgetc();
       sint16_type fputc(sint16_type);
-      sint32_type fputs(const memory_map *, uint32_type);
+      sint32_type fputs(const bus *, uint32_type);
     };
 
     const size_t NFILES = 96;
@@ -137,7 +144,7 @@ namespace vx68k
       int debug_level;
 
     public:
-      dos_exec_context(memory_map *, processor *,
+      dos_exec_context(bus *, processor *,
 		       memory_allocator *, file_system *);
       ~dos_exec_context();
 
@@ -203,7 +210,7 @@ namespace vx68k
     class dos
     {
     private:
-      x68k_address_space as;
+      bus as;
       memory_allocator allocator;
       file_system _fs;
 
@@ -211,7 +218,7 @@ namespace vx68k
       int debug_level;
 
     public:
-      dos(machine *);
+      dos(dos_machine *);
 
     public:
       file_system *fs()
@@ -222,8 +229,7 @@ namespace vx68k
       void set_debug_level(int lev)
 	{debug_level = lev;}
     };
-  } // human
-} // vx68k
+  }
+}
 
-#endif /* not _VX68K_HUMAN_H */
-
+#endif /* not _VX68K_DOS */
