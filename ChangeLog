@@ -1,5 +1,7 @@
 1999-07-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Modified.
+
 	* lib/vx68k/dos.cc (dos_dup): New function.
 	(dos): Add new handler to eu.
 
