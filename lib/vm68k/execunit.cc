@@ -23,6 +23,7 @@
 #undef inline
 
 #include <vm68k/addressing.h>
+#include <vm68k/condition.h>
 #include <vm68k/cpu.h>
 
 #include <algorithm>
@@ -76,6 +77,7 @@ exec_unit::illegal(unsigned int op, execution_context *)
 
 namespace
 {
+  using namespace condition;
   using namespace addressing;
 
   void addw_off_d(unsigned int op, execution_context *ec)
@@ -334,6 +336,31 @@ namespace
 
       ec->regs.pc += 2 + 4;
     }
+
+  template <class Condition> void 
+  b(unsigned int op, context *ec)
+  {
+    Condition cond;
+    sint_type disp = op & 0xff;
+    size_t len;
+    if (disp == 0)
+      {
+	disp = extsw(ec->fetchw(2));
+	len = 2;
+      }
+    else
+      {
+	disp = extsb(disp);
+	len = 0;
+      }
+#ifdef L
+    L(" b%s 0x%lx", cond.text(), (unsigned long) (ec->regs.pc + 2 + disp));
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
+
+    // XXX: The condition codes are not affected by this instruction.
+    ec->regs.pc += 2 + (cond(ec) ? disp : len);
+  }
 
   void bcc(unsigned int op, execution_context *ec)
     {
@@ -1161,7 +1188,7 @@ namespace
     }
 
   template <class Source> void
-  orw(unsigned int op, execution_context *ec)
+  orw(unsigned int op, context *ec)
   {
     Source ea1(op & 0x7, 2);
     int reg2 = op >> 9 & 0x7;
@@ -1612,6 +1639,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x6000, 0x00ff, &bra);
   eu->set_instruction(0x6100, 0x00ff, &bsr);
   eu->set_instruction(0x6400, 0x00ff, &bcc);
+  eu->set_instruction(0x6500, 0x00ff, &b<cs>);
   eu->set_instruction(0x6600, 0x00ff, &bne);
   eu->set_instruction(0x6700, 0x00ff, &beq);
   eu->set_instruction(0x6b00, 0x00ff, &bmi);
