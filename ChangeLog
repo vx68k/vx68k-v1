@@ -1,5 +1,10 @@
 1999-04-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (addqw<address_register>): Fix size.
+	(addql, addql<address_register>): New template function.
+	(addql_d): #if'd out.
+	(install_instructions): Updated with the new functions.
+
 	* lib/vm68k/statusreg.cc (status_register): New constructor.
 	(supervisor_state): Removed.
 
@@ -12,7 +17,7 @@
 	(addil, addqb): Updated for <vm68k/addressing.h> classes.
 	(addil<address_register>): Specialized without definition.
 	(addqw, addqw<address_register>): New template function.
-	(addqw_a): #ifdef'd out.
+	(addqw_a): #if'd out.
 	(install_instructions): Updated with the new functions.
 
 	* include/vm68k/Makefile.am (noinst_HEADERS): Add addressing.h.

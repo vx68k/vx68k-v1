@@ -197,7 +197,7 @@ namespace
       int32 value1 = ea1.getl(ec);
       int32 value = extsl(value1 + value2);
       ea1.putl(ec, value);
-      ea1.finishw(ec);
+      ea1.finishl(ec);
       // XXX: The condition codes are not affected.
 
       ec->regs.pc += 2;
@@ -220,6 +220,43 @@ namespace
     }
 #endif /* 0 */
 
+  template <class Destination> void addql(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      Destination ea1(op & 0x7, 2);
+      int value2 = op >> 9 & 0x7;
+      if (value2 == 0)
+	value2 = 8;
+      VL((" addql #%d,*\n", value2));
+
+      int32 value1 = ea1.getl(ec);
+      int32 value = extsl(value1 + value2);
+      ea1.putl(ec, value);
+      ea1.finishl(ec);
+      ec->regs.sr.set_cc(value); // FIXME.
+
+      ec->regs.pc += 2;
+    }
+
+  template <> void addql<address_register>(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      address_register ea1(op & 0x7, 2);
+      int value2 = op >> 9 & 0x7;
+      if (value2 == 0)
+	value2 = 8;
+      VL((" addql #%d,*\n", value2));
+
+      int32 value1 = ea1.getl(ec);
+      int32 value = extsl(value1 + value2);
+      ea1.putl(ec, value);
+      ea1.finishl(ec);
+      // XXX: The condition codes are not affected.
+
+      ec->regs.pc += 2;
+    }
+
+#if 0
   void addql_d(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -236,6 +273,7 @@ namespace
 
       ec->regs.pc += 2;
     }
+#endif /* 0 */
 
   void andl_i_d(int op, execution_context *ec)
     {
@@ -1160,7 +1198,11 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x5050, 0x0e07, &addqw<indirect>);
   eu->set_instruction(0x5058, 0x0e07, &addqw<postincrement_indirect>);
   eu->set_instruction(0x5060, 0x0e07, &addqw<predecrement_indirect>);
-  eu->set_instruction(0x5080, 0x0e07, &addql_d);
+  eu->set_instruction(0x5080, 0x0e07, &addql<data_register>);
+  eu->set_instruction(0x5088, 0x0e07, &addql<address_register>);
+  eu->set_instruction(0x5090, 0x0e07, &addql<indirect>);
+  eu->set_instruction(0x5098, 0x0e07, &addql<postincrement_indirect>);
+  eu->set_instruction(0x50a0, 0x0e07, &addql<predecrement_indirect>);
   eu->set_instruction(0x5180, 0x0e07, &subql_d);
   eu->set_instruction(0x5188, 0x0e07, &subql_a);
   eu->set_instruction(0x51c8, 0x0007, &dbf_d);
