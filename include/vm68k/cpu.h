@@ -28,23 +28,26 @@ namespace vm68k
 
   inline int extsb(unsigned int value)
     {
-      const unsigned int M = 1u << 7;
-      value &= M + M - 1;
-      return value >= M ? -(int) (M + M - value) : (int) value;
+      const unsigned int N = 1u << 7;
+      const unsigned int M = (N << 1) - 1;
+      value &= M;
+      return value >= N ? -(int) (M - value) - 1 : (int) value;
     }
 
   inline int extsw(unsigned int value)
     {
-      const unsigned int M = 1u << 15;
-      value &= M + M - 1;
-      return value >= M ? -(int) (M + M - value) : (int) value;
+      const unsigned int N = 1u << 15;
+      const unsigned int M = (N << 1) - 1;
+      value &= M;
+      return value >= N ? -(int) (M - value) - 1 : (int) value;
     }
 
   inline int32 extsl(uint32 value)
     {
-      const uint32 M = (uint32) 1u << 31;
-      value &= M + M - 1;
-      return value >= M ? -(int32) (M + M - value) : (int32) value;
+      const uint32 N = (uint32) 1u << 31;
+      const uint32 M = (N << 1) - 1;
+      value &= M;
+      return value >= N ? -(int32) (M - value) - 1 : (int32) value;
     }
 
   class status_register

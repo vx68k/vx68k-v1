@@ -1,3 +1,15 @@
+1999-03-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (cmpib_postinc, moveb_postinc_d,
+	movel_postinc_d, subb_postinc_d, subql_d): New functions.
+	(install_instructions): Set instruction handlers to the new
+	functions.
+	(movew_d_predec): Fix register reference bug.
+
+	* lib/vx68k/dos.cc (fgetc): Fix the subscript.
+
+	* include/vm68k/cpu.h (extsb, extsw, extsl): Avoid overflows.
+
 1999-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* TODO: Modified.

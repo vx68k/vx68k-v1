@@ -47,7 +47,7 @@ dos_exec_context::fgetc(int fd)
   ssize_t done = ::read(fd, data_buf, 1);
   if (done == -1)
     return -6;			// FIXME.
-  return data_buf[1];
+  return data_buf[0];
 }
 
 /* Reads data from the file with a DOS file descriptor.  */
