@@ -117,7 +117,10 @@ dos::load_executable (const char *name)
     }
   free(fixup_buf);
 
-  // Fix relocations here.
+  // PSP setup.
+  main_ec.mem->write(SUPER_DATA, load_address - 128,
+		     name, (strlen(name) + 2) & ~1);
+  main_ec.regs.a0 = load_address - 0x100; // FIXME.
 
   return load_address + start_offset;
 }
@@ -156,6 +159,9 @@ namespace
   void open(int op, execution_context *ec)
     {
       assert(ec != NULL);
+#ifdef TRACE_STEPS
+      fprintf(stderr, " DOS _OPEN\n");
+#endif
 
       ec->regs.d0 = -2u;	// FIXME.
 
@@ -165,6 +171,9 @@ namespace
   void print(int op, execution_context *ec)
     {
       assert(ec != NULL);
+#ifdef TRACE_STEPS
+      fprintf(stderr, " DOS _PRINT\n");
+#endif
 
       uint32 address = ec->mem->getl(SUPER_DATA, ec->regs.a7);
 

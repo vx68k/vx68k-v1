@@ -1,5 +1,15 @@
 1999-03-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (moveb_postinc_postinc): Renamed from
+	moveb_postint_postinc.  Update all referrers.
+	(moveb_postinc_postinc, movel_a_predec): Update the condition
+	codes.
+	(movew_d_absl): Fix the trace output.
+	Modify comments.
+
+	* lib/vx68k/dos.cc (open, print): Output system call names.
+	(load_executable): Set part of PSP.
+
 	* lib/vm68k/execunit.cc (clrw_predec, movew_d_absl, moveql_d): Use
 	status_register::set_cc.
 

@@ -107,7 +107,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      ec->regs.pc += ec->regs.sr.ge() ? 2 + disp : len;// FIXME.
+      ec->regs.pc += ec->regs.sr.ge() ? 2 + disp : len;
     }
 
   void bne(int op, execution_context *ec)
@@ -228,7 +228,7 @@ namespace
       fprintf(stderr, " link %%a%d,#%d\n", reg, disp);
 #endif
 
-      // FIXME.
+      // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
       ec->mem->putl(fc, ec->regs.a7 - 4, (&ec->regs.a0)[reg]);
       ec->regs.a7 -= 4;
@@ -238,7 +238,7 @@ namespace
       ec->regs.pc += 4;
     }
 
-  void moveb_postint_postinc(int op, execution_context *ec)
+  void moveb_postinc_postinc(int op, execution_context *ec)
     {
       assert(ec != NULL);
       int s_reg = op & 0x7;
@@ -247,10 +247,12 @@ namespace
       fprintf(stderr, " moveb %%a%d@+,%%a%d@+\n", s_reg, d_reg);
 #endif
 
-      // FIXME.
       int fc = ec->data_fc();
-      int value = ec->mem->getb(fc, (&ec->regs.a0)[s_reg]);
+      int value = extsb(ec->mem->getb(fc, (&ec->regs.a0)[s_reg]));
       ec->mem->putb(fc, (&ec->regs.a0)[d_reg], value);
+      (&ec->regs.a0)[s_reg] += 1;
+      (&ec->regs.a0)[d_reg] += 1;
+      ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2;
     }
@@ -261,7 +263,7 @@ namespace
       int reg = op & 0x7;
       uint32 address = ec->fetchl(2);
 #ifdef TRACE_STEPS
-      fprintf(stderr, " moveb %%d%d,0x%x\n", reg, address);
+      fprintf(stderr, " movew %%d%d,0x%x\n", reg, address);
 #endif
 
       int fc = ec->data_fc();
@@ -281,10 +283,11 @@ namespace
       fprintf(stderr, " movel %%a%d,%%a%d@-\n", s_reg, d_reg);
 #endif
 
-      // FIXME.
       int fc = ec->data_fc();
-      ec->mem->putl(fc, (&ec->regs.a0)[d_reg] - 4, (&ec->regs.a0)[s_reg]);
+      int32 value = (&ec->regs.a0)[s_reg];
+      ec->mem->putl(fc, (&ec->regs.a0)[d_reg] - 4, value);
       (&ec->regs.a0)[d_reg] -= 4;
+      ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2;
     }
@@ -315,12 +318,12 @@ namespace
       fprintf(stderr, " moveml #0x%x,%%a%d@-\n", bitmap, reg);
 #endif
 
+      // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
       for (int i = 0; i != 16; ++i)
 	{
 	  if (bitmap & 1 != 0)
 	    {
-	      // FIXME.
 	      ec->mem->putl(fc, (&ec->regs.a0)[reg] - 4,
 			    (&ec->regs.d0)[15 - i]);
 	      (&ec->regs.a0)[reg] -= 4;
@@ -401,7 +404,7 @@ exec_unit::install_instructions(exec_unit *eu)
 {
   assert(eu != NULL);
 
-  eu->set_instruction(0x10d8, 0x0e07, &moveb_postint_postinc);
+  eu->set_instruction(0x10d8, 0x0e07, &moveb_postinc_postinc);
   eu->set_instruction(0x2058, 0x0e07, &movel_postinc_a);
   eu->set_instruction(0x2108, 0x0e07, &movel_a_predec);
   eu->set_instruction(0x33c0, 0x0007, &movew_d_absl);
