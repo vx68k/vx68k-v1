@@ -238,6 +238,30 @@ namespace
     long_word_size::put(c.regs.d[0], 0);
   }
 
+  /* Handles a _B_INTVCS call.  */
+  void
+  iocs_b_intvcs(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _INTVCS %%d1=%#010x %%d2=%#010x\n",
+      c.regs.d[1], c.regs.d[2]);
+#endif
+    uint_type vecno = word_size::get(c.regs.d[1]);
+    uint32_type addr = long_word_size::get(c.regs.a[1]);
+
+    if (vecno > 0x1ff)
+      {
+	fprintf(stderr, "system_rom: _INTVCS vector number out of range\n");
+	return;
+      }
+
+    uint32_type vecaddr = vecno * 4u;
+    uint32_type oaddr = c.mem->getw(SUPER_DATA, vecaddr);
+    c.mem->putw(SUPER_DATA, vecaddr, addr);
+
+    long_word_size::put(c.regs.d[0], oaddr);
+  }
+
   /* Handles a _B_LPEEK call.  */
   void
   iocs_b_lpeek(context &c, unsigned long data)
@@ -585,6 +609,7 @@ namespace
     rom->set_iocs_function(0x56, iocs_function_type(&iocs_timeget, 0));
     rom->set_iocs_function(0x57, iocs_function_type(&iocs_timebin, 0));
     rom->set_iocs_function(0x6b, iocs_function_type(&iocs_timerdst, 0));
+    rom->set_iocs_function(0x80, iocs_function_type(&iocs_b_intvcs, 0));
     rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));
     rom->set_iocs_function(0x8e, iocs_function_type(&iocs_bootinf, 0));
     rom->set_iocs_function(0xaf, iocs_function_type(&iocs_os_curof, 0));

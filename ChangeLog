@@ -1,5 +1,8 @@
 2000-05-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_b_intvcs): New function.
+	(initialize_iocs_functions): Use the new handler.
+
 	* libvm68k/execunit.cc (initialize_instructions): Add another
 	handler.
 
