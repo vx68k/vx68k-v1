@@ -19,6 +19,7 @@
 #ifndef _VM68K_EXCEPT_H
 #define _VM68K_EXCEPT_H 1
 
+#include <vm68k/types.h>
 #include <exception>
 
 namespace vm68k
