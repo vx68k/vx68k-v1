@@ -90,6 +90,8 @@ private:
 
   gtk_about_window aw;
 
+  guint status_context;
+
 public:
   explicit gtk_console_window(GtkWidget *w);
   ~gtk_console_window();
@@ -99,6 +101,8 @@ public:
   void hide();
 
 public:
+  void set_status_text(const char *);
+
   void show_about();
 
 public:

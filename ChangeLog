@@ -1,5 +1,13 @@
 2000-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (run_boot): Set status text on exception.
+
+	* bin/gtkconwin.cc (set_status_text): New function.
+	(gtk_console_window): Initialize status_context.
+
+	* bin/gtkapp.h (class gtk_console_window): Add new member
+	status_context and set_status_text.
+
 	* libvx68k/sccmem.cc (iocs_ms_curst, iocs_ms_init, iocs_ms_limit,
 	iocs_set232c): Print a FIXME message only once.
 

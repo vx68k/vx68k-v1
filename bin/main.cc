@@ -143,17 +143,21 @@ gtk_app::run_boot() throw ()
       /* NOTE: This exception should have the address information.  */
       context *c = vm.master_context();
       uint_type op = c->mem->getw(SUPER_DATA, c->regs.pc);
-      fprintf(stderr, "vm68k illegal instruction %%pc=%#010x (%#06x)\n",
-	      c->regs.pc, op);
+      char buf[sizeof "Illegal instruction 0x1234 at 0x12345678"];
+      sprintf(buf, "Illegal instruction 0x%04x at 0x%08lx",
+	      op, c->regs.pc + 0UL);
+      main_window->set_status_text(buf);
     }
   catch (special_exception &x)
     {
+      char buf[sizeof "Address error at 0x12345678 (status=0x12)"];
       if (x.vecno == 3u)
-	fprintf(stderr, "vm68k address error fc=%#x address=%#lx\n",
-		x.status, (unsigned long) x.address);
+	sprintf(buf, "Address error at 0x%08lx (status=0x%02x)",
+		x.address + 0UL, x.status);
       else
-	fprintf(stderr, "vm68k bus error fc=%#x address=%#lx\n",
-		x.status, (unsigned long) x.address);
+	sprintf(buf, "Bus error at 0x%08lx (status=0x%02x)",
+		x.address + 0UL, x.status);
+      main_window->set_status_text(buf);
     }
   catch (exception &x)
     {

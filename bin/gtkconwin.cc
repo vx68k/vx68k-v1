@@ -55,6 +55,14 @@ gtk_console_window::add_callback(console_callback *c)
 }
 
 void
+gtk_console_window::set_status_text(const char *text)
+{
+  gdk_threads_enter();
+  gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_context, text);
+  gdk_threads_leave();
+}
+
+void
 gtk_console_window::show_about()
 {
   aw.open(GTK_WINDOW(window));
@@ -243,4 +251,7 @@ gtk_console_window::gtk_console_window(GtkWidget *w)
       throw;
     }
   gtk_object_weakref(GTK_OBJECT(window), &handle_window_destroy, this);
+
+  status_context = gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar),
+						"status");
 }
