@@ -255,11 +255,14 @@ text_video_memory::put_16(function_code fc, uint32_type address, uint_type value
     throw bus_error_exception(false, fc, address);
 
   address &= PLANE_MAX * PLANE_SIZE - 1u;
-  vm68k::putw(buf + address, value & 0xffffu);
+  if ((value & 0xffff) != vm68k::getw(buf + address))
+    {
+      vm68k::putw(buf + address, value & 0xffffu);
 
-  unsigned int x = address % ROW_SIZE * 8;
-  unsigned int y = address / ROW_SIZE % 1024u;
-  mark_update_area(x, y, x + 16, y + 1);
+      unsigned int x = address % ROW_SIZE * 8;
+      unsigned int y = address / ROW_SIZE % 1024u;
+      mark_update_area(x, y, x + 16, y + 1);
+    }
 }
 
 void
@@ -269,11 +272,14 @@ text_video_memory::put_8(function_code fc, uint32_type address, uint_type value)
     throw bus_error_exception(false, fc, address);
 
   address &= PLANE_MAX * PLANE_SIZE - 1u;
-  *(buf + address) = value & 0xffu;
+  if ((value & 0xff) != *(buf + address))
+    {
+      *(buf + address) = value & 0xffu;
 
-  unsigned int x = address % ROW_SIZE * 8;
-  unsigned int y = address / ROW_SIZE % 1024u;
-  mark_update_area(x, y, x + 8, y + 1);
+      unsigned int x = address % ROW_SIZE * 8;
+      unsigned int y = address / ROW_SIZE % 1024u;
+      mark_update_area(x, y, x + 8, y + 1);
+    }
 }
 
 void
