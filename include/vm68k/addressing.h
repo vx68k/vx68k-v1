@@ -28,6 +28,112 @@ namespace vm68k
   {
     using std::sprintf;
 
+    template <class Size> class basic_d_register
+    {
+    public:
+      typedef Size size_type;
+      typedef typename Size::uvalue_type uvalue_type;
+      typedef typename Size::svalue_type svalue_type;
+
+    private:
+      unsigned int reg;
+
+    public:
+      basic_d_register(unsigned int r, size_t off): reg(r) {}
+
+    public:
+      size_t extension_size() const {return 0;}
+      // XXX address is left unimplemented.
+      svalue_type get(const context &c) const
+	{return Size::svalue(Size::get(c.regs.d[reg]));}
+      void put(context &c, svalue_type value) const
+	{Size::put(c.regs.d[reg], value);}
+      void finish(context &c) const {}
+
+    public:
+      const char *text(const context &c) const
+	{
+	  static char buf[8];
+	  sprintf(buf, "%%d%u", reg);
+	  return buf;
+	}
+    };
+
+    typedef basic_d_register<byte_size> byte_d_register;
+    typedef basic_d_register<word_size> word_d_register;
+    typedef basic_d_register<long_word_size> long_word_d_register;
+
+    template <class Size> class basic_a_register
+    {
+    public:
+      typedef Size size_type;
+      typedef typename Size::uvalue_type uvalue_type;
+      typedef typename Size::svalue_type svalue_type;
+
+    private:
+      unsigned int reg;
+
+    public:
+      basic_a_register(unsigned int r, size_t off): reg(r) {}
+
+    public:
+      size_t extension_size() const {return 0;}
+      // XXX address is left unimplemented.
+      svalue_type get(const context &c) const
+	{return Size::svalue(Size::get(c.regs.a[reg]));}
+      void put(context &c, svalue_type value) const
+	{c.regs.a[reg] = Size::svalue(value);}
+      void finish(context &c) const {}
+
+    public:
+      const char *text(const context &c) const
+	{
+	  static char buf[8];
+	  sprintf(buf, "%%a%u", reg);
+	  return buf;
+	}
+    };
+
+    typedef basic_a_register<word_size> word_a_register;
+    typedef basic_a_register<long_word_size> long_word_a_register;
+
+    template <class Size> class basic_indirect
+    {
+    public:
+      typedef Size size_type;
+      typedef typename Size::uvalue_type uvalue_type;
+      typedef typename Size::svalue_type svalue_type;
+
+    private:
+      unsigned int reg;
+
+    public:
+      basic_indirect(unsigned int r, size_t off): reg(r) {}
+
+    public:
+      size_t extension_size() const {return 0;}
+      uint32_type address(const context &c) const {return c.regs.a[reg];}
+      svalue_type get(const context &c) const
+	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
+      void put(context &c, svalue_type value) const
+	{Size::put(*c.mem, c.data_fc(), address(c), value);}
+      void finish(context &c) const {}
+
+    public:
+      const char *text(const context &c) const
+	{
+	  static char buf[8];
+	  sprintf(buf, "%%a%u@", reg);
+	  return buf;
+	}
+    };
+
+    typedef basic_indirect<byte_size> byte_indirect;
+    typedef basic_indirect<word_size> word_indirect;
+    typedef basic_indirect<long_word_size> long_word_indirect;
+
+    /* --- */
+
     class data_register
     {
     private:
@@ -46,11 +152,11 @@ namespace vm68k
       sint32_type getl(const context &ec) const
 	{return extsl(ec.regs.d[reg]);}
       void putb(context &ec, uint_type value) const
-	{byte_size_traits::set(ec.regs.d[reg], value);}
+	{byte_size::put(ec.regs.d[reg], value);}
       void putw(context &ec, uint_type value) const
-	{word_size_traits::set(ec.regs.d[reg], value);}
+	{word_size::put(ec.regs.d[reg], value);}
       void putl(context &ec, uint32_type value) const
-	{long_word_size_traits::set(ec.regs.d[reg], value);}
+	{long_word_size::put(ec.regs.d[reg], value);}
       void finishb(context &) const {}
       void finishw(context &) const {}
       void finishl(context &) const {}

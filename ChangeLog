@@ -1,5 +1,19 @@
 1999-10-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/addressing.h (class basic_d_register, class
+	basic_a_register, class basic_indirect): New class templates.
+
+	* include/vm68k/cpu.h (struct byte_size): Renamed from
+	byte_size_traits.  Also change all uses.
+	(struct word_size): Likewise.
+	(struct long_word_size): Likewise.
+	(strcut byte_size, struct word_size, struct long_word_size): Add
+	svalue, value_bit, versions of get and put for address_space.
+	Replace member set with put, immediate_operand_size with
+	aligned_value_size.
+
+	* vm68k/Makefile.am (libvm68k_la_LDFLAGS): Revert version info.
+
 	* include/vm68k/cpu.h (struct exception_listener): #if'd out.
 	(class context): Comment out member exception.
 	(struct byte_size_traits, struct word_size_traits, struct
