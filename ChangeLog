@@ -1,5 +1,8 @@
 2000-08-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (invalid_iocs_function): Use fprintf for
+	debug output.
+
 	* libvm68k/execunit.cc (m68k_movem_r_predec): Replace
 	moveml_r_predec.
 	(m68k_movem_postinc_r): Replace moveml_mr<postinc_indirect>.

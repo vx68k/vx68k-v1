@@ -1166,8 +1166,6 @@ system_rom::system_rom()
 void
 system_rom::invalid_iocs_function(context &c, unsigned long data)
 {
-#ifdef HAVE_NANA_H
-  DL("system_rom: IOCS 0x%02x\n", byte_size::get(c.regs.d[0]));
-#endif
+  fprintf(stderr, "system_rom: IOCS 0x%02x\n", byte_size::get(c.regs.d[0]));
   throw runtime_error("invalid iocs function");	// FIXME
 }
