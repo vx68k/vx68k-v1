@@ -225,10 +225,12 @@ namespace vx68k
     void check_timeouts(console::time_type t, context &c);
   };
 
-  /* Palettes and video controller registers memory.  */
+  /* Palettes and video controller registers memory.  This memory is
+     mapped to the address range from 0xe82000 to 0xe84000.  */
   class palettes_memory: public memory
   {
     vector<unsigned short> _tpalette;
+    bool text_colors_modified;
 
   public:
     palettes_memory();
@@ -236,11 +238,15 @@ namespace vx68k
   public:
     /* Reads data from this object.  */
     uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    unsigned int get_8(int, uint32_type) const;
 
     /* Writes data to this object.  */
     void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, unsigned int);
+
+  public:
+    bool check_text_colors_modified();
+    void get_text_colors(unsigned int i, unsigned int j, unsigned char *out);
   };
 
   /* Area set register.  This object is mapped from 0xe86000 to

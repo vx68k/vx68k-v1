@@ -1,5 +1,19 @@
 2000-08-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (update_image): Support text palette
+	changes.
+
+	* libvx68k/palettemem.cc (check_text_colors_modified,
+	get_text_colors): New function.
+	(put_16): Set text_colors_modified.
+	(palettes_memory): Initialize the new member.
+	(palettes_memory): Reset some initial values.
+
+	* include/vx68k/memory.h (class palettes_memory): Add new member
+	text_colors_modified, check_text_colors_modified, and
+	get_text_colors.
+	(class palettes_memory): Change value types for put_8, get_8.
+
 	* libvm68k/execunit.cc (initialize_instructions): Add new
 	handlers.
 

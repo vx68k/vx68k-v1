@@ -37,6 +37,42 @@ using vm68k::SUPER_DATA;
 using namespace vm68k::types;
 using namespace std;
 
+bool
+palettes_memory::check_text_colors_modified()
+{
+  bool tmp = text_colors_modified;
+  text_colors_modified = false;
+  return tmp;
+}
+
+void
+palettes_memory::get_text_colors(unsigned int first, unsigned int last,
+				 unsigned char *out)
+{
+  while (first != last)
+    {
+      uint_type value = _tpalette[first++];
+      if (value == 0)
+	{
+	  *out++ = 0;
+	  *out++ = 0;
+	  *out++ = 0;
+	  *out++ = 0;
+	}
+      else
+	{
+	  unsigned int x = value & 0x1;
+	  unsigned int r = value >> 5 & 0x3e | x;
+	  unsigned int g = value >> 10 & 0x3e | x;
+	  unsigned int b = value & 0x3f;
+	  *out++ = r * 0xff / 0x3f;
+	  *out++ = g * 0xff / 0x3f;
+	  *out++ = b * 0xff / 0x3f;
+	  *out++ = 0xff;
+	}
+    }
+}
+
 uint_type
 palettes_memory::get_16(int fc, uint32_type address) const
 {
@@ -142,6 +178,7 @@ palettes_memory::put_16(int fc, uint32_type address, uint_type value)
     {
       unsigned int i = (off - 256 * 2) / 2;
       _tpalette[i] = value;
+      text_colors_modified = true;
     }
   else
     {
@@ -161,6 +198,11 @@ palettes_memory::put_8(int, uint32_type, unsigned int)
 }
 
 palettes_memory::palettes_memory()
-  : _tpalette(256, 0)
+  : _tpalette(256, 0),
+    text_colors_modified(false)
 {
+  _tpalette[0] = 0;
+  _tpalette[1] = 0xf83e;
+  _tpalette[2] = 0xffc0;
+  _tpalette[3] = 0xffff;
 }

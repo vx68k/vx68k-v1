@@ -333,9 +333,13 @@ machine::update_image(unsigned char *rgb_buf, size_t row_size,
   unsigned char *update_begin = image_end;
   unsigned char *update_end = image_end;
 
+  bool tc_modified = palettes.check_text_colors_modified();
+  unsigned char text_colors[16 * 4];
+  palettes.get_text_colors(0, 16, text_colors);
+
   for (unsigned char *i = rgb_buf; i != image_end;)
     {
-      if (*u++)
+      if (tc_modified || *u)
 	{
 	  unsigned char *row_end = i + width * 3;
 
@@ -350,11 +354,7 @@ machine::update_image(unsigned char *rgb_buf, size_t row_size,
 	    = tvram.raster(0, (i - rgb_buf) / row_size);
 	  for (unsigned char *j = i; j != row_end;)
 	    {
-	      static const unsigned char p[16 * 4] = {0, 0, 0, 0,
-						       0, 255, 255, 255,
-						       255, 255, 0, 255,
-						       255, 255, 255, 255};
-	      const unsigned char *k = p + *r++ * 4;
+	      const unsigned char *k = text_colors + *r++ * 4;
 	      if (k[3] == 0)
 		j += 3;
 	      else
@@ -372,6 +372,7 @@ machine::update_image(unsigned char *rgb_buf, size_t row_size,
 
       I((i - rgb_buf) % row_size == 0);
       i += row_size;
+      ++u;
     }
 
   I((update_begin - rgb_buf) % row_size == 0);
