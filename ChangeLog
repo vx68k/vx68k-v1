@@ -1,5 +1,8 @@
 2000-06-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (getw): Generate a bus error for a program
+	access.
+
 	* bin/main.cc (parse_options): Handle `-b'.
 	(display_help): Modify help messages.
 

@@ -42,11 +42,16 @@ using namespace vm68k::types;
 using namespace std;
 
 uint_type
-system_rom::getw(int, uint32_type) const
+system_rom::getw(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   L("system_rom: FIXME: `getw' not implemented\n");
 #endif
+  // A program access generates a bus error to detect emulation bugs
+  // easily.
+  if (fc == SUPER_PROGRAM || fc == USER_PROGRAM)
+    throw bus_error(fc, address);
+
   return 0;
 }
 
