@@ -1,5 +1,9 @@
 1999-04-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/addressing.h (class postincrement_indirect):
+	Handle %a7 specially.
+	(class predecrement_indirect): Likewise.
+
 	* lib/vm68k/execunit.cc (cmpl, lea, lsrl_i, subl, movew, movel):
 	New functions.
 	(lea_absl_a): #if'd out

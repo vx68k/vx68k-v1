@@ -169,7 +169,7 @@ namespace vm68k
       void putl(execution_context *ec, int32 value) const
 	{ec->mem->putl(ec->data_fc(), ec->regs.a[reg], value);}
       void finishb(execution_context *ec) const
-	{ec->regs.a[reg] += 1;}	// FIXME: %a7 is special.
+	{ec->regs.a[reg] += reg == 7 ? 2 : 1;} // XXX: %a7 is special.
       void finishw(execution_context *ec) const
 	{ec->regs.a[reg] += 2;}
       void finishl(execution_context *ec) const
@@ -198,21 +198,23 @@ namespace vm68k
 	{return 0;}
       // XXX: address is unimplemented.
       int getb(const execution_context *ec) const
-	{return extsb(ec->mem->getb(ec->data_fc(), ec->regs.a[reg] - 1));}
-				// FIXME: %a7 is special.
+	{return extsb(ec->mem->getb(ec->data_fc(),
+				    ec->regs.a[reg] - (reg == 7 ? 2 : 1)));}
+				// XXX: %a7 is special.
       int getw(const execution_context *ec) const
 	{return extsw(ec->mem->getw(ec->data_fc(), ec->regs.a[reg] - 2));}
       int32 getl(const execution_context *ec) const
 	{return extsl(ec->mem->getl(ec->data_fc(), ec->regs.a[reg] - 4));}
       void putb(execution_context *ec, int value) const
-	{ec->mem->putb(ec->data_fc(), ec->regs.a[reg] - 1, value);}
-				// FIXME: %a7 is special.
+	{ec->mem->putb(ec->data_fc(),
+		       ec->regs.a[reg] - (reg == 7 ? 2 : 1), value);}
+				// XXX: %a7 is special.
       void putw(execution_context *ec, int value) const
 	{ec->mem->putw(ec->data_fc(), ec->regs.a[reg] - 2, value);}
       void putl(execution_context *ec, int32 value) const
 	{ec->mem->putl(ec->data_fc(), ec->regs.a[reg] - 4, value);}
       void finishb(execution_context *ec) const
-	{ec->regs.a[reg] -= 1;} // FIXME: %a7 is special.
+	{ec->regs.a[reg] -= reg == 7 ? 2 : 1;} // XXX: %a7 is special.
       void finishw(execution_context *ec) const
 	{ec->regs.a[reg] -= 2;}
       void finishl(execution_context *ec) const
