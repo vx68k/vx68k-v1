@@ -1,5 +1,12 @@
 2000-08-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/gtkconwin.cc (gtk_console_window): Set window policy and
+	title.
+	(gtk_console_window): Set geometry hints.
+
+	* bin/gtkapp.h (class gtk_load_floppy_dialog): New class.
+	(class gtk_about_dialog): New class.
+
 	* bin/gtkconwin.cc (new_tearoff_item): New function.
 	(gtk_console_window): Add tearoff item to Eject Floppy menu.
 	(gtk_console_window): Set focus to the content widget.

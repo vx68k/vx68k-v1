@@ -24,6 +24,30 @@ struct console_callback
   virtual void window_destroyed() = 0;
 };
 
+/* Load Floppy dialog for GTK+.  */
+class gtk_load_floppy_dialog
+{
+private:
+  GtkWidget *file_dialog;
+
+public:
+  explicit gtk_load_floppy_dialog(GtkWindow *);
+  ~gtk_load_floppy_dialog();
+};
+
+/* About dialog for GTK+.  */
+class gtk_about_dialog
+{
+private:
+  GtkWidget *dialog;
+
+  GtkWidget *ok_button;
+
+public:
+  explicit gtk_about_dialog(GtkWindow *);
+  ~gtk_about_dialog();
+};
+
 /* Console window for GTK+.  */
 class gtk_console_window
 {

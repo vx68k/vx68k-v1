@@ -125,6 +125,9 @@ gtk_console_window::gtk_console_window(GtkWidget *w)
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   try
     {
+      gtk_window_set_policy(GTK_WINDOW(window), true, true, false);
+      gtk_window_set_title(GTK_WINDOW(window), _("Virtual X68000"));
+
       GtkAccelGroup *window_ag = gtk_accel_group_new();
       gtk_window_add_accel_group(GTK_WINDOW(window), window_ag);
 
@@ -145,6 +148,9 @@ gtk_console_window::gtk_console_window(GtkWidget *w)
       /* Drawing area.  */
       gtk_widget_show(content);
       gtk_box_pack_start(GTK_BOX(box1), content, true, true, 0);
+      GdkGeometry content_geometry = {0, 0, 0, 0, 0, 0, 1, 1};
+      gtk_window_set_geometry_hints(GTK_WINDOW(window), content,
+				    &content_geometry, GDK_HINT_RESIZE_INC);
       gtk_window_set_focus(GTK_WINDOW(window), content);
 
       /* Menu bar items.  */
