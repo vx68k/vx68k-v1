@@ -1686,8 +1686,11 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x5040, 0x0e07, &addqw<data_register>);
   eu.set_instruction(0x5048, 0x0e07, &addqw<address_register>);
   eu.set_instruction(0x5050, 0x0e07, &addqw<indirect>);
-  eu.set_instruction(0x5058, 0x0e07, &addqw<postincrement_indirect>);
-  eu.set_instruction(0x5060, 0x0e07, &addqw<predecrement_indirect>);
+  eu.set_instruction(0x5058, 0x0e07, &addqw<postinc_indirect>);
+  eu.set_instruction(0x5060, 0x0e07, &addqw<predec_indirect>);
+  eu.set_instruction(0x5068, 0x0e07, &addqw<disp_indirect>);
+  eu.set_instruction(0x5070, 0x0e07, &addqw<indexed_indirect>);
+  eu.set_instruction(0x5079, 0x0e00, &addqw<absolute_long>);
   eu.set_instruction(0x5080, 0x0e07, &addql<data_register>);
   eu.set_instruction(0x5088, 0x0e07, &addql<address_register>);
   eu.set_instruction(0x5090, 0x0e07, &addql<indirect>);
