@@ -82,17 +82,17 @@ public:
 #endif
     address_space ();
     void set_pages (size_t begin, size_t end, memory_page *);
-    void read (int, uint32, void *, size_t) const throw (bus_error);
-    uint8 getb (int, uint32) const throw (bus_error);
-    uint16 getw (int, uint32) const throw (bus_error);
-    uint32 getl (int, uint32) const throw (bus_error);
+    void read (int, uint32, void *, size_t) const;
+    unsigned int getb (int, uint32) const;
+    unsigned int getw (int, uint32) const;
+    uint32 getl (int, uint32) const;
     int getb_signed(int, uint32) const;
     int getw_signed(int, uint32) const;
     int32 getl_signed(int, uint32) const;
-    void write (int, uint32, const void *, size_t) throw (bus_error);
-    void putb (int, uint32, uint8) throw (bus_error);
-    void putw (int, uint32, uint16) throw (bus_error);
-    void putl (int, uint32, uint32) throw (bus_error);
+    void write (int, uint32, const void *, size_t);
+    void putb (int, uint32, unsigned int);
+    void putw (int, uint32, unsigned int);
+    void putl (int, uint32, uint32);
   private:
     bus_error_page default_page;
     memory_page *page_table[NPAGES];

@@ -1,3 +1,10 @@
+1999-03-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/memory.cc (read, write, getb, putb, getw, putw, getl,
+	putl): Remove throw-specs.
+	(getb, putb, getw, putw): Change the value types to unsigned int.
+	* include/vm68k/memory.h (class address_space): Updated.
+
 1999-03-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/execunit.cc (bra, bsr): Use extsw and extsb to make

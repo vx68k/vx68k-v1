@@ -131,7 +131,6 @@ bus_error_page::putw (int fc, uint32 address, uint16)
 /* Read a block of data from memory.  */
 void
 address_space::read (int fc, uint32 address, void *buf, size_t n) const
-  throw (bus_error)
 {
   // This code is slow!
   uint8 *p = static_cast <uint8 *> (buf);
@@ -148,7 +147,6 @@ address_space::read (int fc, uint32 address, void *buf, size_t n) const
 /* Write a block of data to memory.  */
 void
 address_space::write (int fc, uint32 address, const void *buf, size_t n)
-  throw (bus_error)
 {
   // This code is slow!
   const uint8 *p = static_cast <const uint8 *> (buf);
@@ -162,9 +160,8 @@ address_space::write (int fc, uint32 address, const void *buf, size_t n)
     }
 }
 
-uint8
+unsigned int
 address_space::getb(int fc, uint32 address) const
-  throw (bus_error)
 {
   uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
   return page_table[p]->getb(fc, address);
@@ -178,17 +175,15 @@ address_space::getb_signed(int fc, uint32 address) const
 }
 
 void
-address_space::putb(int fc, uint32 address, uint8 value)
-  throw (bus_error)
+address_space::putb(int fc, uint32 address, unsigned int value)
 {
   uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
   page_table[p]->putb(fc, address, value);
 }
 
 /* Get a word from memory.  */
-uint16
+unsigned int
 address_space::getw (int fc, uint32 address) const
-  throw (bus_error)
 {
   uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
   return page_table[p]->getw (fc, address);
@@ -203,8 +198,7 @@ address_space::getw_signed(int fc, uint32 address) const
 
 /* Put a word to memory.  */
 void
-address_space::putw (int fc, uint32 address, uint16 value)
-  throw (bus_error)
+address_space::putw (int fc, uint32 address, unsigned int value)
 {
   uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
   page_table[p]->putw (fc, address, value);
@@ -213,7 +207,6 @@ address_space::putw (int fc, uint32 address, uint16 value)
 /* Returns the long word value.  */
 uint32
 address_space::getl(int fc, uint32 address) const
-  throw (bus_error)
 {
   return getw(fc, address + 0) << 16 | getw(fc, address + 2);
 }
@@ -228,7 +221,6 @@ address_space::getl_signed(int fc, uint32 address) const
 /* Stores the long word value.  */
 void
 address_space::putl(int fc, uint32 address, uint32 value)
-  throw (bus_error)
 {
   putw(fc, address + 0, value >> 16);
   putw(fc, address + 2, value);
