@@ -6,7 +6,8 @@
 
 	* lib/vx68k/memory.cc (getl): New function.
 
-	* lib/vm68k/addrspace.cc (getl): Cast to uint32_type before shift.
+	* lib/vm68k/addrspace.cc (getl): Add cast to uint32_type before
+	shift.
 
 1999-06-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
