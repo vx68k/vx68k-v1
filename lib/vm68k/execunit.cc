@@ -465,6 +465,22 @@ namespace
 
       ec->regs.pc += 2;
     }
+
+  void unlk_a(int op, execution_context *ec)
+    {
+      int reg = op & 0x0007;
+#ifdef TRACE_STEPS
+      fprintf(stderr, " unlk %%a%d\n", reg);
+#endif
+
+      // XXX: The condition codes are not affected.
+      int fc = ec->data_fc();
+      uint32 address = ec->mem->getl(fc, (&ec->regs.a0)[reg]);
+      ec->regs.a7 = (&ec->regs.a0)[reg] + 4;
+      (&ec->regs.a0)[reg] = address;
+
+      ec->regs.pc += 2;
+    }
 } // (unnamed namespace)
 
 /* Installs instructions into the execution unit.  */
@@ -486,6 +502,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
   eu->set_instruction(0x4a40, 0x0007, &tstw_d);
   eu->set_instruction(0x4e50, 0x0007, &link_a);
+  eu->set_instruction(0x4e58, 0x0007, &unlk_a);
   eu->set_instruction(0x4e75, 0x0000, &rts);
   eu->set_instruction(0x5048, 0x0e07, &addqw_a);
   eu->set_instruction(0x5188, 0x0e07, &subql_a);

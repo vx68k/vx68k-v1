@@ -1,5 +1,8 @@
 1999-03-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (unlk_a): New function.
+	(install_instructions): Set operation words to the new function.
+
 	* lib/vx68k/dos.cc (close): New function.
 	(dos): Set operation word to the new function.
 
