@@ -1,5 +1,8 @@
 1999-04-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/cpu.h (class status_register): Add members ls and
+	hi, and reformat.
+
 	* lib/vm68k/execunit.cc (movew_off_d, movel_off_d): #if'd out.
 	(install_instructions): Use disp_indirect.
 	(clrb): New function.
