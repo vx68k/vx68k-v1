@@ -4,6 +4,6 @@ INCLUDES = -I${top_srcdir}/include
 
 noinst_LIBRARIES = libvm68k.a
 
-libvm68k_a_SOURCES = addrspace.cc memory.cc \
-context.cc execunit.cc statusreg.cc
+libvm68k_a_SOURCES = memory.cc addrspace.cc \
+statusreg.cc execunit.cc context.cc
 

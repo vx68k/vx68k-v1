@@ -1,5 +1,7 @@
 1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/Makefile.am (libvm68k_a_SOURCES): Change file order.
+
 	* bin/main.cc (display_help): New function.
 	(main): Handle `--help'.
 
