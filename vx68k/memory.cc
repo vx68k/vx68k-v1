@@ -79,7 +79,7 @@ main_memory_page::main_memory_page (size_t n)
 {				// FIXME
 }
 
-memory::memory (size_t n)
+address_space::address_space (size_t n)
   : main_memory (n)
 {
   using vm68k::PAGE_SHIFT;

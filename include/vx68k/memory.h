@@ -41,11 +41,11 @@ public:
   void putw (int, uint32, uint16) throw (bus_error);
 };
 
-class memory
+class address_space
   : public vm68k::memory
 {
 public:
-  explicit memory (size_t);
+  explicit address_space (size_t);
 private:
   main_memory_page main_memory;
 };

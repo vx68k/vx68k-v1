@@ -1,5 +1,8 @@
 1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/memory.h (class address_space): Renamed from
+	memory.  All references changed.
+
 	* vm68k/memory.cc (set_memory_pages): Defined.
 
 	* vx68k/Makefile.am (libvx68k_a_SOURCES): Add memory.cc.
