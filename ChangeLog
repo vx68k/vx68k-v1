@@ -1,5 +1,10 @@
 2000-08-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_g_clr_on, iocs_scroll,
+	iocs_skey_mod, iocs_tgusemd, iocs_vdispst): New function.
+	(iocs_tcolor, iocs_tpalet): Correct log messages.
+	(initialize_iocs_functions): Use new handlers.
+
 	* bin/main.cc (create_window): Modify menu structure.
 
 	* libvm68k/execunit.cc (m68k_move): New function template.

@@ -582,6 +582,16 @@ namespace
     c.regs.d[0] = 0;
   }
 
+  /* Handles a _G_CLR_ON call.  */
+  void
+  iocs_g_clr_on(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _G_CLR_ON\n");
+#endif
+    fprintf(stderr, "iocs_g_clr_on: FIXME: not implemented\n");
+  }
+
   /* Handles a _INIT_PRN call.  */
   void
   iocs_init_prn(context &c, unsigned long data)
@@ -671,6 +681,18 @@ namespace
     long_word_size::put(c.regs.d[0], romver);
   }
 
+  /* Handles a _SCROLL call.  */
+  void
+  iocs_scroll(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _SCROLL: %%d1:w=%#06x %%d2:w=%#06x %%d3:w=%#06x\n",
+      word_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]),
+      word_size::get(c.regs.d[3]));
+#endif
+    fprintf(stderr, "iocs_scroll: FIXME: not implemented\n");
+  }
+
   /* Handles a _SET232C call.  */
   void
   iocs_set232c(context &c, unsigned long data)
@@ -680,6 +702,19 @@ namespace
 #endif
     fprintf(stderr, "iocs_set232c: FIXME: not implemented\n");
     c.regs.d[0] = 0;
+  }
+
+  /* Handles a _SKEY_MOD call.  */
+  void
+  iocs_skey_mod(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _SKEY_MOD: %%d1=%#010lx %%d2=%#010lx\n",
+      (unsigned long) long_word_size::get(c.regs.d[1]),
+      (unsigned long) long_word_size::get(c.regs.d[2]));
+#endif
+    fprintf(stderr, "iocs_skey_mod: FIXME: not implemented\n");
+    long_word_size::put(c.regs.d[0], 0);
   }
 
   /* Handles a SYS_STAT call.  */
@@ -711,7 +746,7 @@ namespace
   iocs_tcolor(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    L("system_rom: _B_TCOLOR %%d1=%#010x\n",
+    L("IOCS _TCOLOR: %%d1=%#010x\n",
       c.regs.d[1]);
 #endif
     fprintf(stderr, "iocs_tcolor: FIXME: not implemented\n");
@@ -726,6 +761,18 @@ namespace
       c.regs.d[1], c.regs.d[2], c.regs.a[1]);
 #endif
     fprintf(stderr, "iocs_textput: FIXME: not implemented\n");
+  }
+
+  /* Handles a _TGUSEMD call.  */
+  void
+  iocs_tgusemd(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _TGUSEMD: %%d1:b=%#04x %%d2:b=%#04x\n",
+      byte_size::get(c.regs.d[1]), byte_size::get(c.regs.d[2]));
+#endif
+    fprintf(stderr, "iocs_tgusemd: FIXME: not implemented\n");
+    long_word_size::put(c.regs.d[0], 0);
   }
 
   /* Handles a _TIMEASC call.  */
@@ -814,10 +861,23 @@ namespace
   iocs_tpalet(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    L("system_rom: _B_TPALET %%d1=%#010x %%d2=%#010x\n",
+    L("IOCS _TPALET: %%d1=%#010x %%d2=%#010x\n",
       c.regs.d[1], c.regs.d[2]);
 #endif
     fprintf(stderr, "iocs_tpalet: FIXME: not implemented\n");
+  }
+
+  /* Handles a _VDISPST call.  */
+  void
+  iocs_vdispst(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _VDISPST: %%d1=%#010lx %%a1=%#010lx\n",
+      (unsigned long) long_word_size::get(c.regs.d[1]),
+      (unsigned long) long_word_size::get(c.regs.a[1]));
+#endif
+    fprintf(stderr, "iocs_vdispst: FIXME: not implemented\n");
+    long_word_size::put(c.regs.d[0], 0);
   }
 
   /* Handles a 0x37 call.  */
@@ -874,11 +934,13 @@ namespace
     rom->set_iocs_function(0x01, iocs_function_type(&iocs_b_keysns, 0));
     rom->set_iocs_function(0x02, iocs_function_type(&iocs_b_sftsns, 0));
     rom->set_iocs_function(0x0d, iocs_function_type(&iocs_ledmod, 0));
+    rom->set_iocs_function(0x0e, iocs_function_type(&iocs_tgusemd, 0));
     rom->set_iocs_function(0x0f, iocs_function_type(&iocs_defchr, 0));
     rom->set_iocs_function(0x10, iocs_function_type(&iocs_crtmod, 0));
     rom->set_iocs_function(0x13, iocs_function_type(&iocs_tpalet, 0));
     rom->set_iocs_function(0x15, iocs_function_type(&iocs_tcolor, 0));
     rom->set_iocs_function(0x1b, iocs_function_type(&iocs_textput, 0));
+    rom->set_iocs_function(0x1d, iocs_function_type(&iocs_scroll, 0));
     rom->set_iocs_function(0x1e, iocs_function_type(&iocs_b_curon, 0));
     rom->set_iocs_function(0x1f, iocs_function_type(&iocs_b_curoff, 0));
     rom->set_iocs_function(0x20, iocs_function_type(&iocs_b_putc, 0));
@@ -909,11 +971,14 @@ namespace
     rom->set_iocs_function(0x68, iocs_function_type(&iocs_opmset, 0));
     rom->set_iocs_function(0x6a, iocs_function_type(&iocs_opmintst, 0));
     rom->set_iocs_function(0x6b, iocs_function_type(&iocs_timerdst, 0));
+    rom->set_iocs_function(0x6c, iocs_function_type(&iocs_vdispst, 0));
+    rom->set_iocs_function(0x7d, iocs_function_type(&iocs_skey_mod, 0));
     rom->set_iocs_function(0x7f, iocs_function_type(&iocs_ontime, 0));
     rom->set_iocs_function(0x80, iocs_function_type(&iocs_b_intvcs, 0));
     rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));
     rom->set_iocs_function(0x8e, iocs_function_type(&iocs_bootinf, 0));
     rom->set_iocs_function(0x8f, iocs_function_type(&iocs_romver, 0));
+    rom->set_iocs_function(0x90, iocs_function_type(&iocs_g_clr_on, 0));
     rom->set_iocs_function(0xac, iocs_function_type(&iocs_sys_stat, 0));
     rom->set_iocs_function(0xae, iocs_function_type(&iocs_os_curon, 0));
     rom->set_iocs_function(0xaf, iocs_function_type(&iocs_os_curof, 0));
