@@ -38,7 +38,7 @@ AC_CXX_EXCEPTIONS
 AC_CXX_TEMPLATES
 AC_CXX_NAMESPACES
 AC_CHECK_FUNCS(localtime_r)
-ALL_LINGUAS=""
+ALL_LINGUAS="ja"
 AM_GNU_GETTEXT
 AC_OUTPUT(Makefile intl/Makefile include/Makefile include/vx68k/Makefile \
 libvx68kdos/Makefile libvx68kdos/vx68k/Makefile libvx68k/Makefile \

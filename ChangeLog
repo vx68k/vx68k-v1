@@ -1,5 +1,7 @@
 2002-05-07  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* configure.in: Add ja to ALL_LINGUAS.
+
 	* libvx68kdos/Makefile.am (SUBDIRS): Add vx68k.
 
 	* configure.in: Add libvx68kdos/vx68k/Makefile to AC_OUTPUT.
