@@ -100,7 +100,7 @@ main (int argc, char **argv)
       const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
       x68k_address_space mem(MEMSIZE);
 
-      dos env(&mem, MEMSIZE);
+      human::dos env(&mem, MEMSIZE);
       return env.execute(argv[1], argv + 2); // FIXME
     }
   catch (exception &x)

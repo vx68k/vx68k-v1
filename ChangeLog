@@ -1,5 +1,16 @@
 1999-03-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* main.cc (main): Prefix human:: as required.
+
+	* include/vx68k/human.h (class dos): Add member functions: open
+	and close, from.
+	(namespace vm68k): Remove `using namespace human'.
+
+	* lib/vx68k/dos.cc (close, open): New functions.
+	(dos_close, dos_exit2, dos_open, dos_print): Renamed from close,
+	exit2, open, and print, respectively.  Update all referrers.
+	(dos_close, dos_open): Use the new open and close.
+
 	* include/vm68k/except.h: Include <exception> and add `using
 	namespace std'.
 	(struct exception): Removed.

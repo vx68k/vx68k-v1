@@ -28,7 +28,6 @@ namespace vx68k
 
   namespace human
   {
-
     class dos;			// Forward declaration.
 
     struct dos_exec_context
@@ -42,19 +41,21 @@ namespace vx68k
     class dos
     {
     public:
-      dos (address_space *, size_t);
-      uint32 load_executable (const char *);
-      uint16 start (uint32, const char *const *);
-      uint16 execute (const char *, const char *const *);
+      static dos *from(execution_context *ec)
+	{return static_cast<dos_exec_context *>(ec)->dos;}
     private:
       vm68k::cpu main_cpu;
       dos_exec_context main_ec;
+    public:
+      dos (address_space *, size_t);
+    public:
+      int open(const char *, unsigned int);
+      int close(int);
+      uint32 load_executable (const char *);
+      uint16 start (uint32, const char *const *);
+      uint16 execute (const char *, const char *const *);
     };
-
-  };				// namespace human
-
-  using namespace human;
-
-};				// namespace vx68k
+  } // human
+} // vx68k
 
 #endif

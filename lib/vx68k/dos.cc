@@ -41,6 +41,30 @@ using namespace vx68k::human;
 using namespace vm68k;
 using namespace std;
 
+/* Closes a DOS file descriptor.  */
+int
+dos::close(int fd)
+{
+  // FIXME.
+  if (::close(fd) == -1)
+    return -6;			// FIXME.
+  return 0;
+}
+
+/* Opens a file.  */
+int
+dos::open(const char *name, unsigned int flag)
+{
+  // FIXME.
+  static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
+  if ((flag & 0xf) > 2)
+    return -12;			// FIXME.
+  int fd = ::open(name, uflag[flag & 0xf]);
+  if (fd == -1)
+    return -2;			// FIXME: errno test.
+  return fd;
+}
+
 uint32
 dos::load_executable (const char *name)
 {
@@ -175,22 +199,19 @@ dos::execute (const char *name, const char *const *argv)
 
 namespace
 {
-  void close(int op, execution_context *ec)
+  void dos_close(int op, execution_context *ec)
     {
       I(ec != NULL);
       VL((" DOS _CLOSE\n"));
 
       // FIXME.
-      int fd = ec->mem->getw(SUPER_DATA, ec->regs.a[7]);
-      if (::close(fd) == -1)
-	ec->regs.d[0] = -1u;
-      else
-	ec->regs.d[0] = 0u;	// FIXME.
+      int fd = extsw(ec->mem->getw(SUPER_DATA, ec->regs.a[7]));
+      ec->regs.d[0] = dos::from(ec)->close(fd);
 
       ec->regs.pc += 2;
     }
 
-  void exit2(int op, execution_context *ec)
+  void dos_exit2(int op, execution_context *ec)
     {
       I(ec != NULL);
       VL((" DOS _EXIT2\n"));
@@ -198,26 +219,24 @@ namespace
       throw quit_loop(ec->mem->getw(SUPER_DATA, ec->regs.a[7]));
     }
 
-  void open(int op, execution_context *ec)
+  void dos_open(int op, execution_context *ec)
     {
       I(ec != NULL);
       VL((" DOS _OPEN\n"));
 
       // FIXME.
-      char buf[256];
-      uint32 address = ec->mem->getl(SUPER_DATA, ec->regs.a[7]);
-      ec->mem->read(SUPER_DATA, address, buf, 256);
-      VL(("Opening %s\n", buf));
-      int fd = ::open(buf, O_RDONLY); // FIXME.
-      if (fd == -1)
-	ec->regs.d[0] = -2u;	// FIXME.
-      else
-	ec->regs.d[0] = fd;
+      uint32 sp = ec->regs.a[7];
+      uint32 name_address = ec->mem->getl(SUPER_DATA, sp + 0);
+      unsigned int flags = ec->mem->getw(SUPER_DATA, sp + 2);
+
+      char name[256];
+      ec->mem->read(SUPER_DATA, name_address, name, 256);
+      ec->regs.d[0] = dos::from(ec)->open(name, flags);
 
       ec->regs.pc += 2;
     }
 
-  void print(int op, execution_context *ec)
+  void dos_print(int op, execution_context *ec)
     {
       I(ec != NULL);
       VL((" DOS _PRINT\n"));
@@ -241,9 +260,9 @@ namespace
 dos::dos (address_space *as, size_t)
   : main_ec(as, this)
 {
-  main_cpu.set_handlers(0xff09, 0, &print);
-  main_cpu.set_handlers(0xff3d, 0, &open);
-  main_cpu.set_handlers(0xff3e, 0, &close);
-  main_cpu.set_handlers(0xff4c, 0, &exit2);
+  main_cpu.set_handlers(0xff09, 0, &dos_print);
+  main_cpu.set_handlers(0xff3d, 0, &dos_open);
+  main_cpu.set_handlers(0xff3e, 0, &dos_close);
+  main_cpu.set_handlers(0xff4c, 0, &dos_exit2);
 }
 
