@@ -1,5 +1,8 @@
 1998-10-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* COPYING: New file.
+	* INSTALL: New file.
+
 	* Add copyright info to the source files.
 
 	* vm68k/cpu.cc: All refs to substituted members of class cpu
