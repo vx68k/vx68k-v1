@@ -1,5 +1,10 @@
 1999-07-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (andb, btstb_i, oriw): New functions.
+	(install_instructions): Add new handlers.
+
 	* bin/main.cc (run_machine): Fix argument offset.
 
 	* include/vx68k/memory.h (class graphics_vram, class text_vram):
