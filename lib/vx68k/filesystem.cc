@@ -146,6 +146,80 @@ regular_file::regular_file(int f)
 {
 }
 
+namespace
+{
+  class con_device_file
+    : public file
+  {
+  private:
+    machine *_m;
+
+  public:
+    explicit con_device_file(machine *m);
+
+  public:
+    sint32_type read(address_space *, uint32_type, uint32_type);
+    sint32_type write(const address_space *, uint32_type, uint32_type);
+    sint_type fgetc();
+    sint_type fputc(sint_type);
+    sint32_type fputs(const address_space *, uint32_type);
+  };
+} // (unnamed namespace)
+
+sint32_type
+con_device_file::read(address_space *, uint32_type, uint32_type)
+{
+  // FIXME not implemented
+  return -1;
+}
+
+sint32_type
+con_device_file::write(const address_space *,
+		       uint32_type dataptr, uint32_type size)
+{
+  // FIXME.
+  unsigned char *data = new unsigned char [size];
+  _m->address_space()->read(SUPER_DATA, dataptr, data, size);
+
+  for (unsigned char *i = data + 0;
+       i != data + size;
+       ++i)
+    {
+      _m->b_putc(*i);
+    }
+
+  delete [] data;
+  return size;
+}
+
+sint_type
+con_device_file::fgetc()
+{
+  /* FIXME.  This function must be implemented via class machine.  */
+  unsigned char c[1];
+  ::read(STDIN_FILENO, c, 1);
+  return 1;
+}
+
+sint_type
+con_device_file::fputc(sint_type code)
+{
+  _m->b_putc(code);
+  return 1;
+}
+
+sint32_type
+con_device_file::fputs(const address_space *, uint32_type str)
+{
+  _m->b_print(str);
+  return 0;			// FIXME
+}
+
+con_device_file::con_device_file(machine *m)
+  : _m(m)
+{
+}
+
 string
 file_system::export_file_name(const string &dos_name)
 {
@@ -197,35 +271,53 @@ file_system::open(file *&ret, int fd)
 }
 
 sint_type
-file_system::open(file *&ret, const address_space *as, uint32_type nameptr,
-		  sint_type mode)
+file_system::open(file *&ret, const string &name, uint_type mode)
 {
   if ((mode & 0xf) > 2)
     return -12;			// FIXME.
 
-  string name = export_file_name(as->gets(SUPER_DATA, nameptr));
+  if (strcasecmp(name.c_str(), "con") == 0) // FIXME
+    {
+      con_device_file *f = new con_device_file(_m);
+      files.insert(make_pair(f, 1));
+      ret = f;
+    }
+  else
+    {
+      string ext_name = export_file_name(name);
 
-  // FIXME.
-  static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
+      // FIXME.
+      static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
 
-  int fd = ::open(name.c_str(), uflag[mode & 0xf]);
-  if (fd == -1)
-    switch (errno)
-      {
+      int fd = ::open(ext_name.c_str(), uflag[mode & 0xf]);
+      if (fd == -1)
+	switch (errno)
+	  {
 #ifdef EPERM
-      case EPERM:
-	return -19;
+	  case EPERM:
+	    return -19;
 #endif
 #ifdef ENOENT
-      case ENOENT:
-	return -2;
+	  case ENOENT:
+	    return -2;
 #endif
-      default:
-	return -2;		// FIXME: errno test.
-      }
+	  default:
+	    return -2;		// FIXME: errno test.
+	  }
 
-  open(ret, fd);
+      open(ret, fd);
+    }
+
   return 0;
+}
+
+sint_type
+file_system::open(file *&ret, const address_space *as, uint32_type nameptr,
+		  sint_type mode)
+{
+  string name = as->gets(SUPER_DATA, nameptr);
+
+  return open(ret, name, mode);
 }
 
 sint_type
@@ -283,5 +375,10 @@ file_system::chmod(const address_space *as, uint32_type nameptr, sint_type atr)
     a |= 0x01;
 
   return a;
+}
+
+file_system::file_system(machine *m)
+  : _m(m)
+{
 }
 

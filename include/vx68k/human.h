@@ -62,7 +62,11 @@ namespace vx68k
     class file_system
     {
     private:
+      machine *_m;
       map<file *, int> files;
+
+    public:
+      explicit file_system(machine *);
 
     public:
       string export_file_name(const string &);
@@ -71,6 +75,7 @@ namespace vx68k
     public:
       sint_type create(file *&, const address_space *, uint32_type, sint_type);
       void open(file *&, int);
+      sint_type open(file *&, const string &, uint_type);
       sint_type open(file *&, const address_space *, uint32_type, sint_type);
       file *ref(file *);
       void unref(file *);

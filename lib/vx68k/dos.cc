@@ -491,6 +491,7 @@ dos::create_context()
 dos::dos(machine *m)
   : vm(m),
     allocator(vm->address_space(), 0x8000u, vm->memory_size()),
+    _fs(vm),
     debug_level(0)
 {
   exec_unit *eu = vm->exec_unit();
