@@ -302,77 +302,78 @@ namespace
 GtkWidget *
 vx68k_app::create_window()
 {
-  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_signal_connect(GTK_OBJECT(window), "delete_event",
-		     GTK_SIGNAL_FUNC(&gtk_main_quit), NULL);
-  gtk_widget_show(window);
-  {
-    GtkWidget *vbox = gtk_vbox_new(false, 0);
-    gtk_widget_show(vbox);
-    gtk_container_add(GTK_CONTAINER(window), vbox);
+  if (main_window == NULL)
     {
-      GtkItemFactory *ifactory
-	= gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<Window>", NULL);
-#define ITEM_FACTORY_CALLBACK(f) (reinterpret_cast<GtkItemFactoryCallback>(f))
-      GtkItemFactoryEntry entries[]
-	= {{_("/_File/FD _0/_Load..."), NULL,
-	    ITEM_FACTORY_CALLBACK(&handle_fd_load_command), 0, "<Item>"},
-	   {_("/_File/FD _0/_Eject"), NULL,
-	    ITEM_FACTORY_CALLBACK(&handle_fd_eject_command), 0, "<Item>"},
-	   {_("/_File/FD _1/_Load..."), NULL,
-	    ITEM_FACTORY_CALLBACK(&handle_fd_load_command), 1, "<Item>"},
-	   {_("/_File/FD _1/_Eject"), NULL,
-	    ITEM_FACTORY_CALLBACK(&handle_fd_eject_command), 1, "<Item>"},
-	   {_("/_File/"), NULL, NULL, 0, "<Separator>"},
-	   {_("/_File/E_xit"), NULL,
-	    ITEM_FACTORY_CALLBACK(&gtk_main_quit), 1, "<Item>"},
-	   {_("/_Help/_About..."), NULL,
-	    ITEM_FACTORY_CALLBACK(&handle_about_command), 0, "<Item>"}};
-#undef ITEM_FACTORY_CALLBACK
-      gtk_item_factory_create_items(ifactory,
-				    sizeof entries / sizeof entries[0],
-				    entries, window);
-      gtk_widget_show(ifactory->widget);
-      gtk_box_pack_start(GTK_BOX(vbox), ifactory->widget, false, false, 0);
-      //gtk_object_unref(GTK_OBJECT(ifactory));
-    }
-    {
-      GtkWidget *statusbar = gtk_statusbar_new();
-      gtk_widget_show(statusbar);
-      gtk_box_pack_end(GTK_BOX(vbox), statusbar, false, false, 0);
-    }
-    {
-      GtkWidget *console_widget = con.create_widget();
-      gtk_widget_show(console_widget);
+      main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+      gtk_signal_connect(GTK_OBJECT(main_window), "delete_event",
+			 GTK_SIGNAL_FUNC(&gtk_main_quit), NULL);
+      gtk_widget_show(main_window);
 
-#if 0
-      GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
       {
+	GtkWidget *vbox = gtk_vbox_new(false, 0);
+	gtk_widget_show(vbox);
+	gtk_container_add(GTK_CONTAINER(main_window), vbox);
+	{
+	  GtkItemFactory *ifactory
+	    = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<Window>", NULL);
+#define ITEM_FACTORY_CALLBACK(f) (reinterpret_cast<GtkItemFactoryCallback>(f))
+	  GtkItemFactoryEntry entries[]
+	    = {{_("/_File/FD _0/_Load..."), NULL,
+		ITEM_FACTORY_CALLBACK(&handle_fd_load_command), 0, "<Item>"},
+	       {_("/_File/FD _0/_Eject"), NULL,
+		ITEM_FACTORY_CALLBACK(&handle_fd_eject_command), 0, "<Item>"},
+	       {_("/_File/FD _1/_Load..."), NULL,
+		ITEM_FACTORY_CALLBACK(&handle_fd_load_command), 1, "<Item>"},
+	       {_("/_File/FD _1/_Eject"), NULL,
+		ITEM_FACTORY_CALLBACK(&handle_fd_eject_command), 1, "<Item>"},
+	       {_("/_File/"), NULL, NULL, 0, "<Separator>"},
+	       {_("/_File/E_xit"), NULL,
+		ITEM_FACTORY_CALLBACK(&gtk_main_quit), 1, "<Item>"},
+	       {_("/_Help/_About..."), NULL,
+		ITEM_FACTORY_CALLBACK(&handle_about_command), 0, "<Item>"}};
+#undef ITEM_FACTORY_CALLBACK
+	  gtk_item_factory_create_items(ifactory,
+					sizeof entries / sizeof entries[0],
+					entries, this);
+	  gtk_widget_show(ifactory->widget);
+	  gtk_box_pack_start(GTK_BOX(vbox), ifactory->widget, false, false, 0);
+	  //gtk_object_unref(GTK_OBJECT(ifactory));
+	}
+
+	GtkWidget *statusbar = gtk_statusbar_new();
+	gtk_widget_show(statusbar);
+	gtk_box_pack_end(GTK_BOX(vbox), statusbar, false, false, 0);
+
+	GtkWidget *console_widget = con.create_widget();
 	gtk_widget_show(console_widget);
-	gtk_scrolled_window_add_with_viewport
-	  (GTK_SCROLLED_WINDOW(scrolled_window), console_widget);
-      }
-      gtk_widget_show(scrolled_window);
-      gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, true, true, 0);
+#if 0
+	{
+	  GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	  gtk_widget_show(scrolled_window);
+	  gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, true, true, 0);
 
-      GdkGeometry geometry = {0, 0, 0, 0, 0, 0, 1, 1};
-      gtk_window_set_geometry_hints(GTK_WINDOW(window),
-				    scrolled_window,
-				    &geometry, GDK_HINT_RESIZE_INC);
+	  gtk_scrolled_window_add_with_viewport
+	    (GTK_SCROLLED_WINDOW(scrolled_window), console_widget);
+
+	  GdkGeometry geometry = {0, 0, 0, 0, 0, 0, 1, 1};
+	  gtk_window_set_geometry_hints(GTK_WINDOW(main_window),
+					scrolled_window,
+					&geometry, GDK_HINT_RESIZE_INC);
+	}
 #else
-      gtk_box_pack_start(GTK_BOX(vbox), console_widget, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), console_widget, true, true, 0);
 
-      GdkGeometry geometry = {0, 0, 0, 0, 0, 0, 1, 1};
-      gtk_window_set_geometry_hints(GTK_WINDOW(window),
-				    console_widget,
-				    &geometry, GDK_HINT_RESIZE_INC);
+	GdkGeometry geometry = {0, 0, 0, 0, 0, 0, 1, 1};
+	gtk_window_set_geometry_hints(GTK_WINDOW(main_window),
+				      console_widget,
+				      &geometry, GDK_HINT_RESIZE_INC);
 #endif
 
-      gtk_widget_grab_focus(console_widget);
+	gtk_widget_grab_focus(console_widget);
+      }
     }
-  }
 
-  return window;
+  return main_window;
 }
 
 const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME

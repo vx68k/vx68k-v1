@@ -4,6 +4,8 @@
 	(show_about_dialog): Enable set_transient_for.
 	(vx68k_app): Initialize main_window.
 	(run): Moved.
+	(create_window): Create the main window only if not created.
+	Reform code.
 
 2000-02-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
