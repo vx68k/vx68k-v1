@@ -28,6 +28,7 @@
 #include <vx68k/machine.h>
 
 #include <algorithm>
+#include <memory>
 #include <stdexcept>
 
 using namespace vx68k;
@@ -121,6 +122,68 @@ machine::b_print(uint32_type strptr)
     }
 }
 
+sint32_type
+machine::read_disk(uint_type mode, uint32_type pos,
+		   uint32_type buf, uint32_type nbytes)
+{
+  uint_type u = mode >> 8 & 0xf;
+
+#ifdef HAVE_NANA_H
+  L("machine: reading disk %#x %#x %#x %#x\n", mode, pos, buf, nbytes);
+#endif
+  switch (mode >> 12)
+    {
+    case 0x9:
+      if (u >= NFDS)
+	throw range_error("read_disk");
+
+      return fd[u]->read(mode, pos, *this, buf, nbytes);
+
+    default:
+      abort();
+    }
+}
+
+sint32_type
+machine::write_disk(uint_type mode, uint32_type pos,
+		    uint32_type buf, uint32_type nbytes) const
+{
+  uint_type u = mode >> 8 & 0xf;
+
+#ifdef HAVE_NANA_H
+  L("machine: writing disk %#x %#x %#x %#x\n", mode, pos, buf, nbytes);
+#endif
+  switch (mode >> 12)
+    {
+    case 0x9:
+      if (u >= NFDS)
+	throw range_error("write_disk");
+
+      return fd[u]->write(mode, pos, *this, buf, nbytes);
+
+    default:
+      abort();
+    }
+}
+
+void
+machine::boot()
+{
+  sint32_type st = read_disk(0x9000, 0x03000001, 0x2000, 1024);
+  if (st >> 24 & 0xc0)
+    {
+#ifdef HAVE_NANA_H
+      L("machine: boot error %#x\n", st);
+#endif
+      throw runtime_error("machine");
+    }
+
+  context c(this);
+  c.regs.pc = 0x2000;
+
+  eu.run(c);
+}
+
 void
 machine::queue_key(uint_type key)
 {
@@ -164,6 +227,29 @@ machine::get_key()
   pthread_mutex_unlock(&key_queue_mutex);
 
   return key;
+}
+
+void
+machine::load_fd(unsigned int u, int fildes)
+{
+  if (u >= NFDS)
+    throw range_error("machine");
+
+  auto_ptr<iocs::image_file_floppy_disk> d
+    (new iocs::image_file_floppy_disk(fildes));
+
+  unload_fd(u);
+  fd[u] = d.release();
+}
+
+void
+machine::unload_fd(unsigned int u)
+{
+  if (u >= NFDS)
+    throw range_error("machine");
+
+  delete fd[u];
+  fd[u] = NULL;
 }
 
 void

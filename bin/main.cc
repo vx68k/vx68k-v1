@@ -104,14 +104,16 @@ public:
   void run(const char *const *args);
 
   /* Boots the first floppy on the VM.  */
-  void boot();
+  void boot()
+  {vm.boot();}
 
   /* Waits for the program to exit.  */
   void join(int *st);
 
 public:
   /* Loads an image file on a FD unit.  */
-  void load_fd_image(unsigned int u, int fildes);
+  void load_fd_image(unsigned int u, int fildes)
+  {vm.load_fd(u, fildes);}
 
 public:
   GtkWidget *create_window();
@@ -182,12 +184,6 @@ gtk_app::run(const char *const *args)
 }
 
 void
-gtk_app::boot()
-{
-  g_message("`boot' function not implemented yet");
-}
-
-void
 gtk_app::join(int *status)
 {
   if (vm_thread != pthread_self())
@@ -198,14 +194,6 @@ gtk_app::join(int *status)
 
   if (status != NULL)
     *status = vm_status;
-}
-
-void
-gtk_app::load_fd_image(unsigned int u, int fildes)
-{
-  iocs::image_file_floppy_disk *fd = new iocs::image_file_floppy_disk(fildes);
-  g_message("`load_fd_image' function not implemented yet");
-  delete fd;
 }
 
 /* Window management.  */

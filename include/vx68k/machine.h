@@ -273,6 +273,13 @@ namespace vx68k
 		   unsigned char *rgb_buf, size_t row_size);
 
   public:
+    /* Loads a file on a FD unit.  */
+    void load_fd(unsigned int u, int fildes);
+
+    /* Unloads the disk on a FD unit.  */
+    void unload_fd(unsigned int u);
+
+  public:
     void b_putc(uint_type);
     void b_print(uint32_type);
 
@@ -282,6 +289,18 @@ namespace vx68k
 
     /* Gets a key input from the queue.  */
     uint_type get_key();
+
+  public:
+    /* Reads blocks from a FD unit.  */
+    sint32_type read_disk(uint_type u, uint32_type pos,
+			  uint32_type buf, uint32_type nbytes);
+
+    /* Writes blocks from a FD unit.  */
+    sint32_type write_disk(uint_type u, uint32_type pos,
+			   uint32_type buf, uint32_type nbytes) const;
+
+    /* Boots up this machine.  */
+    void boot();
   };
 } // vx68k
 

@@ -1,3 +1,14 @@
+2000-05-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (class gtk_app): Rewrite boot and load_fd_image in
+	line.
+
+	* libvx68k/machine.cc (read_disk, write_disk, boot, load_fd,
+	unload_fd): New member functions.
+
+	* include/vx68k/machine.h (class machine): Add new members
+	load_fd, unload_fd, read_disk, write_dist, and boot.
+
 2000-05-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/dos.cc (dos_chmod, dos_fflush, dos_nameck): Use
