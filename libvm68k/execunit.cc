@@ -297,6 +297,31 @@ namespace
     c.regs.pc += 2 + ea1.extension_size();
   }
 
+  /* Handles an ANDI instruction.  */
+  template <class Size, class Destination> void
+  m68k_andi(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    svalue_type value2 = Size::svalue(c.fetch(Size(), 2));
+    Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
+#ifdef TRACE_INSTRUCTIONS
+    L(" andi%s ", Size::suffix());
+    L("#%#lx,", (unsigned long) Size::get(value2));
+    L("%s\n", ea1.text(c));
+#endif
+
+    svalue_type value1 = ea1.get(c);
+    svalue_type value = Size::svalue(Size::get(value1) & Size::get(value2));
+    ea1.put(c, value);
+    c.regs.ccr.set_cc(value);
+    ea1.finish(c);
+
+    c.regs.pc += 2 + Size::aligned_value_size() + ea1.extension_size();
+  }
+
+#if 0
   /* Handles ANDI instruction for byte.  */
   template <class Destination> void
   andib(uint_type op, context &c, unsigned long data)
@@ -354,6 +379,7 @@ namespace
 
     ec.regs.pc += 2 + 4 + ea1.isize(4);
   }
+#endif
 
   /* Handles an ASL instruction with an immediate count.  */
   template <class Size> void
@@ -459,28 +485,30 @@ namespace
     ec.regs.pc += 2;
   }
 
+  /* Handles a Bcc instruction.  */
   template <class Condition> void 
-  b(uint_type op, context &ec, unsigned long data)
+  m68k_b(uint_type op, context &c, unsigned long data)
   {
-    Condition cond;
     sint_type disp = op & 0xff;
-    size_t len;
+    size_t extsize;
     if (disp == 0)
       {
-	disp = extsw(ec.fetch(word_size(), 2));
-	len = 2;
+	disp = word_size::svalue(c.fetch(word_size(), 2));
+	extsize = 2;
       }
     else
       {
-	disp = extsb(disp);
-	len = 0;
+	disp = byte_size::svalue(disp);
+	extsize = 0;
       }
 #ifdef TRACE_INSTRUCTIONS
-    L(" b%s 0x%lx\n", cond.text(), (unsigned long) (ec.regs.pc + 2 + disp));
+    L(" b%s ", Condition::text());
+    L("%#lx\n", (unsigned long) (c.regs.pc + 2 + disp));
 #endif
 
-    // XXX: The condition codes are not affected by this instruction.
-    ec.regs.pc += 2 + (cond(ec) ? disp : len);
+    // This instruction does not affect the condition codes.
+    Condition cond;
+    c.regs.pc += 2 + (cond(c) ? disp : extsize);
   }
 
 #if 0
@@ -2654,27 +2682,50 @@ namespace
 		       &m68k_bset_r<byte_size, byte_abs_short>);
     eu.set_instruction(0x01f9, 0x0e00,
 		       &m68k_bset_r<byte_size, byte_abs_long>);
-    eu.set_instruction(0x0200, 0x0007, &andib<data_register>);
-    eu.set_instruction(0x0210, 0x0007, &andib<indirect>);
-    eu.set_instruction(0x0218, 0x0007, &andib<postinc_indirect>);
-    eu.set_instruction(0x0220, 0x0007, &andib<predec_indirect>);
-    eu.set_instruction(0x0228, 0x0007, &andib<disp_indirect>);
-    eu.set_instruction(0x0230, 0x0007, &andib<indexed_indirect>);
-    eu.set_instruction(0x0239, 0x0000, &andib<absolute_long>);
-    eu.set_instruction(0x0240, 0x0007, &andiw<data_register>);
-    eu.set_instruction(0x0250, 0x0007, &andiw<indirect>);
-    eu.set_instruction(0x0258, 0x0007, &andiw<postinc_indirect>);
-    eu.set_instruction(0x0260, 0x0007, &andiw<predec_indirect>);
-    eu.set_instruction(0x0268, 0x0007, &andiw<disp_indirect>);
-    eu.set_instruction(0x0270, 0x0007, &andiw<indexed_indirect>);
-    eu.set_instruction(0x0279, 0x0000, &andiw<absolute_long>);
-    eu.set_instruction(0x0280, 0x0007, &andil<data_register>);
-    eu.set_instruction(0x0290, 0x0007, &andil<indirect>);
-    eu.set_instruction(0x0298, 0x0007, &andil<postinc_indirect>);
-    eu.set_instruction(0x02a0, 0x0007, &andil<predec_indirect>);
-    eu.set_instruction(0x02a8, 0x0007, &andil<disp_indirect>);
-    eu.set_instruction(0x02b0, 0x0007, &andil<indexed_indirect>);
-    eu.set_instruction(0x02b9, 0x0000, &andil<absolute_long>);
+    eu.set_instruction(0x0200, 0x0007, &m68k_andi<byte_size, byte_d_register>);
+    eu.set_instruction(0x0210, 0x0007, &m68k_andi<byte_size, byte_indirect>);
+    eu.set_instruction(0x0218, 0x0007,
+		       &m68k_andi<byte_size, byte_postinc_indirect>);
+    eu.set_instruction(0x0220, 0x0007,
+		       &m68k_andi<byte_size, byte_predec_indirect>);
+    eu.set_instruction(0x0228, 0x0007,
+		       &m68k_andi<byte_size, byte_disp_indirect>);
+    eu.set_instruction(0x0230, 0x0007,
+		       &m68k_andi<byte_size, byte_index_indirect>);
+    eu.set_instruction(0x0238, 0x0000,
+		       &m68k_andi<byte_size, byte_abs_short>);
+    eu.set_instruction(0x0239, 0x0000,
+		       &m68k_andi<byte_size, byte_abs_long>);
+    eu.set_instruction(0x0240, 0x0007, &m68k_andi<word_size, word_d_register>);
+    eu.set_instruction(0x0250, 0x0007, &m68k_andi<word_size, word_indirect>);
+    eu.set_instruction(0x0258, 0x0007,
+		       &m68k_andi<word_size, word_postinc_indirect>);
+    eu.set_instruction(0x0260, 0x0007,
+		       &m68k_andi<word_size, word_predec_indirect>);
+    eu.set_instruction(0x0268, 0x0007,
+		       &m68k_andi<word_size, word_disp_indirect>);
+    eu.set_instruction(0x0270, 0x0007,
+		       &m68k_andi<word_size, word_index_indirect>);
+    eu.set_instruction(0x0278, 0x0000,
+		       &m68k_andi<word_size, word_abs_short>);
+    eu.set_instruction(0x0279, 0x0000,
+		       &m68k_andi<word_size, word_abs_long>);
+    eu.set_instruction(0x0280, 0x0007,
+		       &m68k_andi<long_word_size, long_word_d_register>);
+    eu.set_instruction(0x0290, 0x0007,
+		       &m68k_andi<long_word_size, long_word_indirect>);
+    eu.set_instruction(0x0298, 0x0007,
+		       &m68k_andi<long_word_size, long_word_postinc_indirect>);
+    eu.set_instruction(0x02a0, 0x0007,
+		       &m68k_andi<long_word_size, long_word_predec_indirect>);
+    eu.set_instruction(0x02a8, 0x0007,
+		       &m68k_andi<long_word_size, long_word_disp_indirect>);
+    eu.set_instruction(0x02b0, 0x0007,
+		       &m68k_andi<long_word_size, long_word_index_indirect>);
+    eu.set_instruction(0x02b8, 0x0000,
+		       &m68k_andi<long_word_size, long_word_abs_short>);
+    eu.set_instruction(0x02b9, 0x0000,
+		       &m68k_andi<long_word_size, long_word_abs_long>);
     eu.set_instruction(0x0400, 0x0007, &subib<data_register>);
     eu.set_instruction(0x0410, 0x0007, &subib<indirect>);
     eu.set_instruction(0x0418, 0x0007, &subib<postinc_indirect>);
@@ -2822,6 +2873,7 @@ namespace
     eu.set_instruction(0x11ba, 0x0e00, &moveb<disp_pc, indexed_indirect>);
     eu.set_instruction(0x11bc, 0x0e00, &moveb<immediate, indexed_indirect>);
     eu.set_instruction(0x11c0, 0x0007, &moveb<data_register, absolute_short>);
+    eu.set_instruction(0x11f8, 0x0000, &moveb<absolute_short, absolute_short>);
     eu.set_instruction(0x11f9, 0x0000, &moveb<absolute_long, absolute_short>);
     eu.set_instruction(0x11fc, 0x0000, &moveb<immediate, absolute_short>);
     eu.set_instruction(0x13c0, 0x0007, &moveb<data_register, absolute_long>);
@@ -2839,6 +2891,7 @@ namespace
     eu.set_instruction(0x2018, 0x0e07, &movel<postinc_indirect, data_register>);
     eu.set_instruction(0x2020, 0x0e07, &movel<predec_indirect, data_register>);
     eu.set_instruction(0x2028, 0x0e07, &movel<disp_indirect, data_register>);
+    eu.set_instruction(0x2038, 0x0e00, &movel<absolute_short, data_register>);
     eu.set_instruction(0x2039, 0x0e00, &movel<absolute_long, data_register>);
     eu.set_instruction(0x203a, 0x0e00, &movel<disp_pc, data_register>);
     eu.set_instruction(0x203c, 0x0e00, &movel<immediate, data_register>);
@@ -2913,6 +2966,7 @@ namespace
     eu.set_instruction(0x21b0, 0x0e07, &movel<indexed_indirect, indexed_indirect>);
     eu.set_instruction(0x21b9, 0x0e00, &movel<absolute_long, indexed_indirect>);
     eu.set_instruction(0x21bc, 0x0e00, &movel<immediate, indexed_indirect>);
+    eu.set_instruction(0x21c0, 0x0007, &movel<data_register, absolute_short>);
     eu.set_instruction(0x21c8, 0x0007, &movel<address_register, absolute_short>);
     eu.set_instruction(0x21d0, 0x0007, &movel<indirect, absolute_short>);
     eu.set_instruction(0x21fc, 0x0000, &movel<immediate, absolute_short>);
@@ -2932,6 +2986,7 @@ namespace
     eu.set_instruction(0x3020, 0x0e07, &movew<predec_indirect, data_register>);
     eu.set_instruction(0x3028, 0x0e07, &movew<disp_indirect, data_register>);
     eu.set_instruction(0x3030, 0x0e07, &movew<indexed_indirect, data_register>);
+    eu.set_instruction(0x3038, 0x0e00, &movew<absolute_short, data_register>);
     eu.set_instruction(0x3039, 0x0e00, &movew<absolute_long, data_register>);
     eu.set_instruction(0x303a, 0x0e00, &movew<disp_pc, data_register>);
     eu.set_instruction(0x303b, 0x0e00, &movew<indexed_pc_indirect, data_register>);
@@ -3256,18 +3311,18 @@ namespace
     eu.set_instruction(0x5fc8, 0x0007, &m68k_db<le>);
     eu.set_instruction(0x6000, 0x00ff, &bra);
     eu.set_instruction(0x6100, 0x00ff, &bsr);
-    eu.set_instruction(0x6200, 0x00ff, &b<hi>);
-    eu.set_instruction(0x6300, 0x00ff, &b<ls>);
-    eu.set_instruction(0x6400, 0x00ff, &b<cc>);
-    eu.set_instruction(0x6500, 0x00ff, &b<cs>);
-    eu.set_instruction(0x6600, 0x00ff, &b<ne>);
-    eu.set_instruction(0x6700, 0x00ff, &b<eq>);
-    eu.set_instruction(0x6a00, 0x00ff, &b<pl>);
-    eu.set_instruction(0x6b00, 0x00ff, &b<mi>);
-    eu.set_instruction(0x6c00, 0x00ff, &b<ge>);
-    eu.set_instruction(0x6d00, 0x00ff, &b<lt>);
-    eu.set_instruction(0x6e00, 0x00ff, &b<gt>);
-    eu.set_instruction(0x6f00, 0x00ff, &b<le>);
+    eu.set_instruction(0x6200, 0x00ff, &m68k_b<hi>);
+    eu.set_instruction(0x6300, 0x00ff, &m68k_b<ls>);
+    eu.set_instruction(0x6400, 0x00ff, &m68k_b<cc>);
+    eu.set_instruction(0x6500, 0x00ff, &m68k_b<cs>);
+    eu.set_instruction(0x6600, 0x00ff, &m68k_b<ne>);
+    eu.set_instruction(0x6700, 0x00ff, &m68k_b<eq>);
+    eu.set_instruction(0x6a00, 0x00ff, &m68k_b<pl>);
+    eu.set_instruction(0x6b00, 0x00ff, &m68k_b<mi>);
+    eu.set_instruction(0x6c00, 0x00ff, &m68k_b<ge>);
+    eu.set_instruction(0x6d00, 0x00ff, &m68k_b<lt>);
+    eu.set_instruction(0x6e00, 0x00ff, &m68k_b<gt>);
+    eu.set_instruction(0x6f00, 0x00ff, &m68k_b<le>);
     eu.set_instruction(0x7000, 0x0eff, &moveql_d);
     eu.set_instruction(0x8000, 0x0e07, &orb<data_register>);
     eu.set_instruction(0x8010, 0x0e07, &orb<indirect>);
@@ -3308,6 +3363,7 @@ namespace
     eu.set_instruction(0x9018, 0x0e07, &subb<postinc_indirect>);
     eu.set_instruction(0x9020, 0x0e07, &subb<predec_indirect>);
     eu.set_instruction(0x9028, 0x0e07, &subb<disp_indirect>);
+    eu.set_instruction(0x9038, 0x0e00, &subb<absolute_short>);
     eu.set_instruction(0x9039, 0x0e00, &subb<absolute_long>);
     eu.set_instruction(0x903a, 0x0e00, &subb<disp_pc>);
     eu.set_instruction(0x903c, 0x0e00, &subb<immediate>);
