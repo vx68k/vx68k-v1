@@ -1,5 +1,15 @@
 1999-03-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Modified.
+
+	* lib/vx68k/dos.cc (load_executable): Remove size adjustment for
+	write.
+
+	* lib/vm68k/addrspace.cc: Include "debug.h".
+	(read, write): Rewrite using memory_page::read and
+	memory_page::write.
+	(set_pages): Use nana-style assertion check.
+
 	* lib/vx68k/memory.cc: Add `using namespace vx68k' and move
 	functions out of the namespace.
 	(read, write): Write real code.

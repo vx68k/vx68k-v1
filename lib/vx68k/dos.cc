@@ -151,7 +151,7 @@ dos::load_executable (const char *name)
 
   // PSP setup.
   main_ec.mem->write(SUPER_DATA, load_address - 128,
-		     name, (strlen(name) + 2) & ~1);
+		     name, strlen(name) + 1);
   main_ec.regs.a[0] = load_address - 0x100; // FIXME.
 
   return load_address + start_offset;

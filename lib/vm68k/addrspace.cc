@@ -21,27 +21,28 @@
 #undef const
 #undef inline
 
-#include "vm68k/memory.h"
+#include <vm68k/memory.h>
 
 #include <algorithm>
-#include <cassert>
+
+#include "debug.h"
 
 using namespace vm68k;
 using namespace std;
 
 /* Read a block of data from memory.  */
 void
-address_space::read (int fc, uint32 address, void *buf, size_t n) const
+address_space::read(int fc, uint32 address, void *data, size_t size) const
 {
-  // FIXME: This code is slow!
-  uint8 *p = static_cast <uint8 *> (buf);
-  assert ((n & 1) == 0);
-  while (n != 0)
+  while (size != 0)
     {
-      vm68k::putw (p, getw (fc, address));
-      address += 2;
-      p += 2;
-      n -= 2;
+      uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
+      size_t done = page_table[p]->read(fc, address, data, size);
+      I(done != 0);
+      I(done <= size);
+      address += done;
+      data = static_cast<uint8 *>(data) + done;
+      size -= done;
     }
 }
 
@@ -70,17 +71,17 @@ address_space::getl(int fc, uint32 address) const
 
 /* Write a block of data to memory.  */
 void
-address_space::write (int fc, uint32 address, const void *buf, size_t n)
+address_space::write(int fc, uint32 address, const void *data, size_t size)
 {
-  // FIXME: This code is slow!
-  const uint8 *p = static_cast <const uint8 *> (buf);
-  assert ((n & 1) == 0);
-  while (n != 0)
+  while (size != 0)
     {
-      putw (fc, address, vm68k::getw (p));
-      p += 2;
-      address += 2;
-      n -= 2;
+      uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
+      size_t done = page_table[p]->write(fc, address, data, size);
+      I(done != 0);
+      I(done <= size);
+      address += done;
+      data = static_cast<uint8 *>(data) + done;
+      size -= done;
     }
 }
 
@@ -111,8 +112,8 @@ address_space::putl(int fc, uint32 address, uint32 value)
 void
 address_space::set_pages (size_t first, size_t last, memory_page *p)
 {
-  assert (first <= last);
-  assert (last <= NPAGES);
+  I(first <= last);
+  I(last <= NPAGES);
   fill (page_table + first, page_table + last, p);
 }
 
