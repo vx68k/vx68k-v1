@@ -1,5 +1,10 @@
 1999-06-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (dispatch): Removed as an out-of-line
+	function.
+
+	* include/vm68k/cpu.h (class exec_unit): Make dispatch inline.
+
 	* lib/vx68k/memory.cc (read, getb, getw, write, putb, putw): Use
 	generate_bus_error.
 	(getb): Changed to read words from the array directly.

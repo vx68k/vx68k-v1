@@ -40,14 +40,6 @@
 using namespace vm68k;
 using namespace std;
 
-/* Dispatches for instructions.  */
-void
-exec_unit::dispatch(unsigned int op, context &ec) const
-{
-  I(op < 0x10000);
-  instructions[op].first(op, ec, instructions[op].second);
-}
-
 /* Sets an instruction to operation codes.  */
 void
 exec_unit::set_instruction(int code, int mask, instruction_handler h,

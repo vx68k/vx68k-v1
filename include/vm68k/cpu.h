@@ -157,7 +157,13 @@ struct exception_listener
 			 instruction_data *);
     void set_instruction(int op, int mask, instruction_handler h)
       {set_instruction(op, mask, h, NULL);}
-    void dispatch(unsigned int op, context &) const;
+
+    /* Dispatches for instruction handlers.  */
+    void dispatch(uint_type op, context &ec) const
+      {
+	op &= 0xffffu;
+	instructions[op].first(op, ec, instructions[op].second);
+      }
   };
 
   class context
