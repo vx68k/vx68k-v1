@@ -25,7 +25,7 @@
 
 namespace vm68k
 {
-  using namespace std.
+  using namespace std;
 
   enum function_code
   {
