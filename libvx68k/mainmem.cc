@@ -53,26 +53,23 @@ main_memory::get_16(int fc, uint32_type address) const
 {
   // Address error?
   if (address >= end)
-    {
-      generate_bus_error(true, fc, address);
-      abort();
-    }
+    throw bus_error_exception(true, fc, address);
 
-  return array[address >> 1];
+  uint32_type i = address / 2;
+  uint_type value = array[i];
+  return value;
 }
 
 uint32_type
 main_memory::get_32(int fc, uint32_type address) const
 {
   // Address error?
-  uint32_type address2 = address + 2;
-  if (address2 >= end)
-    {
-      generate_bus_error(true, fc, address2);
-      abort();
-    }
+  if (address >= end)
+    throw bus_error_exception(true, fc, address);
 
-  return uint32_type(array[address >> 1]) << 16 | array[address2 >> 1];
+  uint32_type i = address / 2;
+  uint32_type value = uint32_type(array[i]) << 16 | array[i + 1];
+  return value;
 }
 
 void
@@ -97,12 +94,22 @@ main_memory::put_16(int fc, uint32_type address, uint_type value)
 {
   // Address error?
   if (address >= end)
-    {
-      generate_bus_error(false, fc, address);
-      abort();
-    }
+    throw bus_error_exception(false, fc, address);
 
-  array[address >> 1] = value;
+  uint32_type i = address / 2;
+  array[i] = value & 0xffffu;
+}
+
+void
+main_memory::put_32(int fc, uint32_type address, uint32_type value)
+{
+  // Address error?
+  if (address >= end)
+    throw bus_error_exception(false, fc, address);
+
+  uint32_type i = address / 2;
+  array[i] = value >> 16 & 0xffffu;
+  array[i + 1] = value & 0xffffu;
 }
 
 main_memory::~main_memory()

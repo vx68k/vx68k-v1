@@ -1,3 +1,11 @@
+2000-08-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/mainmem.cc (get_16, get_32, put_16): Rewrite code.
+	(put_32): New function.
+
+	* include/vx68k/machine.h (class main_memory): Add new method
+	put_32.
+
 2000-07-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvm68k/addrspace.cc (getl, putl): Use get_32 and put_32 only

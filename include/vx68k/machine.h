@@ -51,6 +51,7 @@ namespace vx68k
 
     void put_16(int, uint32_type, uint_type);
     void put_8(int, uint32_type, uint_type);
+    void put_32(int, uint32_type, uint32_type);
   };
 
   /* SRAM.  */
