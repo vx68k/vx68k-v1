@@ -1,5 +1,13 @@
 1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/memory.h: Add using namespace std.
+
+	* include/vm68k/cpu.h: Prefix include-once macro with _, and use
+	<> for include.
+	* include/vm68k/types.h: Likewise.
+	* include/vm68k/memory.h: Likewise.
+	* include/vm68k/except.h: Likewise.
+
 	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Change file name.
 
 	* lib/vx68k/mainmem.cc: Renamed from memory.cc.

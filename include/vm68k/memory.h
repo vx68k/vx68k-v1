@@ -16,15 +16,16 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef VM68K_MEMORY_H
-#define VM68K_MEMORY_H 1
+#ifndef _VM68K_MEMORY_H
+#define _VM68K_MEMORY_H 1
 
+#include <vm68k/except.h>
+#include <vm68k/types.h>
 #include <iterator>
-#include "vm68k/types.h"
-#include "vm68k/except.h"
 
 namespace vm68k
 {
+  using namespace std.
 
   enum function_code
   {
@@ -164,8 +165,7 @@ namespace vm68k
     void write (int, uint32, const void *, size_t);
     size_t puts(int, uint32, const char *);
   };
+} // vm68k
 
-};				// namespace vm68k
-
-#endif
+#endif /* not _VM68K_MEMORY_H */
 
