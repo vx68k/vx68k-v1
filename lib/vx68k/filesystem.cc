@@ -145,7 +145,7 @@ regular_file::regular_file(int f)
   : fd(f)
 {
 }
-
+
 string
 file_system::export_file_name(const string &dos_name)
 {
