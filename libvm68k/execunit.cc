@@ -86,9 +86,35 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      ec->regs.a[reg] += value;
+      (&ec->regs.a0)[reg] += value;
 
       ec->regs.pc += 2;
+    }
+
+  void bcc(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int len = 2;
+      int32 disp = op & 0xff;
+      if (disp == 0)
+	{
+	  len = 4;
+	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+	  disp = ec->mem->getw(fc, ec->regs.pc + 2);
+	  if (disp >= 0x8000)
+	    disp -= 0x10000;
+	}
+      else if (disp >= 0x80)
+	disp -= 0x100;
+#ifdef TRACE_STEPS
+      fprintf(stderr, " bsr 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
+#endif
+
+      // XXX: The condition codes are not affected.
+      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+      ec->mem->putl(fc, ec->regs.a7 - 4, ec->regs.pc + len);
+      ec->regs.a7 -= 4;
+      ec->regs.pc += 2 + disp;
     }
 
   void bsr(int op, execution_context *ec)
@@ -112,8 +138,8 @@ namespace
 
       // XXX: The condition codes are not affected.
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
-      ec->mem->putl(fc, ec->regs.a[7] - 4, ec->regs.pc + len);
-      ec->regs.a[7] -= 4;
+      ec->mem->putl(fc, ec->regs.a7 - 4, ec->regs.pc + len);
+      ec->regs.a7 -= 4;
       ec->regs.pc += 2 + disp;
     }
 
@@ -131,7 +157,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      ec->regs.a[d_reg] = ec->regs.a[s_reg] + offset;
+      (&ec->regs.a0)[d_reg] = (&ec->regs.a0)[s_reg] + offset;
 
       ec->regs.pc += 4;
     }
@@ -147,7 +173,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      ec->regs.a[reg] = address;
+      (&ec->regs.a0)[reg] = address;
 
       ec->regs.pc += 6;
     }
@@ -164,10 +190,10 @@ namespace
 #endif
 
       // FIXME.
-      ec->mem->putl(fc, ec->regs.a[7] - 4, ec->regs.a[reg]);
-      ec->regs.a[7] -= 4;
-      ec->regs.a[reg] = ec->regs.a[7];
-      ec->regs.a[7] += disp;
+      ec->mem->putl(fc, ec->regs.a7 - 4, (&ec->regs.a0)[reg]);
+      ec->regs.a7 -= 4;
+      (&ec->regs.a0)[reg] = ec->regs.a7;
+      ec->regs.a7 += disp;
 
       ec->regs.pc += 4;
     }
@@ -183,8 +209,8 @@ namespace
 
       // FIXME.
       int fc = 1 ? SUPER_DATA : USER_DATA; // FIXME.
-      int value = ec->mem->getb(fc, ec->regs.a[s_reg]);
-      ec->mem->putb(fc, ec->regs.a[d_reg], value);
+      int value = ec->mem->getb(fc, (&ec->regs.a0)[s_reg]);
+      ec->mem->putb(fc, (&ec->regs.a0)[d_reg], value);
 
       ec->regs.pc += 2;
     }
@@ -200,8 +226,8 @@ namespace
 
       // FIXME.
       int fc = 1 ? SUPER_DATA : USER_DATA; // FIXME.
-      ec->mem->putl(fc, ec->regs.a[d_reg] - 4, ec->regs.a[s_reg]);
-      ec->regs.a[d_reg] -= 4;
+      ec->mem->putl(fc, (&ec->regs.a0)[d_reg] - 4, (&ec->regs.a0)[s_reg]);
+      (&ec->regs.a0)[d_reg] -= 4;
 
       ec->regs.pc += 2;
     }
@@ -217,8 +243,8 @@ namespace
 
       // XXX: The condition codes are not affected.
       int fc = 1 ? SUPER_DATA : USER_DATA; // FIXME.
-      ec->regs.a[d_reg] = ec->mem->getl(fc, ec->regs.a[s_reg]);
-      ec->regs.a[s_reg] += 4;
+      (&ec->regs.a0)[d_reg] = ec->mem->getl(fc, (&ec->regs.a0)[s_reg]);
+      (&ec->regs.a0)[s_reg] += 4;
 
       ec->regs.pc += 2;
     }
@@ -238,8 +264,9 @@ namespace
 	  if (bitmap & 1 != 0)
 	    {
 	      // FIXME.
-	      ec->mem->putl(fc, ec->regs.a[reg] - 4, ec->regs.d[15 - i]);
-	      ec->regs.a[reg] -= 4;
+	      ec->mem->putl(fc, (&ec->regs.a0)[reg] - 4,
+			    (&ec->regs.d0)[15 - i]);
+	      (&ec->regs.a0)[reg] -= 4;
 	    }
 	  bitmap >>= 1;
 	}
@@ -256,8 +283,8 @@ namespace
 
       // XXX: The condition codes are not affected.
       int fc = 1 ? SUPER_DATA : USER_PROGRAM; // FIXME.
-      uint32 value = ec->mem->getl(fc, ec->regs.a[7]);
-      ec->regs.a[7] += 4;
+      uint32 value = ec->mem->getl(fc, ec->regs.a7);
+      ec->regs.a7 += 4;
       ec->regs.pc = value;
     }
 } // (unnamed namespace)

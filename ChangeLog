@@ -1,3 +1,9 @@
+1999-03-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/cpu.h (status_register): New class.
+	(user_cpu_regs): Removed.
+	(cpu_regs): Reconstruct members.  Update all users.
+
 1999-03-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* main.cc: Modify comments.

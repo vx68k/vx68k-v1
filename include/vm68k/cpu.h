@@ -1,6 +1,6 @@
 /* -*-C++-*- */
 /* vx68k - Virtual X68000
-   Copyright (C) 1998 Hypercore Software Design, Ltd.
+   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,23 +26,23 @@
 namespace vm68k
 {
 
-  /* User view of CPU registers.  */
-  struct user_cpu_regs
+  struct status_register
   {
-    uint32 d[8];		// d0-d7
-    uint32 a[8];		// a0-a7
-    uint32 pc;
-    uint16 ccr;
+    bool eq() const;
+    bool ne() const {return eq();}
+    bool supervisor_state() const;
   };
 
-/* CPU registers (mc68000).  */
-struct cpu_regs
-  : user_cpu_regs
-{
-  uint32 usp;
-  uint32 ssp;
-  uint16 sr;
-};
+  /* CPU registers (mc68000).  */
+  struct cpu_regs
+  {
+    uint32 d0, d1, d2, d3, d4, d5, d6, d7;
+    uint32 a0, a1, a2, a3, a4, a5, a6, a7;
+    status_register sr;
+    uint32 pc;
+    uint32 usp;
+    uint32 ssp;
+  };
 
 struct exception_listener
 {

@@ -126,7 +126,7 @@ uint16
 dos::start (uint32 address, const char *const *argv)
 {
   main_ec.regs.pc = address;
-  main_ec.regs.a[7] = 0x8000;	// FIXME.
+  main_ec.regs.a7 = 0x8000;	// FIXME.
   uint16 status = 0;
  restart:
   try
@@ -157,7 +157,7 @@ namespace
     {
       assert(ec != NULL);
 
-      uint32 address = ec->mem->getl(SUPER_DATA, ec->regs.a[7]);
+      uint32 address = ec->mem->getl(SUPER_DATA, ec->regs.a7);
 
       int value;
       do
