@@ -22,6 +22,7 @@
 #undef const
 #undef inline
 
+#include "gtkapp.h"
 #include "getopt.h"
 
 #include <vx68k/human.h>
@@ -40,6 +41,7 @@
 # include <unistd.h>
 #endif
 
+#include <memory>
 #include <stdexcept>
 #include <csignal>
 #include <cstdlib>
@@ -91,8 +93,12 @@ private:
      pthread_self() when no thread is running.  */
   pthread_t vm_thread;
 
+#if 0
   /* Main window of this application.  */
   GtkWidget *main_window;
+#else
+  gtk_console_window *main_window;
+#endif
 
 public:
   gtk_app();
@@ -119,7 +125,11 @@ public:
   {vm.load_fd(u, fildes);}
 
 public:
+#if 0
   GtkWidget *create_window();
+#else
+  gtk_console_window *create_window();
+#endif
 
 public:
   /* Shows the about dialog and returns immediately.  */
@@ -430,11 +440,16 @@ namespace
   }
 } // namespace (unnamed)
 
+#if 0
 GtkWidget *
+#else
+gtk_console_window *
+#endif
 gtk_app::create_window()
 {
   if (main_window == NULL)
     {
+#if 0
       main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
       gtk_window_set_title(GTK_WINDOW(main_window), PROGRAM);
       gtk_signal_connect(GTK_OBJECT(main_window), "delete_event",
@@ -508,6 +523,9 @@ gtk_app::create_window()
 
 	gtk_widget_grab_focus(console_widget);
       }
+#else
+      main_window = new gtk_console_window(con.create_widget());
+#endif
     }
 
   return main_window;
@@ -665,8 +683,13 @@ main(int argc, char **argv)
     {
       gtk_app app;
 
+#if 0
       GtkWidget *window = app.create_window();
       gtk_widget_show(window);
+#else
+      auto_ptr<gtk_console_window> window(app.create_window());
+      window->show();
+#endif
 
       for (int u = 0; u != 2; ++u)
 	if (opt_fd_images[u][0] != '\0')

@@ -1,5 +1,8 @@
 2000-08-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (class gtk_app): Use gtk_console_window.
+	(main): Likewise.
+
 	* bin/Makefile.am (noinst_HEADERS): Add gtkapp.h.
 	(vx68k_SOURCES): Add gtkconwin.cc.
 
