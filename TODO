@@ -1,17 +1,14 @@
-TO DO
+Virtual X68000 TO DO
 
-$Date: Thu, 01 Apr 1999 22:39:56 +0900 $
+$Date: Thu, 01 Jul 1999 20:58:29 +0900 $
+
+* IOCS handler.
+
+* File system translation layer must be added.
 
 * More instructions must be implemented.
 
 * Instruction handlers must be changed into templates.
-
-* DOS memory management
-
-The DOS memory management must be implemented.  Currently, the
-executable is loaded at a constant address.
-
-* Filesystem translation layer must be added.
 
 * The value of errno must be looked at for DOS calls.
 

@@ -1,15 +1,23 @@
 Virtual X68000 User-Visible Changes
 
-$Date: Sun, 27 Jun 1999 20:16:17 +0900 $
+$Date: Thu, 01 Jul 1999 20:58:29 +0900 $
 
-Version 0.34
+Version 0.35
 
-* Some of condition codes are implemented.
+* CPU core changes
 
-* 534 instruction handlers are implemented though some do not update
+** Some of condition codes are implemented.
+
+** 534 instruction handlers are implemented though some do not update
 the condition codes properly.
 
-* 23 DOS-call handlers are partially implemented.
+* X68000 machine layer changes
 
-* The HU executables can be loaded on memory from files.
+* Human68k DOS layer changes
+
+** 23 DOS-call handlers are partially implemented.
+
+** Memory management is implemented.
+
+** Executable loader can load HU (*.x) executables.
 
