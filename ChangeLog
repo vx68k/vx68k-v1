@@ -1,5 +1,10 @@
 2000-12-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Replace addrspace.cc
+	to memory_map.cc.
+
+	* libvm68k/memory_map.cc: Renamed from addrspace.cc.
+
 	* libvm68k/inst0.cc [0] (cmpib, cmpiw, cmpil, eoriw, orib, oriw,
 	oril): Removed.
 
