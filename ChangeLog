@@ -1,5 +1,27 @@
 2000-09-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/textvram.cc (draw_char): Modify the kanji handling.
+
+	* libvx68k/machine.cc (machine): Call install_iocs_calls on dmac
+	and font.
+
+	* libvx68k/systemrom.cc: Remove functions moved to fontrom.cc.
+	(initialize_iocs_functions): Remove the calls to removed
+	functions.
+
+	* libvx68k/fontrom.cc (iocs_defchr, iocs_fntadr, iocs_fntget):
+	Moved from systemrom.cc.
+	(install_iocs_calls): New function.
+
+	* libvx68k/dmacmem.cc (install_iocs_calls): Changed to member
+	function.
+	(dmac_memory): Remove call to install_iocs_calls.
+
+	* include/vx68k/memory.h (class dmac_memory): Remove argument of
+	the constructor.  Add member install_iocs_calls.
+	(class font_rom): Change the value types of get_8 and put_8.  Add
+	member install_iocs_calls.
+
 	* libvx68k/machine.cc (machine): Call install_iocs_calls on scc.
 
 	* libvx68k/sccmem.cc (install_iocs_calls): Changed to member

@@ -211,6 +211,7 @@ namespace vx68k
     void put_8(function_code, uint32_type, unsigned int);
 
   public:
+    /* Installs IOCS calls on the text video memory.  */
     void install_iocs_calls(system_rom &);
 
   public:
@@ -336,7 +337,7 @@ namespace vx68k
   class dmac_memory: public memory
   {
   public:
-    explicit dmac_memory(system_rom &);
+    dmac_memory();
     ~dmac_memory();
 
   public:
@@ -347,6 +348,10 @@ namespace vx68k
     /* Writes data to this object.  */
     void put_16(function_code, uint32_type, uint_type);
     void put_8(function_code, uint32_type, unsigned int);
+
+  public:
+    /* Installs IOCS calls on the DMAC.  */
+    void install_iocs_calls(system_rom &);
   };
 
   /* Area set register.  This object is mapped from 0xe86000 to
@@ -491,6 +496,7 @@ namespace vx68k
     void put_8(function_code, uint32_type, unsigned int);
 
   public:
+    /* Installs IOCS calls on the first COM port and the mouse.  */
     void install_iocs_calls(system_rom &);
 
   public:
@@ -597,13 +603,16 @@ namespace vx68k
   public:
     /* Reads data from this object.  */
     uint_type get_16(function_code, uint32_type) const;
-    uint_type get_8(function_code, uint32_type) const;
+    unsigned int get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
     void put_16(function_code, uint32_type, uint_type);
-    void put_8(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, unsigned int);
 
   public:
+    /* Installs IOCS calls on the system font.  */
+    void install_iocs_calls(system_rom &);
+
     void copy_data(const console *);
   };
 } // namespace vx68k

@@ -36,6 +36,10 @@ using vx68k::font_rom;
 using namespace vm68k::types;
 using namespace std;
 
+#ifdef HAVE_NANA_H
+extern bool nana_iocs_call_trace;
+#endif
+
 namespace
 {
   inline unsigned int
@@ -72,6 +76,236 @@ font_rom::jisx0208_24_offset(unsigned int ch1, unsigned int ch2)
   return linear_jisx0208(ch1, ch2) * size_t(24 * 3) + 0x40000;
 }
 
+namespace
+{
+  using vm68k::memory;
+  using vm68k::byte_size;
+  using vm68k::word_size;
+  using vm68k::long_word_size;
+  using vm68k::context;
+
+  /* Handles a _DEFCHR IOCS call.  */
+  void
+  iocs_defchr(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace, "IOCS _DEFCHR; %%d1=0x%08lx %%a1=0x%08lx\n",
+       long_word_size::get(c.regs.d[1]) + 0UL,
+       long_word_size::get(c.regs.a[1]) + 0UL);
+#endif
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_defchr: FIXME: not implemented\n");
+    c.regs.d[0] = 0;
+  }
+
+  /* Handles a _FNTADR IOCS call.  */
+  void
+  iocs_fntadr(context &c, unsigned long data)
+  {
+    uint_type ch = word_size::get(c.regs.d[1]);
+    uint32_type size = long_word_size::get(c.regs.d[2]);
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace, "IOCS _FNTADR; %%d1:w=0x%04x %%d2=0x%08lx\n",
+       ch, size + 0UL);
+#endif
+
+    unsigned int ch1 = ch >> 8;
+    unsigned int ch2 = ch & 0xff;
+    if (ch1 >= 0x81 && ch1 <= 0x9f || ch1 >= 0xe0 && ch1 <= 0xef)
+      {
+	if (ch1 >= 0xe0)
+	  ch1 -= 0x81 + (0xe0 - 0xa0);
+	else
+	  ch1 -= 0x81;
+
+	if (ch2 >= 0x80)
+	  ch2 -= 0x40 + 1;
+	else
+	  ch2 -= 0x40;
+
+	ch1 *= 2;
+	if (ch2 >= 94)
+	  {
+	    ch2 -= 94;
+	    ++ch1;
+	  }
+
+	ch1 += 0x21;
+	ch2 += 0x21;
+      }
+
+    if (ch1 >= 0x21 && ch1 <= 0x7e)
+      {
+	switch (size)
+	  {
+	  case 6:
+	    fprintf(stderr, "iocs_fntadr: FIXME: not implemented\n");
+	    long_word_size::put(c.regs.d[0],
+				0xf00000
+				+ font_rom::jisx0208_16_offset(ch1, ch2));
+	    word_size::put(c.regs.d[1], 2 - 1);
+	    word_size::put(c.regs.d[2], 12 - 1);
+	    break;
+
+	  case 12:
+	    long_word_size::put(c.regs.d[0],
+				0xf00000
+				+ font_rom::jisx0208_24_offset(ch1, ch2));
+	    word_size::put(c.regs.d[1], 3 - 1);
+	    word_size::put(c.regs.d[2], 24 - 1);
+	    break;
+
+	  default:
+	  case 8:
+	    long_word_size::put(c.regs.d[0],
+				0xf00000
+				+ font_rom::jisx0208_16_offset(ch1, ch2));
+	    word_size::put(c.regs.d[1], 2 - 1);
+	    word_size::put(c.regs.d[2], 16 - 1);
+	    break;
+	  }
+      }
+    else
+      {
+	switch (size)
+	  {
+	  case 6:
+	    fprintf(stderr, "iocs_fntadr: FIXME: not implemented\n");
+	    long_word_size::put(c.regs.d[0],
+				0xf00000
+				+ font_rom::jisx0201_16_offset(ch2));
+	    word_size::put(c.regs.d[1], 1 - 1);
+	    word_size::put(c.regs.d[2], 12 - 1);
+	    break;
+
+	  case 12:
+	    long_word_size::put(c.regs.d[0],
+				0xf00000
+				+ font_rom::jisx0201_24_offset(ch2));
+	    word_size::put(c.regs.d[1], 2 - 1);
+	    word_size::put(c.regs.d[2], 24 - 1);
+	    break;
+
+	  default:
+	  case 8:
+	    long_word_size::put(c.regs.d[0],
+				0xf00000
+				+ font_rom::jisx0201_16_offset(ch2));
+	    word_size::put(c.regs.d[1], 1 - 1);
+	    word_size::put(c.regs.d[2], 16 - 1);
+	    break;
+	  }
+      }
+  }
+
+  /* Handles a _FNTGET IOCS call.  */
+  void
+  iocs_fntget(context &c, unsigned long data)
+  {
+    uint32_type size_ch = long_word_size::get(c.regs.d[1]);
+    uint32_type i = long_word_size::get(c.regs.a[1]);
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace, "IOCS _FNTGET; %%d1=0x%08lx %%a1=0x%08lx\n",
+       size_ch + 0UL, i + 0UL);
+#endif
+
+    unsigned int ch1 = size_ch >> 8 & 0xff;
+    unsigned int ch2 = size_ch & 0xff;
+    if (ch1 >= 0x81 && ch1 <= 0x9f || ch1 >= 0xe0 && ch1 <= 0xef)
+      {
+	if (ch1 >= 0xe0)
+	  ch1 -= 0x81 + (0xe0 - 0xa0);
+	else
+	  ch1 -= 0x81;
+
+	if (ch2 >= 0x80)
+	  ch2 -= 0x40 + 1;
+	else
+	  ch2 -= 0x40;
+
+	ch1 *= 2;
+	if (ch2 >= 94)
+	  {
+	    ch2 -= 94;
+	    ++ch1;
+	  }
+
+	ch1 += 0x21;
+	ch2 += 0x21;
+      }
+
+    unsigned char buf[24 * 3];
+    if (ch1 >= 0x21 && ch1 <= 0x7e)
+      {
+	switch (size_ch >> 16)
+	  {
+	  case 6:
+	    fprintf(stderr, "iocs_fntadr: FIXME: not implemented\n");
+	    break;
+
+	  case 12:
+	    word_size::put(*c.mem, memory::SUPER_DATA, i, 24);
+	    word_size::put(*c.mem, memory::SUPER_DATA, i + 2, 24);
+	    c.mem->read(memory::SUPER_DATA,
+			0xf00000 + font_rom::jisx0208_24_offset(ch1, ch2),
+			buf, 24 * 3);
+	    c.mem->write(memory::SUPER_DATA, i + 4, buf, 24 * 3);
+	    break;
+
+	  default:
+	  case 0:
+	  case 8:
+	    word_size::put(*c.mem, memory::SUPER_DATA, i, 16);
+	    word_size::put(*c.mem, memory::SUPER_DATA, i + 2, 16);
+	    c.mem->read(memory::SUPER_DATA,
+			0xf00000 + font_rom::jisx0208_16_offset(ch1, ch2),
+			buf, 16 * 2);
+	    c.mem->write(memory::SUPER_DATA, i + 4, buf, 16 * 2);
+	    break;
+	  }
+      }
+    else
+      {
+	switch (size_ch >> 16)
+	  {
+	  case 6:
+	    fprintf(stderr, "iocs_fntadr: FIXME: not implemented\n");
+	    break;
+
+	  case 12:
+	    word_size::put(*c.mem, memory::SUPER_DATA, i, 12);
+	    word_size::put(*c.mem, memory::SUPER_DATA, i + 2, 24);
+	    c.mem->read(memory::SUPER_DATA,
+			0xf00000 + font_rom::jisx0201_24_offset(ch2),
+			buf, 24 * 2);
+	    c.mem->write(memory::SUPER_DATA, i + 4, buf, 24 * 2);
+	    break;
+
+	  default:
+	  case 0:
+	  case 8:
+	    word_size::put(*c.mem, memory::SUPER_DATA, i, 8);
+	    word_size::put(*c.mem, memory::SUPER_DATA, i + 2, 16);
+	    c.mem->read(memory::SUPER_DATA,
+			0xf00000 + font_rom::jisx0201_16_offset(ch2),
+			buf, 16 * 1);
+	    c.mem->write(memory::SUPER_DATA, i + 4, buf, 16 * 1);
+	    break;
+	  }
+      }
+  }
+}
+
+void
+font_rom::install_iocs_calls(system_rom &rom)
+{
+  unsigned long data = reinterpret_cast<unsigned long>(this);
+  rom.set_iocs_function(0x0f, make_pair(&iocs_defchr, data));
+  rom.set_iocs_function(0x16, make_pair(&iocs_fntadr, data));
+  rom.set_iocs_function(0x19, make_pair(&iocs_fntget, data));
+}
+
 void
 font_rom::copy_data(const console *c)
 {

@@ -146,33 +146,35 @@ text_video_memory::scroll()
 void
 text_video_memory::draw_char(int x, int y, unsigned int c)
 {
-  if (c > 0xff)
+  int ch1 = c >> 8 & 0xff;
+  int ch2 = c & 0xff;
+  if (ch1 >= 0x81 && ch1 <= 0x9f || ch1 >= 0xe0 && ch1 <= 0xef)
     {
-      unsigned int byte1 = c >> 8;
-      if (byte1 >= 0x81 && byte1 <= 0x9f
-	  || byte1 >= 0xe0 && byte1 <= 0xef)
+      if (ch1 >= 0xe0)
+	ch1 -= 0x81 + (0xe0 - 0xa0);
+      else
+	ch1 -= 0x81;
+
+      if (ch2 >= 0x80)
+	ch2 -= 0x40 + 1;
+      else
+	ch2 -= 0x40;
+
+      ch1 *= 2;
+      if (ch2 >= 94)
 	{
-	  if (byte1 >= 0xe0)
-	    byte1 -= 0xe0 - 0xa0;
-	  byte1 -= 0x81;
-
-	  unsigned int byte2 = c & 0xff;
-	  if (byte2 >= 0x80)
-	    --byte2;
-	  byte2 -= 0x40;
-
-	  byte1 *= 2;
-	  if (byte2 >= 94)
-	    {
-	      byte2 -= 94;
-	      ++byte1;
-	    }
-
-	  c = byte1 + 0x21 << 8 | byte2 + 0x21;
+	  ch2 -= 94;
+	  ++ch1;
 	}
 
+      ch1 += 0x21;
+      ch2 += 0x21;
+    }
+
+  if (ch1 >= 0x21 && ch1 <= 0x7e)
+    {
       unsigned char img[16 * 2];
-      connected_console->get_k16_image(c, img, 2);
+      connected_console->get_k16_image(uint_type(ch1) << 8 | ch2, img, 2);
 
       for (unsigned char *plane = buf;
 	   plane != buf + 2 * PLANE_SIZE;
@@ -192,7 +194,7 @@ text_video_memory::draw_char(int x, int y, unsigned int c)
   else
     {
       unsigned char img[16];
-      connected_console->get_b16_image(c, img, 1);
+      connected_console->get_b16_image(ch2, img, 1);
 
       for (unsigned char *plane = buf;
 	   plane != buf + 2 * PLANE_SIZE;

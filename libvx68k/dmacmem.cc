@@ -41,54 +41,6 @@ using namespace std;
 extern bool nana_iocs_call_trace;
 #endif
 
-uint_type
-dmac_memory::get_16(function_code fc, uint32_type address) const
-{
-#ifdef HAVE_NANA_H
-  DL("class dmac_memory: get_16: fc=%d address=0x%08x\n", fc, address + 0UL);
-#endif
-  static bool once;
-  if (!once++)
-    fprintf(stderr, "class dmac_memory: FIXME: `get_16' not implemented\n");
-  return 0;
-}
-
-unsigned int
-dmac_memory::get_8(function_code fc, uint32_type address) const
-{
-#ifdef HAVE_NANA_H
-  DL("class dmac_memory: get_8: fc=%d address=0x%08x\n", fc, address + 0UL);
-#endif
-  static bool once;
-  if (!once++)
-    fprintf(stderr, "class dmac_memory: FIXME: `get_8' not implemented\n");
-  return 0;
-}
-
-void
-dmac_memory::put_16(function_code fc, uint32_type address, uint_type value)
-{
-#ifdef HAVE_NANA_H
-  DL("class dmac_memory: put_16: fc=%d address=0x%08x value=0x%04x\n",
-     fc, address + 0UL, value);
-#endif
-  static bool once;
-  if (!once++)
-    fprintf(stderr, "class dmac_memory: FIXME: `put_16' not implemented\n");
-}
-
-void
-dmac_memory::put_8(function_code fc, uint32_type address, unsigned int value)
-{
-#ifdef HAVE_NANA_H
-  DL("class dmac_memory: put_8: fc=%d address=0x%08x value=0x%02x\n",
-     fc, address + 0UL, value);
-#endif
-  static bool once;
-  if (!once++)
-    fprintf(stderr, "class dmac_memory: FIXME: `put_8' not implemented\n");
-}
-
 namespace
 {
   using vm68k::byte_size;
@@ -138,23 +90,70 @@ namespace
 	  }
       }
   }
-
-  /* Installs serial and mouse IOCS calls to the BIOS ROM.  */
-  void
-  install_iocs_calls(system_rom &bios, unsigned long data)
-  {
-    bios.set_iocs_function(0x8a, make_pair(&iocs_dmamove, data));
-    // 0x8b _DMAMOV_A
-    // 0x8c _DMAMOV_L
-    // 0x8d _DMAMODE
-  }
 }
 
+void
+dmac_memory::install_iocs_calls(system_rom &rom)
+{
+  unsigned long data = reinterpret_cast<unsigned long>(this);
+  rom.set_iocs_function(0x8a, make_pair(&iocs_dmamove, data));
+  // 0x8b: _DMAMOV_A
+  // 0x8c: _DMAMOV_L
+  // 0x8d: _DMAMODE
+}
+
+uint_type
+dmac_memory::get_16(function_code fc, uint32_type address) const
+{
+#ifdef HAVE_NANA_H
+  DL("class dmac_memory: get_16: fc=%d address=0x%08x\n", fc, address + 0UL);
+#endif
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class dmac_memory: FIXME: `get_16' not implemented\n");
+  return 0;
+}
+
+unsigned int
+dmac_memory::get_8(function_code fc, uint32_type address) const
+{
+#ifdef HAVE_NANA_H
+  DL("class dmac_memory: get_8: fc=%d address=0x%08x\n", fc, address + 0UL);
+#endif
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class dmac_memory: FIXME: `get_8' not implemented\n");
+  return 0;
+}
+
+void
+dmac_memory::put_16(function_code fc, uint32_type address, uint_type value)
+{
+#ifdef HAVE_NANA_H
+  DL("class dmac_memory: put_16: fc=%d address=0x%08x value=0x%04x\n",
+     fc, address + 0UL, value);
+#endif
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class dmac_memory: FIXME: `put_16' not implemented\n");
+}
+
+void
+dmac_memory::put_8(function_code fc, uint32_type address, unsigned int value)
+{
+#ifdef HAVE_NANA_H
+  DL("class dmac_memory: put_8: fc=%d address=0x%08x value=0x%02x\n",
+     fc, address + 0UL, value);
+#endif
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class dmac_memory: FIXME: `put_8' not implemented\n");
+}
+
 dmac_memory::~dmac_memory()
 {
 }
 
-dmac_memory::dmac_memory(system_rom &bios)
+dmac_memory::dmac_memory()
 {
-  install_iocs_calls(bios, reinterpret_cast<unsigned long>(this));
 }
