@@ -1,3 +1,13 @@
+1999-06-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vx68k/memory.h: Reformat indents.
+	(_VX68K_MEMORY_H): Renamed from VX68K_MEMORY_H.
+	(class x68k_address_space): Change members' order.
+
+	* lib/vx68k/memory.cc (getl): New function.
+
+	* lib/vm68k/addrspace.cc (getl): Cast to uint32_type before shift.
+
 1999-06-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/dos.cc (dos_create, dos_open): Treat any space in file

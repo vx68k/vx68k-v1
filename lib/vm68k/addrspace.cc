@@ -69,7 +69,7 @@ address_space::getl(int fc, uint32_type address) const
   memory_page *p = find_page(address);
   memory_page *p2 = find_page(address2);
   if (p2 != p)
-    return p->getw(fc, address) << 16 | p2->getw(fc, address2);
+    return uint32_type(p->getw(fc, address)) << 16 | p2->getw(fc, address2);
   else
     return p->getl(fc, address);
 }

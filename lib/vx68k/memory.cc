@@ -82,6 +82,20 @@ main_memory_page::getw (int fc, uint32 address) const
   return array[address >> 1];
 }
 
+uint32
+main_memory_page::getl(int fc, uint32 address) const
+{
+  // Address error?
+  uint32_type address2 = address + 2;
+  if (address2 >= end)
+    {
+      generate_bus_error(fc, address2);
+      abort();
+    }
+
+  return uint32_type(array[address >> 1]) << 16 | array[address2 >> 1];
+}
+
 size_t
 main_memory_page::write(int fc, uint32 address, const void *data, size_t size)
 {
