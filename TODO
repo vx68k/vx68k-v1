@@ -1,6 +1,9 @@
 To-Do List for Virtual X68000
 
-$Date: Thu, 18 Nov 1999 20:18:46 +0900 $
+$Date: Thu, 18 Nov 1999 20:32:45 +0900 $
+
+* Modify vx68k.texi generation as rglclock does.  Include the file in
+the repository.
 
 * Rename directories for libraries as libXXX?
 
