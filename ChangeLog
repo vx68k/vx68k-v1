@@ -1,5 +1,8 @@
 2000-05-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (initialize_iocs_functions): Add new
+	handler.
+
 	* libvx68k/systemrom.cc (initialize): Initialize the interrupt
 	vector table, too.
 	(iocs_b_keysns, iocs_b_putc): New function.

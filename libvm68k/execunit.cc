@@ -3246,6 +3246,7 @@ namespace
     eu.set_instruction(0x91e8, 0x0e07, &subal<disp_indirect>);
     eu.set_instruction(0x91f0, 0x0e07, &subal<indexed_indirect>);
     eu.set_instruction(0x91f9, 0x0e00, &subal<absolute_long>);
+    eu.set_instruction(0x91fa, 0x0e00, &subal<disp_pc>);
     eu.set_instruction(0x91fc, 0x0e00, &subal<immediate>);
     eu.set_instruction(0xb000, 0x0e07, &cmpb<data_register>);
     eu.set_instruction(0xb010, 0x0e07, &cmpb<indirect>);
