@@ -3,6 +3,7 @@
 	* vx68k.texi (Document Type Definitions, Disk Set Descriptors,
 	Options Settings): New node.
 	(Class memory): Add documentation.
+	(Invoking vx68k, Sample Application): Use @command for vx68k.
 
 2000-12-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 

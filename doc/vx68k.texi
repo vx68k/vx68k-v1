@@ -5,9 +5,9 @@
 @synindex vr fn
 @set VERSION 1.1
 @c $Format: "@set REVISION $Revision$" $
-@set REVISION 1.20
+@set REVISION 1.21
 @c $Format: "@set DATE $Date$" $
-@set DATE Sat, 16 Dec 2000 00:51:50 +0900
+@set DATE Sat, 16 Dec 2000 00:54:31 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -162,11 +162,11 @@ This chapter describes the usage of the sample program.
 @end menu
 
 @node Invoking vx68k,  , Command Reference, Command Reference
-@section Invoking @code{vx68k}
+@section Invoking @command{vx68k}
 
-@code{vx68k} executes X68000 programs.
+@command{vx68k} executes X68000 programs.
 
-@code{vx68k}
+@command{vx68k}
 [@var{option}]...
 [--]
 @var{command}
@@ -717,7 +717,7 @@ Implements a console using the GTK+ user interface toolkit.
 @chapter Sample Application
 
 This chapter describes the implementation of the sample application
-@code{vx68k}.
+@command{vx68k}.
 
 @node Document Type Definitions, Function and Variable Index, Sample Application, Top
 @appendix Document Type Definitions
