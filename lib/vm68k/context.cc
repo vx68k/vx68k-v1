@@ -40,7 +40,6 @@ context::run()
 {
   for (;;)
     {
-      step();
 #ifdef L
 # ifdef DUMP_REGISTERS
       for (unsigned int i = 0; i != 8; ++i)
@@ -49,8 +48,9 @@ context::run()
 	    i, (unsigned long) regs.d[i], i, (unsigned long) regs.a[i]);
 	}
 # endif
-      L("| %%pc = 0x%08lx\n", (unsigned long) regs.pc);
+      L("| %#lx: %#06x\n", (unsigned long) regs.pc, fetchw(0));
 #endif
+      step();
     }
 }
 

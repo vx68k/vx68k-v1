@@ -172,9 +172,11 @@ namespace
     {
       Source ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
-      VL((" addl %s", ea1.textl(ec)));
-      VL((",%%d%d", reg2));
-      VL(("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc));
+#ifdef L
+      L(" addl %s", ea1.textl(ec));
+      L(",%%d%d", reg2);
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
       int32 value1 = ea1.getl(ec);
       int32 value2 = extsl(ec.regs.d[reg2]);
@@ -191,9 +193,11 @@ namespace
     {
       Destination ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
-      VL((" addal %s", ea1.textl(ec)));
-      VL((",%%a%d", reg2));
-      VL((" | %%pc = 0x%lx\n", (unsigned long) ec.regs.pc));
+#ifdef L
+      L(" addal %s", ea1.textl(ec));
+      L(",%%a%d", reg2);
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
       int32 value1 = ea1.getl(ec);
       int32 value2 = extsl(ec.regs.a[reg2]);
@@ -210,7 +214,11 @@ namespace
     {
       int32 value2 = extsl(ec.fetchl(2));
       Destination ea1(op & 0x7, 2 + 4);
-      VL((" addil #%ld,*\n", (long) value2));
+#ifdef L
+      L(" addil #%ld", (long) value2);
+      L(",%s", ea1.textl(ec));
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
       int32 value1 = ea1.getl(ec);
       int32 value = extsl(value1 + value2);
@@ -247,7 +255,11 @@ namespace
       int value2 = op >> 9 & 0x7;
       if (value2 == 0)
 	value2 = 8;
-      VL((" addqb #%d,*\n", value2));
+#ifdef L
+      L(" addqb #%d", value2);
+      L(",%s", ea1.textb(ec));
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
       int value1 = ea1.getb(ec);
       int value = extsb(value1 + value2);
@@ -284,7 +296,11 @@ namespace
       int value2 = op >> 9 & 0x7;
       if (value2 == 0)
 	value2 = 8;
-      VL((" addqw #%d,*\n", value2));
+#ifdef L
+      L(" addqw #%d", value2);
+      L(",%s", ea1.textw(ec));
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
       int value1 = ea1.getw(ec);
       int value = extsw(value1 + value2);
@@ -302,7 +318,11 @@ namespace
       int value2 = op >> 9 & 0x7;
       if (value2 == 0)
 	value2 = 8;
-      VL((" addqw #%d,*\n", value2));
+#ifdef L
+      L(" addqw #%d", value2);
+      L(",%s", ea1.textw(ec));
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
       // XXX: The entire register is used.
       int32 value1 = ea1.getl(ec);
@@ -337,7 +357,11 @@ namespace
       int value2 = op >> 9 & 0x7;
       if (value2 == 0)
 	value2 = 8;
-      VL((" addql #%d,*\n", value2));
+#ifdef L
+      L(" addql #%d", value2);
+      L(",%s", ea1.textl(ec));
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
       int32 value1 = ea1.getl(ec);
       int32 value = extsl(value1 + value2);
@@ -355,7 +379,11 @@ namespace
       int value2 = op >> 9 & 0x7;
       if (value2 == 0)
 	value2 = 8;
-      VL((" addql #%d,*\n", value2));
+#ifdef L
+      L(" addql #%d", value2);
+      L(",%s", ea1.textw(ec));
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
       int32 value1 = ea1.getl(ec);
       int32 value = extsl(value1 + value2);

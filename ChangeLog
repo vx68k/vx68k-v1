@@ -1,5 +1,13 @@
 1999-07-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (addl, addal, addil, addqb, addqw,
+	addqw<address_register>, addql, addql<address_register>): Modify
+	logging message to include effective address.
+
+	* lib/vm68k/context.cc (run): Modify logging message to include
+	operation word.
+	(run): Output logging message before step.
+
 	* Makefile.am (EXTRA_DIST): Remove MEMO.ja.
 
 	* MEMO.ja: Removed.
