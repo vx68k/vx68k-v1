@@ -1,5 +1,7 @@
 2001-06-28  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* README: Updated.
+
 	* NEWS: Modified.
 
 	* bin/Makefile.am (vx68k_LDADD): Change location of

@@ -16,7 +16,7 @@ See the file NEWS in this directory for the current limitations.
 
 PREREQUISITE
 
-This program requires Libvm68k 1.0.1 or later, and GTK+ 1.2.0 or
+This program requires Libvm68k 1.0.4 or later, and GTK+ 1.2.0 or
 later.
 
 This program is written in C++ with exception handling, templates, and
@@ -44,4 +44,4 @@ Send comments, suggestions, or anything you thought about this program
 to vx68k@lists.hypercore.co.jp.
 
 ---
-$ProjectHeader: vx68k 1.347 Wed, 20 Jun 2001 21:27:37 +0900 kaz $
+$ProjectHeader: vx68k 1.358 Thu, 28 Jun 2001 19:53:11 +0900 kaz $
