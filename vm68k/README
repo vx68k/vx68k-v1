@@ -1,0 +1,7 @@
+vm68k READ ME
+
+$Date: Thu, 21 Oct 1999 21:48:09 +0900 $
+
+vm68k is a C++ library that implements virtual machine emulating
+Motorola M68000 family processor.
+

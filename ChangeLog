@@ -1,5 +1,9 @@
 1999-10-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/TODO: New file.
+
+	* vm68k/README: New file.
+
 	* bin/Makefile.am (vx68k_LDADD): Change directory of vx68k libs.
 
 	* Makefile.am (SUBDIRS): Add vx68k and remove lib.
