@@ -124,7 +124,7 @@ namespace
     svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
     svalue_type value = Size::svalue(Size::get(value2 + value1));
     Size::put(c.regs.d[reg2], value);
-    c.regs.sr.set_cc(value);	// FIXME.
+    c.regs.sr.set_cc_as_add(value, value2, value1);
     ea1.finish(c);
 
     c.regs.pc += 2 + ea1.extension_size();
@@ -148,7 +148,7 @@ namespace
     svalue_type value1 = ea1.get(c);
     svalue_type value = Size::svalue(Size::get(value1 + value2));
     ea1.put(c, value);
-    c.regs.sr.set_cc(value);	// FIXME.
+    c.regs.sr.set_cc_as_add(value, value1, value2);
     ea1.finish(c);
 
     c.regs.pc += 2 + ea1.extension_size();
@@ -196,7 +196,7 @@ namespace
     svalue_type value1 = ea1.get(c);
     svalue_type value = Size::svalue(Size::get(value1 + value2));
     ea1.put(c, value);
-    c.regs.sr.set_cc(value);	// FIXME.
+    c.regs.sr.set_cc_as_add(value, value1, value2);
     ea1.finish(c);
 
     c.regs.pc += 2 + Size::aligned_value_size() + ea1.extension_size();
@@ -221,7 +221,7 @@ namespace
     svalue_type value1 = ea1.get(c);
     svalue_type value = Size::svalue(Size::get(value1 + value2));
     ea1.put(c, value);
-    c.regs.sr.set_cc(value);	// FIXME.
+    c.regs.sr.set_cc_as_add(value, value1, value2);
     ea1.finish(c);
 
     c.regs.pc += 2 + ea1.extension_size();

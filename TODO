@@ -1,6 +1,6 @@
 To-Do List for Virtual X68000
 
-$Date: Tue, 25 Jan 2000 22:40:35 +0900 $
+$Date: Thu, 24 Feb 2000 06:09:25 +0900 $
 
 * Update the status bar when the process exits.
 
@@ -13,8 +13,6 @@ $Date: Tue, 25 Jan 2000 22:40:35 +0900 $
 ** Implement hardware text scrolling, or at least prepare for it.
 
 * Improve console device behaviour using emulated keyboard input.
-
-* Implement condition code updates for ADD.
 
 * Implement the handler for instruction DBNE to make HAS work.
 

@@ -1,4 +1,14 @@
+2000-01-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/Makefile.am (libvm68k_la_LDFLAGS): Use VERSION only for
+	ltlib versioning.
+
 2000-01-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Updated.
+
+	* libvm68k/execunit.cc (m68k_add, m68k_add_r, m68k_addi,
+	m68k_addq): Use set_cc_as_add method.
 
 	* libvm68k/statusreg.cc (class general_condition_tester): Renamed
 	from struct common_cc_evaluator.  Make base class non-virtual.
