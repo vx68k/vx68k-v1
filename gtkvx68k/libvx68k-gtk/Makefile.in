@@ -68,6 +68,8 @@ CPP = @CPP@
 CXX = @CXX@
 DATADIRNAME = @DATADIRNAME@
 DLLTOOL = @DLLTOOL@
+ECHO = @ECHO@
+EXEEXT = @EXEEXT@
 GENCAT = @GENCAT@
 GLIBC21 = @GLIBC21@
 GMOFILES = @GMOFILES@
@@ -88,10 +90,12 @@ MAKEINFO = @MAKEINFO@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 MSGFMT = @MSGFMT@
 OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 POFILES = @POFILES@
 POSUB = @POSUB@
 RANLIB = @RANLIB@
+STRIP = @STRIP@
 TEMPLATE_OBJS = @TEMPLATE_OBJS@
 USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
 USE_NLS = @USE_NLS@
@@ -118,7 +122,7 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libvx68kui_gtk_a_LIBADD = 
-libvx68kui_gtk_a_OBJECTS =  gtkconsole.o gl.o
+libvx68kui_gtk_a_OBJECTS =  gtkconsole.$(OBJEXT) gl.$(OBJEXT)
 AR = ar
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -140,7 +144,7 @@ OBJECTS = $(libvx68kui_gtk_a_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .S .c .cc .lo .o .s
+.SUFFIXES: .S .c .cc .lo .o .obj .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu libvx68k-gtk/Makefile
 
@@ -158,6 +162,11 @@ distclean-noinstLIBRARIES:
 
 maintainer-clean-noinstLIBRARIES:
 
+# FIXME: We should only use cygpath when building on Windows,
+# and only if it is available.
+.c.obj:
+	$(COMPILE) -c `cygpath -w $<`
+
 .s.o:
 	$(COMPILE) -c $<
 
@@ -166,6 +175,7 @@ maintainer-clean-noinstLIBRARIES:
 
 mostlyclean-compile:
 	-rm -f *.o core *.core
+	-rm -f *.$(OBJEXT)
 
 clean-compile:
 
@@ -196,6 +206,8 @@ libvx68kui_gtk.a: $(libvx68kui_gtk_a_OBJECTS) $(libvx68kui_gtk_a_DEPENDENCIES)
 	$(RANLIB) libvx68kui_gtk.a
 .cc.o:
 	$(CXXCOMPILE) -c $<
+.cc.obj:
+	$(CXXCOMPILE) -c `cygpath -w $<`
 .cc.lo:
 	$(LTCXXCOMPILE) -c $<
 

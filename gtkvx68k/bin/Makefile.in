@@ -68,6 +68,8 @@ CPP = @CPP@
 CXX = @CXX@
 DATADIRNAME = @DATADIRNAME@
 DLLTOOL = @DLLTOOL@
+ECHO = @ECHO@
+EXEEXT = @EXEEXT@
 GENCAT = @GENCAT@
 GLIBC21 = @GLIBC21@
 GMOFILES = @GMOFILES@
@@ -88,10 +90,12 @@ MAKEINFO = @MAKEINFO@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 MSGFMT = @MSGFMT@
 OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 POFILES = @POFILES@
 POSUB = @POSUB@
 RANLIB = @RANLIB@
+STRIP = @STRIP@
 TEMPLATE_OBJS = @TEMPLATE_OBJS@
 USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
 USE_NLS = @USE_NLS@
@@ -114,6 +118,7 @@ EXTRA_DIST = ${man_MANS}
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
+bin_PROGRAMS =  vx68k$(EXEEXT)
 PROGRAMS =  $(bin_PROGRAMS)
 
 
@@ -121,7 +126,8 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-vx68k_OBJECTS =  main.o gtkconwin.o gtkabout.o getopt.o getopt1.o
+vx68k_OBJECTS =  main.$(OBJEXT) gtkconwin.$(OBJEXT) gtkabout.$(OBJEXT) \
+getopt.$(OBJEXT) getopt1.$(OBJEXT)
 vx68k_DEPENDENCIES =  ../libvx68k-gtk/libvx68kui_gtk.a \
 ../../libvx68kdos/libvx68kdos.la ../../libvx68k/libvx68k.la
 vx68k_LDFLAGS = 
@@ -155,7 +161,7 @@ OBJECTS = $(vx68k_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .S .c .cc .lo .o .s
+.SUFFIXES: .S .c .cc .lo .o .obj .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu bin/Makefile
 
@@ -189,6 +195,11 @@ uninstall-binPROGRAMS:
 	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	done
 
+# FIXME: We should only use cygpath when building on Windows,
+# and only if it is available.
+.c.obj:
+	$(COMPILE) -c `cygpath -w $<`
+
 .s.o:
 	$(COMPILE) -c $<
 
@@ -197,6 +208,7 @@ uninstall-binPROGRAMS:
 
 mostlyclean-compile:
 	-rm -f *.o core *.core
+	-rm -f *.$(OBJEXT)
 
 clean-compile:
 
@@ -221,11 +233,13 @@ distclean-libtool:
 
 maintainer-clean-libtool:
 
-vx68k: $(vx68k_OBJECTS) $(vx68k_DEPENDENCIES)
-	@rm -f vx68k
+vx68k$(EXEEXT): $(vx68k_OBJECTS) $(vx68k_DEPENDENCIES)
+	@rm -f vx68k$(EXEEXT)
 	$(CXXLINK) $(vx68k_LDFLAGS) $(vx68k_OBJECTS) $(vx68k_LDADD) $(LIBS)
 .cc.o:
 	$(CXXCOMPILE) -c $<
+.cc.obj:
+	$(CXXCOMPILE) -c `cygpath -w $<`
 .cc.lo:
 	$(LTCXXCOMPILE) -c $<
 
