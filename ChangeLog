@@ -1,5 +1,11 @@
 2000-05-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (run_boot): Catches bus errors.
+
+	* libvx68k/systemrom.cc (iocs_b_read): Write working code.
+	(iocs_os_curof): New function.
+	(initialize_iocs_functions): Use iocs_os_curof.
+
 	* libvm68k/execunit.cc (m68k_addi): Use Size for typedefs.
 	(m68k_asl_i): New function.
 	[0] (asll_i): Disabled.

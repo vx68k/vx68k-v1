@@ -146,6 +146,11 @@ gtk_app::run_boot() throw ()
       fprintf(stderr, "vm68k illegal instruction %%pc=%#010x (%#0x)\n",
 	      c.regs.pc, op);
     }
+  catch (bus_error &x)
+    {
+      fprintf(stderr, "vm68k bus error fc=%#x address=%#lx\n",
+	      x.status, (unsigned long) x.address);
+    }
   catch (exception &x)
     {
       fprintf(stderr, _("Unhandled exception in thread: %s\n"), x.what());
