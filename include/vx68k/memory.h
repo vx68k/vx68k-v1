@@ -45,14 +45,14 @@ namespace vx68k
   class text_video_raster_iterator: public forward_iterator<uint_type, int>
   {
   private:
-    unsigned short *buf;
+    unsigned char *buf;
     unsigned int pos;
 
   public:
     text_video_raster_iterator()
       : buf(NULL), pos(0) {}
 
-    text_video_raster_iterator(unsigned short *b, unsigned int p)
+    text_video_raster_iterator(unsigned char *b, unsigned int p)
       : buf(b), pos(p) {}
 
   public:
