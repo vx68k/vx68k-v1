@@ -624,7 +624,7 @@ namespace
     unsigned int reg1 = op & 0x7;
     unsigned int bit = ec.fetchw(2) & 0x1f;
 #ifdef L
-    L(" btstl #%u", bit);
+    L(" bclrl #%u", bit);
     L(",%%d%u", reg1);
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
@@ -1704,6 +1704,23 @@ namespace
       ec.regs.pc = value;
     }
 
+  template <class Condition, class Destination> void
+  s_b(unsigned int op, context &ec, instruction_data *data)
+  {
+    Condition cond;
+    Destination ea1(op & 0x7, 2);
+#ifdef L
+    L(" s%sb %s", cond.text(), ea1.textb(ec));
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    // The condition codes are not affected by this instruction.
+    ea1.putb(ec, cond(ec) ? -1 : 0);
+    ea1.finishb(ec);
+
+    ec.regs.pc += 2 + ea1.isize(2);
+  }
+
   template <class Source> void
   subb(unsigned int op, context &ec, instruction_data *data)
   {
@@ -2342,7 +2359,14 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x5179, 0x0e00, &subqw<absolute_long>);
   eu.set_instruction(0x5180, 0x0e07, &subql_d);
   eu.set_instruction(0x5188, 0x0e07, &subql_a);
+  eu.set_instruction(0x51c0, 0x0007, &s_b<f, data_register>);
   eu.set_instruction(0x51c8, 0x0007, &dbf);
+  eu.set_instruction(0x51d0, 0x0007, &s_b<f, indirect>);
+  eu.set_instruction(0x51d8, 0x0007, &s_b<f, postinc_indirect>);
+  eu.set_instruction(0x51e0, 0x0007, &s_b<f, predec_indirect>);
+  eu.set_instruction(0x51e8, 0x0007, &s_b<f, disp_indirect>);
+  eu.set_instruction(0x51f0, 0x0007, &s_b<f, indexed_indirect>);
+  eu.set_instruction(0x51f9, 0x0000, &s_b<f, absolute_long>);
   eu.set_instruction(0x6000, 0x00ff, &bra);
   eu.set_instruction(0x6100, 0x00ff, &bsr);
   eu.set_instruction(0x6200, 0x00ff, &b<hi>);
