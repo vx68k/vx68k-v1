@@ -48,15 +48,7 @@ palettes_memory::get_16(int fc, uint32_type address) const
     throw bus_error_exception(true, fc, address);
 
   address &= 0x1fff;
-  if (address < 256 * 2)
-    return 0;
-  else if (address < 512 * 2)
-    {
-      uint_type i = (address - 256 * 2) / 2;
-      uint_type value = _tpalette[i];
-      return value;
-    }
-  else
+  if (address >= 2 * 256 * 2)
     {
       switch (address / 2)
 	{
@@ -73,6 +65,14 @@ palettes_memory::get_16(int fc, uint32_type address) const
 	  return 0;
 	}
     }
+  else if (address >= 256 * 2)
+    {
+      uint_type i = (address - 256 * 2) / 2;
+      uint_type value = _tpalette[i];
+      return value;
+    }
+  else
+    return 0;
 }
 
 uint_type
@@ -100,14 +100,7 @@ palettes_memory::put_16(int fc, uint32_type address, uint_type value)
     throw bus_error_exception(false, fc, address);
 
   address &= 0x1fff;
-  if (address < 256 * 2)
-    ;
-  else if (address < 512 * 2)
-    {
-      uint_type i = (address - 256 * 2) / 2;
-      _tpalette[i] = value & 0xffffu;
-    }
-  else
+  if (address >= 2 * 256 * 2)
     {
       switch (address / 2)
 	{
@@ -124,6 +117,13 @@ palettes_memory::put_16(int fc, uint32_type address, uint_type value)
 	  break;
 	}
     }
+  else if (address >= 256 * 2)
+    {
+      uint_type i = (address - 256 * 2) / 2;
+      _tpalette[i] = value & 0xffffu;
+    }
+  else
+    ;
 }
 
 void
