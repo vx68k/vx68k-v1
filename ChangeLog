@@ -1,5 +1,7 @@
 1999-06-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Modified.
+
 	* lib/vm68k/statusreg.cc (struct cmp_cc_evaluator): Add lt and le.
 	(struct asr_cc_evaluator): Remove use of eq in ls.
 	(struct lsl_cc_evaluator): Likewise.
