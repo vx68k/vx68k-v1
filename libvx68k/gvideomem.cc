@@ -43,8 +43,10 @@ graphics_video_memory::get_16(int fc, uint32_type address) const
   L("class graphics_video_memory: get_16: fc=%d address=0x%08lx\n",
     fc, (unsigned long) address);
 #endif
-  fprintf(stderr,
-	  "class graphics_video_memory: FIXME: `get_16' not implemented\n");
+  static bool once;
+  if (!once++)
+    fprintf(stderr,
+	    "class graphics_video_memory: FIXME: `get_16' not implemented\n");
   return 0;
 }
 
@@ -55,8 +57,10 @@ graphics_video_memory::get_8(int fc, uint32_type address) const
   L("class graphics_video_memory: get_8: fc=%d address=0x%08lx\n",
     fc, (unsigned long) address);
 #endif
-  fprintf(stderr,
-	  "class graphics_video_memory: FIXME: `get_8' not implemented\n");
+  static bool once;
+  if (!once++)
+    fprintf(stderr,
+	    "class graphics_video_memory: FIXME: `get_8' not implemented\n");
   return 0;
 }
 
@@ -67,8 +71,10 @@ graphics_video_memory::put_16(int fc, uint32_type address, uint_type value)
   L("class opm_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
     fc, (unsigned long) address, value);
 #endif
-  fprintf(stderr,
-	  "class graphics_video_memory: FIXME: `put_16' not implemented\n");
+  static bool once;
+  if (!once++)
+    fprintf(stderr,
+	    "class graphics_video_memory: FIXME: `put_16' not implemented\n");
 }
 
 void
@@ -78,6 +84,8 @@ graphics_video_memory::put_8(int fc, uint32_type address, uint_type value)
   L("class opm_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",
     fc, (unsigned long) address, value);
 #endif
-  fprintf(stderr,
-	  "class graphics_video_memory: FIXME: `put_8' not implemented\n");
+  static bool once;
+  if (!once++)
+    fprintf(stderr,
+	    "class graphics_video_memory: FIXME: `put_8' not implemented\n");
 }
