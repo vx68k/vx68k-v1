@@ -69,6 +69,8 @@ exec_unit::illegal(int op, execution_context *)
 
 namespace
 {
+  using namespace addressing;
+
   void addw_off_d(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -105,6 +107,9 @@ namespace
 
       ec->regs.pc += 2 + 4;
     }
+
+  template <> void addil<address_register>(int, execution_context *);
+  // XXX: Address register cannot be the destination.
 
 #if 0
   void addil_d(int op, execution_context *ec)
@@ -161,6 +166,44 @@ namespace
     }
 #endif /* 0 */
 
+  template <class Destination> void addqw(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      Destination ea1(op & 0x7, 2);
+      int value2 = op >> 9 & 0x7;
+      if (value2 == 0)
+	value2 = 8;
+      VL((" addqw #%d,*\n", value2));
+
+      int value1 = ea1.getw(ec);
+      int value = extsw(value1 + value2);
+      ea1.putw(ec, value);
+      ea1.finishw(ec);
+      ec->regs.sr.set_cc(value); // FIXME.
+
+      ec->regs.pc += 2;
+    }
+
+  template <> void addqw<address_register>(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      address_register ea1(op & 0x7, 2);
+      int value2 = op >> 9 & 0x7;
+      if (value2 == 0)
+	value2 = 8;
+      VL((" addqw #%d,*\n", value2));
+
+      // XXX: The entire register is used.
+      int32 value1 = ea1.getl(ec);
+      int32 value = extsl(value1 + value2);
+      ea1.putl(ec, value);
+      ea1.finishw(ec);
+      // XXX: The condition codes are not affected.
+
+      ec->regs.pc += 2;
+    }
+
+#if 0
   void addqw_a(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -175,6 +218,7 @@ namespace
 
       ec->regs.pc += 2;
     }
+#endif /* 0 */
 
   void addql_d(int op, execution_context *ec)
     {
@@ -1111,7 +1155,11 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x5010, 0x0e07, &addqb<indirect>);
   eu->set_instruction(0x5018, 0x0e07, &addqb<postincrement_indirect>);
   eu->set_instruction(0x5020, 0x0e07, &addqb<predecrement_indirect>);
-  eu->set_instruction(0x5048, 0x0e07, &addqw_a);
+  eu->set_instruction(0x5040, 0x0e07, &addqw<data_register>);
+  eu->set_instruction(0x5048, 0x0e07, &addqw<address_register>);
+  eu->set_instruction(0x5050, 0x0e07, &addqw<indirect>);
+  eu->set_instruction(0x5058, 0x0e07, &addqw<postincrement_indirect>);
+  eu->set_instruction(0x5060, 0x0e07, &addqw<predecrement_indirect>);
   eu->set_instruction(0x5080, 0x0e07, &addql_d);
   eu->set_instruction(0x5180, 0x0e07, &subql_d);
   eu->set_instruction(0x5188, 0x0e07, &subql_a);

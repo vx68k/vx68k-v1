@@ -3,7 +3,10 @@
 	* lib/vm68k/execunit.cc (struct data_register, struct
 	address_register, struct indirect): Removed.
 	(addil, addqb): Updated for <vm68k/addressing.h> classes.
-	(install_instructions): Cleaned.
+	(addil<address_register>): Specialized without definition.
+	(addqw, addqw<address_register>): New template function.
+	(addqw_a): #ifdef'd out.
+	(install_instructions): Updated with the new functions.
 
 	* include/vm68k/Makefile.am (noinst_HEADERS): Add addressing.h.
 
