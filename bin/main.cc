@@ -26,6 +26,7 @@
 
 #include <vx68k/human.h>
 #include <vx68k/gtk.h>
+#include <vx68k/version.h>
 
 #include <gtk/gtk.h>
 #include <pthread.h>
@@ -215,15 +216,17 @@ vx68k_app::show_about_dialog()
       gtk_widget_show(vbox1);
       gtk_container_set_border_width(GTK_CONTAINER(vbox1), 20);
       {
-	const char *version_format = _("%s %s");
+	const char *version_format = _("%s %s (library %s)");
 	char *version;
 #ifdef HAVE_ASPRINTF
-	asprintf(&version, version_format, PROGRAM, VERSION);
+	asprintf(&version, version_format, PROGRAM, VERSION,
+		 library_version());
 #else
-	version = static_cast<char *>(malloc(strlen(version_format) - 2 * 2
+	version = static_cast<char *>(malloc(strlen(version_format) - 3 * 2
 					     + strlen(PROGRAM)
-					     + strlen(VERSION) + 1));
-	sprintf(version, version_format, PROGRAM, VERSION);
+					     + strlen(VERSION)
+					     + strlen(library_version()) + 1));
+	sprintf(version, version_format, PROGRAM, VERSION, library_version());
 #endif
 
 	GtkWidget *version_label = gtk_label_new(version);

@@ -1,5 +1,16 @@
 2000-03-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (show_about_dialog): Show the library version.
+
+	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Add version.cc.
+
+	* libvx68k/version.cc: New file.
+	(library_version): New function.
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Add version.h.
+
+	* include/vx68k/version.h: New file.
+
 	* bin/main.cc (show_about_dialog): Add "report bugs" paragraph.
 	(main): Print copyright for `--version'.
 	(main): Modify "unhandled exception" message.

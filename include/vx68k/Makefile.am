@@ -1,4 +1,4 @@
 ## Process this file with automake to produce a Makefile.in.
 
-noinst_HEADERS = machine.h human.h gtk.h
+noinst_HEADERS = version.h machine.h human.h gtk.h
 
