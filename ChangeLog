@@ -1,3 +1,7 @@
+1999-02-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Makefile.am (dist-snapshot): New target.
+
 1998-11-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* vx68k/main.cc (main): Update dos::execute call.
