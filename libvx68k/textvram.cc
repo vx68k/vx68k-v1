@@ -410,7 +410,7 @@ text_video_memory::get_16(function_code fc, uint32_type address) const
   return value;
 }
 
-uint_type
+unsigned int
 text_video_memory::get_8(function_code fc, uint32_type address) const
 {
   if (fc != SUPER_DATA)
@@ -422,7 +422,8 @@ text_video_memory::get_8(function_code fc, uint32_type address) const
 }
 
 void
-text_video_memory::put_16(function_code fc, uint32_type address, uint_type value)
+text_video_memory::put_16(function_code fc, uint32_type address,
+			  uint_type value)
 {
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);
@@ -439,7 +440,8 @@ text_video_memory::put_16(function_code fc, uint32_type address, uint_type value
 }
 
 void
-text_video_memory::put_8(function_code fc, uint32_type address, uint_type value)
+text_video_memory::put_8(function_code fc, uint32_type address,
+			 unsigned int value)
 {
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);
