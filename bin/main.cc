@@ -250,6 +250,21 @@ vx68k_app::show_about_dialog()
 
 namespace
 {
+  /* Handles the FD Load command.  */
+  void
+  handle_fd_load_command(gpointer data, guint i, GtkWidget *item) throw ()
+  {
+    g_message("FD Load command is not implemented yet");
+  }
+
+  /* Handles the FD Eject command.  */
+  void
+  handle_fd_eject_command(gpointer data, guint i, GtkWidget *item) throw ()
+  {
+    g_message("FD Eject command is not implemented yet");
+  }
+
+  /* Handles About command.  */
   void
   handle_about_command(gpointer data, guint, GtkWidget *item) throw ()
   {
@@ -275,10 +290,14 @@ vx68k_app::create_window()
 	= gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<Window>", NULL);
 #define ITEM_FACTORY_CALLBACK(f) (reinterpret_cast<GtkItemFactoryCallback>(f))
       GtkItemFactoryEntry entries[]
-	= {{_("/_File/FD _0/_Load..."), NULL, NULL, 0, "<Item>"},
-	   {_("/_File/FD _0/_Eject"), NULL, NULL, 0, "<Item>"},
-	   {_("/_File/FD _1/_Load..."), NULL, NULL, 1, "<Item>"},
-	   {_("/_File/FD _1/_Eject"), NULL, NULL, 1, "<Item>"},
+	= {{_("/_File/FD _0/_Load..."), NULL,
+	    ITEM_FACTORY_CALLBACK(&handle_fd_load_command), 0, "<Item>"},
+	   {_("/_File/FD _0/_Eject"), NULL,
+	    ITEM_FACTORY_CALLBACK(&handle_fd_eject_command), 0, "<Item>"},
+	   {_("/_File/FD _1/_Load..."), NULL,
+	    ITEM_FACTORY_CALLBACK(&handle_fd_load_command), 1, "<Item>"},
+	   {_("/_File/FD _1/_Eject"), NULL,
+	    ITEM_FACTORY_CALLBACK(&handle_fd_eject_command), 1, "<Item>"},
 	   {_("/_File/"), NULL, NULL, 0, "<Separator>"},
 	   {_("/_File/E_xit"), NULL,
 	    ITEM_FACTORY_CALLBACK(&gtk_main_quit), 1, "<Item>"},

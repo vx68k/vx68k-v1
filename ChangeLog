@@ -6,6 +6,8 @@
 	handle_about_command): New functions.
 	(create_window): Use macro for function casts.  Use
 	handle_about_command for about handler.  Add new items.
+	(handle_fd_load_command, handle_fd_eject_command): New functions.
+	(create_window): Use the new functions for callbacks.
 
 2000-02-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
