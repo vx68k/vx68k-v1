@@ -1,5 +1,20 @@
 2000-01-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/statusreg.cc (class general_condition_tester): Renamed
+	from struct common_cc_evaluator.  Make base class non-virtual.
+	(class add_condition_tester): New class.
+	(class sub_condition_tester): Renamed from struct
+	cmp_cc_evaluator.  Also change all users.
+	(class asr_condition_tester): Renamed from struct
+	asr_cc_evaluator.  Also change all users.
+	(class lsl_condition_tester): Likewise.
+
+	* include/vm68k/cpu.h (class condition_tester): Renamed from
+	struct cc_evaluator.  Also change all users.
+	(vm68k): Add new static member add_condition_tester, and rename
+	common_cc_eval to general_condition_tester.  Add new member
+	function set_cc_as_add.
+
 	* TODO: Modified.
 
 2000-01-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>

@@ -164,9 +164,10 @@ namespace vm68k
 
 #endif /* VM68K_ENABLE_DEPRECATED */
 
-  /* Condition code evaluator (abstract base class).  */
-  struct cc_evaluator
+  /* Abstruct base class for condition testers.  */
+  class condition_tester
   {
+  public:
     virtual bool ls(const sint32_type *) const = 0;
     virtual bool cs(const sint32_type *) const = 0;
     virtual bool eq(const sint32_type *) const = 0;
@@ -181,12 +182,15 @@ namespace vm68k
   protected:
     enum
     {S = 1 << 13};
+
+  private:			// Condition testers
+    static const condition_tester *const general_condition_tester;
+    static const condition_tester *const add_condition_tester;
+
   private:
-    static const cc_evaluator *const common_cc_eval;
-  private:
-    const cc_evaluator *cc_eval;
+    const condition_tester *cc_eval;
     sint32_type cc_values[3];
-    const cc_evaluator *x_eval;
+    const condition_tester *x_eval;
     sint32_type x_values[3];
     uint_type value;
   public:
@@ -224,10 +228,19 @@ namespace vm68k
   public:
     /* Sets the condition codes by a result.  */
     void set_cc(sint32_type r)
-      {
-	cc_eval = common_cc_eval;
-	cc_values[0] = r;
-      }
+    {
+      cc_eval = general_condition_tester;
+      cc_values[0] = r;
+    }
+
+    /* Sets the condition codes as ADD.  */
+    void set_cc_as_add(sint32_type r, sint32_type d, sint32_type s)
+    {
+      x_eval = cc_eval = add_condition_tester;
+      x_values[0] = cc_values[0] = r;
+      x_values[1] = cc_values[1] = d;
+      x_values[2] = cc_values[2] = s;
+    }
 
     void set_cc_cmp(sint32_type, sint32_type, sint32_type);
     void set_cc_sub(sint32_type, sint32_type, sint32_type);

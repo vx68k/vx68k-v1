@@ -28,26 +28,46 @@ using namespace vm68k;
 
 namespace
 {
-  struct common_cc_evaluator
-    : virtual cc_evaluator
+  /* Condition tester for general case.  */
+  class general_condition_tester
+    : public condition_tester
   {
+  public:
     bool ls(const sint32_type *values) const
-      {return uint32_type(values[0]) <= 0;}
+    {return uint32_type(values[0]) <= 0;}
     bool cs(const sint32_type *values) const
-      {return false;}
+    {return false;}
     bool eq(const sint32_type *values) const
-      {return values[0] == 0;}
+    {return values[0] == 0;}
     bool mi(const sint32_type *values) const
-      {return values[0] < 0;}
+    {return values[0] < 0;}
     bool lt(const sint32_type *values) const
-      {return values[0] < 0;}
+    {return values[0] < 0;}
     bool le(const sint32_type *values) const
-      {return values[0] <= 0;}
+    {return values[0] <= 0;}
   };
 
-  struct cmp_cc_evaluator
-    : common_cc_evaluator
+  /* Condition tester for ADD.  */
+  class add_condition_tester
+    : public general_condition_tester
   {
+  public:
+    // FIXME: Check if these tests are correct.
+    bool ls(const sint32_type *values) const
+    {return uint32_type(1 - values[1]) <= uint32_type(values[2]);}
+    bool cs(const sint32_type *values) const
+    {return uint32_type(1 - values[1]) < uint32_type(values[2]);}
+    bool lt(const sint32_type *values) const
+    {return values[1] < 1 - values[2];}
+    bool le(const sint32_type *values) const
+    {return values[1] <= 1 - values[2];}
+  };
+
+  /* Condition tester for SUB and CMP.  */
+  class sub_condition_tester
+    : public general_condition_tester
+  {
+  public:
     bool ls(const sint32_type *values) const
       {return uint32_type(values[1]) <= uint32_type(values[2]);}
     bool cs(const sint32_type *values) const
@@ -58,9 +78,11 @@ namespace
       {return values[1] <= values[2];}
   };
 
-  struct asr_cc_evaluator
-    : common_cc_evaluator
+  /* Condition tester for ASR.  */
+  class asr_condition_tester
+    : public general_condition_tester
   {
+  public:
     bool ls(const sint32_type *values) const
       {return values[0] == 0 || cs(values);}
     bool cs(const sint32_type *values) const
@@ -68,9 +90,11 @@ namespace
 	       && uint32_type(values[1]) & uint32_type(1) << values[2] - 1);}
   };
 
-  struct lsl_cc_evaluator
-    : common_cc_evaluator
+  /* Condition tester for LSL.  */
+  class lsl_condition_tester
+    : public general_condition_tester
   {
+  public:
     bool ls(const sint32_type *values) const
       {return values[0] == 0 || cs(values);}
     bool cs(const sint32_type *values) const
@@ -78,16 +102,17 @@ namespace
 	       && uint32_type(values[1]) & uint32_type(1) << 32 - values[2]);}
   };
 
-  const common_cc_evaluator common_cc_eval;
-  const cmp_cc_evaluator cmp_cc_eval;
-  const asr_cc_evaluator asr_cc_eval;
-  const lsl_cc_evaluator lsl_cc_eval;
+  const general_condition_tester const_general_condition_tester;
+  const add_condition_tester const_add_condition_tester;
+  const sub_condition_tester const_sub_condition_tester;
+  const asr_condition_tester const_asr_condition_tester;
+  const lsl_condition_tester const_lsl_condition_tester;
 } // (unnamed namespace)
 
 void
 status_register::set_cc_cmp(sint32_type r, sint32_type d, sint32_type s)
 {
-  cc_eval = &cmp_cc_eval;
+  cc_eval = &const_sub_condition_tester;
   cc_values[0] = r;
   cc_values[1] = d;
   cc_values[2] = s;
@@ -96,7 +121,7 @@ status_register::set_cc_cmp(sint32_type r, sint32_type d, sint32_type s)
 void
 status_register::set_cc_sub(sint32_type r, sint32_type d, sint32_type s)
 {
-  x_eval = cc_eval = &cmp_cc_eval;
+  x_eval = cc_eval = &const_sub_condition_tester;
   x_values[0] = cc_values[0] = r;
   x_values[1] = cc_values[1] = d;
   x_values[2] = cc_values[2] = s;
@@ -105,7 +130,7 @@ status_register::set_cc_sub(sint32_type r, sint32_type d, sint32_type s)
 void
 status_register::set_cc_asr(sint32_type r, sint32_type d, uint_type s)
 {
-  x_eval = cc_eval = &asr_cc_eval;
+  x_eval = cc_eval = &const_asr_condition_tester;
   x_values[0] = cc_values[0] = r;
   x_values[1] = cc_values[1] = d;
   x_values[2] = cc_values[2] = s;
@@ -114,17 +139,20 @@ status_register::set_cc_asr(sint32_type r, sint32_type d, uint_type s)
 void
 status_register::set_cc_lsl(sint32_type r, sint32_type d, uint_type s)
 {
-  x_eval = cc_eval = &lsl_cc_eval;
+  x_eval = cc_eval = &const_lsl_condition_tester;
   x_values[0] = cc_values[0] = r;
   x_values[1] = cc_values[1] = d;
   x_values[2] = cc_values[2] = s;
 }
 
-const cc_evaluator *const status_register::common_cc_eval = &::common_cc_eval;
+const condition_tester *const
+status_register::general_condition_tester = &const_general_condition_tester;
+const condition_tester *const
+status_register::add_condition_tester = &const_add_condition_tester;
 
 status_register::status_register()
-  : cc_eval(common_cc_eval),
-    x_eval(common_cc_eval),
+  : cc_eval(general_condition_tester),
+    x_eval(general_condition_tester),
     value(S)
 {
 }
