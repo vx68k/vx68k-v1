@@ -1,5 +1,11 @@
 2000-01-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (set_instruction): Use the new method.
+
+	* include/vm68k/cpu.h (class exec_unit): Add mew member type
+	instruction.  Change type of instructions.  Add new member
+	set_instruction.
+
 	* libvm68k/execunit.cc (run): Add interrupt checking.
 
 	* libvm68k/context.cc (handle_interrupts): New function.

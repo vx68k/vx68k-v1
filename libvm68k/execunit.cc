@@ -67,7 +67,6 @@ exec_unit::run(context &c) const
     }
 }
 
-/* Sets an instruction to operation codes.  */
 void
 exec_unit::set_instruction(int code, int mask, instruction_handler h,
 			   instruction_data *data)
@@ -79,11 +78,11 @@ exec_unit::set_instruction(int code, int mask, instruction_handler h,
     {
       if ((i & ~mask) == code)
 	{
+	  instruction old_value = set_instruction(i, make_pair(h, data));
 #ifdef L
-	  if (instructions[i].first != &illegal)
+	  if (old_value.first != &illegal)
 	    L("warning: Replacing instruction handler at 0x%04x\n", i);
 #endif
-	  instructions[i] = make_pair(h, data);
 	}
     }
 }

@@ -336,15 +336,31 @@ namespace vm68k
   public:
     typedef void (*instruction_handler)(unsigned int, context &,
 					instruction_data *);
+
+    /* Type of an instruction.  */
+    typedef pair<instruction_handler, instruction_data *> instruction;
+
   public:
     static void illegal(unsigned int, context &, instruction_data *);
   protected:
     static void install_instructions(exec_unit &);
   private:
-    pair<instruction_handler, instruction_data *> instructions[0x10000];
+    instruction instructions[0x10000];
+
   public:
     exec_unit();
   public:
+    /* Sets an instruction for an operation word.  The old value is
+       returned.  */
+    instruction set_instruction(uint_type op, const instruction &i)
+    {
+      op &= 0xffffu;
+      instruction old_value = instructions[op];
+      instructions[op] = i;
+      return old_value;
+    }
+
+    /* Sets an instruction to operation codes.  */
     void set_instruction(int op, int mask, instruction_handler,
 			 instruction_data *);
     void set_instruction(int op, int mask, instruction_handler h)
