@@ -1,6 +1,7 @@
 1999-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* lib/vm68k/execunit.cc (bcc, dbf_d): New functions.
+	* lib/vm68k/execunit.cc (bcc, dbf_d, addqb_d, addql_d, andl_i_d,
+	movew_d_postinc, tstb_d): New functions.
 	(install_instructions): Set instructions.
 
 	* lib/vm68k/statusreg.cc (cs): New function.
