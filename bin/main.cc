@@ -142,7 +142,7 @@ main(int argc, char **argv)
 
   if (opt_version)
     {
-      printf("vx68k (%s) %s\n", "Virtual X68000", VERSION);
+      printf("%s %s\n", PACKAGE, VERSION);
       return EXIT_SUCCESS;
     }
 

@@ -1,5 +1,7 @@
 1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (main): Modify version string.
+
 	* bin/Makefile.am (INCLUDES): Add ${GTK_CFLAGS}.
 	(vx68k_LDADD): Add ${GTK_LIBS}.
 
