@@ -236,7 +236,7 @@ text_video_memory::put_16(int fc, uint32_type address, uint_type value)
   if (connected_console != NULL)
     {
       unsigned int x = address % ROW_SIZE;
-      unsigned int y = address / ROW_SIZE;
+      unsigned int y = address / ROW_SIZE % 1024u;
       connected_console->update_area(x * 8, y, 16, 1);
     }
 }
@@ -253,7 +253,7 @@ text_video_memory::put_8(int fc, uint32_type address, uint_type value)
   if (connected_console != NULL)
     {
       unsigned int x = address % ROW_SIZE;
-      unsigned int y = address / ROW_SIZE;
+      unsigned int y = address / ROW_SIZE % 1024u;
       connected_console->update_area(x * 8, y, 8, 1);
     }
 }

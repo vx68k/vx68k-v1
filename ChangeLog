@@ -1,5 +1,15 @@
 2000-08-06  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68kgtk/gtkconsole.cc (handle_timeout): Request drawing only
+	in RGB buffer.
+
+	* libvx68k/textvram.cc (put_16, put_8): Wrap y for update_area.
+
+	* libvm68k/execunit.cc (m68k_andi_to_ccr): New function.
+	(m68k_suba): New function template.
+	(subal): #if'd out.
+	(initialize_instructions): Use new handlers.
+
 	* libvx68k/systemrom.cc (iocs_ms_curst, iocs_ms_init,
 	iocs_ms_limit): New function.
 	(initialize_iocs_functions): Use new handlers.

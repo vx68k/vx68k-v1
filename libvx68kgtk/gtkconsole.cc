@@ -362,8 +362,14 @@ gtk_console::handle_timeout()
       update_region = gdk_region_new();
       gdk_threads_leave();
 
-      _m->get_image(bounds.x, bounds.y, bounds.width, bounds.height,
-		    rgb_buf + bounds.y * row_size + bounds.x * 3, row_size);
+      if (bounds.width + bounds.x > 768)
+	bounds.width = 768 - bounds.x;
+      if (bounds.height + bounds.y > 512)
+	bounds.height = 512 - bounds.y;
+
+      if (bounds.x < 768 && bounds.y < 512)
+	_m->get_image(bounds.x, bounds.y, bounds.width, bounds.height,
+		      rgb_buf + bounds.y * row_size + bounds.x * 3, row_size);
 
       gdk_threads_enter();
       for (vector<GtkWidget *>::const_iterator i = widgets.begin();

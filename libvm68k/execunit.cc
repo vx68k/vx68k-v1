@@ -437,6 +437,27 @@ namespace
   }
 #endif
 
+  /* Handles an ANDI-to-CCR instruction.  */
+  void
+  m68k_andi_to_ccr(uint_type op, context &c, unsigned long data)
+  {
+    typedef byte_size::uvalue_type uvalue_type;
+    typedef byte_size::svalue_type svalue_type;
+
+    uvalue_type value2 = c.fetch(byte_size(), 2);
+#ifdef TRACE_INSTRUCTIONS
+    L("\tandi%s\t", byte_size::suffix());
+    L("#%#x,", value2);
+    L("%%ccr\n");
+#endif
+
+    uvalue_type value1 = c.regs.ccr & 0xffu;
+    uvalue_type value = value1 & value2;
+    c.regs.ccr = c.regs.ccr & ~0xffu | value & 0xffu;
+
+    c.regs.pc += 2 + byte_size::aligned_value_size();
+  }
+
   /* Handles an ASL instruction with an immediate count.  */
   template <class Size> void
   m68k_asl_i(uint_type op, context &c, unsigned long data)
@@ -2696,6 +2717,34 @@ namespace
   }
 #endif
 
+  /* Handles an SUBA instruction.  */
+  template <class Size, class Source> void
+  m68k_suba(uint_type op, context &c, unsigned long data)
+  {
+    typedef long_word_size::uvalue_type uvalue_type;
+    typedef long_word_size::svalue_type svalue_type;
+
+    Source ea1(op & 0x7, 2);
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef TRACE_INSTRUCTIONS
+    L("\tsuba%s\t", Size::suffix());
+    L("%s,", ea1.text(c));
+    L("%%a%u\n", reg2);
+#endif
+
+    // This instruction does not affect the condition codes.
+    svalue_type value1 = ea1.get(c);
+    svalue_type value2
+      = long_word_size::svalue(long_word_size::get(c.regs.a[reg2]));
+    svalue_type value
+      = long_word_size::svalue(long_word_size::get(value2 - value1));
+    long_word_size::put(c.regs.a[reg2], value);
+
+    ea1.finish(c);
+    c.regs.pc += 2 + ea1.extension_size();
+  }
+
+#if 0
   template <class Source> void
   subal(uint_type op, context &ec, unsigned long data)
   {
@@ -2715,6 +2764,7 @@ namespace
 
     ec.regs.pc += 2 + ea1.isize(4);
   }
+#endif
 
   template <class Destination> void
   subib(uint_type op, context &ec, unsigned long data)
@@ -3061,6 +3111,8 @@ namespace
 		       &m68k_andi<byte_size, byte_abs_short>);
     eu.set_instruction(0x0239, 0x0000,
 		       &m68k_andi<byte_size, byte_abs_long>);
+    eu.set_instruction(0x023c, 0x0000,
+		       &m68k_andi_to_ccr);
     eu.set_instruction(0x0240, 0x0007, &m68k_andi<word_size, word_d_register>);
     eu.set_instruction(0x0250, 0x0007, &m68k_andi<word_size, word_indirect>);
     eu.set_instruction(0x0258, 0x0007,
@@ -4411,6 +4463,30 @@ namespace
     eu.set_instruction(0x90b8, 0x0e00, &subl<absolute_short>);
     eu.set_instruction(0x90b9, 0x0e00, &subl<absolute_long>);
     eu.set_instruction(0x90bc, 0x0e00, &subl<immediate>);
+    eu.set_instruction(0x90c0, 0x0e07,
+		       &m68k_suba<word_size, word_d_register>);
+    eu.set_instruction(0x90c8, 0x0e07,
+		       &m68k_suba<word_size, word_a_register>);
+    eu.set_instruction(0x90d0, 0x0e07,
+		       &m68k_suba<word_size, word_indirect>);
+    eu.set_instruction(0x90d8, 0x0e07,
+		       &m68k_suba<word_size, word_postinc_indirect>);
+    eu.set_instruction(0x90e0, 0x0e07,
+		       &m68k_suba<word_size, word_predec_indirect>);
+    eu.set_instruction(0x90e8, 0x0e07,
+		       &m68k_suba<word_size, word_disp_indirect>);
+    eu.set_instruction(0x90f0, 0x0e07,
+		       &m68k_suba<word_size, word_index_indirect>);
+    eu.set_instruction(0x90f8, 0x0e00,
+		       &m68k_suba<word_size, word_abs_short>);
+    eu.set_instruction(0x90f9, 0x0e00,
+		       &m68k_suba<word_size, word_abs_long>);
+    eu.set_instruction(0x90fa, 0x0e00,
+		       &m68k_suba<word_size, word_disp_pc_indirect>);
+    eu.set_instruction(0x90fb, 0x0e00,
+		       &m68k_suba<word_size, word_index_pc_indirect>);
+    eu.set_instruction(0x90fc, 0x0e00,
+		       &m68k_suba<word_size, word_immediate>);
     eu.set_instruction(0x9110, 0x0e07,
 		       &m68k_sub_m<byte_size, byte_indirect>);
     eu.set_instruction(0x9118, 0x0e07,
@@ -4450,17 +4526,30 @@ namespace
 		       &m68k_sub_m<long_word_size, long_word_abs_short>);
     eu.set_instruction(0x91b9, 0x0e00,
 		       &m68k_sub_m<long_word_size, long_word_abs_long>);
-    eu.set_instruction(0x91c0, 0x0e07, &subal<data_register>);
-    eu.set_instruction(0x91c8, 0x0e07, &subal<address_register>);
-    eu.set_instruction(0x91d0, 0x0e07, &subal<indirect>);
-    eu.set_instruction(0x91d8, 0x0e07, &subal<postinc_indirect>);
-    eu.set_instruction(0x91e0, 0x0e07, &subal<predec_indirect>);
-    eu.set_instruction(0x91e8, 0x0e07, &subal<disp_indirect>);
-    eu.set_instruction(0x91f0, 0x0e07, &subal<indexed_indirect>);
-    eu.set_instruction(0x91f8, 0x0e00, &subal<absolute_short>);
-    eu.set_instruction(0x91f9, 0x0e00, &subal<absolute_long>);
-    eu.set_instruction(0x91fa, 0x0e00, &subal<disp_pc>);
-    eu.set_instruction(0x91fc, 0x0e00, &subal<immediate>);
+    eu.set_instruction(0x91c0, 0x0e07,
+		       &m68k_suba<long_word_size, long_word_d_register>);
+    eu.set_instruction(0x91c8, 0x0e07,
+		       &m68k_suba<long_word_size, long_word_a_register>);
+    eu.set_instruction(0x91d0, 0x0e07,
+		       &m68k_suba<long_word_size, long_word_indirect>);
+    eu.set_instruction(0x91d8, 0x0e07,
+		       &m68k_suba<long_word_size, long_word_postinc_indirect>);
+    eu.set_instruction(0x91e0, 0x0e07,
+		       &m68k_suba<long_word_size, long_word_predec_indirect>);
+    eu.set_instruction(0x91e8, 0x0e07,
+		       &m68k_suba<long_word_size, long_word_disp_indirect>);
+    eu.set_instruction(0x91f0, 0x0e07,
+		       &m68k_suba<long_word_size, long_word_index_indirect>);
+    eu.set_instruction(0x91f8, 0x0e00,
+		       &m68k_suba<long_word_size, long_word_abs_short>);
+    eu.set_instruction(0x91f9, 0x0e00,
+		       &m68k_suba<long_word_size, long_word_abs_long>);
+    eu.set_instruction(0x91fa, 0x0e00,
+		       &m68k_suba<long_word_size, long_word_disp_pc_indirect>);
+    eu.set_instruction(0x91fb, 0x0e00,
+		       &m68k_suba<long_word_size, long_word_index_pc_indirect>);
+    eu.set_instruction(0x91fc, 0x0e00,
+		       &m68k_suba<long_word_size, long_word_immediate>);
     eu.set_instruction(0xb000, 0x0e07,
 		       &m68k_cmp<byte_size, byte_d_register>);
     eu.set_instruction(0xb010, 0x0e07,
