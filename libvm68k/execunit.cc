@@ -307,7 +307,7 @@ namespace
     svalue_type value2 = Size::svalue(c.fetch(Size(), 2));
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
 #ifdef TRACE_INSTRUCTIONS
-    L(" andi%s ", Size::suffix());
+    L("\tandi%s\t", Size::suffix());
     L("#%#lx,", (unsigned long) Size::get(value2));
     L("%s\n", ea1.text(c));
 #endif
@@ -502,7 +502,7 @@ namespace
 	extsize = 0;
       }
 #ifdef TRACE_INSTRUCTIONS
-    L(" b%s ", Condition::text());
+    L("\tb%s\t", Condition::text());
     L("%#lx\n", (unsigned long) (c.regs.pc + 2 + disp));
 #endif
 
@@ -3056,6 +3056,7 @@ namespace
     eu.set_instruction(0x31b9, 0x0e00, &movew<absolute_long, indexed_indirect>);
     eu.set_instruction(0x31bc, 0x0e00, &movew<immediate, indexed_indirect>);
     eu.set_instruction(0x31c0, 0x0007, &movew<data_register, absolute_short>);
+    eu.set_instruction(0x31e8, 0x0007, &movew<disp_indirect, absolute_short>);
     eu.set_instruction(0x31f9, 0x0000, &movew<absolute_long, absolute_short>);
     eu.set_instruction(0x31fc, 0x0000, &movew<immediate, absolute_short>);
     eu.set_instruction(0x33c0, 0x0007, &movew<data_register, absolute_long>);
