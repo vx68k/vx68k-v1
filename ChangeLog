@@ -1,3 +1,10 @@
+2000-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Add iocs.h.
+
+	* include/vx68k/iocs.h: New file.
+	(class disk): New class.
+
 2000-03-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* README: Updated.
