@@ -1,4 +1,4 @@
-List of things to do in Virtual X68000.  -*-C++-*-
+List of things to do in Virtual X68000.  -*-Outline-*-
 
 * Testing Screen Drawing by Mesa
 
@@ -10,9 +10,11 @@ cards.
 A possible drawback of using Mesa is worse performance on older
 hardware.  Can it be paid for better user interface?
 
-* Implement the DMA controller.
+* Adding ~/.vx68k Support
 
-* Generalize interrupt handling.
+All per-user files should be stored in one place.
+
+* Implement the DMA controller.
 
 * Implement text cursor.
 
