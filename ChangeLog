@@ -1,7 +1,15 @@
 1999-03-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* vm68k/execunit.cc (move_l_a_predec): New function.
-	(lea_absl_a): New function.
+	* vx68k/dos.cc: Modify comments.
+
+	* vm68k/execunit.cc (link, move_l_a_predec, movem_l_r_predec):
+	Store data to memory.
+
+	* vx68k/dos.cc (start): Set a7 to a safe value.
+
+	* vm68k/cpu.cc: Modify comments.
+
+	* vm68k/execunit.cc (move_l_a_predec, lea_absl_a): New function.
 	(install_instructions): Set &move_l_a_predec and &lea_absl_a.
 
 	* vm68k/execunit.cc (link): New function.

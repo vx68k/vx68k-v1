@@ -98,7 +98,7 @@ namespace
       fprintf(stderr, " link a%d,#%d\n", reg, disp);
 
       // FIXME.
-      // ec->mem->putl(fc, ec->regs.a[7] - 4, ec->regs.a[reg]);
+      ec->mem->putl(fc, ec->regs.a[7] - 4, ec->regs.a[reg]);
       ec->regs.a[7] -= 4;
       ec->regs.a[reg] = ec->regs.a[7];
       ec->regs.a[7] += disp;
@@ -114,7 +114,8 @@ namespace
       fprintf(stderr, " move.l a%d,-(a%d)\n", s_reg, d_reg);
 
       // FIXME.
-      // ec->mem->putl(fc, ec->regs.a[d_reg] - 4, ec->regs.a[s_reg]);
+      int fc = 1 ? SUPER_DATA : USER_DATA; // FIXME.
+      ec->mem->putl(fc, ec->regs.a[d_reg] - 4, ec->regs.a[s_reg]);
       ec->regs.a[d_reg] -= 4;
 
       ec->regs.pc += 2;
@@ -133,7 +134,7 @@ namespace
 	  if (bitmap & 1 != 0)
 	    {
 	      // FIXME.
-	      // ec->mem->putl(fc, ec->regs.a[reg] - 4, ec->regs.d[15 - i]);
+	      ec->mem->putl(fc, ec->regs.a[reg] - 4, ec->regs.d[15 - i]);
 	      ec->regs.a[reg] -= 4;
 	    }
 	  bitmap >>= 1;
