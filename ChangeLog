@@ -1,5 +1,8 @@
 2000-08-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_txfill): New function.
+	(initialize_iocs_functions): Add new handler.
+
 	* libvm68k/addrspace.cc: Move functions.
 	(fill): New functions.
 	(memory_address_space): Change initialization.

@@ -1231,6 +1231,16 @@ namespace
     fprintf(stderr, "iocs_tpalet: FIXME: not implemented\n");
   }
 
+  /* Handles a _TXFILL call.  */
+  void
+  iocs_txfill(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _TXFILL; %%a1=0x%08lx\n", long_word_size::get(c.regs.a[1]) + 0UL);
+#endif
+    fprintf(stderr, "iocs_txfill: FIXME: not implemented\n");
+  }
+
   /* Handles a _VDISPST call.  */
   void
   iocs_vdispst(context &c, unsigned long data)
@@ -1381,6 +1391,7 @@ namespace
     rom->set_iocs_function(0xac, iocs_function_type(&iocs_sys_stat, 0));
     rom->set_iocs_function(0xae, iocs_function_type(&iocs_os_curon, 0));
     rom->set_iocs_function(0xaf, iocs_function_type(&iocs_os_curof, 0));
+    rom->set_iocs_function(0xd7, iocs_function_type(&iocs_txfill, 0));
   }
 } // namespace (unnamed)
 
