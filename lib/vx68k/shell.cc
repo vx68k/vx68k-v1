@@ -41,11 +41,26 @@ using namespace std;
 uint32_type
 shell::create_env(const char *const *envp)
 {
-  // FIXME
+#ifdef L
+  L("shell: creating environment\n");
+#endif
+  size_t env_size = 4 + 1;
+  const char *const *p = envp;
+  while (*p != NULL)
+    env_size += strlen(*p++) + 1;
 
-  const size_t ENV_SIZE = 512;
-  uint32_type env = _context->malloc(ENV_SIZE);
-  _context->mem->putl(SUPER_DATA, env, ENV_SIZE);
+  env_size = (env_size + 0x200u + 0x1ffu) & ~0x1ffu;
+  uint32_type env = _context->malloc(env_size);
+  _context->mem->putl(SUPER_DATA, env, env_size);
+
+  uint32_type address = env + 4;
+  p = envp;
+  while (*p != NULL)
+    {
+      size_t len = strlen(*p) + 1;
+      _context->mem->write(SUPER_DATA, address, *p++, len);
+      address += len;
+    }
 
   return env;
 }
