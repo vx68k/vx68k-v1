@@ -1,5 +1,17 @@
 1999-10-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/Makefile.am (libvm68k_la_LDFLAGS): Set version info 1:0:0.
+
+	* include/vm68k/cpu.h (extsb, extsw, extsl): Add function
+	comments.
+	(extsb, extsl): Avoid old-style casts.
+	(extsw): Use sint_type and uint_type.
+	(struct registers): Move member pc before sr.
+
+	* include/vm68k/types.h: Remove int32, uint32, uint16, and uint8.
+	Also change all uses to sint32_type, uint32_type, unsigned short,
+	and unsigned char respectively.
+
 	* vx68k/dos.cc (dos_delete, dos_filedate, dos_getdate, dos_getpdb,
 	dos_gettim2, dos_intvcs, dos_ioctrl, dos_read, dos_vernum,
 	dos_write): Change log messages.

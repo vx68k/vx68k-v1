@@ -43,7 +43,7 @@ namespace vm68k
 	{return extsb(ec.regs.d[reg]);}
       int getw(const context &ec) const
 	{return extsw(ec.regs.d[reg]);}
-      int32 getl(const context &ec) const
+      sint32_type getl(const context &ec) const
 	{return extsl(ec.regs.d[reg]);}
       void putb(context &ec, uint_type value) const
 	{modify_b(ec.regs.d[reg], value);}
@@ -80,11 +80,11 @@ namespace vm68k
       // XXX: getb, putb, and finishb are not available.
       int getw(const context &ec) const
 	{return extsw(ec.regs.a[reg]);}
-      int32 getl(const context &ec) const
+      sint32_type getl(const context &ec) const
 	{return extsl(ec.regs.a[reg]);}
       void putw(context &ec, int value) const
 	{ec.regs.a[reg] = extsw(value);}
-      void putl(context &ec, int32 value) const
+      void putl(context &ec, sint32_type value) const
 	{ec.regs.a[reg] = value;}
       void finishw(context &) const {}
       void finishl(context &) const {}
@@ -110,19 +110,19 @@ namespace vm68k
     public:
       size_t isize(size_t) const
 	{return 0;}
-      uint32 address(const context &ec) const
+      uint32_type address(const context &ec) const
 	{return ec.regs.a[reg];}
       int getb(const context &ec) const
 	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
       int getw(const context &ec) const
 	{return extsw(ec.mem->getw(ec.data_fc(), address(ec)));}
-      int32 getl(const context &ec) const
+      sint32_type getl(const context &ec) const
 	{return extsl(ec.mem->getl(ec.data_fc(), address(ec)));}
       void putb(context &ec, int value) const
 	{ec.mem->putb(ec.data_fc(), address(ec), value);}
       void putw(context &ec, int value) const
 	{ec.mem->putw(ec.data_fc(), address(ec), value);}
-      void putl(context &ec, int32 value) const
+      void putl(context &ec, sint32_type value) const
 	{ec.mem->putl(ec.data_fc(), address(ec), value);}
       void finishb(context &) const {}
       void finishw(context &) const {}
@@ -154,13 +154,13 @@ namespace vm68k
 	{return extsb(ec.mem->getb(ec.data_fc(), ec.regs.a[reg]));}
       int getw(const context &ec) const
 	{return extsw(ec.mem->getw(ec.data_fc(), ec.regs.a[reg]));}
-      int32 getl(const context &ec) const
+      sint32_type getl(const context &ec) const
 	{return extsl(ec.mem->getl(ec.data_fc(), ec.regs.a[reg]));}
       void putb(context &ec, int value) const
 	{ec.mem->putb(ec.data_fc(), ec.regs.a[reg], value);}
       void putw(context &ec, int value) const
 	{ec.mem->putw(ec.data_fc(), ec.regs.a[reg], value);}
-      void putl(context &ec, int32 value) const
+      void putl(context &ec, sint32_type value) const
 	{ec.mem->putl(ec.data_fc(), ec.regs.a[reg], value);}
       void finishb(context &ec) const
 	{ec.regs.a[reg] += reg == 7 ? 2 : 1;} // XXX: %a7 is special.
@@ -197,7 +197,7 @@ namespace vm68k
 				// XXX: %a7 is special.
       int getw(const context &ec) const
 	{return extsw(ec.mem->getw(ec.data_fc(), ec.regs.a[reg] - 2));}
-      int32 getl(const context &ec) const
+      sint32_type getl(const context &ec) const
 	{return extsl(ec.mem->getl(ec.data_fc(), ec.regs.a[reg] - 4));}
       void putb(context &ec, int value) const
 	{ec.mem->putb(ec.data_fc(),
@@ -205,7 +205,7 @@ namespace vm68k
 				// XXX: %a7 is special.
       void putw(context &ec, int value) const
 	{ec.mem->putw(ec.data_fc(), ec.regs.a[reg] - 2, value);}
-      void putl(context &ec, int32 value) const
+      void putl(context &ec, sint32_type value) const
 	{ec.mem->putl(ec.data_fc(), ec.regs.a[reg] - 4, value);}
       void finishb(context &ec) const
 	{ec.regs.a[reg] -= reg == 7 ? 2 : 1;} // XXX: %a7 is special.
@@ -236,19 +236,19 @@ namespace vm68k
     public:
       size_t isize(size_t) const
 	{return 2;}
-      uint32 address(const context &ec) const
+      uint32_type address(const context &ec) const
 	{return ec.regs.a[reg] + extsw(ec.fetchw(offset));}
       int getb(const context &ec) const
 	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
       int getw(const context &ec) const
 	{return extsw(ec.mem->getw(ec.data_fc(), address(ec)));}
-      int32 getl(const context &ec) const
+      sint32_type getl(const context &ec) const
 	{return extsl(ec.mem->getl(ec.data_fc(), address(ec)));}
       void putb(context &ec, int value) const
 	{ec.mem->putb(ec.data_fc(), address(ec), value);}
       void putw(context &ec, int value) const
 	{ec.mem->putw(ec.data_fc(), address(ec), value);}
-      void putl(context &ec, int32 value) const
+      void putl(context &ec, sint32_type value) const
 	{ec.mem->putl(ec.data_fc(), address(ec), value);}
       void finishb(context &) const {}
       void finishw(context &) const {}
@@ -293,7 +293,7 @@ namespace vm68k
 	{ec.mem->putb(ec.data_fc(), address(ec), value);}
       void putw(context &ec, int value) const
 	{ec.mem->putw(ec.data_fc(), address(ec), value);}
-      void putl(context &ec, int32 value) const
+      void putl(context &ec, sint32_type value) const
 	{ec.mem->putl(ec.data_fc(), address(ec), value);}
       void finishb(context &) const {}
       void finishw(context &) const {}
@@ -327,19 +327,19 @@ namespace vm68k
     public:
       size_t isize(size_t) const
 	{return 2;}
-      uint32 address(const context &ec) const
+      uint32_type address(const context &ec) const
 	{return ec.fetchw(offset);}
       int getb(const context &ec) const
 	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
       int getw(const context &ec) const
 	{return extsw(ec.mem->getw(ec.data_fc(), address(ec)));}
-      int32 getl(const context &ec) const
+      sint32_type getl(const context &ec) const
 	{return extsl(ec.mem->getl(ec.data_fc(), address(ec)));}
       void putb(context &ec, int value) const
 	{ec.mem->putb(ec.data_fc(), address(ec), value);}
       void putw(context &ec, int value) const
 	{ec.mem->putw(ec.data_fc(), address(ec), value);}
-      void putl(context &ec, int32 value) const
+      void putl(context &ec, sint32_type value) const
 	{ec.mem->putl(ec.data_fc(), address(ec), value);}
       void finishb(context &) const {}
       void finishw(context &) const {}
@@ -366,19 +366,19 @@ namespace vm68k
     public:
       size_t isize(size_t) const
 	{return 4;}
-      uint32 address(const context &ec) const
+      uint32_type address(const context &ec) const
 	{return ec.fetchl(offset);}
       int getb(const context &ec) const
 	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
       int getw(const context &ec) const
 	{return extsw(ec.mem->getw(ec.data_fc(), address(ec)));}
-      int32 getl(const context &ec) const
+      sint32_type getl(const context &ec) const
 	{return extsl(ec.mem->getl(ec.data_fc(), address(ec)));}
       void putb(context &ec, int value) const
 	{ec.mem->putb(ec.data_fc(), address(ec), value);}
       void putw(context &ec, int value) const
 	{ec.mem->putw(ec.data_fc(), address(ec), value);}
-      void putl(context &ec, int32 value) const
+      void putl(context &ec, sint32_type value) const
 	{ec.mem->putl(ec.data_fc(), address(ec), value);}
       void finishb(context &) const {}
       void finishw(context &) const {}
@@ -405,13 +405,13 @@ namespace vm68k
     public:
       size_t isize(size_t size) const
 	{return 2;}
-      uint32 address(const context &ec) const
+      uint32_type address(const context &ec) const
 	{return ec.regs.pc + offset + extsw(ec.fetchw(offset));}
       int getb(const context &ec) const
 	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
       int getw(const context &ec) const
 	{return extsw(ec.mem->getw(ec.data_fc(), address(ec)));}
-      int32 getl(const context &ec) const
+      sint32_type getl(const context &ec) const
 	{return extsl(ec.mem->getl(ec.data_fc(), address(ec)));}
       // XXX: putb, putw, and putl are unimplemented.
       void finishb(context &ec) const {}
@@ -457,7 +457,7 @@ namespace vm68k
 	{ec.mem->putb(ec.data_fc(), address(ec), value);}
       void putw(context &ec, int value) const
 	{ec.mem->putw(ec.data_fc(), address(ec), value);}
-      void putl(context &ec, int32 value) const
+      void putl(context &ec, sint32_type value) const
 	{ec.mem->putl(ec.data_fc(), address(ec), value);}
       void finishb(context &) const {}
       void finishw(context &) const {}
@@ -496,7 +496,7 @@ namespace vm68k
 	{return extsb(ec.fetchw(offset));}
       int getw(const context &ec) const
 	{return extsw(ec.fetchw(offset));}
-      int32 getl(const context &ec) const
+      sint32_type getl(const context &ec) const
 	{return extsl(ec.fetchl(offset));}
       // XXX: putb, putw, and putl are unimplemented.
       void finishb(context &) const {}

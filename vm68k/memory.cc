@@ -32,21 +32,21 @@ using namespace std;
 uint_type
 vm68k::getw(const void *address)
 {
-  const uint8 *p = static_cast<const uint8 *>(address);
+  const unsigned char *p = static_cast<const unsigned char *>(address);
   return p[0] << 8 | p[1];
 }
 
 uint32_type
 vm68k::getl(const void *address)
 {
-  const uint8 *p = static_cast<const uint8 *>(address);
+  const unsigned char *p = static_cast<const unsigned char *>(address);
   return uint32_type(getw(p + 0)) << 16 | uint32_type(getw(p + 2));
 }
 
 void
 vm68k::putw(void *address, uint_type value)
 {
-  uint8 *p = static_cast<uint8 *>(address);
+  unsigned char *p = static_cast<unsigned char *>(address);
   p[0] = value >> 8;
   p[1] = value;
 }
@@ -54,12 +54,12 @@ vm68k::putw(void *address, uint_type value)
 void
 vm68k::putl(void *address, uint32_type value)
 {
-  uint8 *p = static_cast<uint8 *>(address);
+  unsigned char *p = static_cast<unsigned char *>(address);
   putw(p + 0, value >> 16);
   putw(p + 2, value);
 }
 
-bus_error::bus_error (int s, uint32 a)
+bus_error::bus_error(int s, uint32_type a)
   : status (s),
     address (a)
 {

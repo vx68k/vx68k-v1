@@ -168,8 +168,8 @@ namespace vx68k
       sint32_type fputs(uint32_type, uint_type);
 
     public:
-      uint32 load_executable(const char *, uint32_type address);
-      uint16 start(uint32, const char *const *);
+      uint32_type load_executable(const char *, uint32_type address);
+      uint_type start(uint32_type, const char *const *);
 
     public:
       void set_debug_level(int lev)

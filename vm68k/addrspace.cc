@@ -54,7 +54,7 @@ address_space::read(int fc, uint32_type address,
       I(done != 0);
       I(done <= size);
       address += done;
-      data = static_cast<uint8 *>(data) + done;
+      data = static_cast<unsigned char *>(data) + done;
       size -= done;
     }
 }
@@ -109,7 +109,7 @@ address_space::write(int fc, uint32_type address,
       I(done != 0);
       I(done <= size);
       address += done;
-      data = static_cast<uint8 *>(data) + done;
+      data = static_cast<const unsigned char *>(data) + done;
       size -= done;
     }
 }

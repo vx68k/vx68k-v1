@@ -29,7 +29,7 @@ using namespace std;
 const size_t ROW_SIZE = 128;
 
 inline void
-advance_row(uint16 *&ptr)
+advance_row(unsigned short *&ptr)
 {
   ptr += ROW_SIZE >> 1;
 }
@@ -37,8 +37,8 @@ advance_row(uint16 *&ptr)
 void
 text_vram::scroll()
 {
-  uint16 *i = buf;
-  for (uint16 *j = buf + 16 * (ROW_SIZE >> 1);
+  unsigned short *i = buf;
+  for (unsigned short *j = buf + 16 * (ROW_SIZE >> 1);
        j != buf + 31 * 16 * (ROW_SIZE >> 1);
        ++j)
     {
@@ -85,11 +85,11 @@ text_vram::draw_char(int x, int y, unsigned int c)
 
       if (x % 2 != 0)
 	{
-	  for (uint16 *plane = buf;
+	  for (unsigned short *plane = buf;
 	       plane != buf + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
 	       plane += TEXT_VRAM_PLANE_SIZE >> 1)
 	    {
-	      uint16 *p = plane + (y * 16 * ROW_SIZE + x >> 1);
+	      unsigned short *p = plane + (y * 16 * ROW_SIZE + x >> 1);
 	      for (unsigned char *i = img + 0; i != img + 16 * 2; i += 2)
 		{
 		  p[0] = p[0] & ~0xff | i[0] & 0xff;
@@ -100,11 +100,11 @@ text_vram::draw_char(int x, int y, unsigned int c)
 	}
       else
 	{
-	  for (uint16 *plane = buf;
+	  for (unsigned short *plane = buf;
 	       plane != buf + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
 	       plane += TEXT_VRAM_PLANE_SIZE >> 1)
 	    {
-	      uint16 *p = plane + (y * 16 * ROW_SIZE + x >> 1);
+	      unsigned short *p = plane + (y * 16 * ROW_SIZE + x >> 1);
 	      for (unsigned char *i = img + 0; i != img + 16 * 2; i += 2)
 		{
 		  p[0] = i[0] << 8 | i[1] & 0xff;
@@ -122,11 +122,11 @@ text_vram::draw_char(int x, int y, unsigned int c)
 
       if (x % 2 != 0)
 	{
-	  for (uint16 *plane = buf;
+	  for (unsigned short *plane = buf;
 	       plane != buf + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
 	       plane += TEXT_VRAM_PLANE_SIZE >> 1)
 	    {
-	      uint16 *p = plane + (y * 16 * ROW_SIZE + x >> 1);
+	      unsigned short *p = plane + (y * 16 * ROW_SIZE + x >> 1);
 	      for (unsigned char *i = img + 0; i != img + 16; ++i)
 		{
 		  *p = *p & ~0xff | i[0] & 0xff;
@@ -136,11 +136,11 @@ text_vram::draw_char(int x, int y, unsigned int c)
 	}
       else
 	{
-	  for (uint16 *plane = buf;
+	  for (unsigned short *plane = buf;
 	       plane != buf + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
 	       plane += TEXT_VRAM_PLANE_SIZE >> 1)
 	    {
-	      uint16 *p = plane + (y * 16 * ROW_SIZE + x >> 1);
+	      unsigned short *p = plane + (y * 16 * ROW_SIZE + x >> 1);
 	      for (unsigned char *i = img + 0; i != img + 16; ++i)
 		{
 		  *p = i[0] << 8 | *p & 0xff;
@@ -158,12 +158,12 @@ text_vram::get_image(int x, int y, int width, int height,
 		     unsigned char *rgb_buf, size_t row_size)
 {
   // FIXME
-  uint16 *p = buf + (y * ROW_SIZE >> 1);
+  unsigned short *p = buf + (y * ROW_SIZE >> 1);
   for (int i = 0; i != height; ++i)
     {
       for (int j = 0; j != width; ++j)
 	{
-	  uint16 *q = p + (j >> 4);
+	  unsigned short *q = p + (j >> 4);
 	  unsigned char *s = rgb_buf + i * row_size + j * 3;
 	  if (*q & 0x8000 >> (j & 0xf))
 	    {
@@ -245,6 +245,6 @@ text_vram::text_vram()
   : buf(NULL),
     connected_console(NULL)
 {
-  buf = new uint16 [TEXT_VRAM_SIZE >> 1];
+  buf = new unsigned short [TEXT_VRAM_SIZE >> 1];
 }
 

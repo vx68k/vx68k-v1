@@ -163,8 +163,8 @@ namespace
 {
   struct quit_loop
   {
-    uint16 status;
-    quit_loop(uint16 s): status(s) {};
+    uint_type status;
+    quit_loop(uint_type s): status(s) {};
   };
 }
 
@@ -175,15 +175,15 @@ dos_exec_context::exit(unsigned int status)
   throw quit_loop(status);
 }
 
-uint16
-dos_exec_context::start(uint32 address, const char *const *argv)
+uint_type
+dos_exec_context::start(uint32_type address, const char *const *argv)
 {
   /* Program must be started in user state.  */
   regs.usp = regs.a[7];
   set_supervisor_state(false);
 
   regs.pc = address;
-  uint16 status = 0;
+  uint_type status = 0;
   try
     {
       _eu->run(*this);
@@ -195,7 +195,7 @@ dos_exec_context::start(uint32 address, const char *const *argv)
     }
   catch (illegal_instruction &e)
     {
-      uint16 op = mem->getw(SUPER_DATA, regs.pc);
+      uint_type op = mem->getw(SUPER_DATA, regs.pc);
       fprintf(stderr, "vm68k illegal instruction (op = 0x%x)\n", op);
       status = 0xff;
     }
@@ -210,7 +210,7 @@ dos_exec_context::start(uint32 address, const char *const *argv)
   return status;
 }
 
-uint32
+uint32_type
 dos_exec_context::load_executable(const char *name, uint32_type address)
 {
   ifstream is (name, ios::in | ios::binary);
@@ -223,8 +223,8 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
   if (head[0] != 'H' || head[1] != 'U')
     throw runtime_error("exec format error");
 
-  uint32 base = getl (head + 4);
-  uint32 start_offset = getl (head + 8);
+  uint32_type base = getl (head + 4);
+  uint32_type start_offset = getl (head + 8);
   size_t text_size = getl (head + 12);
   size_t data_size = getl (head + 16);
   size_t bss_size = getl (head + 20);
@@ -239,7 +239,7 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
       fprintf(stderr, "Fixup: %lu\n", (unsigned long) reloc_size);
     }
 
-  uint32 load_address = address + 0xf0;
+  uint32_type load_address = address + 0xf0;
 
   char *buf = static_cast<char *>(::malloc(text_size + data_size));
   try
@@ -266,10 +266,10 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
 	throw runtime_error("read error");
 
       const char *p = fixup_buf;
-      uint32 address = load_address;
+      uint32_type address = load_address;
       while (p != fixup_buf + reloc_size)
 	{
-	  uint32 d = getw(p);
+	  uint32_type d = getw(p);
 	  p += 2;
 	  if (d == 1)		// Prefix for long offset.
 	    {
@@ -282,7 +282,7 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
 	      throw runtime_error("exec format error");
 	    }
 	  address += d;
-	  uint32 value = mem->getl(SUPER_DATA, address);
+	  uint32_type value = mem->getl(SUPER_DATA, address);
 	  mem->putl(SUPER_DATA, address, value + load_address - base);
 	  VL(("Fixup at 0x%lx (0x%lx -> 0x%lx)\n",
 	      (unsigned long) address, (unsigned long) value,

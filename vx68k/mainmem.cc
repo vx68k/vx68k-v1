@@ -38,8 +38,8 @@ main_memory::read(int fc, uint32_type address, void *data, size_t size) const
   if (address + size >= end)
     size = end - address;
 
-  uint8 *p = static_cast<uint8 *>(data);
-  uint8 *last = p + size;
+  unsigned char *p = static_cast<unsigned char *>(data);
+  unsigned char *last = p + size;
   if (p != last && (address & 1) != 0)
     *p++ = getb(fc, address++);
   while (last - p >> 1 != 0)
@@ -106,8 +106,8 @@ main_memory::write(int fc, uint32_type address, const void *data, size_t size)
   if (address + size >= end)
     size = end - address;
 
-  uint8 *p = static_cast<uint8 *>(data);
-  uint8 *last = p + size;
+  unsigned char *p = static_cast<unsigned char *>(data);
+  unsigned char *last = p + size;
   if (p != last && (address & 1) != 0)
     putb(fc, address++, *p++);
   while (last - p >> 1 != 0)
@@ -161,6 +161,6 @@ main_memory::main_memory(size_t n)
   : end((n + 1u) & ~1u),
     array(NULL)
 {
-  array = new uint16 [end >> 1];
+  array = new unsigned short [end >> 1];
 }
 

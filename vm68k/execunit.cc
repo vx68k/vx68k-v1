@@ -172,9 +172,9 @@ namespace
       L(",%%d%d\n", reg2);
 #endif
 
-      int32 value1 = ea1.getl(ec);
-      int32 value2 = extsl(ec.regs.d[reg2]);
-      int32 value = extsl(value2 + value1);
+      sint32_type value1 = ea1.getl(ec);
+      sint32_type value2 = extsl(ec.regs.d[reg2]);
+      sint32_type value = extsl(value2 + value1);
       ec.regs.d[reg2] = value;
       ea1.finishl(ec);
       ec.regs.sr.set_cc(value); // FIXME.
@@ -233,9 +233,9 @@ namespace
       L(",%%a%d\n", reg2);
 #endif
 
-      int32 value1 = ea1.getl(ec);
-      int32 value2 = extsl(ec.regs.a[reg2]);
-      int32 value = extsl(value2 + value1);
+      sint32_type value1 = ea1.getl(ec);
+      sint32_type value2 = extsl(ec.regs.a[reg2]);
+      sint32_type value = extsl(value2 + value1);
       ec.regs.a[reg2] = value;
       ea1.finishl(ec);
       // XXX: The condition codes are not affected.
@@ -246,15 +246,15 @@ namespace
   template <class Destination> void
   addil(unsigned int op, context &ec, instruction_data *data)
     {
-      int32 value2 = extsl(ec.fetchl(2));
+      sint32_type value2 = extsl(ec.fetchl(2));
       Destination ea1(op & 0x7, 2 + 4);
 #ifdef TRACE_INSTRUCTIONS
       L(" addil #%ld", (long) value2);
       L(",%s\n", ea1.textl(ec));
 #endif
 
-      int32 value1 = ea1.getl(ec);
-      int32 value = extsl(value1 + value2);
+      sint32_type value1 = ea1.getl(ec);
+      sint32_type value = extsl(value1 + value2);
       ea1.putl(ec, value);
       ea1.finishl(ec);
       ec.regs.sr.set_cc(value); // FIXME.
@@ -317,8 +317,8 @@ namespace
 #endif
 
       // XXX: The entire register is used.
-      int32 value1 = ea1.getl(ec);
-      int32 value = extsl(value1 + value2);
+      sint32_type value1 = ea1.getl(ec);
+      sint32_type value = extsl(value1 + value2);
       ea1.putl(ec, value);
       ea1.finishl(ec);
       // XXX: The condition codes are not affected.
@@ -338,8 +338,8 @@ namespace
       L(",%s\n", ea1.textl(ec));
 #endif
 
-      int32 value1 = ea1.getl(ec);
-      int32 value = extsl(value1 + value2);
+      sint32_type value1 = ea1.getl(ec);
+      sint32_type value = extsl(value1 + value2);
       ea1.putl(ec, value);
       ea1.finishl(ec);
       ec.regs.sr.set_cc(value); // FIXME.
@@ -359,8 +359,8 @@ namespace
       L(",%s\n", ea1.textl(ec));
 #endif
 
-      int32 value1 = ea1.getl(ec);
-      int32 value = extsl(value1 + value2);
+      sint32_type value1 = ea1.getl(ec);
+      sint32_type value = extsl(value1 + value2);
       ea1.putl(ec, value);
       ea1.finishl(ec);
       // XXX: The condition codes are not affected.
@@ -1232,7 +1232,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      uint32 address = ea1.address(ec);
+      uint32_type address = ea1.address(ec);
       int fc = ec.data_fc();
       ec.mem->putl(fc, ec.regs.a[7] - 4, ec.regs.pc + 2 + ea1.isize(0));
       ec.regs.a[7] -= 4;
@@ -1250,7 +1250,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      uint32 address = ea1.address(ec);
+      uint32_type address = ea1.address(ec);
       ec.regs.a[reg2] = address;
 
       ec.regs.pc += 2 + ea1.isize(0);
@@ -1289,7 +1289,7 @@ namespace
 
     sint_type value1 = extsb(ec.regs.d[reg1]);
     sint_type value = extsb(uint_type(value1) << count);
-    const uint32_type MASK = ((uint32) 1u << 8) - 1;
+    const uint32_type MASK = ((uint32_type) 1u << 8) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
     ec.regs.sr.set_cc_lsl(value, value1, count + (32 - 8));
 
@@ -1310,7 +1310,7 @@ namespace
 
     sint_type value1 = extsw(ec.regs.d[reg1]);
     sint_type value = extsw(uint_type(value1) << count);
-    const uint32_type MASK = ((uint32) 1u << 16) - 1;
+    const uint32_type MASK = ((uint32_type) 1u << 16) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
     ec.regs.sr.set_cc_lsl(value, value1, count + (32 - 16));
 
@@ -1330,7 +1330,7 @@ namespace
     uint_type count = ec.regs.d[reg2];
     sint_type value1 = extsw(ec.regs.d[reg1]);
     sint_type value = extsw(uint_type(value1) << count);
-    const uint32_type MASK = ((uint32) 1u << 16) - 1;
+    const uint32_type MASK = ((uint32_type) 1u << 16) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
     ec.regs.sr.set_cc_lsl(value, value1, count + (32 - 16));
 
@@ -1500,7 +1500,7 @@ namespace
     {
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
-      uint32 d_addr = ec.regs.a[d_reg];
+      uint32_type d_addr = ec.regs.a[d_reg];
       VL((" moveb %%d%d,%%a%d@+ |*,0x%lx\n",
 	  s_reg, d_reg, (unsigned long) d_addr));
 
@@ -1516,9 +1516,9 @@ namespace
   void moveb_postinc_postinc(unsigned int op, context &ec, instruction_data *data)
     {
       int s_reg = op & 0x7;
-      uint32 s_addr = ec.regs.a[s_reg];
+      uint32_type s_addr = ec.regs.a[s_reg];
       int d_reg = op >> 9 & 0x7;
-      uint32 d_addr = ec.regs.a[d_reg];
+      uint32_type d_addr = ec.regs.a[d_reg];
       VL((" moveb %%a%d@+,%%a%d@+ |0x%lx,0x%lx\n",
 	  s_reg, d_reg, (unsigned long) s_addr, (unsigned long) d_addr));
 
@@ -1557,7 +1557,7 @@ namespace
     {
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
-      uint32 d_addr = ec.regs.a[d_reg] - 2;
+      uint32_type d_addr = ec.regs.a[d_reg] - 2;
       VL((" movew %%d%d,%%a%x@- |*,0x%lx\n",
 	  s_reg, d_reg, (unsigned long) d_addr));
 
@@ -1573,8 +1573,8 @@ namespace
   void movew_absl_predec(unsigned int op, context &ec, instruction_data *data)
     {
       int d_reg = op >> 9 & 0x7;
-      uint32 d_addr = ec.regs.a[d_reg] - 2;
-      uint32 s_addr = ec.fetchl(2);
+      uint32_type d_addr = ec.regs.a[d_reg] - 2;
+      uint32_type s_addr = ec.fetchl(2);
       VL((" movew 0x%lx,%%a%x@- |*,0x%lx\n",
 	  (unsigned long) s_addr, d_reg, (unsigned long) d_addr));
 
@@ -1590,7 +1590,7 @@ namespace
   void movew_d_absl(unsigned int op, context &ec, instruction_data *data)
     {
       int reg = op & 0x7;
-      uint32 address = ec.fetchl(2);
+      uint32_type address = ec.fetchl(2);
       VL((" movew %%d%d,0x%x\n", reg, address));
 
       int fc = ec.data_fc();
@@ -1612,7 +1612,7 @@ namespace
       VL((",%s\n", ea2.textl(ec)));
 #endif
 
-      int32 value = ea1.getl(ec);
+      sint32_type value = ea1.getl(ec);
       ea2.putl(ec, value);
       ea1.finishl(ec);
       ea2.finishl(ec);
@@ -1652,7 +1652,7 @@ namespace
 
       // XXX: The condition codes are not affected by this
       // instruction.
-      int32 value = ea1.getl(ec);
+      sint32_type value = ea1.getl(ec);
       ea2.putl(ec, value);
       ea1.finishl(ec);
       ea2.finishl(ec);
@@ -1671,9 +1671,9 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      uint32 address = ec.regs.a[reg];
+      uint32_type address = ec.regs.a[reg];
       int fc = ec.data_fc();
-      for (uint32 *i = ec.regs.a + 8; i != ec.regs.a + 0; --i)
+      for (uint32_type *i = ec.regs.a + 8; i != ec.regs.a + 0; --i)
 	{
 	  if (bitmap & 1 != 0)
 	    {
@@ -1682,7 +1682,7 @@ namespace
 	    }
 	  bitmap >>= 1;
 	}
-      for (uint32 *i = ec.regs.d + 8; i != ec.regs.d + 0; --i)
+      for (uint32_type *i = ec.regs.d + 8; i != ec.regs.d + 0; --i)
 	{
 	  if (bitmap & 1 != 0)
 	    {
@@ -1708,9 +1708,9 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      uint32 address = ea1.address(ec);
+      uint32_type address = ea1.address(ec);
       int fc = ec.data_fc();
-      for (uint32 *i = ec.regs.d + 0; i != ec.regs.d + 8; ++i)
+      for (uint32_type *i = ec.regs.d + 0; i != ec.regs.d + 8; ++i)
 	{
 	  if (bitmap & 1 != 0)
 	    {
@@ -1719,7 +1719,7 @@ namespace
 	    }
 	  bitmap >>= 1;
 	}
-      for (uint32 *i = ec.regs.a + 0; i != ec.regs.a + 8; ++i)
+      for (uint32_type *i = ec.regs.a + 0; i != ec.regs.a + 8; ++i)
 	{
 	  if (bitmap & 1 != 0)
 	    {
@@ -1745,9 +1745,9 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      uint32 address = ec.regs.a[reg1];
+      uint32_type address = ec.regs.a[reg1];
       int fc = ec.data_fc();
-      for (uint32 *i = ec.regs.d + 0; i != ec.regs.d + 8; ++i)
+      for (uint32_type *i = ec.regs.d + 0; i != ec.regs.d + 8; ++i)
 	{
 	  if (bitmap & 1 != 0)
 	    {
@@ -1756,7 +1756,7 @@ namespace
 	    }
 	  bitmap >>= 1;
 	}
-      for (uint32 *i = ec.regs.a + 0; i != ec.regs.a + 8; ++i)
+      for (uint32_type *i = ec.regs.a + 0; i != ec.regs.a + 8; ++i)
 	{
 	  if (bitmap & 1 != 0)
 	    {
@@ -2005,7 +2005,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      uint32 address = ea1.address(ec);
+      uint32_type address = ea1.address(ec);
       int fc = ec.data_fc();
       ec.mem->putl(fc, ec.regs.a[7] - 4, address);
       ec.regs.a[7] -= 4;
@@ -2156,7 +2156,7 @@ namespace
 
       // XXX: The condition codes are not affected.
       int fc = ec.data_fc();
-      uint32 value = ec.mem->getl(fc, ec.regs.a[7]);
+      uint32_type value = ec.mem->getl(fc, ec.regs.a[7]);
       ec.regs.a[7] += 4;
       ec.regs.pc = value;
     }
@@ -2203,7 +2203,7 @@ namespace
     {
       int reg1 = op & 0x7;
       int reg2 = op >> 9 & 0x7;
-      uint32 addr1 = ec.regs.a[reg1];
+      uint32_type addr1 = ec.regs.a[reg1];
       VL((" subb %%a%d@+,%%d%d |0x%lx,*\n",
 	  reg1, reg2, (unsigned long) addr1));
 
@@ -2211,7 +2211,7 @@ namespace
       int val1 = extsb(ec.mem->getb(fc, addr1));
       int val2 = extsb(ec.regs.d[reg2]);
       int val = extsb(val2 - val1);
-      const uint32 MASK = ((uint32) 1u << 8) - 1;
+      const uint32_type MASK = ((uint32) 1u << 8) - 1;
       ec.regs.d[reg2] = ec.regs.d[reg2] & ~MASK | (uint32) val & MASK;
       ec.regs.a[reg1] = addr1 + 1;
       ec.regs.sr.set_cc(val);	// FIXME.
@@ -2251,9 +2251,9 @@ namespace
       VL((",%%d%d\n", reg2));
 #endif
 
-      int32 value1 = ea1.getl(ec);
-      int32 value2 = extsl(ec.regs.d[reg2]);
-      int32 value = extsl(value2 - value1);
+      sint32_type value1 = ea1.getl(ec);
+      sint32_type value2 = extsl(ec.regs.d[reg2]);
+      sint32_type value = extsl(value2 - value1);
       ec.regs.d[reg2] = value;
       ea1.finishl(ec);
       ec.regs.sr.set_cc_sub(value, value2, value1);
@@ -2433,8 +2433,8 @@ namespace
 	val2 = 8;
       VL((" subql #%d,%%d%d\n", val2, reg1));
 
-      int32 val1 = extsl(ec.regs.d[reg1]);
-      int32 val = extsl(val1 - val2);
+      sint32_type val1 = extsl(ec.regs.d[reg1]);
+      sint32_type val = extsl(val1 - val2);
       ec.regs.d[reg1] = val;
       ec.regs.sr.set_cc_sub(val, val1, val2);
 
@@ -2525,7 +2525,7 @@ namespace
       VL((" tstl %s\n", ea1.textl(ec)));
 #endif
 
-      int32 value = ea1.getl(ec);
+      sint32_type value = ea1.getl(ec);
       ec.regs.sr.set_cc(value);
       ea1.finishl(ec);
 
@@ -2542,7 +2542,7 @@ namespace
 
       // XXX: The condition codes are not affected.
       int fc = ec.data_fc();
-      uint32 address = ec.mem->getl(fc, ec.regs.a[reg]);
+      uint32_type address = ec.mem->getl(fc, ec.regs.a[reg]);
       ec.regs.a[7] = ec.regs.a[reg] + 4;
       ec.regs.a[reg] = address;
 

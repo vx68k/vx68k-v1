@@ -30,17 +30,10 @@ namespace vm68k
     typedef unsigned int uint_type;
 
 #if UINT_MAX >= 0xffffffff
-typedef int int32;
     typedef unsigned int uint32_type;
-typedef unsigned int uint32;
 #else
-typedef long int32;
     typedef unsigned long uint32_type;
-typedef unsigned long uint32;
 #endif
-
-typedef unsigned short uint16;
-typedef unsigned char uint8;
 
 #if INT_MIN >= -0x7fff
     typedef long sint_type;

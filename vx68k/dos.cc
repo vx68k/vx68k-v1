@@ -117,7 +117,7 @@ namespace
   void
   dos_exit2(unsigned int op, context &ec, instruction_data *data)
   {
-    uint32 sp = ec.regs.a[7];
+    uint32_type sp = ec.regs.a[7];
     unsigned int status = ec.mem->getw(SUPER_DATA, sp + 0);
 #ifdef L
     L(" DOS _EXIT2\n");
@@ -156,7 +156,7 @@ namespace
   void
   dos_fgetc(unsigned int op, context &ec, instruction_data *data)
   {
-    uint32 sp = ec.regs.a[7];
+    uint32_type sp = ec.regs.a[7];
     int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
 #ifdef L
     L(" DOS _FGETC\n");
@@ -391,7 +391,7 @@ namespace
   void
   dos_read(unsigned int op, context &ec, instruction_data *data)
   {
-    uint32 sp = ec.regs.a[7];
+    uint32_type sp = ec.regs.a[7];
     sint_type fd = extsw(ec.mem->getw(SUPER_DATA, sp));
     uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
     uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
@@ -407,9 +407,9 @@ namespace
   void
   dos_seek(unsigned int op, context &ec, instruction_data *data)
   {
-    uint32 sp = ec.regs.a[7];
+    uint32_type sp = ec.regs.a[7];
     int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
-    int32 offset = extsl(ec.mem->getl(SUPER_DATA, sp + 2));
+    sint32_type offset = extsl(ec.mem->getl(SUPER_DATA, sp + 2));
     unsigned int whence = ec.mem->getw(SUPER_DATA, sp + 6);
 #ifdef L
     L(" DOS _SEEK\n");

@@ -35,7 +35,7 @@ namespace vx68k
   {
   private:
     uint32_type end;
-    uint16 *array;
+    unsigned short *array;
 
   public:
     explicit main_memory(size_t);
@@ -70,7 +70,7 @@ namespace vx68k
     : public memory
   {
   private:
-    uint16 *base;
+    unsigned short *base;
     console *connected_console;
 
   public:
@@ -96,7 +96,7 @@ namespace vx68k
     : public memory
   {
   private:
-    uint16 *buf;
+    unsigned short *buf;
     console *connected_console;
 
   public:

@@ -26,14 +26,14 @@ namespace vm68k
 {
   using namespace std;
 
-struct bus_error
-  : exception
-{
-  enum {WRITE = 0, READ = 0x10};
-  int status;
-  uint32 address;
-  bus_error (int, uint32);
-};
+  struct bus_error
+    : exception
+  {
+    enum {WRITE = 0, READ = 0x10};
+    int status;
+    uint32_type address;
+    bus_error(int, uint32_type);
+  };
 
 struct address_error
   : exception

@@ -4,7 +4,7 @@ INCLUDES = -I${top_srcdir}/include
 
 lib_LTLIBRARIES = libvm68k.la
 
-libvm68k_la_LDFLAGS = -version-info 0:0:0
+libvm68k_la_LDFLAGS = -version-info 1:0:0
 libvm68k_la_SOURCES = memory.cc addrspace.cc \
 statusreg.cc execunit.cc context.cc
 

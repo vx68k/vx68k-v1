@@ -44,29 +44,38 @@ namespace vm68k
     return value;
   }
 
-  inline int extsb(unsigned int value)
-    {
-      const unsigned int N = 1u << 7;
-      const unsigned int M = (N << 1) - 1;
-      value &= M;
-      return value >= N ? -(int) (M - value) - 1 : (int) value;
-    }
+  /* Returns the signed 8-bit value that is equivalent to unsigned
+     value VALUE.  */
+  inline int
+  extsb(unsigned int value)
+  {
+    const unsigned int N = 1u << 7;
+    const unsigned int M = (N << 1) - 1;
+    value &= M;
+    return value >= N ? -int(M - value) - 1 : int(value);
+  }
 
-  inline int extsw(unsigned int value)
-    {
-      const unsigned int N = 1u << 15;
-      const unsigned int M = (N << 1) - 1;
-      value &= M;
-      return value >= N ? -(int) (M - value) - 1 : (int) value;
-    }
+  /* Returns the signed 16-bit value that is equivalent to unsigned
+     value VALUE.  */
+  inline sint_type
+  extsw(uint_type value)
+  {
+    const uint_type N = uint_type(1) << 15;
+    const uint_type M = (N << 1) - 1;
+    value &= M;
+    return value >= N ? -sint_type(M - value) - 1 : sint_type(value);
+  }
 
-  inline int32 extsl(uint32 value)
-    {
-      const uint32 N = (uint32) 1u << 31;
-      const uint32 M = (N << 1) - 1;
-      value &= M;
-      return value >= N ? -(int32) (M - value) - 1 : (int32) value;
-    }
+  /* Returns the signed 32-bit value that is equivalent to unsigned
+     value VALUE.  */
+  inline sint32_type
+  extsl(uint32_type value)
+  {
+    const uint32_type N = uint32_type(1) << 31;
+    const uint32_type M = (N << 1) - 1;
+    value &= M;
+    return value >= N ? -sint32_type(M - value) - 1 : sint32_type(value);
+  }
 
   inline void
   modify_b(uint32_type &dest, uint_type value)
@@ -113,7 +122,7 @@ namespace vm68k
     sint32_type cc_values[3];
     const cc_evaluator *x_eval;
     sint32_type x_values[3];
-    uint16 value;
+    uint_type value;
   public:
     status_register();
   public:
@@ -174,12 +183,12 @@ namespace vm68k
   /* CPU registers (mc68000).  */
   struct registers
   {
-    uint32 d[8];		/* %d0-%d7 */
-    uint32 a[8];		/* %a0-%a6/%sp */
+    uint32_type d[8];		/* %d0-%d7 */
+    uint32_type a[8];		/* %a0-%a6/%sp */
+    uint32_type pc;
     status_register sr;
-    uint32 pc;
-    uint32 usp;
-    uint32 ssp;
+    uint32_type usp;
+    uint32_type ssp;
   };
 
 struct exception_listener
@@ -231,7 +240,7 @@ struct exception_listener
   public:
     uint_type fetchw(int disp) const
       {return mem->getw_aligned(program_fc(), regs.pc + disp);}
-    uint32 fetchl(int disp) const
+    uint32_type fetchl(int disp) const
       {return mem->getl(program_fc(), regs.pc + disp);}
   };
 
