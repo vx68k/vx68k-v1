@@ -1,9 +1,13 @@
 1999-06-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Modified.
+
 	* lib/vm68k/execunit.cc (dispatch): Add the third argumrnt to
 	handlers.
 	(set_instruction): Save handler with instruction data.
 	(exec_unit): Likewise.
+	(divuw, orib, subw, swapw): New functions.
+	(install_instructions): Add new handlers.
 
 	* include/vm68k/cpu.h (struct install_data): New class.
 	(class exec_unit): Add instruction_data * to instruction_handler's

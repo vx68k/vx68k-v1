@@ -889,6 +889,28 @@ namespace
     ec.regs.pc += 2 + 2 + ea1.isize(2);
   }
 
+  template <class Source> void
+  divuw(unsigned int op, context &ec, instruction_data *data)
+  {
+    Source ea1(op & 0x7, 2);
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef L
+    L(" divuw %s", ea1.textw(ec));
+    L(",%%d%u", reg2);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    sint_type value1 = ea1.getw(ec);
+    sint32_type value2 = extsw(ec.regs.d[reg2]);
+    sint32_type value = uint32_type(value2) / (uint32_type(value1) & 0xffffu);
+    sint32_type rem = uint32_type(value2) % (uint32_type(value1) & 0xffffu);
+    ec.regs.d[reg2] = uint32_type(rem) << 16 | uint32_type(value) & 0xffffu;
+    ec.regs.sr.set_cc(value); // FIXME.
+    ea1.finishw(ec);
+
+    ec.regs.pc += 2 + ea1.isize(2);
+  }
+
   template <class Destination> void
   eorb_r(unsigned int op, context &ec, instruction_data *data)
   {
@@ -1619,6 +1641,26 @@ namespace
   }
 
   template <class Destination> void
+  orib(unsigned int op, context &ec, instruction_data *data)
+  {
+    sint_type value2 = extsb(ec.fetchw(2));
+    Destination ea1(op & 0x7, 2 + 2);
+#ifdef L
+    L(" orib #0x%x", uint_type(value2) & 0xff);
+    L(",%s", ea1.textb(ec));
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    sint_type value1 = ea1.getb(ec);
+    sint_type value = extsb(uint_type(value1) | uint_type(value2));
+    ea1.putb(ec, value);
+    ec.regs.sr.set_cc(value);
+    ea1.finishb(ec);
+
+    ec.regs.pc += 2 + 2 + ea1.isize(2);
+  }
+
+  template <class Destination> void
   pea(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
@@ -1713,6 +1755,28 @@ namespace
       ec.regs.pc += 2;
     }
 #endif
+
+  template <class Source> void
+  subw(unsigned int op, context &ec, instruction_data *data)
+  {
+    Source ea1(op & 0x7, 2);
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef L
+    L(" subw %s", ea1.textw(ec));
+    L(",%%d%u", reg2);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    sint_type value1 = ea1.getw(ec);
+    sint_type value2 = extsw(ec.regs.d[reg2]);
+    sint_type value = extsw(value2 - value1);
+    const uint32_type MASK = 0xffffu;
+    ec.regs.d[reg2] = ec.regs.d[reg2] & ~MASK | uint32_type(value) & MASK;
+    ec.regs.sr.set_cc_sub(value, value2, value1);
+    ea1.finishw(ec);
+
+    ec.regs.pc += 2 + ea1.isize(2);
+  }
 
   template <class Destination> void
   subl(unsigned int op, context &ec, instruction_data *data)
@@ -1891,6 +1955,24 @@ namespace
       ec.regs.pc += 2;
     }
 
+  void
+  swapw(unsigned int op, context &ec, instruction_data *data)
+  {
+    unsigned int reg1 = op & 0x7;
+#ifdef L
+    L(" swapw %%d%u", reg1);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    sint32_type value1 = extsl(ec.regs.d[reg1]);
+    sint32_type value
+      = extsl(uint32_type(value1) << 16 | uint32_type(value1) >> 16 & 0xffffu);
+    ec.regs.d[reg1] = value;
+    ec.regs.sr.set_cc(value);
+
+    ec.regs.pc += 2;
+  }
+
   template <class Destination> void
   tstb(unsigned int op, context &ec, instruction_data *data)
     {
@@ -1968,6 +2050,13 @@ namespace
 void
 exec_unit::install_instructions(exec_unit &eu)
 {
+  eu.set_instruction(0x0000, 0x0007, &orib<data_register>);
+  eu.set_instruction(0x0010, 0x0007, &orib<indirect>);
+  eu.set_instruction(0x0018, 0x0007, &orib<postinc_indirect>);
+  eu.set_instruction(0x0020, 0x0007, &orib<predec_indirect>);
+  eu.set_instruction(0x0028, 0x0007, &orib<disp_indirect>);
+  eu.set_instruction(0x0030, 0x0007, &orib<indexed_indirect>);
+  eu.set_instruction(0x0039, 0x0000, &orib<absolute_long>);
   eu.set_instruction(0x0240, 0x0007, &andiw<data_register>);
   eu.set_instruction(0x0250, 0x0007, &andiw<indirect>);
   eu.set_instruction(0x0258, 0x0007, &andiw<postinc_indirect>);
@@ -2028,6 +2117,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x1030, 0x0e07, &moveb<indexed_indirect, data_register>);
   eu.set_instruction(0x1039, 0x0e00, &moveb<absolute_long, data_register>);
   eu.set_instruction(0x103a, 0x0e00, &moveb<disp_pc, data_register>);
+  eu.set_instruction(0x103b, 0x0e00, &moveb<indexed_pc_indirect, data_register>);
   eu.set_instruction(0x103c, 0x0e00, &moveb<immediate, data_register>);
   eu.set_instruction(0x1080, 0x0e07, &moveb<data_register, indirect>);
   eu.set_instruction(0x1090, 0x0e07, &moveb<indirect, indirect>);
@@ -2062,6 +2152,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x2020, 0x0e07, &movel<predecrement_indirect, data_register>);
   eu.set_instruction(0x2028, 0x0e07, &movel<disp_indirect, data_register>);
   eu.set_instruction(0x2039, 0x0e00, &movel<absolute_long, data_register>);
+  eu.set_instruction(0x203a, 0x0e00, &movel<disp_pc, data_register>);
   eu.set_instruction(0x203c, 0x0e00, &movel<immediate, data_register>);
   eu.set_instruction(0x2040, 0x0e07, &moveal<data_register>);
   eu.set_instruction(0x2048, 0x0e07, &moveal<address_register>);
@@ -2070,6 +2161,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x2060, 0x0e07, &moveal<predec_indirect>);
   eu.set_instruction(0x2068, 0x0e07, &moveal<disp_indirect>);
   eu.set_instruction(0x2079, 0x0e00, &moveal<absolute_long>);
+  eu.set_instruction(0x207a, 0x0e00, &moveal<disp_pc>);
   eu.set_instruction(0x207c, 0x0e00, &moveal<immediate>);
   eu.set_instruction(0x2080, 0x0e07, &movel<data_register, indirect>);
   eu.set_instruction(0x2088, 0x0e07, &movel<address_register, indirect>);
@@ -2144,6 +2236,15 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x3139, 0x0e00, &movew<absolute_long, predec_indirect>);
   eu.set_instruction(0x313a, 0x0e00, &movew<disp_pc, predec_indirect>);
   eu.set_instruction(0x313c, 0x0e00, &movew<immediate, predec_indirect>);
+  eu.set_instruction(0x3140, 0x0e07, &movew<data_register, disp_indirect>);
+  eu.set_instruction(0x3148, 0x0e07, &movew<address_register, disp_indirect>);
+  eu.set_instruction(0x3150, 0x0e07, &movew<indirect, disp_indirect>);
+  eu.set_instruction(0x3158, 0x0e07, &movew<postinc_indirect, disp_indirect>);
+  eu.set_instruction(0x3160, 0x0e07, &movew<predec_indirect, disp_indirect>);
+  eu.set_instruction(0x3168, 0x0e07, &movew<disp_indirect, disp_indirect>);
+  eu.set_instruction(0x3179, 0x0e00, &movew<absolute_long, disp_indirect>);
+  eu.set_instruction(0x317a, 0x0e00, &movew<disp_pc, disp_indirect>);
+  eu.set_instruction(0x317c, 0x0e00, &movew<immediate, disp_indirect>);
   eu.set_instruction(0x3180, 0x0e07, &movew<data_register, indexed_indirect>);
   eu.set_instruction(0x3188, 0x0e07, &movew<address_register, indexed_indirect>);
   eu.set_instruction(0x3190, 0x0e07, &movew<indirect, indexed_indirect>);
@@ -2156,7 +2257,9 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x33c0, 0x0007, &movew_d_absl);
   eu.set_instruction(0x4190, 0x0e07, &lea<indirect>);
   eu.set_instruction(0x41e8, 0x0e07, &lea<disp_indirect>);
+  eu.set_instruction(0x41f0, 0x0e07, &lea<indexed_indirect>);
   eu.set_instruction(0x41f9, 0x0e00, &lea<absolute_long>);
+  eu.set_instruction(0x41fa, 0x0e00, &lea<disp_pc>);
   eu.set_instruction(0x41fb, 0x0e00, &lea<indexed_pc_indirect>);
   eu.set_instruction(0x4200, 0x0007, &clrb<data_register>);
   eu.set_instruction(0x4210, 0x0007, &clrb<indirect>);
@@ -2183,6 +2286,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x44a8, 0x0007, &negl<disp_indirect>);
   eu.set_instruction(0x44b0, 0x0007, &negl<indexed_indirect>);
   eu.set_instruction(0x44b9, 0x0000, &negl<absolute_long>);
+  eu.set_instruction(0x4840, 0x0007, &swapw);
   eu.set_instruction(0x4850, 0x0007, &pea<indirect>);
   eu.set_instruction(0x4868, 0x0007, &pea<disp_indirect>);
   eu.set_instruction(0x4878, 0x0000, &pea<absolute_short>);
@@ -2270,6 +2374,14 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x8079, 0x0e00, &orw<absolute_long>);
   eu.set_instruction(0x807a, 0x0e00, &orw<disp_pc>);
   eu.set_instruction(0x807c, 0x0e00, &orw<immediate>);
+  eu.set_instruction(0x80c0, 0x0e07, &divuw<data_register>);
+  eu.set_instruction(0x80d0, 0x0e07, &divuw<indirect>);
+  eu.set_instruction(0x80d8, 0x0e07, &divuw<postinc_indirect>);
+  eu.set_instruction(0x80e0, 0x0e07, &divuw<predec_indirect>);
+  eu.set_instruction(0x80e8, 0x0e07, &divuw<disp_indirect>);
+  eu.set_instruction(0x80f0, 0x0e07, &divuw<indexed_indirect>);
+  eu.set_instruction(0x80f9, 0x0e00, &divuw<absolute_long>);
+  eu.set_instruction(0x80fc, 0x0e00, &divuw<immediate>);
   eu.set_instruction(0x9000, 0x0e07, &subb<data_register>);
   eu.set_instruction(0x9010, 0x0e07, &subb<indirect>);
   eu.set_instruction(0x9018, 0x0e07, &subb<postinc_indirect>);
@@ -2278,6 +2390,15 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x9039, 0x0e00, &subb<absolute_long>);
   eu.set_instruction(0x903a, 0x0e00, &subb<disp_pc>);
   eu.set_instruction(0x903c, 0x0e00, &subb<immediate>);
+  eu.set_instruction(0x9040, 0x0e07, &subw<data_register>);
+  eu.set_instruction(0x9048, 0x0e07, &subw<address_register>);
+  eu.set_instruction(0x9050, 0x0e07, &subw<indirect>);
+  eu.set_instruction(0x9058, 0x0e07, &subw<postinc_indirect>);
+  eu.set_instruction(0x9060, 0x0e07, &subw<predec_indirect>);
+  eu.set_instruction(0x9068, 0x0e07, &subw<disp_indirect>);
+  eu.set_instruction(0x9079, 0x0e00, &subw<absolute_long>);
+  eu.set_instruction(0x907a, 0x0e00, &subw<disp_pc>);
+  eu.set_instruction(0x907c, 0x0e00, &subw<immediate>);
   eu.set_instruction(0x9080, 0x0e07, &subl<data_register>);
   eu.set_instruction(0x9088, 0x0e07, &subl<address_register>);
   eu.set_instruction(0x9090, 0x0e07, &subl<indirect>);
