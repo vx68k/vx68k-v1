@@ -367,39 +367,47 @@ namespace vm68k
 
   public:
     /* Returns one byte at address ADDRESS in this address space.  */
-    int get_8(uint32_type address, function_code fc) const;
+    int get_8(uint32_type address, function_code fc) const
+      throw (memory_exception);
 
     /* Returns one word at address ADDRESS in this address space.  Any
        unaligned address will be handled.  */
-    uint16_type get_16(uint32_type address, function_code fc) const;
+    uint16_type get_16(uint32_type address, function_code fc) const
+      throw (memory_exception);
 
     /* Returns one word at address ADDRESS in this address space.
        The address must be word-aligned.  */
-    uint16_type get_16_unchecked(uint32_type address, function_code fc) const;
+    uint16_type get_16_unchecked(uint32_type address, function_code fc) const
+      throw (memory_exception);
 
     /* Returns one long word at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
-    uint32_type get_32(uint32_type address, function_code fc) const;
+    uint32_type get_32(uint32_type address, function_code fc) const
+      throw (memory_exception);
 
     string get_string(uint32_type address, function_code fc) const;
 
     void read(uint32_type, void *, size_t, function_code fc) const;
 
     /* Stores byte VALUE at address ADDRESS in this address space.  */
-    void put_8(uint32_type address, int value, function_code fc);
+    void put_8(uint32_type address, int value, function_code fc)
+      throw (memory_exception);
 
     /* Stores word VALUE at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
-    void put_16(uint32_type address, uint16_type value, function_code fc);
+    void put_16(uint32_type address, uint16_type value, function_code fc)
+      throw (memory_exception);
 
     /* Stores word VALUE at address ADDRESS in this address space.
        The address must be word-aligned.  */
     void put_16_unchecked(uint32_type address, uint16_type value,
-			  function_code fc);
+			  function_code fc)
+      throw (memory_exception);
 
     /* Stores long word VALUE at address ADDRESS in this address
        space.  Any unaligned address will be handled.  */
-    void put_32(uint32_type address, uint32_type value, function_code fc);
+    void put_32(uint32_type address, uint32_type value, function_code fc)
+      throw (memory_exception);
 
     void put_string(uint32_type address, const string &, function_code fc);
 
@@ -420,6 +428,7 @@ namespace vm68k
 
   inline int
   memory_map::get_8(uint32_type address, function_code fc) const
+    throw (memory_exception)
   {
     const memory *p = *this->find_memory(address);
     return p->get_8(address, fc);
@@ -427,6 +436,7 @@ namespace vm68k
 
   inline uint16_type
   memory_map::get_16_unchecked(uint32_type address, function_code fc) const
+    throw (memory_exception)
   {
     const memory *p = *this->find_memory(address);
     return p->get_16(address, fc);
@@ -434,6 +444,7 @@ namespace vm68k
 
   inline void
   memory_map::put_8(uint32_type address, int value, function_code fc)
+    throw (memory_exception)
   {
     memory *p = *this->find_memory(address);
     p->put_8(address, value, fc);
@@ -442,6 +453,7 @@ namespace vm68k
   inline void
   memory_map::put_16_unchecked(uint32_type address, uint16_type value,
 			       function_code fc)
+    throw (memory_exception)
   {
     memory *p = *this->find_memory(address);
     p->put_16(address, value, fc);

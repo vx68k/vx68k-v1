@@ -1,5 +1,9 @@
 2000-12-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/memory.h (class memory_map): Add throw specs to
+	methods: get_8, get_16, get_16_unchecked, get_32, put_8, put_16,
+	put_16_unchecked, and put_32.
+
 	* libvx68k/machine.cc (boot): Use memory_exception instead of
 	special_exception.
 	* libvx68k/doscontext.cc (start): Likewise.

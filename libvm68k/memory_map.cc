@@ -40,6 +40,7 @@ using namespace std;
 
 uint16_type
 memory_map::get_16(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
   if ((address & 1) != 0)
     throw address_error_exception(true, fc, address);
@@ -49,6 +50,7 @@ memory_map::get_16(uint32_type address, function_code fc) const
 
 uint32_type
 memory_map::get_32(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
   if ((address & 1) != 0)
     throw address_error_exception(true, fc, address);
@@ -97,6 +99,7 @@ memory_map::read(uint32_type address, void *data, size_t size,
 
 void
 memory_map::put_16(uint32_type address, uint16_type value, function_code fc)
+  throw (memory_exception)
 {
   if ((address & 1) != 0)
     throw address_error_exception(false, fc, address);
@@ -106,6 +109,7 @@ memory_map::put_16(uint32_type address, uint16_type value, function_code fc)
 
 void
 memory_map::put_32(uint32_type address, uint32_type value, function_code fc)
+  throw (memory_exception)
 {
   if ((address & 1) != 0)
     throw address_error_exception(false, fc, address);
