@@ -1,3 +1,14 @@
+1999-04-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (struct data_register, struct
+	address_register, struct indirect): Removed.
+	(addil, addqb): Updated for <vm68k/addressing.h> classes.
+	(install_instructions): Cleaned.
+
+	* include/vm68k/Makefile.am (noinst_HEADERS): Add addressing.h.
+
+	* include/vm68k/addressing.h: New file.
+
 1999-03-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/execunit.cc (struct data_register, struct

@@ -22,6 +22,7 @@
 #undef const
 #undef inline
 
+#include <vm68k/addressing.h>
 #include <vm68k/cpu.h>
 
 #include <algorithm>
@@ -68,78 +69,6 @@ exec_unit::illegal(int op, execution_context *)
 
 namespace
 {
-  struct data_register
-  {
-    int reg;
-    data_register(int r)
-      : reg(r) {}
-    int getb(const execution_context *ec) const
-      {return extsl(ec->regs.d[reg]);}
-    int getw(const execution_context *ec) const
-      {return extsw(ec->regs.d[reg]);}
-    int32 getl(const execution_context *ec) const
-      {return extsl(ec->regs.d[reg]);}
-    void putb(execution_context *ec, int value) const
-      {
-	const uint32 MASK = ((uint32) 1u << 8) - 1;
-	ec->regs.d[reg] = ec->regs.d[reg] & ~MASK | (uint32) value & MASK;
-      }
-    void putw(execution_context *ec, int value) const
-      {
-	const uint32 MASK = ((uint32) 1u << 16) - 1;
-	ec->regs.d[reg] = ec->regs.d[reg] & ~MASK | (uint32) value & MASK;
-      }
-    void putl(execution_context *ec, int32 value) const
-      {ec->regs.d[reg] = value;}
-    void finishb(execution_context *) const {}
-    void finishw(execution_context *) const {}
-    void finishl(execution_context *) const {}
-    void set_cc(execution_context *ec, int32 value) const
-      {ec->regs.sr.set_cc(value);}
-  };
-
-  struct address_register
-  {
-    int reg;
-    address_register(int r): reg(r) {}
-    int getw(const execution_context *ec) const
-      {return extsw(ec->regs.a[reg]);}
-    int32 getl(const execution_context *ec) const
-      {return extsl(ec->regs.a[reg]);}
-    // No putb.
-    void putw(execution_context *ec, int value) const
-      {ec->regs.a[reg] = extsw(value);}
-    void putl(execution_context *ec, int32 value) const
-      {ec->regs.a[reg] = value;}
-    void finishb(execution_context *) const {}
-    void finishw(execution_context *) const {}
-    void finishl(execution_context *) const {}
-    void set_cc(execution_context *, int32) const {}
-  };
-
-  struct indirect
-  {
-    int reg;
-    indirect(int r): reg(r) {}
-    int getb(const execution_context *ec) const
-      {return extsb(ec->mem->getb(ec->data_fc(), ec->regs.a[reg]));}
-    int getw(const execution_context *ec) const
-      {return extsw(ec->mem->getw(ec->data_fc(), ec->regs.a[reg]));}
-    int32 getl(const execution_context *ec) const
-      {return extsl(ec->mem->getl(ec->data_fc(), ec->regs.a[reg]));}
-    void putb(execution_context *ec, int value) const
-      {ec->mem->putb(ec->data_fc(), ec->regs.a[reg], value);}
-    void putw(execution_context *ec, int value) const
-      {ec->mem->putw(ec->data_fc(), ec->regs.a[reg], value);}
-    void putl(execution_context *ec, int32 value) const
-      {ec->mem->putl(ec->data_fc(), ec->regs.a[reg], value);}
-    void finishb(execution_context *) const {}
-    void finishw(execution_context *) const {}
-    void finishl(execution_context *) const {}
-    void set_cc(execution_context *ec, int32 value) const
-      {ec->regs.sr.set_cc(value);}
-  };
-
   void addw_off_d(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -164,15 +93,15 @@ namespace
   template <class Destination> void addil(int op, execution_context *ec)
     {
       I(ec != NULL);
-      Destination ea1(op & 0x7);
       int32 value2 = extsl(ec->fetchl(2));
+      Destination ea1(op & 0x7, 2 + 4);
       VL((" addil #%ld,*\n", (long) value2));
 
       int32 value1 = ea1.getl(ec);
       int32 value = extsl(value1 + value2);
       ea1.putl(ec, value);
       ea1.finishl(ec);
-      ea1.set_cc(ec, value);	// FIXME.
+      ec->regs.sr.set_cc(value); // FIXME.
 
       ec->regs.pc += 2 + 4;
     }
@@ -197,7 +126,7 @@ namespace
   template <class Destination> void addqb(int op, execution_context *ec)
     {
       I(ec != NULL);
-      Destination ea1(op & 0x7);
+      Destination ea1(op & 0x7, 2);
       int value2 = op >> 9 & 0x7;
       if (value2 == 0)
 	value2 = 8;
@@ -207,7 +136,7 @@ namespace
       int value = extsb(value1 + value2);
       ea1.putb(ec, value);
       ea1.finishb(ec);
-      ea1.set_cc(ec, value);	// FIXME.
+      ec->regs.sr.set_cc(value); // FIXME.
 
       ec->regs.pc += 2;
     }
@@ -1136,14 +1065,12 @@ namespace
 void
 exec_unit::install_instructions(exec_unit *eu)
 {
+  using namespace addressing;
   I(eu != NULL);
-
-#if 0
-  eu->set_instruction(0x0680, 0x0007, &addil_d);
-#endif
   eu->set_instruction(0x0680, 0x0007, &addil<data_register>);
-  eu->set_instruction(0x0688, 0x0007, &addil<address_register>);
   eu->set_instruction(0x0690, 0x0007, &addil<indirect>);
+  eu->set_instruction(0x0698, 0x0007, &addil<postincrement_indirect>);
+  eu->set_instruction(0x06a0, 0x0007, &addil<predecrement_indirect>);
   eu->set_instruction(0x0c18, 0x0007, &cmpib_postinc);
   eu->set_instruction(0x1010, 0x0e07, &moveb_indir_d);
   eu->set_instruction(0x1018, 0x0e07, &moveb_postinc_d);
@@ -1180,12 +1107,10 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x4e50, 0x0007, &link_a);
   eu->set_instruction(0x4e58, 0x0007, &unlk_a);
   eu->set_instruction(0x4e75, 0x0000, &rts);
-#if 0
-  eu->set_instruction(0x5000, 0x0e07, &addqb_d);
-#endif
   eu->set_instruction(0x5000, 0x0e07, &addqb<data_register>);
-  // No addqb for address registers.
   eu->set_instruction(0x5010, 0x0e07, &addqb<indirect>);
+  eu->set_instruction(0x5018, 0x0e07, &addqb<postincrement_indirect>);
+  eu->set_instruction(0x5020, 0x0e07, &addqb<predecrement_indirect>);
   eu->set_instruction(0x5048, 0x0e07, &addqw_a);
   eu->set_instruction(0x5080, 0x0e07, &addql_d);
   eu->set_instruction(0x5180, 0x0e07, &subql_d);

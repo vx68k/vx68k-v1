@@ -1,4 +1,5 @@
-## -*-Makefile-*-
+## Process this file with automake to produce a Makefile.in.
 
-noinst_HEADERS = types.h except.h memory.h cpu.h
+noinst_HEADERS = addressing.h \
+types.h except.h memory.h cpu.h
 
