@@ -1,5 +1,9 @@
 2001-06-20  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* Version 1.1.5.
+
+	* configure.in: Set VERSION to 1.1.5.
+
 	* README: Updated.
 
 	* NEWS: Updated.
