@@ -603,6 +603,27 @@ namespace
     c.regs.pc += 2;
   }
 
+  /* Handles a ROXL instruction (immediate).  */
+  template <class Size> void
+  m68k_roxl_i(uint16_type op, context &c, unsigned long data)
+  {
+    unsigned int reg1 = op & 0x7;
+    unsigned int value2 = ((op >> 9) - 1 & 0x7) + 1;
+#ifdef HAVE_NANA_H
+    L("\troxl%s #%u,%%d%u", Size::suffix(), value2, reg1);
+#endif
+
+    typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
+    typename Size::svalue_type value
+      = Size::svalue(Size::uvalue(value1) << value2
+		     | c.regs.ccr.x() << value2 - 1
+		     | Size::uvalue(value1) >> Size::value_bit() + 1 - value2);
+    Size::put(c.regs.d[reg1], value);
+    c.regs.ccr.set_cc(value);	// FIXME.
+
+    c.regs.advance_pc(2);
+  }
+
   /* Handles a ROXR instruction (immediate).  */
   template <class Size> void
   m68k_roxr_i(uint16_type op, context &c, unsigned long data)
@@ -697,18 +718,21 @@ vm68k::install_instructions_14(exec_unit &eu, unsigned long data)
        {0xe0a8, 0xe07, &m68k_lsr_r<long_word_size>},
        {0xe100, 0xe07, &m68k_asl_i<byte_size>},
        {0xe108, 0xe07, &m68k_lsl_i<byte_size>},
+       {0xe110, 0xe07, &m68k_roxl_i<byte_size>},
        {0xe118, 0xe07, &m68k_rol_i<byte_size>},
        {0xe120, 0xe07, &m68k_asl_r<byte_size>},
        {0xe128, 0xe07, &m68k_lsl_r<byte_size>},
        {0xe138, 0xe07, &m68k_rol_r<byte_size>},
        {0xe140, 0xe07, &m68k_asl_i<word_size>},
        {0xe148, 0xe07, &m68k_lsl_i<word_size>},
+       {0xe150, 0xe07, &m68k_roxl_i<word_size>},
        {0xe158, 0xe07, &m68k_rol_i<word_size>},
        {0xe160, 0xe07, &m68k_asl_r<word_size>},
        {0xe168, 0xe07, &m68k_lsl_r<word_size>},
        {0xe178, 0xe07, &m68k_rol_r<word_size>},
        {0xe180, 0xe07, &m68k_asl_i<long_word_size>},
        {0xe188, 0xe07, &m68k_lsl_i<long_word_size>},
+       {0xe190, 0xe07, &m68k_roxl_i<long_word_size>},
        {0xe198, 0xe07, &m68k_rol_i<long_word_size>},
        {0xe1a0, 0xe07, &m68k_asl_r<long_word_size>},
        {0xe1a8, 0xe07, &m68k_lsl_r<long_word_size>},

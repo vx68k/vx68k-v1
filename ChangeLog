@@ -1,5 +1,8 @@
 2000-12-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/inst14.cc (m68k_roxl_i): New function.
+	(install_instructions_14): Use the new handler.
+
 	* Version 1.1.4.
 
 	* configure.in: Set VERSION to 1.1.4.
