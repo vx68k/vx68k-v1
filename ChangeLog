@@ -1,5 +1,7 @@
 1999-08-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/machine.cc (get_image): New function.
+
 	* lib/vx68k/textvram.cc (draw_char): Add code for control
 	characters.
 	(draw_char): Fix cursor motion.

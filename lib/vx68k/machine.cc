@@ -128,6 +128,22 @@ machine::set_iocs_function(unsigned int i, iocs_function_handler handler,
   iocs_functions[i] = make_pair(handler, data);
 }
 
+void
+machine::get_image(int x, int y, int width, int height,
+		   unsigned char *rgb_buf, size_t row_size)
+{
+  for (int i = 0; i != height; ++i)
+    for (int j = 0; j != width; ++j)
+      {
+	unsigned char *p = rgb_buf + i * row_size + j * 3;
+	p[0] = 0;
+	p[1] = 0;
+	p[2] = 0;
+      }
+
+  tvram.get_image(x, y, width, height, rgb_buf, row_size);
+}
+
 machine::machine(size_t memory_size)
   : _memory_size(memory_size),
     mem(memory_size)
