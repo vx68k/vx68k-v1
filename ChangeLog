@@ -1,5 +1,7 @@
 2001-11-30  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* Add missing throw specs to functions.
+
 	* include/vx68k/human.h: Replace exec_unit with processor.
 	* include/vx68k/machine.h: Likewise.
 	* include/vx68k/machine.h: Likewise.

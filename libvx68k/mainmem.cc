@@ -56,6 +56,7 @@ main_memory::set_super_area(size_t n)
 
 int
 main_memory::get_8(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
   if (address % 0x1000000U >= end)
     throw bus_error(address, READ | fc);
@@ -76,6 +77,7 @@ main_memory::get_8(uint32_type address, function_code fc) const
 
 uint16_type
 main_memory::get_16(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
   assert((address & 1) == 0);
   if (address % 0x1000000U >= end)
@@ -90,6 +92,7 @@ main_memory::get_16(uint32_type address, function_code fc) const
 
 uint32_type
 main_memory::get_32(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
   assert((address & 3) == 0);
   if (address % 0x1000000U >= end)
@@ -107,6 +110,7 @@ main_memory::get_32(uint32_type address, function_code fc) const
 
 void
 main_memory::put_8(uint32_type address, int value, function_code fc)
+  throw (memory_exception)
 {
   value &= 0xff;
 
@@ -127,6 +131,7 @@ main_memory::put_8(uint32_type address, int value, function_code fc)
 
 void
 main_memory::put_16(uint32_type address, uint16_type value, function_code fc)
+  throw (memory_exception)
 {
   assert((address & 1) == 0);
   value &= 0xffff;
@@ -141,6 +146,7 @@ main_memory::put_16(uint32_type address, uint16_type value, function_code fc)
 
 void
 main_memory::put_32(uint32_type address, uint32_type value, function_code fc)
+  throw (memory_exception)
 {
   assert((address & 3) == 0);
   value &= 0xffffffffU;

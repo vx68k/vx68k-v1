@@ -46,6 +46,7 @@ bool nana_iocs_call_trace = false;
 
 uint16_type
 system_rom::get_16(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
 #ifdef DL
   DL("class system_rom: get_16: fc=%d address=0x%08lx\n",
@@ -69,6 +70,7 @@ system_rom::get_16(uint32_type address, function_code fc) const
 
 int
 system_rom::get_8(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
 #ifdef DL
   DL("class system_rom: get_8: fc=%d address=0x%08lx\n",
@@ -87,6 +89,7 @@ system_rom::get_8(uint32_type address, function_code fc) const
 
 void
 system_rom::put_16(uint32_type address, uint16_type value, function_code fc)
+  throw (memory_exception)
 {
 #ifdef DL
   DL("class system_rom: put_16: fc=%d address=0x%08lx value=0x%04x\n",
@@ -102,6 +105,7 @@ system_rom::put_16(uint32_type address, uint16_type value, function_code fc)
 
 void
 system_rom::put_8(uint32_type address, int value, function_code fc)
+  throw (memory_exception)
 {
 #ifdef DL
   DL("class system_rom: put_8: fc=%d address=0x%08lx value=0x%02x\n",

@@ -34,6 +34,7 @@ namespace vx68k
   using vm68k::memory_map;
   using vm68k::context;
   using vm68k::processor;
+  using vm68k::memory_exception;
   using namespace vm68k::types;
   using namespace std;
 
@@ -70,12 +71,16 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  These methods shall always fail.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
 
   public:
     /* Attaches or detaches an execution unit.  */
@@ -113,14 +118,20 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
-    uint32_type get_32(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint32_type get_32(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
-    void put_32(uint32_type address, uint32_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
+    void put_32(uint32_type address, uint32_type, function_code)
+      throw (memory_exception);
 
   public:
     void set_super_area(size_t n);
@@ -132,12 +143,16 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
   };
 
   /* Raster iterator for the text VRAM.  This class is used by the
@@ -204,11 +219,15 @@ namespace vx68k
     ~text_video_memory();
 
   public:
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
 
   public:
     /* Installs IOCS calls on the text video memory.  */
@@ -279,12 +298,16 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
 
   public:
     /* Returns true if VDISP interrupts are enabled.  */
@@ -318,12 +341,16 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
 
   public:
     /* Checks if text colors are modified.  This function may be
@@ -346,12 +373,16 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
 
   public:
     /* Installs IOCS calls on the DMAC.  */
@@ -372,12 +403,16 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
   };
 
   /* MFP input/output port memory.  This memory is mapped to the
@@ -386,12 +421,16 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
   };
 
   /* System ports memory.  This memory is mapped to the address range
@@ -400,12 +439,16 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
   };
 
   /* OPM input/output port memory.  */
@@ -434,12 +477,16 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
 
   public:
     int status() const {return _status;}
@@ -462,12 +509,16 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int value, function_code);
-    void put_16(uint32_type address, uint16_type value, function_code);
+    void put_8(uint32_type address, int value, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type value, function_code)
+      throw (memory_exception);
 
   public:
     /* Installs IOCS calls on this ADPCM chip.  */
@@ -480,12 +531,16 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int value, function_code);
-    void put_16(uint32_type address, uint16_type value, function_code);
+    void put_8(uint32_type address, int value, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type value, function_code)
+      throw (memory_exception);
 
   public:
     /* Installs IOCS calls on this ADPCM chip.  */
@@ -528,12 +583,16 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
 
   public:
     /* Installs IOCS calls on the first COM port and the mouse.  */
@@ -572,12 +631,16 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
   };
 
   /* Sprite controller memory.  */
@@ -585,12 +648,16 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
   };
 
   /* SRAM.  */
@@ -605,12 +672,16 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
   };
 
   /* Font ROM.  */
@@ -642,12 +713,16 @@ namespace vx68k
     
   public:
     /* Reads data from this object.  */
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
+    int get_8(uint32_type address, function_code) const
+      throw (memory_exception);
+    uint16_type get_16(uint32_type address, function_code) const
+      throw (memory_exception);
 
     /* Writes data to this object.  */
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
+    void put_8(uint32_type address, int, function_code)
+      throw (memory_exception);
+    void put_16(uint32_type address, uint16_type, function_code)
+      throw (memory_exception);
 
   public:
     /* Installs IOCS calls on the system font.  */

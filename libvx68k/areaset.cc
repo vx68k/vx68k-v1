@@ -38,6 +38,7 @@ using namespace std;
 
 uint16_type
 area_set::get_16(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
 #ifdef L
   L("class area_set: get_16 fc=%d address=%#010x\n", fc, address);
@@ -47,6 +48,7 @@ area_set::get_16(uint32_type address, function_code fc) const
 
 int
 area_set::get_8(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
 #ifdef L
   L("class area_set: get_8 fc=%d address=%#010x\n", fc, address);
@@ -56,6 +58,7 @@ area_set::get_8(uint32_type address, function_code fc) const
 
 void
 area_set::put_8(uint32_type address, int value, function_code fc)
+  throw (memory_exception)
 {
   address &= 0xffffffffu;
   value &= 0xffu;
@@ -85,6 +88,7 @@ area_set::put_8(uint32_type address, int value, function_code fc)
 
 void
 area_set::put_16(uint32_type address, uint16_type value, function_code fc)
+  throw (memory_exception)
 {
   this->put_8(address / 2 * 2 + 1, value, fc);
 }

@@ -39,6 +39,7 @@ using namespace std;
 
 uint16_type
 sprites_memory::get_16(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
 #ifdef L
   L("class sprites_memory: get_16: fc=%d address=%#010lx\n",
@@ -50,6 +51,7 @@ sprites_memory::get_16(uint32_type address, function_code fc) const
 
 int
 sprites_memory::get_8(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
 #ifdef L
   L("class sprites_memory: get_8: fc=%d address=%#010lx\n",
@@ -66,6 +68,7 @@ sprites_memory::get_8(uint32_type address, function_code fc) const
 void
 sprites_memory::put_16(uint32_type address, uint16_type value,
 		       function_code fc)
+  throw (memory_exception)
 {
 #ifdef L
   L("class sprites_memory: put_16: fc=%d address=%#010lx value=%#06x\n",
@@ -76,6 +79,7 @@ sprites_memory::put_16(uint32_type address, uint16_type value,
 
 void
 sprites_memory::put_8(uint32_type address, int value, function_code fc)
+  throw (memory_exception)
 {
 #ifdef L
   L("class sprites_memory: put_8: fc=%d address=%#010lx value=%#04x\n",

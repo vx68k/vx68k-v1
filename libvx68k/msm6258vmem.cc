@@ -49,6 +49,7 @@ msm6258v_memory::install_iocs_calls(system_rom &rom)
 
 int
 msm6258v_memory::get_8(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
   address &= 0xffffffff;
 #ifdef LG
@@ -65,6 +66,7 @@ msm6258v_memory::get_8(uint32_type address, function_code fc) const
 
 uint16_type
 msm6258v_memory::get_16(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
   address &= 0xffffffff & ~1;
 #ifdef LG
@@ -82,6 +84,7 @@ msm6258v_memory::get_16(uint32_type address, function_code fc) const
 
 void
 msm6258v_memory::put_8(uint32_type address, int value, function_code fc)
+  throw (memory_exception)
 {
   address &= 0xffffffff;
   value &= 0xff;
@@ -99,6 +102,7 @@ msm6258v_memory::put_8(uint32_type address, int value, function_code fc)
 void
 msm6258v_memory::put_16(uint32_type address, uint16_type value,
 			function_code fc)
+  throw (memory_exception)
 {
   address &= 0xffffffff & ~1;
   value &= 0xff;

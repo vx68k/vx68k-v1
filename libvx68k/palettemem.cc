@@ -92,6 +92,7 @@ palettes_memory::get_text_colors(unsigned int first, unsigned int last,
 
 uint16_type
 palettes_memory::get_16(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
   address &= 0xfffffffeu;
 #ifdef DL
@@ -134,6 +135,7 @@ palettes_memory::get_16(uint32_type address, function_code fc) const
 
 int
 palettes_memory::get_8(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
   address &= 0xffffffffU;
 #ifdef DL
@@ -151,6 +153,7 @@ palettes_memory::get_8(uint32_type address, function_code fc) const
 void
 palettes_memory::put_16(uint32_type address, uint16_type value,
 			function_code fc)
+  throw (memory_exception)
 {
   address &= 0xfffffffeu;
   value &= 0xffffu;
@@ -198,6 +201,7 @@ palettes_memory::put_16(uint32_type address, uint16_type value,
 
 void
 palettes_memory::put_8(uint32_type address, int value, function_code fc)
+  throw (memory_exception)
 {
   address &= 0xffffffffU;
   value &= 0xff;

@@ -77,6 +77,7 @@ crtc_memory::set_vdisp_counter_data(unsigned int value)
 
 uint16_type
 crtc_memory::get_16(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
 #ifdef DL
   DL("class crtc_memory: get_16: fc=%d address=0x%08lx\n", fc, address + 0UL);
@@ -93,6 +94,7 @@ crtc_memory::get_16(uint32_type address, function_code fc) const
 
 int
 crtc_memory::get_8(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
 #ifdef DL
   DL("class crtc_memory: get_8: fc=%d address=0x%08lx\n", fc, address + 0UL);
@@ -107,6 +109,7 @@ crtc_memory::get_8(uint32_type address, function_code fc) const
 
 void
 crtc_memory::put_16(uint32_type address, uint16_type value, function_code fc)
+  throw (memory_exception)
 {
 #ifdef DL
   DL("class crtc_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
@@ -120,6 +123,7 @@ crtc_memory::put_16(uint32_type address, uint16_type value, function_code fc)
 
 void
 crtc_memory::put_8(uint32_type address, int value, function_code fc)
+  throw (memory_exception)
 {
 #ifdef DL
   DL("class crtc_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",

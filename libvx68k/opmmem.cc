@@ -128,6 +128,7 @@ opm_memory::set_interrupt_enabled(bool value)
 
 int
 opm_memory::get_8(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
   address &= 0xffffffffu;
 #ifdef DL
@@ -154,6 +155,7 @@ opm_memory::get_8(uint32_type address, function_code fc) const
 
 uint16_type
 opm_memory::get_16(uint32_type address, function_code fc) const
+  throw (memory_exception)
 {
 #ifdef DL
   DL("class opm_memory: get_16: fc=%d address=0x%08lx\n",
@@ -165,6 +167,7 @@ opm_memory::get_16(uint32_type address, function_code fc) const
 
 void
 opm_memory::put_8(uint32_type address, int value, function_code fc)
+  throw (memory_exception)
 {
   address &= 0xffffffffu;
   value &= 0xffu;
@@ -195,6 +198,7 @@ opm_memory::put_8(uint32_type address, int value, function_code fc)
 
 void
 opm_memory::put_16(uint32_type address, uint16_type value, function_code fc)
+  throw (memory_exception)
 {
   address &= 0xffffffffu;
   value &= 0xffffu;
