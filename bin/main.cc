@@ -250,21 +250,21 @@ vx68k_app::show_about_dialog()
 
 namespace
 {
-  /* Handles the FD Load command.  */
+  /* Handles a `FD load' command.  */
   void
   handle_fd_load_command(gpointer data, guint i, GtkWidget *item) throw ()
   {
-    g_message("FD Load command is not implemented yet");
+    g_message("`FD load' command is not implemented yet");
   }
 
-  /* Handles the FD Eject command.  */
+  /* Handles a `FD eject' command.  */
   void
   handle_fd_eject_command(gpointer data, guint i, GtkWidget *item) throw ()
   {
-    g_message("FD Eject command is not implemented yet");
+    g_message("`FD eject' command is not implemented yet");
   }
 
-  /* Handles About command.  */
+  /* Handles an `about' command.  */
   void
   handle_about_command(gpointer data, guint, GtkWidget *item) throw ()
   {
