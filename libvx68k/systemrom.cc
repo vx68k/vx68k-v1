@@ -36,14 +36,6 @@ using namespace std;
 # define I assert
 #endif
 
-namespace
-{
-  void
-  iocs_dispatch(uint_type, context &, instruction_data *)
-  {
-  }
-} // namespace (unnamed)
-
 uint_type
 system_rom::getw(int, uint32_type) const
 {
@@ -95,6 +87,34 @@ system_rom::write(int, uint32_type, const void *, size_t)
 #endif
   return 0;
 }
+
+void
+system_rom::dispatch_iocs_function(context &c)
+{
+  unsigned int funcno = c.regs.d[0] & 0xffu;
+#ifdef HAVE_NANA_H
+  L(" trap #15\t| IOCS %#4x\n", funcno);
+#endif
+
+  iocs_function_handler handler = iocs_functions[funcno].first;
+  I(handler != NULL);
+
+  (*handler)(c, iocs_functions[funcno].second);
+
+  c.regs.pc += 2;
+}
+
+namespace
+{
+  void
+  iocs_trap(uint_type, context &c, instruction_data *data)
+  {
+    system_rom *rom = reinterpret_cast<system_rom *>(data);
+    I(rom != NULL);
+
+    rom->dispatch_iocs_function(c);
+  }
+} // namespace (unnamed)
 
 void
 system_rom::attach(exec_unit *eu)
@@ -103,7 +123,8 @@ system_rom::attach(exec_unit *eu)
     throw logic_error("system_rom");
 
   attached_eu = eu;
-  attached_eu->set_instruction(0x4e4f, 0, &iocs_dispatch, NULL);
+  attached_eu->set_instruction(0x4e4f, 0, &iocs_trap,
+			       reinterpret_cast<instruction_data *>(this));
 }
 
 void
@@ -125,13 +146,7 @@ system_rom::initialize(address_space &)
   L("system_rom: `initialize' not implemented\n");
 #endif
 }
-
-void
-system_rom::invalid_iocs_function(context &c, machine &m, unsigned long data)
-{
-  throw runtime_error("invalid iocs function");	// FIXME
-}
-
+
 system_rom::~system_rom()
 {
   detach(attached_eu);
@@ -141,4 +156,10 @@ system_rom::system_rom()
   : iocs_functions(0x100, iocs_function_type(&invalid_iocs_function, 0)),
     attached_eu(NULL)
 {
+}
+
+void
+system_rom::invalid_iocs_function(context &c, unsigned long data)
+{
+  throw runtime_error("invalid iocs function");	// FIXME
 }

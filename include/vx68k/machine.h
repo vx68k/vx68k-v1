@@ -61,11 +61,11 @@ namespace vx68k
   class system_rom: public memory
   {
   public:
-    typedef void (*iocs_function_handler)(context &, machine &, unsigned long);
+    typedef void (*iocs_function_handler)(context &, unsigned long);
     typedef pair<iocs_function_handler, unsigned long> iocs_function_type;
 
   protected:
-    static void invalid_iocs_function(context &, machine &, unsigned long);
+    static void invalid_iocs_function(context &, unsigned long);
 
   private:
     /* Table of the IOCS functions.  */
@@ -85,6 +85,9 @@ namespace vx68k
 
     /* Initializes memory in an address space.  */
     void initialize(address_space &);
+
+  public:
+    void dispatch_iocs_function(context &);
 
   public:
     /* Reads data from this object.  */

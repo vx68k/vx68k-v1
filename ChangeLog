@@ -1,5 +1,14 @@
 2000-05-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_dispatch): Removed.
+	(iocs_trap): New function.
+	(attach): Use iocs_trap instead of iocs_dispatch.
+	(invalid_iocs_function): Remove the machine & argument.
+	(dispatch_iocs_function): New member function.
+
+	* include/vx68k/machine.h (class system_rom): Modify
+	iocs_function_handler.  Add new member dispatch_iocs_function.
+
 	* libvx68k/machine.cc (~machine): Clean up about rom.
 	(machine): Initialize about rom.
 
