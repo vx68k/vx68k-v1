@@ -351,6 +351,23 @@ namespace
       ec->regs.pc += 4;
     }
 
+  void lslw_i_d(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int reg1 = op & 0x7;
+      int val2 = op >> 9 & 0x7;
+      if (val2 == 0)
+	val2 = 8;
+      VL((" lslw #%d,%%d%d\n", val2, reg1));
+
+      unsigned int val = ec->regs.d[reg1] << val2;
+      const uint32 MASK = ((uint32) 1u << 16) - 1;
+      ec->regs.d[reg1] = ec->regs.d[reg1] & ~MASK | (uint32) val & MASK;
+      ec->regs.sr.set_cc(val);	// FIXME.
+
+      ec->regs.pc += 2;
+    }
+
   void lsll_i_d(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -607,6 +624,24 @@ namespace
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2 + 2;
+    }
+
+  void movel_d_postinc(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+      uint32 d_addr = ec->regs.a[d_reg];
+      VL((" movel %%d%d,%%a%d@+ |*,0x%lx\n",
+	  s_reg, d_reg, (unsigned long) d_addr));
+
+      int fc = ec->data_fc();
+      int32 value = extsl(ec->regs.d[s_reg]);
+      ec->mem->putl(fc, d_addr, value);
+      ec->regs.a[d_reg] = d_addr + 4;
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2;
     }
 
   void movel_d_predec(int op, execution_context *ec)
@@ -909,6 +944,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x2008, 0x0e07, &movel_a_d);
   eu->set_instruction(0x2028, 0x0e07, &movel_off_d);
   eu->set_instruction(0x2058, 0x0e07, &movel_postinc_a);
+  eu->set_instruction(0x20c0, 0x0e07, &movel_d_postinc);
   eu->set_instruction(0x2100, 0x0e07, &movel_d_predec);
   eu->set_instruction(0x2108, 0x0e07, &movel_a_predec);
   eu->set_instruction(0x213c, 0x0e00, &movel_i_predec);
@@ -948,6 +984,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0xc0bc, 0x0e00, &andl_i_d);
   eu->set_instruction(0xd068, 0x0e07, &addw_off_d);
   eu->set_instruction(0xe048, 0x0e07, &lsrw_i_d);
+  eu->set_instruction(0xe148, 0x0e07, &lslw_i_d);
   eu->set_instruction(0xe188, 0x0e07, &lsll_i_d);
 }
 
