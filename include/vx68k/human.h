@@ -42,6 +42,7 @@ namespace vx68k
       sint32_type alloc_largest(uint32_type parent);
       sint_type free(uint32_type memptr);
       void free_by_parent(uint32_type parent);
+      sint32_type resize(uint32_type memptr, uint32_type newlen);
 
     protected:
       void make_block(uint32_type, uint32_type, uint32_type, uint32_type);
@@ -80,9 +81,13 @@ namespace vx68k
       uint32_type getpdb() const
 	{return pdb;}
       void exit(sint_type);
-      sint32_type malloc(uint32_type);
-      sint_type mfree(sint32_type);
-      sint32_type setblock(sint32_type, uint32_type);
+
+    public:
+      sint32_type malloc(uint32_type len)
+	{return _allocator->alloc(len, pdb - 0x10);}
+      sint_type mfree(uint32_type);
+      sint32_type setblock(uint32_type memptr, uint32_type newlen)
+	{return _allocator->resize(memptr, newlen);}
 
     public:
       sint_type create(const char *name, sint_type attr);
@@ -113,6 +118,8 @@ namespace vx68k
     public:
       process *current_process() const
 	{return _process;}
+      void set_current_process(process *p)
+	{_process = p;}
 
       void exit(unsigned int);
       int open(const char *, unsigned int);

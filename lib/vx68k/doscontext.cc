@@ -193,7 +193,7 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
   mem->write(SUPER_DATA, load_address - 128,
 	     name, strlen(name) + 1);
   regs.a[0] = load_address - 0x100;
-  regs.a[1] = mem->getl(SUPER_DATA, regs.a[0] + 8);
+  regs.a[1] = load_address + text_size + data_size;
   regs.a[2] = 0x7000;		// FIXME.
   regs.a[3] = 0x7000;		// FIXME.
   regs.a[4] = load_address + start_offset;

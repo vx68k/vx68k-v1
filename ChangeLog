@@ -1,3 +1,19 @@
+1999-07-02  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vx68k/human.h (class process): Add inline malloc and
+	setblock.
+	(class memory_allocator): Add resize.
+	(class dos_exec_context): Add set_current_process.
+
+	* lib/vx68k/dos.cc (load): Set current process in context.
+	(dos_malloc, dos_setblock): Implemented.
+
+	* lib/vx68k/doscontext.cc (load_executable): Fix %a1 value.
+
+	* lib/vx68k/allocator.cc (free, alloc, alloc_largest): Add error
+	tests and logging.
+	(resize): New function.
+
 1999-07-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/dos.cc (dos_fputs, print): Use process::fputs.

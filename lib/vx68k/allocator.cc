@@ -24,6 +24,14 @@
 
 #include <vx68k/human.h>
 
+#ifdef HAVE_NANA_H
+# include <nana.h>
+# include <cstdio>
+#else
+# include <cassert>
+# define I assert
+#endif
+
 using namespace vx68k::human;
 using namespace vm68k;
 using namespace std;
@@ -78,21 +86,84 @@ memory_allocator::free_by_parent(uint32_type parent)
 sint_type
 memory_allocator::free(uint32_type memptr)
 {
+#ifdef L
+  L("memory_allocator: deallocating block %#lx...\n", (unsigned long) memptr);
+#endif
   memptr -= 0x10;
 
+  uint32_type next = limit;
   uint32_type block = last_block;
   while (block != 0)
     {
+      if (block + 0x10 > next)
+	return -7;
+
       if (block == memptr)
 	{
 	  free_by_parent(block);
 	  remove_block(block);
+#ifdef L
+	  L("memory_allocator: success\n");
+#endif
 	  return 0;
 	}
 
+      next = limit;
       block = _as->getl(SUPER_DATA, block + 0);
     }
 
+#ifdef L
+  L("memory_allocator: failure\n");
+#endif
+  // No matching block.
+  return -9;
+}
+
+sint32_type
+memory_allocator::resize(uint32_type memptr, uint32_type newlen)
+{
+#ifdef L
+  L("memory_allocator: resizing block %#lx to %lu bytes...\n",
+    (unsigned long) memptr, (unsigned long) newlen);
+#endif
+  uint32_type new_brk = memptr + newlen;
+  memptr -= 0x10;
+
+  uint32_type next = limit;
+  uint32_type block = last_block;
+  while (block != 0)
+    {
+      if (block + 0x10 > next)
+	return -7;
+
+      if (block == memptr)
+	{
+	  if (next < new_brk)
+	    {
+#ifdef L
+	      L("memory_allocator: failure\n");
+#endif
+	      uint32_type max_newlen = next - block;
+	      if (max_newlen == 0x10)
+		return extsl(0x82000000);
+
+	      return extsl(0x81000000 + (max_newlen - 0x10));
+	    }
+
+	  _as->putl(SUPER_DATA, block + 8, new_brk);
+#ifdef L
+	  L("memory_allocator: success\n");
+#endif
+	  return 0;
+	}
+
+      next = block;
+      block = _as->getl(SUPER_DATA, block + 0);
+    }
+
+#ifdef L
+  L("memory_allocator: failure\n");
+#endif
   // No matching block.
   return -9;
 }
@@ -100,65 +171,87 @@ memory_allocator::free(uint32_type memptr)
 sint32_type
 memory_allocator::alloc(uint32_type len, uint32_type parent)
 {
+#ifdef L
+  L("memory_allocator: allocating block of %lu bytes...\n",
+    (unsigned long) len);
+#endif
   len += 0x10;
-  uint32_type max_free_size = 0;
+  uint32_type max_free_len = 0x10;
 
-  uint32_type end = limit;
+  uint32_type next = limit;
   uint32_type block = last_block;
   while (block != 0)
     {
-      uint32_type candidate = (_as->getl(SUPER_DATA, block + 8) + 0xf) & ~0xf;
-      uint32_type free_size = end - candidate;
-      if (free_size >= len)
+      if (block + 0x10 > next)
+	return -7;
+
+      uint32_type candidate = _as->getl(SUPER_DATA, block + 8) + 0xf & ~0xf;
+      uint32_type free_len = next - candidate;
+      if (free_len >= len)
 	{
 	  make_block(candidate, len, block, parent);
+#ifdef L
+	  L("memory_allocator: success, returning %#lx\n",
+	    (unsigned long) candidate + 0x10);
+#endif
 	  return extsl(candidate + 0x10);
 	}
 
-      if (free_size > max_free_size)
-	max_free_size = free_size;
+      if (free_len > max_free_len)
+	max_free_len = free_len;
 
-      end = block;
+      next = block;
       block = _as->getl(SUPER_DATA, block + 0);
     }
 
-  if (max_free_size > 0x10)
-    return extsl(0x81000000 + (max_free_size - 0x10));
+#ifdef L
+  L("memory_allocator: failure\n");
+#endif
+  if (max_free_len == 0x10)
+    return extsl(0x82000000);
 
-  return extsl(0x82000000);
+  return extsl(0x81000000 + (max_free_len - 0x10));
 }
 
 sint32_type
 memory_allocator::alloc_largest(uint32_type parent)
 {
-  uint32_type prev = 0;
-  uint32_type largest = 0;
-  uint32_type max_free_size = 0;
+#ifdef L
+  L("memory_allocator: allocating largestblock...\n");
+#endif
+  uint32_type best_block = 0;
+  uint32_type best_candidate = 0;
+  uint32_type max_free_len = 0x10;
 
-  uint32_type end = limit;
+  uint32_type next = limit;
   uint32_type block = last_block;
   while (block != 0)
     {
+      if (block + 0x10 > next)
+	return -7;
+
       uint32_type candidate = (_as->getl(SUPER_DATA, block + 8) + 0xf) & ~0xf;
-      uint32_type free_size = end - candidate;
-      if (free_size > max_free_size)
+      uint32_type free_len = next - candidate;
+      if (free_len > max_free_len)
 	{
-	  prev = block;
-	  largest = candidate;
-	  max_free_size = free_size;
+	  best_block = block;
+	  best_candidate = candidate;
+	  max_free_len = free_len;
 	}
 
-      end = block;
+      next = block;
       block = _as->getl(SUPER_DATA, block + 0);
     }
 
-  if (max_free_size > 0x10)
-    {
-      make_block(largest, max_free_size, prev, parent);
-      return extsl(largest + 0x10);
-    }
+  if (max_free_len == 0x10)
+    return extsl(0x82000000);
 
-  return extsl(0x82000000);
+  make_block(best_candidate, max_free_len, best_block, parent);
+#ifdef L
+  L("memory_allocator: success, returning %#lx\n",
+    (unsigned long) best_candidate + 0x10);
+#endif
+  return extsl(best_candidate + 0x10);
 }
 
 memory_allocator::memory_allocator(address_space *as,

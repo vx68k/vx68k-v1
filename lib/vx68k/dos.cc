@@ -44,6 +44,7 @@ process *
 dos::load(const char *name, dos_exec_context &c)
 {
   process *p = new process(&allocator, &fs);
+  c.set_current_process(p);
   c.regs.a[4] = c.load_executable(name, p->getpdb());
   return p;
 }
@@ -306,13 +307,14 @@ namespace
   void
   dos_malloc(unsigned int op, context &ec, instruction_data *data)
   {
+    uint32_type sp = ec.regs.a[7];
+    uint32_type len = ec.mem->getl(SUPER_DATA, sp + 0);
 #ifdef L
-    L(" DOS _MALLOC");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _MALLOC\n");
 #endif
 
-    // FIXME.
-    ec.regs.d[0] = 0x110000;
+    process *p = static_cast<dos_exec_context &>(ec).current_process();
+    ec.regs.d[0] = p->malloc(len);
 
     ec.regs.pc += 2;
   }
@@ -415,17 +417,19 @@ namespace
 
   void
   dos_setblock(unsigned int op, context &ec, instruction_data *data)
-    {
+  {
+    uint32_type sp = ec.regs.a[7];
+    uint32_type memptr = ec.mem->getl(SUPER_DATA, sp + 0);
+    uint32_type newlen = ec.mem->getl(SUPER_DATA, sp + 4);
 #ifdef L
-      L(" DOS _SETBLOCK");
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _SETBLOCK\n");
 #endif
 
-      // FIXME.
-      ec.regs.d[0] = 0;
+    process *p = static_cast<dos_exec_context &>(ec).current_process();
+    ec.regs.d[0] = p->setblock(memptr, newlen);
 
-      ec.regs.pc += 2;
-    }
+    ec.regs.pc += 2;
+  }
 
   void
   dos_vernum(uint_type op, context &ec, instruction_data *data)
