@@ -29,7 +29,7 @@ using namespace vm68k;
 namespace
 {
   struct common_cc_evaluator
-    : cc_evaluator
+    : virtual cc_evaluator
   {
     bool ls(const sint32_type *values) const
       {return uint32_type(values[0]) <= 0;}
@@ -41,6 +41,8 @@ namespace
       {return values[0] < 0;}
     bool lt(const sint32_type *values) const
       {return values[0] < 0;}
+    bool le(const sint32_type *values) const
+      {return values[0] <= 0;}
   };
 
   struct cmp_cc_evaluator

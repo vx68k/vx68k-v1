@@ -1,5 +1,19 @@
 1999-06-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (bge): #if'd out.
+	(lslw_r, subb): New function.
+	(install_instructions): Add new handlers.
+
+	* lib/vm68k/statusreg.cc (struct common_cc_evaluator): Add member
+	function le.
+
+	* include/vm68k/condition.h (struct ge, struct lt, struct gt,
+	struct le): New classes.
+
+	* include/vm68k/cpu.h (struct cc_evaluator): Add member function
+	le.
+	(class status_register): Add member function gt and le.
+
 	* lib/vx68k/dos.cc: Expand "debug.h".
 	(dos_create, dos_write): New function.
 	(dos): Add new handlers.

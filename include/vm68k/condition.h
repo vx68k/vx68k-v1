@@ -63,6 +63,42 @@ namespace vm68k
       const char *text() const
 	{return "cs";}
     };
+
+    struct ge
+      : unary_function<context, bool>
+    {
+      bool operator()(const context &ec) const
+	{return ec.regs.sr.ge();}
+      const char *text() const
+	{return "ge";}
+    };
+
+    struct lt
+      : unary_function<context, bool>
+    {
+      bool operator()(const context &ec) const
+	{return ec.regs.sr.lt();}
+      const char *text() const
+	{return "lt";}
+    };
+
+    struct gt
+      : unary_function<context, bool>
+    {
+      bool operator()(const context &ec) const
+	{return ec.regs.sr.gt();}
+      const char *text() const
+	{return "gt";}
+    };
+
+    struct le
+      : unary_function<context, bool>
+    {
+      bool operator()(const context &ec) const
+	{return ec.regs.sr.le();}
+      const char *text() const
+	{return "le";}
+    };
   } // condition
 } // vm68k
 

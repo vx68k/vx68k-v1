@@ -58,6 +58,7 @@ namespace vm68k
     virtual bool eq(const sint32_type *) const = 0;
     virtual bool mi(const sint32_type *) const = 0;
     virtual bool lt(const sint32_type *) const = 0;
+    virtual bool le(const sint32_type *) const = 0;
   };
 
   /* Status register.  */
@@ -93,6 +94,10 @@ namespace vm68k
       {return !lt();}
     bool lt() const
       {return cc_eval->lt(cc_values);}
+    bool gt() const
+      {return !le();}
+    bool le() const
+      {return cc_eval->le(cc_values);}
   public:
     void set_cc(int32);
     void set_cc_cmp(sint32_type, sint32_type, sint32_type);
