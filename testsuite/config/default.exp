@@ -1,3 +1,8 @@
+global VX68K
+if ![info exists VX68K] {
+    set VX68K "$objdir/../bin/vx68k"
+}
+
 proc vx68k_exit {} {
 }
 
