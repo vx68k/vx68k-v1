@@ -216,10 +216,10 @@ gtk_console_window::gtk_console_window(GtkWidget *w)
 
       /* Eject Floppy menu items.  */
       new_tearoff_item(GTK_MENU_SHELL(eject_floppy_menu));
-      eject_floppy_0_item
+      eject_floppy_subitems[0]
 	= new_item(GTK_MENU_SHELL(eject_floppy_menu),
 		   _("Unit _0"), eject_floppy_menu_ag);
-      eject_floppy_1_item
+      eject_floppy_subitems[1]
 	= new_item(GTK_MENU_SHELL(eject_floppy_menu),
 		   _("Unit _1"), eject_floppy_menu_ag);
 
@@ -230,8 +230,8 @@ gtk_console_window::gtk_console_window(GtkWidget *w)
 
       gtk_widget_set_sensitive(load_floppy_item, false);
       gtk_widget_set_sensitive(run_item, false);
-      gtk_widget_set_sensitive(eject_floppy_0_item, false);
-      gtk_widget_set_sensitive(eject_floppy_1_item, false);
+      gtk_widget_set_sensitive(eject_floppy_subitems[0], false);
+      gtk_widget_set_sensitive(eject_floppy_subitems[1], false);
     }
   catch (...)
     {

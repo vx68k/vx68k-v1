@@ -1,5 +1,9 @@
 2000-08-06  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/gtkapp.h (class gtk_console_window): Replace members
+	eject_floppy_0_item and eject_floppy_1_item with
+	eject_floppy_subitems array.  Also change all users.
+
 	* bin/main.cc (class gtk_app): Remove `#if 0' sections.
 	(class gtk_app): Remove show_about_dialog.
 	(handle_about_ok_clicked, show_about_dialog, handle_run_command,

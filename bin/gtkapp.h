@@ -83,8 +83,7 @@ private:
 
   GtkWidget *load_floppy_item;
   GtkWidget *eject_floppy_item;
-  GtkWidget *eject_floppy_0_item;
-  GtkWidget *eject_floppy_1_item;
+  GtkWidget *eject_floppy_subitems[2];
   GtkWidget *run_item;
   GtkWidget *exit_item;
   GtkWidget *about_item;
