@@ -1,9 +1,20 @@
 2000-07-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* libvx68k/textvram.cc: Rename ROW_SIZE to TEXT_VIDEO_ROW_SIZE.
-	Add new constant TEXT_VIDEO_PLANE_SIZE and TEXT_VIDEO_MEMORY_SIZE.
-	(draw_char): Use TEXT_VIDEO_PLANE_SIZE.
-	(get_16, put_16, text_video_memory): Use TEXT_VIDEO_MEMORY_SIZE.
+	* libvx68k/textvram.cc (advance_row): Change the argument to
+	unsigned char *.
+	(scroll): Use STL.
+	(draw_char, get_image): Change for byte array.
+	(get_16, get_8, put_16, put_8): Avoid generate_bus_error.
+	Rewrite code.
+	(connect): Update the console.
+	(text_video_memory): Clear the buffer.
+
+	* include/vx68k/memory.h (class text_video_memory): Change member
+	buf to unsigned char *.
+
+	* libvx68k/textvram.cc: Add new constant PLANE_SIZE and PLANE_MAX.
+	(draw_char): Use PLANE_SIZE.
+	(get_16, put_16, text_video_memory): Use PLANE_SIZE and PLANE_MAX.
 
 	* include/vx68k/memory.h (struct console): Moved from machine.h.
 	(class text_video_raster_iterator): Likewise.

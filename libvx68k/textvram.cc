@@ -23,6 +23,8 @@
 
 #include <vx68k/memory.h>
 
+#include <algorithm>
+
 #ifdef HAVE_NANA_H
 # include <nana.h>
 # include <cstdio>
@@ -32,36 +34,28 @@
 #endif
 
 using vx68k::text_video_memory;
+using vm68k::bus_error_exception;
 using vm68k::SUPER_DATA;
 using namespace vm68k::types;
 using namespace std;
 
-const size_t TEXT_VIDEO_ROW_SIZE = 1024 / 8;
-const size_t TEXT_VIDEO_PLANE_SIZE = 1024 * TEXT_VIDEO_ROW_SIZE;
-const size_t TEXT_VIDEO_MEMORY_SIZE = 4 * TEXT_VIDEO_PLANE_SIZE;
+const size_t ROW_SIZE = 1024 / 8;
+const size_t PLANE_SIZE = 1024 * ROW_SIZE;
+const size_t PLANE_MAX = 4;
 
 inline void
-advance_row(unsigned short *&ptr)
+advance_row(unsigned char *&ptr)
 {
-  ptr += TEXT_VIDEO_ROW_SIZE >> 1;
+  ptr += ROW_SIZE;
 }
 
 void
 text_video_memory::scroll()
 {
-  unsigned short *i = buf;
-  for (unsigned short *j = buf + 16 * (TEXT_VIDEO_ROW_SIZE >> 1);
-       j != buf + 31 * 16 * (TEXT_VIDEO_ROW_SIZE >> 1);
-       ++j)
-    {
-      *i++ = *j;
-    }
-  while (i != buf + 31 * 16 * (TEXT_VIDEO_ROW_SIZE >> 1))
-    {
-      *i++ = 0;
-    }
+  fill(copy(buf + 1 * 16 * ROW_SIZE, buf + 31 * 16 * ROW_SIZE, buf),
+       buf + 31 * 16 * ROW_SIZE, 0);
 
-  connected_console->update_area(0, 0, TEXT_VIDEO_ROW_SIZE * 8, 31 * 16);
+  connected_console->update_area(0, 0, ROW_SIZE * 8, 31 * 16);
 }
 
 void
@@ -95,73 +89,41 @@ text_video_memory::draw_char(int x, int y, unsigned int c)
       unsigned char img[16 * 2];
       connected_console->get_k16_image(c, img, 2);
 
-      if (x % 2 != 0)
+      for (unsigned char *plane = buf;
+	   plane != buf + 2 * PLANE_SIZE;
+	   plane += PLANE_SIZE)
 	{
-	  for (unsigned short *plane = buf;
-	       plane != buf + 2 * (TEXT_VIDEO_PLANE_SIZE >> 1);
-	       plane += TEXT_VIDEO_PLANE_SIZE >> 1)
+	  unsigned char *p = plane + y * 16 * ROW_SIZE + x;
+	  for (unsigned char *i = img + 0; i != img + 16 * 2; i += 2)
 	    {
-	      unsigned short *p = plane + (y * 16 * TEXT_VIDEO_ROW_SIZE + x >> 1);
-	      for (unsigned char *i = img + 0; i != img + 16 * 2; i += 2)
-		{
-		  p[0] = p[0] & ~0xff | i[0] & 0xff;
-		  p[1] = i[1] << 8 | p[1] & 0xff;
-		  advance_row(p);
-		}
-	    }
-	}
-      else
-	{
-	  for (unsigned short *plane = buf;
-	       plane != buf + 2 * (TEXT_VIDEO_PLANE_SIZE >> 1);
-	       plane += TEXT_VIDEO_PLANE_SIZE >> 1)
-	    {
-	      unsigned short *p = plane + (y * 16 * TEXT_VIDEO_ROW_SIZE + x >> 1);
-	      for (unsigned char *i = img + 0; i != img + 16 * 2; i += 2)
-		{
-		  p[0] = i[0] << 8 | i[1] & 0xff;
-		  advance_row(p);
-		}
+	      p[0] = i[0] & 0xffu;
+	      p[1] = i[1] & 0xffu;
+	      advance_row(p);
 	    }
 	}
 
-      connected_console->update_area(x * 8, y * 16, 16, 16);
+      if (connected_console != NULL)
+	connected_console->update_area(x * 8, y * 16, 16, 16);
     }
   else
     {
       unsigned char img[16];
       connected_console->get_b16_image(c, img, 1);
 
-      if (x % 2 != 0)
+      for (unsigned char *plane = buf;
+	   plane != buf + 2 * PLANE_SIZE;
+	   plane += PLANE_SIZE)
 	{
-	  for (unsigned short *plane = buf;
-	       plane != buf + 2 * (TEXT_VIDEO_PLANE_SIZE >> 1);
-	       plane += TEXT_VIDEO_PLANE_SIZE >> 1)
+	  unsigned char *p = plane + y * 16 * ROW_SIZE + x;
+	  for (unsigned char *i = img + 0; i != img + 16; ++i)
 	    {
-	      unsigned short *p = plane + (y * 16 * TEXT_VIDEO_ROW_SIZE + x >> 1);
-	      for (unsigned char *i = img + 0; i != img + 16; ++i)
-		{
-		  *p = *p & ~0xff | i[0] & 0xff;
-		  advance_row(p);
-		}
-	    }
-	}
-      else
-	{
-	  for (unsigned short *plane = buf;
-	       plane != buf + 2 * (TEXT_VIDEO_PLANE_SIZE >> 1);
-	       plane += TEXT_VIDEO_PLANE_SIZE >> 1)
-	    {
-	      unsigned short *p = plane + (y * 16 * TEXT_VIDEO_ROW_SIZE + x >> 1);
-	      for (unsigned char *i = img + 0; i != img + 16; ++i)
-		{
-		  *p = i[0] << 8 | *p & 0xff;
-		  advance_row(p);
-		}
+	      *p = i[0] & 0xffu;
+	      advance_row(p);
 	    }
 	}
 
-      connected_console->update_area(x * 8, y * 16, 8, 16);
+      if (connected_console != NULL)
+	connected_console->update_area(x * 8, y * 16, 8, 16);
     }
 }
 
@@ -170,14 +132,14 @@ text_video_memory::get_image(int x, int y, int width, int height,
 			     unsigned char *rgb_buf, size_t row_size)
 {
   // FIXME
-  unsigned short *p = buf + (y * TEXT_VIDEO_ROW_SIZE >> 1);
+  unsigned char *p = buf + y * ROW_SIZE;
   for (int i = 0; i != height; ++i)
     {
       for (int j = 0; j != width; ++j)
 	{
-	  unsigned short *q = p + (j >> 4);
+	  unsigned char *q = p + (j / 8u);
 	  unsigned char *s = rgb_buf + i * row_size + j * 3;
-	  if (*q & 0x8000 >> (j & 0xf))
+	  if (*q & 0x80 >> (j % 8u))
 	    {
 	      s[0] = 0xff;
 	      s[1] = 0xff;
@@ -189,30 +151,33 @@ text_video_memory::get_image(int x, int y, int width, int height,
 }
 
 uint_type
-text_video_memory::get_8(int fc, uint32_type address) const
+text_video_memory::get_16(int fc, uint32_type address) const
 {
+#ifdef HAVE_NANA_H
+  L("class text_video_memory: get_16 fc=%d address=%#010lx\n",
+    fc, (unsigned long) address);
+#endif
   if (fc != SUPER_DATA)
-    generate_bus_error(true, fc, address);
+    throw bus_error_exception(true, fc, address);
 
-  abort();			// FIXME
+  address &= PLANE_MAX * PLANE_SIZE - 1u;
+  uint_type value = vm68k::getw(buf + address);
+  return value;
 }
 
 uint_type
-text_video_memory::get_16(int fc, uint32_type address) const
+text_video_memory::get_8(int fc, uint32_type address) const
 {
+#ifdef HAVE_NANA_H
+  L("class text_video_memory: get_8 fc=%d address=%#010lx\n",
+    fc, (unsigned long) address);
+#endif
   if (fc != SUPER_DATA)
-    generate_bus_error(true, fc, address);
+    throw bus_error_exception(true, fc, address);
 
-  return buf[(address & TEXT_VIDEO_MEMORY_SIZE - 1) >> 1];
-}
-
-void
-text_video_memory::put_8(int fc, uint32_type address, uint_type value)
-{
-  if (fc != SUPER_DATA)
-    generate_bus_error(false, fc, address);
-
-  abort();			// FIXME
+  address &= PLANE_MAX * PLANE_SIZE - 1u;
+  uint_type value = *(buf + address);
+  return value;
 }
 
 void
@@ -223,15 +188,45 @@ text_video_memory::put_16(int fc, uint32_type address, uint_type value)
     fc, (unsigned long) address);
 #endif
   if (fc != SUPER_DATA)
-    generate_bus_error(false, fc, address);
+    throw bus_error_exception(false, fc, address);
 
-  buf[(address & TEXT_VIDEO_MEMORY_SIZE - 1) >> 1] = value & 0xffffu;
+  address &= PLANE_MAX * PLANE_SIZE - 1u;
+  vm68k::putw(buf + address, value & 0xffffu);
+
+  if (connected_console != NULL)
+    {
+      unsigned int x = address % ROW_SIZE;
+      unsigned int y = address / ROW_SIZE;
+      connected_console->update_area(x * 8, y, 16, 1);
+    }
+}
+
+void
+text_video_memory::put_8(int fc, uint32_type address, uint_type value)
+{
+#ifdef HAVE_NANA_H
+  L("class text_video_memory: put_16 fc=%d address=%#010lx\n",
+    fc, (unsigned long) address);
+#endif
+  if (fc != SUPER_DATA)
+    throw bus_error_exception(false, fc, address);
+
+  address &= PLANE_MAX * PLANE_SIZE - 1u;
+  *(buf + address) = value & 0xffu;
+
+  if (connected_console != NULL)
+    {
+      unsigned int x = address % ROW_SIZE;
+      unsigned int y = address / ROW_SIZE;
+      connected_console->update_area(x * 8, y, 8, 1);
+    }
 }
 
 void
 text_video_memory::connect(console *con)
 {
   connected_console = con;
+  connected_console->update_area(0, 0, ROW_SIZE * 8, 512);
 }
 
 text_video_memory::~text_video_memory()
@@ -243,5 +238,6 @@ text_video_memory::text_video_memory()
   : buf(NULL),
     connected_console(NULL)
 {
-  buf = new unsigned short [TEXT_VIDEO_MEMORY_SIZE >> 1];
+  buf = new unsigned char [PLANE_MAX * PLANE_SIZE];
+  fill(buf + 0, buf + PLANE_MAX * PLANE_SIZE, 0);
 }

@@ -88,7 +88,7 @@ namespace vx68k
     typedef text_video_raster_iterator raster_iterator;
 
   private:
-    unsigned short *buf;
+    unsigned char *buf;
     console *connected_console;
 
   public:
