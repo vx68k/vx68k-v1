@@ -72,10 +72,11 @@ namespace vx68k
 	   GLX_RED_SIZE, 6,
 	   GLX_GREEN_SIZE, 6,
 	   GLX_BLUE_SIZE, 6,
-	   GLX_ALPHA_SIZE, 4,
 	   None};
       Display *d = GDK_DISPLAY();
       XVisualInfo *xvi = glXChooseVisual(d, DefaultScreen(d), glx_attr);
+      if (xvi == NULL)
+	throw runtime_error("glXChooseVisual");
       GdkVisual *v = gdkx_visual_get(xvi->visualid);
       XFree(xvi);
       return v;
