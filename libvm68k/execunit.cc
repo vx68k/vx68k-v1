@@ -1964,41 +1964,51 @@ namespace
     c.regs.pc += 2 + 2 + ea1.extension_size();
   }
 
-  /* movem regs to EA (postdec).  */
-  void
-  moveml_r_predec(uint_type op, context &ec, unsigned long data)
-    {
-      int reg = op & 0x0007;
-      unsigned int bitmap = ec.fetch(word_size(), 2);
+  /* Handles a MOVEM instruction (register to predec memory).  */
+  template <class Size> void
+  m68k_movem_r_predec(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    unsigned int reg1 = op & 0x7;
+    uint_type mask = c.fetch(word_size(), 2);
 #ifdef TRACE_INSTRUCTIONS
-      VL((" moveml #0x%x,%%a%d@-\n", bitmap, reg));
+    DL("\tmovem%s\t", Size::suffix());
+    DL("#0x%04x,", mask);
+    DL("%%a%u@-\n", reg1);
 #endif
 
-      // XXX: The condition codes are not affected.
-      uint32_type address = ec.regs.a[reg];
-      int fc = ec.data_fc();
-      for (uint32_type *i = ec.regs.a + 8; i != ec.regs.a + 0; --i)
-	{
-	  if (bitmap & 1 != 0)
-	    {
-	      ec.mem->putl(fc, address - 4, *(i - 1));
-	      address -= 4;
-	    }
-	  bitmap >>= 1;
-	}
-      for (uint32_type *i = ec.regs.d + 8; i != ec.regs.d + 0; --i)
-	{
-	  if (bitmap & 1 != 0)
-	    {
-	      ec.mem->putl(fc, address - 4, *(i - 1));
-	      address -= 4;
-	    }
-	  bitmap >>= 1;
-	}
-      ec.regs.a[reg] = address;
+    // This instruction does not affect the condition codes.
+    uint_type m = 1;
+    int fc = c.data_fc();
+    sint32_type address
+      = long_word_size::svalue(long_word_size::get(c.regs.a[reg1]));
+    // This instruction iterates registers in reverse.
+    for (uint32_type *i = c.regs.a + 8; i != c.regs.a + 0; --i)
+      {
+	if (mask & m)
+	  {
+	    address -= Size::value_size();
+	    Size::put(*c.mem, fc, address,
+		      long_word_size::svalue(long_word_size::get(*(i - 1))));
+	  }
+	m <<= 1;
+      }
+    for (uint32_type *i = c.regs.d + 8; i != c.regs.d + 0; --i)
+      {
+	if (mask & m)
+	  {
+	    address -= Size::value_size();
+	    Size::put(*c.mem, fc, address,
+		      long_word_size::svalue(long_word_size::get(*(i - 1))));
+	  }
+	m <<= 1;
+      }
 
-      ec.regs.pc += 2 + 2;
-    }
+    long_word_size::put(c.regs.a[reg1], address);
+    c.regs.pc += 2 + 2;
+  }
 
   /* moveml instruction (memory to register) */
   template <class Source> void
@@ -2036,42 +2046,51 @@ namespace
       ec.regs.pc += 4 + ea1.isize(4);
     }
 
-  /* moveml (postinc) */
-  template <> void
-  moveml_mr<postinc_indirect>(uint_type op, context &ec, unsigned long data)
-    {
-      int reg1 = op & 0x7;
-      unsigned int bitmap = ec.fetch(word_size(), 2);
+  /* Handles a MOVEM instruction (postinc memory to register).  */
+  template <class Size> void
+  m68k_movem_postinc_r(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    unsigned int reg1 = op & 0x7;
+    uint_type mask = c.fetch(word_size(), 2);
 #ifdef TRACE_INSTRUCTIONS
-      L(" moveml %%a%d@+", reg1);
-      L(",#0x%04x\n", bitmap);
+    DL("\tmovem%s\t", Size::suffix());
+    DL("%%a%u@+,", reg1);
+    DL("#0x%04x\n", mask);
 #endif
 
-      // XXX: The condition codes are not affected.
-      uint32_type address = ec.regs.a[reg1];
-      int fc = ec.data_fc();
-      for (uint32_type *i = ec.regs.d + 0; i != ec.regs.d + 8; ++i)
-	{
-	  if (bitmap & 1 != 0)
-	    {
-	      *i = ec.mem->getl(fc, address);
-	      address += 4;
-	    }
-	  bitmap >>= 1;
-	}
-      for (uint32_type *i = ec.regs.a + 0; i != ec.regs.a + 8; ++i)
-	{
-	  if (bitmap & 1 != 0)
-	    {
-	      *i = ec.mem->getl(fc, address);
-	      address += 4;
-	    }
-	  bitmap >>= 1;
-	}
-      ec.regs.a[reg1] = address;
+    // This instruction does not affect the condition codes.
+    uint_type m = 1;
+    int fc = c.data_fc();
+    sint32_type address
+      = long_word_size::svalue(long_word_size::get(c.regs.a[reg1]));
+    // This instruction sign-extends words to long words.
+    for (uint32_type *i = c.regs.d + 0; i != c.regs.d + 8; ++i)
+      {
+	if (mask & m)
+	  {
+	    long_word_size::put(*i,
+				Size::svalue(Size::get(*c.mem, fc, address)));
+	    address += Size::value_size();
+	  }
+	m <<= 1;
+      }
+    for (uint32_type *i = c.regs.a + 0; i != c.regs.a + 8; ++i)
+      {
+	if (mask & m)
+	  {
+	    long_word_size::put(*i,
+				Size::svalue(Size::get(*c.mem, fc, address)));
+	    address += Size::value_size();
+	  }
+	m <<= 1;
+      }
 
-      ec.regs.pc += 4;
-    }
+    c.regs.a[reg1] = address;
+    c.regs.pc += 2 + 2;
+  }
 
   void
   moveql_d(uint_type op, context &ec, unsigned long data)
@@ -4105,6 +4124,8 @@ namespace
     eu.set_instruction(0x4880, 0x0007, &extw);
     eu.set_instruction(0x4890, 0x0007,
 		       &m68k_movem_r_m<word_size, word_indirect>);
+    eu.set_instruction(0x48a0, 0x0007,
+		       &m68k_movem_r_predec<word_size>);
     eu.set_instruction(0x48a8, 0x0007,
 		       &m68k_movem_r_m<word_size, word_disp_indirect>);
     eu.set_instruction(0x48b0, 0x0007,
@@ -4116,7 +4137,8 @@ namespace
     eu.set_instruction(0x48c0, 0x0007, &extl);
     eu.set_instruction(0x48d0, 0x0007,
 		       &m68k_movem_r_m<long_word_size, long_word_indirect>);
-    eu.set_instruction(0x48e0, 0x0007, &moveml_r_predec);
+    eu.set_instruction(0x48e0, 0x0007,
+		       &m68k_movem_r_predec<long_word_size>);
     eu.set_instruction(0x48e8, 0x0007,
 		       &m68k_movem_r_m<long_word_size,
 		                       long_word_disp_indirect>);
@@ -4152,7 +4174,10 @@ namespace
     eu.set_instruction(0x4ab8, 0x0000, &tstl<absolute_short>);
     eu.set_instruction(0x4ab9, 0x0000, &tstl<absolute_long>);
     eu.set_instruction(0x4cd0, 0x0007, &moveml_mr<indirect>);
-    eu.set_instruction(0x4cd8, 0x0007, &moveml_mr<postinc_indirect>);
+    eu.set_instruction(0x4c98, 0x0007,
+		       &m68k_movem_postinc_r<word_size>);
+    eu.set_instruction(0x4cd8, 0x0007,
+		       &m68k_movem_postinc_r<long_word_size>);
     eu.set_instruction(0x4ce8, 0x0007, &moveml_mr<disp_indirect>);
     eu.set_instruction(0x4cf0, 0x0007, &moveml_mr<indexed_indirect>);
     eu.set_instruction(0x4cf8, 0x0000, &moveml_mr<absolute_short>);

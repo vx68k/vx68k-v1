@@ -1,5 +1,10 @@
 2000-08-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (m68k_movem_r_predec): Replace
+	moveml_r_predec.
+	(m68k_movem_postinc_r): Replace moveml_mr<postinc_indirect>.
+	(initialize_instructions): Add new handlers.
+
 	* libvx68k/gvideomem.cc: Use DL instead of L.
 
 	* libvm68k/Makefile.am (CLEANFILES): New macro.
