@@ -90,7 +90,9 @@ namespace
 	}
       else if (disp >= 0x80)
 	disp -= 0x100;
+#ifdef TRACE_STEPS
       fprintf(stderr, " bsr 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
+#endif
 
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
       ec->mem->putl(fc, ec->regs.a[7], ec->regs.pc + len);
@@ -106,7 +108,9 @@ namespace
       int reg = op >> 9 & 0x7;
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
       uint32 address = ec->mem->getl(fc, ec->regs.pc + 2);
+#ifdef TRACE_STEPS
       fprintf(stderr, " lea 0x%lx:l,%%a%d\n", (unsigned long) address, reg);
+#endif
 
       ec->regs.a[reg] = address;
 
@@ -121,7 +125,9 @@ namespace
       int32 disp = ec->mem->getw(fc, ec->regs.pc + 2);
       if (disp >= 0x8000)
 	disp -= 0x10000;
+#ifdef TRACE_STEPS
       fprintf(stderr, " link %%a%d,#%d\n", reg, disp);
+#endif
 
       // FIXME.
       ec->mem->putl(fc, ec->regs.a[7] - 4, ec->regs.a[reg]);
@@ -137,7 +143,9 @@ namespace
       assert(ec != NULL);
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
+#ifdef TRACE_STEPS
       fprintf(stderr, " movel %%a%d,%%a%d@-\n", s_reg, d_reg);
+#endif
 
       // FIXME.
       int fc = 1 ? SUPER_DATA : USER_DATA; // FIXME.
@@ -153,7 +161,9 @@ namespace
       int reg = op & 0x0007;
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
       unsigned int bitmap = ec->mem->getw(fc, ec->regs.pc + 2);
+#ifdef TRACE_STEPS
       fprintf(stderr, " moveml #0x%x,%%a%d@-\n", bitmap, reg);
+#endif
 
       for (int i = 0; i != 16; ++i)
 	{

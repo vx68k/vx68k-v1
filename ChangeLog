@@ -1,5 +1,12 @@
 1999-03-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc: Print instructions only ifdef TRACE_STEPS.
+
+	* acconfig.h: Add new macros.
+
+	* configure.in: Define _GNU_SOURCE.
+	Add `--enable-step-trace'.
+
 	* main.cc: Modify comments.
 	(_): New macro.
 	(parse_options): New function.

@@ -3,6 +3,13 @@ AC_INIT(libvx68k/dos.cc)
 dnl $Format: "AM_INIT_AUTOMAKE($Package$, $Version$)" $
 AM_INIT_AUTOMAKE(vx68k, 0.31)
 AM_CONFIG_HEADER(config.h)
+AC_DEFINE(_GNU_SOURCE)
+AC_ARG_ENABLE(step-trace,
+[  --enable-step-trace     print each executed instruction for debug [yes]])
+if test "$enable_step_trace" != no; then
+  AC_DEFINE(TRACE_STEPS)
+fi
+
 AC_PROG_CXX
 AC_PROG_RANLIB
 AC_TYPE_SIZE_T
