@@ -400,6 +400,23 @@ namespace
       ec->regs.pc += 2 + disp;
     }
 
+  template <class Destination> void clrw(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      Destination ea1(op & 0x7, 2);
+      VL((" clrw *\n"));
+
+      ea1.putw(ec, 0);
+      ea1.finishw(ec);
+      ec->regs.sr.set_cc(0);
+
+      ec->regs.pc += 2;
+    }
+
+  template <> void clrw<address_register>(int, execution_context *);
+  // XXX: Address register cannot be the destination.
+
+#if 0
   void clrw_predec(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -414,6 +431,7 @@ namespace
 
       ec->regs.pc += 2;
     }
+#endif /* 0 */
 
   void cmpib_postinc(int op, execution_context *ec)
     {
@@ -1178,7 +1196,10 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x33c0, 0x0007, &movew_d_absl);
   eu->set_instruction(0x41e8, 0x0e07, &lea_offset_a);
   eu->set_instruction(0x41f9, 0x0e00, &lea_absl_a);
-  eu->set_instruction(0x4260, 0x0007, &clrw_predec);
+  eu->set_instruction(0x4240, 0x0007, &clrw<data_register>);
+  eu->set_instruction(0x4250, 0x0007, &clrw<indirect>);
+  eu->set_instruction(0x4258, 0x0007, &clrw<postincrement_indirect>);
+  eu->set_instruction(0x4260, 0x0007, &clrw<predecrement_indirect>);
   eu->set_instruction(0x4879, 0x0000, &pea_absl);
   eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
   eu->set_instruction(0x4cd8, 0x0007, &moveml_postinc_r);

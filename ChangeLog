@@ -1,8 +1,9 @@
 1999-04-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/execunit.cc (addqw<address_register>): Fix size.
-	(addql, addql<address_register>): New template function.
-	(addql_d): #if'd out.
+	(addql, addql<address_register>, clrw): New template functions.
+	(clrw<address_register>): Specialized without definition.
+	(addql_d, clrw_predec): #if'd out.
 	(install_instructions): Updated with the new functions.
 
 	* lib/vm68k/statusreg.cc (status_register): New constructor.
