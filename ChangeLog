@@ -1,5 +1,8 @@
 2000-05-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (add_instructions): Add
+	tstb<absolute_short>.
+
 	* libvx68k/systemrom.cc (attach): Use make_pair.
 
 	* libvx68k/dos.cc: Use uint_type for all instruction handlers.

@@ -2746,6 +2746,7 @@ namespace
     eu.set_instruction(0x4a18, 0x0007, &tstb<postinc_indirect>);
     eu.set_instruction(0x4a20, 0x0007, &tstb<predec_indirect>);
     eu.set_instruction(0x4a28, 0x0007, &tstb<disp_indirect>);
+    eu.set_instruction(0x4a38, 0x0000, &tstb<absolute_short>);
     eu.set_instruction(0x4a39, 0x0000, &tstb<absolute_long>);
     eu.set_instruction(0x4a40, 0x0007, &tstw<data_register>);
     eu.set_instruction(0x4a50, 0x0007, &tstw<indirect>);
