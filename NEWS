@@ -1,12 +1,12 @@
 User-Visible Changes
 
 $Format: "Version $Version$ ($ProjectDate$ -r $ProjectVersion$)" $
-Version 0.31 (Mon, 22 Mar 1999 18:04:36 +0900 -r 0.126)
+Version 0.32 (Thu, 25 Mar 1999 23:24:46 +0900 -r 0.150)
 
-* DOS calls PRINT, OPEN, CLOSE, READ, and EXIT2 are implemented
-partialy.
+* 51 instruction handlers are implemented though some do not update
+the condition codes properly.
 
-* Several instructions are implemented.
+* 7 DOS-call handlers are partially implemented.
 
-* HU executables can be loaded on memory from files.
+* The HU executables can be loaded on memory from files.
 

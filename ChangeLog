@@ -1,5 +1,7 @@
 1999-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Modified.
+
 	* lib/vm68k/execunit.cc (moveb_off_d, moveb_d_postinc, lsll_i_d,
 	moveb_indir_d, movel_d_postinc, lslw_i_d): New functions.
 	(install_instructions): Set instructions.
