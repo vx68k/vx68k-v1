@@ -4,7 +4,7 @@
 #undef const
 #undef inline
 
-#include "vm68k/cpu.h"
+#include "vm68k/memory.h"
 
 #include <algorithm>
 
