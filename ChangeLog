@@ -1,5 +1,14 @@
 1999-11-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/Makefile.am (bin_PROGRAMS): Modify locations.
+
+	* Makefile.am (SUBDIRS): Modify the list.
+
+	* configure.in: Modify AC_OUTPUT and AC_INIT.
+
+	* Rename directories vm68k, vx68k, and vx68kgtk to libvm68k,
+ 	libvx68k, and libvx68kgtk espectively.
+
 	* bin/main.cc (vx68k_app): Set the default visual.
 	(main): Remove the gdk_rgb_init call.
 
