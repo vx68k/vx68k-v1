@@ -1,5 +1,7 @@
 1998-10-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/memory.cc (read16): New function.
+
 	* include/vm68k/memory.h (VM68K_MEMORY_H): Fix typo.
 	(function_code): New enum.
 

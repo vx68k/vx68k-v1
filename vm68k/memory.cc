@@ -8,6 +8,14 @@
 
 #include <algorithm>
 
+uint16
+memory::read16 (int, uint32) const
+  throw (bus_error)
+{
+  abort ();
+  return 0;
+}
+
 memory::memory ()
 {
   memory_page *null = NULL;
