@@ -53,6 +53,16 @@ dos_exec_context::read(int fd, uint32 data, uint32 size)
   return done;
 }
 
+int32
+dos_exec_context::seek(int fd, int32 offset, unsigned int whence)
+{
+  // FIXME.
+  int32 pos = ::lseek(fd, offset, whence);
+  if (pos == -1)
+    return -6;			// FIXME.
+  return pos;
+}
+
 /* Closes a DOS file descriptor.  */
 int
 dos_exec_context::close(int fd)
@@ -292,6 +302,22 @@ namespace
 
       ec->regs.pc += 2;
     }
+
+  void dos_seek(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      VL((" DOS _SEEK\n"));
+
+      // FIXME.
+      uint32 sp = ec->regs.a[7];
+      int fd = extsw(ec->mem->getw(SUPER_DATA, sp));
+      int32 offset = extsl(ec->mem->getl(SUPER_DATA, sp + 2));
+      unsigned int whence = ec->mem->getw(SUPER_DATA, sp + 6);
+      ec->regs.d[0]
+	= static_cast<dos_exec_context *>(ec)->seek(fd, offset, whence);
+
+      ec->regs.pc += 2;
+    }
 } // (unnamed namespace)
 
 dos::dos(address_space *m, size_t)
@@ -301,6 +327,7 @@ dos::dos(address_space *m, size_t)
   main_cpu.set_instruction(0xff3d, 0, &dos_open);
   main_cpu.set_instruction(0xff3e, 0, &dos_close);
   main_cpu.set_instruction(0xff3f, 0, &dos_read);
+  main_cpu.set_instruction(0xff42, 0, &dos_seek);
   main_cpu.set_instruction(0xff4c, 0, &dos_exit2);
 }
 
