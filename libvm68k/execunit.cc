@@ -655,9 +655,9 @@ namespace
     bool value = value1 & mask;
     ea1.put(c, value1 & ~mask);
     c.regs.ccr.set_cc(value);	// FIXME.
-    ea1.finish(c);
 
-    c.regs.pc += 2 + ea1.extension_size();
+    ea1.finish(c);
+    c.regs.pc += 2 + 2 + ea1.extension_size();
   }
 
 #if 0
@@ -1633,6 +1633,27 @@ namespace
 
     // The condition codes are not affected by this instruction.
     c.regs.a[reg1] = c.regs.usp;
+
+    c.regs.pc += 2;
+  }
+
+  /* Handles a MOVE-to-USP instruction.  */
+  void
+  m68k_move_to_usp(uint_type op, context &c, unsigned long data)
+  {
+    unsigned int reg1 = op & 0x7;
+#ifdef TRACE_INSTRUCTIONS
+    L("\tmove%s\t", long_word_size::suffix());
+    L("%%a%u,", reg1);
+    L("%%usp\n");
+#endif
+
+    // This instruction is privileged.
+    if (!c.supervisor_state())
+      throw privilege_violation_exception();
+
+    // This instruction does not affect the condition codes.
+    long_word_size::put(c.regs.usp, long_word_size::get(c.regs.a[reg1]));
 
     c.regs.pc += 2;
   }
@@ -3337,6 +3358,7 @@ namespace
     eu.set_instruction(0x4cfa, 0x0000, &moveml_mr<disp_pc>);
     eu.set_instruction(0x4e50, 0x0007, &link_a);
     eu.set_instruction(0x4e58, 0x0007, &unlk_a);
+    eu.set_instruction(0x4e60, 0x0007, &m68k_move_to_usp);
     eu.set_instruction(0x4e68, 0x0007, &m68k_move_from_usp);
     eu.set_instruction(0x4e73, 0x0000, &m68k_rte);
     eu.set_instruction(0x4e75, 0x0000, &rts);
