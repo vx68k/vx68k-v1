@@ -60,6 +60,8 @@ namespace vx68k
   /* Interface to console.  */
   struct console
   {
+    virtual void get_b16_image(unsigned int, unsigned char *, size_t) const = 0;
+    virtual void get_k16_image(unsigned int, unsigned char *, size_t) const = 0;
   };
 
   /* Graphics VRAM.  */
@@ -129,7 +131,7 @@ namespace vx68k
   private:
     size_t _memory_size;
     main_memory mem;
-    class text_vram tvram;
+    text_vram tvram;
     class address_space as;
     class exec_unit eu;
     pair<iocs_function_handler, iocs_function_data *> iocs_functions[0x100];
@@ -140,12 +142,16 @@ namespace vx68k
   public:
     size_t memory_size() const
       {return _memory_size;}
-    class text_vram *text_vram()
-      {return &tvram;}
     class address_space *address_space()
       {return &as;}
     class exec_unit *exec_unit()
       {return &eu;}
+
+  public:
+    void connect(console *con)
+      {tvram.connect(con);}
+    void get_image(int x, int y, int width, int height,
+		   unsigned char *rgb_buf, size_t row_size);
 
   public:
     void set_iocs_function(unsigned int, iocs_function_handler,

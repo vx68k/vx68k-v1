@@ -1,5 +1,18 @@
 1999-07-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (vx68k_app): Use machine::connect.
+
+	* lib/vx68k/gtkconsole.cc (get_b16_image, get_k16_image): New
+	functions.
+
+	* include/vx68k/gtk.h (class gtk_console): Add members to override
+	console.
+
+	* include/vx68k/machine.h (struct console): Add pure virtual
+	members.
+	(class machine): Remove member function text_vram, and add
+	connect and get_image.
+
 	* bin/main.cc (vx68k_app): Connect text vram to console.
 
 	* lib/vx68k/machine.cc (machine): Set pages for tvram.

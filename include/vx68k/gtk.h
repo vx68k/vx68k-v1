@@ -45,6 +45,10 @@ namespace vx68k
       ~gtk_console();
 
     public:
+      void get_b16_image(unsigned int, unsigned char *, size_t) const;
+      void get_k16_image(unsigned int, unsigned char *, size_t) const;
+
+    public:
       GtkWidget *create_widget();
     };
   } // gtk

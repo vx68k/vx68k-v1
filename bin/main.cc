@@ -233,7 +233,7 @@ vx68k_app::vx68k_app(const char *const *a)
   : args(a),
     vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE)
 {
-  vm.text_vram()->connect(&con);
+  vm.connect(&con);
 }
 
 /* vx68k main.  */

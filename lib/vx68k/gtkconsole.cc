@@ -64,6 +64,16 @@ gtk_console::create_widget()
   return drawing_area;
 }
 
+void
+gtk_console::get_b16_image(unsigned int, unsigned char *, size_t) const
+{
+}
+
+void
+gtk_console::get_k16_image(unsigned int, unsigned char *, size_t) const
+{
+}
+
 gtk_console::~gtk_console()
 {
   delete [] rgb_buf;
