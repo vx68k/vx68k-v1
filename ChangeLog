@@ -1,5 +1,7 @@
 2000-03-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* README: Updated.
+
 	* libvm68k/Makefile.am (libvm68k_la_LDFLAGS): Add -version-info.
 
 	* acconfig.h: Add HAVE_EXCEPTIONS.  Remove unneeded defines.

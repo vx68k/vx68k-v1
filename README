@@ -1,6 +1,6 @@
 READ ME about Virtual X68000
 
-$Date: Fri, 26 Nov 1999 21:32:58 +0900 $
+$Date: Thu, 16 Mar 2000 09:33:49 +0900 $
 
 >> DESCRIPTION
 
@@ -25,9 +25,15 @@ This package is written in C++ with exception handling, templates, and
 namespaces.  For the best performance, a compiler that is good at
 optimizing templates and inline functions is recommended.
 
+- The compilers known to work are:
+     GCC 2.95.2.
+
+- The compilers known not to work are:
+     G++ 2.7.* and earlier.
+
 This package uses POSIX threads.
 
-This package uses GTK+ for GUI.
+This package uses GTK+ 1.2 for GUI.
 
 To get diagnostic log output, GNU Nana is also required.
 
