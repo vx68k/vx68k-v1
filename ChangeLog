@@ -1,5 +1,11 @@
 1999-06-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (parse_options): Add new option `--memory-size' or
+	`-m'.
+	(run_machine): Shift argument list.
+	(main): Use opt_memory_size.
+	(main): Add optind to md->argv.
+
 	* lib/vm68k/context.cc (context): Initialize pfc and dfc.
 
 	* include/vm68k/cpu.h (class context): Add members pfc, dfc.

@@ -37,12 +37,14 @@ using namespace vx68k;
 
 namespace
 {
+  size_t opt_memory_size = 0;
   int opt_debug = 0;
   int opt_help = false;
   int opt_version = false;
 
   const struct option longopts[] =
   {
+    {"memory-size", required_argument, NULL, 'm'},
     {"debug", no_argument, &opt_debug, 1},
     {"help", no_argument, &opt_help, true},
     {"version", no_argument, &opt_version, true},
@@ -55,9 +57,23 @@ namespace
       do
 	{
 	  int index;
-	  optc = getopt_long(argc, argv, "", longopts, &index);
+	  optc = getopt_long(argc, argv, "m:", longopts, &index);
 	  switch (optc)
 	    {
+	    case 'm':
+	      {
+		int mega = atoi(optarg);
+		if (mega < 1 || mega > 12)
+		  {
+		    fprintf(stderr, _("%s: invalid memory size `%s'\n"),
+			    argv[0], optarg);
+		    return false;
+		  }
+
+		opt_memory_size = mega * 1024 * 1024;
+	      }
+	      break;
+
 	    case '?':		// unknown option
 	      return false;
 	    case 0:		// long option
@@ -88,7 +104,7 @@ namespace
     if (opt_debug)
       env.set_debug_level(1);
 
-    md->status = env.execute(md->argv[1], md->argv + 2); // FIXME
+    md->status = env.execute(md->argv[0], md->argv + 1); // FIXME
 
     pthread_exit(NULL);
   }
@@ -122,12 +138,12 @@ main (int argc, char **argv)
   try
     {
       const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
-      machine vm(MEMSIZE);
+      machine vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE);
 
       pthread_t vm_thread;
       machine_data *md = new machine_data;
       md->vm = &vm;
-      md->argv = argv;
+      md->argv = argv + optind;
       pthread_create(&vm_thread, NULL, &run_machine, md);
 
       pthread_join(vm_thread, NULL);
