@@ -1,5 +1,7 @@
 1999-03-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* README: Modified.
+
 	* libvm68k/execunit.cc: Modify comments.
 	(addqw_a, rts, movel_postinc_a, lea_offset_a,
 	moveb_postinc_postinc): New function.

@@ -1,6 +1,6 @@
 READ ME
 
-$Date: Sat, 13 Mar 1999 21:16:34 +0900 $
+$Date: Sat, 13 Mar 1999 23:31:54 +0900 $
 
 >> DESCRIPTION
 
@@ -10,11 +10,19 @@ without the ROM image.
 
 A generic m68k emulation library will also be provided.
 
----
+>> STATUS
 
-CONTACT
+This version is still in early development and for developers only.
 
-Send comments, suggestions, or anything you thought about vx68k to
-vx68k@lists.hypercore.co.jp.
+>> REQUIREMENTS
 
----
+>> INSTALLATION
+
+See the file INSTALL in this directory for general instructions on
+installation.
+
+>> CONTACT
+
+Send comments, suggestions, or anything you thought about this program
+to vx68k@lists.hypercore.co.jp.
+
