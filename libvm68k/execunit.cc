@@ -117,6 +117,25 @@ namespace
       ec->regs.pc += 2 + disp;
     }
 
+  void lea_offset_a(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+      int32 offset = ec->mem->getw(fc, ec->regs.pc + 2);
+      if (offset >= 0x8000)
+	offset -= 0x10000;
+#ifdef TRACE_STEPS
+      fprintf(stderr, " lea %%a%d@(%ld),%%a%d\n", s_reg, (long) offset, d_reg);
+#endif
+
+      // XXX: The condition codes are not affected.
+      ec->regs.a[d_reg] = ec->regs.a[s_reg] + offset;
+
+      ec->regs.pc += 4;
+    }
+
   void lea_absl_a(int op, execution_context *ec)
     {
       assert(ec != NULL);
@@ -151,6 +170,23 @@ namespace
       ec->regs.a[7] += disp;
 
       ec->regs.pc += 4;
+    }
+
+  void moveb_postint_postinc(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+#ifdef TRACE_STEPS
+      fprintf(stderr, " moveb %%a%d@+,%%a%d@+\n", s_reg, d_reg);
+#endif
+
+      // FIXME.
+      int fc = 1 ? SUPER_DATA : USER_DATA; // FIXME.
+      int value = ec->mem->getb(fc, ec->regs.a[s_reg]);
+      ec->mem->putb(fc, ec->regs.a[d_reg], value);
+
+      ec->regs.pc += 2;
     }
 
   void movel_a_predec(int op, execution_context *ec)
@@ -231,8 +267,10 @@ void
 exec_unit::install_instructions(exec_unit *eu)
 {
   assert(eu != NULL);
+  eu->set_instruction(0x10d8, 0x0e07, &moveb_postint_postinc);
   eu->set_instruction(0x2058, 0x0e07, &movel_postinc_a);
   eu->set_instruction(0x2108, 0x0e07, &movel_a_predec);
+  eu->set_instruction(0x41e8, 0x0e07, &lea_offset_a);
   eu->set_instruction(0x41f9, 0x0e00, &lea_absl_a);
   eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
   eu->set_instruction(0x4e50, 0x0007, &link);
