@@ -1246,6 +1246,27 @@ namespace
       ec->regs.pc += 2 + ea1.isize(4);
     }
 
+  template <class Destination> void subib(unsigned int op,
+					  execution_context *ec)
+    {
+      I(ec != NULL);
+      int value2 = extsb(ec->fetchw(2));
+      Destination ea1(op & 0x7, 2 + 2);
+#ifdef L
+      L(" subib #%d", value2);
+      L(",%s", ea1.textb(ec));
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
+
+      int value1 = ea1.getb(ec);
+      int value = extsb(value1 - value2);
+      ea1.putb(ec, value);
+      ea1.finishb(ec);
+      ec->regs.sr.set_cc(value); // FIXME.
+
+      ec->regs.pc += 2 + 2 + ea1.isize(2);
+    }
+
   void subql_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -1387,6 +1408,12 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x0690, 0x0007, &addil<indirect>);
   eu->set_instruction(0x0698, 0x0007, &addil<postincrement_indirect>);
   eu->set_instruction(0x06a0, 0x0007, &addil<predecrement_indirect>);
+  eu->set_instruction(0x0800, 0x0007, &subib<data_register>);
+  eu->set_instruction(0x0810, 0x0007, &subib<indirect>);
+  eu->set_instruction(0x0818, 0x0007, &subib<postinc_indirect>);
+  eu->set_instruction(0x0820, 0x0007, &subib<predec_indirect>);
+  eu->set_instruction(0x0828, 0x0007, &subib<disp_indirect>);
+  eu->set_instruction(0x0839, 0x0000, &subib<absolute_long>);
   eu->set_instruction(0x0c00, 0x0007, &cmpib<data_register>);
   eu->set_instruction(0x0c10, 0x0007, &cmpib<indirect>);
   eu->set_instruction(0x0c18, 0x0007, &cmpib<postincrement_indirect>);
