@@ -1,3 +1,14 @@
+1999-06-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (cmpb, cmpw, cmpl, cmpib): Change code to
+	set condition codes properly.
+
+	* lib/vm68k/statusreg.cc: Add suffix _eval to evaluator objects.
+	(struct common_cc_evaluator): Renamed from result_cc_evaluator.
+	Also change all users.
+	(struct cmp_cc_evaluator): New class.
+	(set_cc_cmp): New function.  Also change the class definition.
+
 1999-06-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* Makefile.am (dist-snapshot distcheck-snapshot): Change version

@@ -28,7 +28,7 @@ using namespace vm68k;
 
 namespace
 {
-  struct result_cc_evaluator
+  struct common_cc_evaluator
     : cc_evaluator
   {
     bool ls(const sint32_type *values) const
@@ -43,40 +43,58 @@ namespace
       {return values[0] < 0;}
   };
 
-  struct asr_cc_evaluator
-    : result_cc_evaluator
+  struct cmp_cc_evaluator
+    : common_cc_evaluator
   {
     bool ls(const sint32_type *values) const
-      {return result_cc_evaluator::ls(values);}	// FIXME
+      {return uint32_type(values[1]) <= uint32_type(values[2]);}
     bool cs(const sint32_type *values) const
-      {return (values[2] == 0
-	       ? result_cc_evaluator::cs(values)
-	       : (uint32_type(values[1]) >> values[2] - 1 & 1) != 0);}
+      {return uint32_type(values[1]) < uint32_type(values[2]);}
   };
 
-  const result_cc_evaluator result_cc;
-  const asr_cc_evaluator asr_cc;
+  struct asr_cc_evaluator
+    : common_cc_evaluator
+  {
+    bool ls(const sint32_type *values) const
+      {return eq(values) || cs(values);}
+    bool cs(const sint32_type *values) const
+      {return (values[2] != 0
+	       && (uint32_type(values[1]) >> values[2] - 1 & 1) != 0);}
+  };
+
+  const common_cc_evaluator common_cc_eval;
+  const cmp_cc_evaluator cmp_cc_eval;
+  const asr_cc_evaluator asr_cc_eval;
 } // (unnamed namespace)
 
 /* Sets the condition codes by a result.  */
 void
 status_register::set_cc(int32 r)
 {
-  cc_eval = &result_cc;
+  cc_eval = &common_cc_eval;
   cc_values[0] = r;
+}
+
+void
+status_register::set_cc_cmp(sint32_type r, sint32_type d, sint32_type s)
+{
+  cc_eval = &cmp_cc_eval;
+  cc_values[0] = r;
+  cc_values[1] = d;
+  cc_values[2] = s;
 }
 
 void
 status_register::set_cc_asr(sint32_type r, sint32_type d, uint_type s)
 {
-  cc_eval = &asr_cc;
+  cc_eval = &asr_cc_eval;
   cc_values[0] = r;
   cc_values[1] = d;
   cc_values[2] = s;
 }
 
 status_register::status_register()
-  : cc_eval(&result_cc),
+  : cc_eval(&common_cc_eval),
     value(S)
 {
 }

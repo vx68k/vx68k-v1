@@ -519,81 +519,84 @@ namespace
       ec.regs.pc += 2 + ea1.isize(2);
     }
 
-  template <class Source> void cmpb(unsigned int op,
-				    context &ec)
-    {
-      Source ea1(op & 0x7, 2);
-      int reg2 = op >> 9 & 0x7;
+  template <class Source> void
+  cmpb(unsigned int op, context &ec)
+  {
+    Source ea1(op & 0x7, 2);
+    unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
-      L(" cmpb %s", ea1.textb(ec));
-      L(",%%d%d", reg2);
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" cmpb %s", ea1.textb(ec));
+    L(",%%d%d", reg2);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
-      int value1 = ea1.getb(ec);
-      int value2 = extsb(ec.regs.d[reg2]);
-      int value = extsb(value2 - value1);
-      ea1.finishb(ec);
-      ec.regs.sr.set_cc(value); // FIXME.
+    sint_type value1 = ea1.getb(ec);
+    sint_type value2 = extsb(ec.regs.d[reg2]);
+    sint_type value = extsb(value2 - value1);
+    ec.regs.sr.set_cc_cmp(value, value2, value1);
+    ea1.finishb(ec);
 
-      ec.regs.pc += 2 + ea1.isize(2);
-    }
+    ec.regs.pc += 2 + ea1.isize(2);
+  }
 
-  template <class Source> void cmpw(unsigned int op,
-				    context &ec)
-    {
-      Source ea1(op & 0x7, 2);
-      int reg2 = op >> 9 & 0x7;
+  template <class Source> void
+  cmpw(unsigned int op, context &ec)
+  {
+    Source ea1(op & 0x7, 2);
+    unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
-      L(" cmpw %s", ea1.textb(ec));
-      L(",%%d%d", reg2);
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" cmpw %s", ea1.textw(ec));
+    L(",%%d%d", reg2);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
-      int value1 = ea1.getw(ec);
-      int value2 = extsw(ec.regs.d[reg2]);
-      int value = extsw(value2 - value1);
-      ea1.finishw(ec);
-      ec.regs.sr.set_cc(value); // FIXME.
+    sint_type value1 = ea1.getw(ec);
+    sint_type value2 = extsw(ec.regs.d[reg2]);
+    sint_type value = extsw(value2 - value1);
+    ec.regs.sr.set_cc_cmp(value, value2, value1);
+    ea1.finishw(ec);
 
-      ec.regs.pc += 2 + ea1.isize(2);
-    }
+    ec.regs.pc += 2 + ea1.isize(2);
+  }
 
-  template <class Source> void cmpl(unsigned int op,
-				    context &ec)
-    {
-      Source ea1(op & 0x7, 2);
-      int reg2 = op >> 9 & 0x7;
+  template <class Source> void
+  cmpl(unsigned int op, context &ec)
+  {
+    Source ea1(op & 0x7, 2);
+    unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
-      L(" cmpl %s", ea1.textl(ec));
-      L(",%%d%d", reg2);
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" cmpl %s", ea1.textl(ec));
+    L(",%%d%d", reg2);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
-      int32 value1 = ea1.getl(ec);
-      int32 value2 = extsl(ec.regs.d[reg2]);
-      int32 value = extsl(value2 - value1);
-      ea1.finishl(ec);
-      ec.regs.sr.set_cc(value); // FIXME.
+    sint32_type value1 = ea1.getl(ec);
+    sint32_type value2 = extsl(ec.regs.d[reg2]);
+    sint32_type value = extsl(value2 - value1);
+    ec.regs.sr.set_cc_cmp(value, value2, value1);
+    ea1.finishl(ec);
 
-      ec.regs.pc += 2 + ea1.isize(4);
-    }
+    ec.regs.pc += 2 + ea1.isize(4);
+  }
 
-  template <class Destination> void cmpib(unsigned int op, context &ec)
-    {
-      int value2 = extsb(ec.fetchw(2));
-      Destination ea1(op & 0x7, 2 + 2);
-      VL((" cmpib #0x%x", (unsigned int) value2));
-      VL((",%s", ea1.textb(ec)));
-      VL((" | %%pc = 0x%lx\n", (unsigned long) ec.regs.pc));
+  template <class Destination> void
+  cmpib(unsigned int op, context &ec)
+  {
+    sint_type value2 = extsb(ec.fetchw(2));
+    Destination ea1(op & 0x7, 2 + 2);
+#ifdef L
+    L(" cmpib #0x%x", uint_type(value2));
+    L(",%s", ea1.textb(ec));
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
-      int value1 = ea1.getb(ec);
-      int value = extsb(value1 - value2);
-      ea1.finishb(ec);
-      ec.regs.sr.set_cc(value); // FIXME.
+    sint_type value1 = ea1.getb(ec);
+    sint_type value = extsb(value1 - value2);
+    ec.regs.sr.set_cc_cmp(value, value1, value2);
+    ea1.finishb(ec);
 
-      ec.regs.pc += 2 + 2 + ea1.isize(2);
-    }
+    ec.regs.pc += 2 + 2 + ea1.isize(2);
+  }
 
   template <class Destination> void
   eoriw(unsigned int op, context &ec)

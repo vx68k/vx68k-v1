@@ -95,6 +95,7 @@ namespace vm68k
       {return cc_eval->lt(cc_values);}
   public:
     void set_cc(int32);
+    void set_cc_cmp(sint32_type, sint32_type, sint32_type);
     void set_cc_asr(sint32_type, sint32_type, uint_type);
     void set_cc_lsr(sint32_type r, sint32_type d, uint_type s)
       {set_cc_asr(r, d, s);}
