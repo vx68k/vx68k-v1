@@ -1,5 +1,8 @@
 1999-06-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/dos.cc (dos_ioctrl): New function.
+	(dos): Add new function.
+
 	* NEWS: Modified.
 
 	* lib/vm68k/execunit.cc (bmi): New function.
