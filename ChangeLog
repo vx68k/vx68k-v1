@@ -1,5 +1,11 @@
 1999-06-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/addressing.h (class indexed_indirect): Fix
+	address.
+	(class indexed_pc_indirect): Fix address.
+	(class disp_pc, class indexed_pc_indirect): Add offset to
+	effective address.
+
 	* include/vx68k/human.h (class file, class process): New classes.
 
 	* NEWS: Modified.

@@ -290,7 +290,7 @@ namespace vm68k
 	  uint_type w = ec.fetchw(offset);
 	  unsigned int r = w >> 12 & 0xf;
 	  uint32_type x = r >= 8 ? ec.regs.a[r - 8] : ec.regs.d[r];
-	  return ec.regs.a[reg] + extsb(w) + (w & 0x800 ? extsl(x) : extsw(w));
+	  return ec.regs.a[reg] + extsb(w) + (w & 0x800 ? extsl(x) : extsw(x));
 	}
       sint_type getb(const context &ec) const
 	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
@@ -415,7 +415,7 @@ namespace vm68k
       size_t isize(size_t size) const
 	{return 2;}
       uint32 address(const context &ec) const
-	{return ec.regs.pc + extsw(ec.fetchw(offset));}
+	{return ec.regs.pc + offset + extsw(ec.fetchw(offset));}
       int getb(const context &ec) const
 	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
       int getw(const context &ec) const
@@ -453,7 +453,8 @@ namespace vm68k
 	  uint_type w = ec.fetchw(offset);
 	  unsigned int r = w >> 12 & 0xf;
 	  uint32_type x = r >= 8 ? ec.regs.a[r - 8] : ec.regs.d[r];
-	  return ec.regs.pc + extsb(w) + (w & 0x800 ? extsl(x) : extsw(w));
+	  return ec.regs.pc + offset + extsb(w)
+	    + (w & 0x800 ? extsl(x) : extsw(x));
 	}
       sint_type getb(const context &ec) const
 	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
