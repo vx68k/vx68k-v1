@@ -161,7 +161,6 @@ namespace
     {
       VL((" DOS _FGETC\n"));
 
-      // FIXME.
       uint32 sp = ec.regs.a[7];
       int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
       ec.regs.d[0] = static_cast<dos_exec_context &>(ec).fgetc(fd);
@@ -318,20 +317,18 @@ namespace
     I(d != NULL);
 
     // FIXME
-    char buf[256];
-    c.mem->read(SUPER_DATA, file, buf, 256);
-    char *p = strrchr(buf, '/');
-    if (p == NULL)
+    string buf = c.mem->gets(SUPER_DATA, file);
+    string::size_type p = buf.find_last_of(buf, '/');
+    if (p == string::npos)
       {
-	c.mem->write(SUPER_DATA, buffer + 0, "./", 3);
-	c.mem->write(SUPER_DATA, buffer + 67, buf, strlen(buf) + 1);
+	c.mem->puts(SUPER_DATA, buffer + 0, "./");
+	c.mem->puts(SUPER_DATA, buffer + 67, buf);
       }
     else
       {
 	++p;
-	c.mem->write(SUPER_DATA, buffer + 0, buf, p - buf);
-	c.mem->putb(SUPER_DATA, buffer + p - buf, 0);
-	c.mem->write(SUPER_DATA, buffer + 67, p, strlen(p) + 1);
+	c.mem->puts(SUPER_DATA, buffer + 0, buf.substr(0, p));
+	c.mem->puts(SUPER_DATA, buffer + 67, buf.substr(p));
       }
     c.regs.d[0] = 0;
 
@@ -376,7 +373,6 @@ namespace
     L(" DOS _PUTCHAR\n");
 #endif
 
-    // FIXME.
     uint32_type sp = ec.regs.a[7];
     sint_type code = extsw(ec.mem->getw(SUPER_DATA, sp + 0));
 
@@ -394,7 +390,6 @@ namespace
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
-    // FIXME.
     uint32 sp = ec.regs.a[7];
     sint_type fd = extsw(ec.mem->getw(SUPER_DATA, sp));
     uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
@@ -410,7 +405,6 @@ namespace
     {
       VL((" DOS _SEEK\n"));
 
-      // FIXME.
       uint32 sp = ec.regs.a[7];
       int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
       int32 offset = extsl(ec.mem->getl(SUPER_DATA, sp + 2));
@@ -457,7 +451,6 @@ namespace
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
-    // FIXME.
     uint32_type sp = ec.regs.a[7];
     int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
     uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
