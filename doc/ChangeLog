@@ -4,6 +4,8 @@
 	iocs_call_type.
 	(IOCS and System ROM): Rename set_iocs_handler to set_iocs_call.
 	(Text Video Memory): Add documentation.
+	(Memory Components): Separated from the previous node.
+	(Disk I/O, Floppy Disk): New node.
 
 2000-12-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 

@@ -5,9 +5,9 @@
 @synindex vr fn
 @set VERSION 1.1
 @c $Format: "@set REVISION $Revision$" $
-@set REVISION 1.16
+@set REVISION 1.17
 @c $Format: "@set DATE $Date$" $
-@set DATE Wed, 13 Dec 2000 22:54:23 +0900
+@set DATE Wed, 13 Dec 2000 23:20:50 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -113,14 +113,20 @@ Execution Unit
 X68000 Emulation
 
 * Machine::                     Hardware and BIOS emulation.
+* Memory Components::           
+* Disk I/O::                    
 
-Machine
+Memory Components
 
 * Main Memory::                 The main memory.
 * IOCS and System ROM::         
 * Text Video Memory::           
 * Graphic Video Memory::        
 * SCC::                         
+
+Disk I/O
+
+* Floppy Disk::                 
 
 Human68k Emulation
 
@@ -405,9 +411,11 @@ They are available in library @file{libvx68k}.
 
 @menu
 * Machine::                     Hardware and BIOS emulation.
+* Memory Components::           
+* Disk I/O::                    
 @end menu
 
-@node Machine,  , X68000 Emulation, X68000 Emulation
+@node Machine, Memory Components, X68000 Emulation, X68000 Emulation
 @section Machine
 @cindex machine
 
@@ -450,6 +458,9 @@ Configures address space @var{mm} for this object.
 This class is an abstract interface to the host system.
 @end deftp
 
+@node Memory Components, Disk I/O, Machine, X68000 Emulation
+@section Memory Components
+
 @menu
 * Main Memory::                 The main memory.
 * IOCS and System ROM::         
@@ -458,14 +469,14 @@ This class is an abstract interface to the host system.
 * SCC::                         
 @end menu
 
-@node Main Memory, IOCS and System ROM, Machine, Machine
+@node Main Memory, IOCS and System ROM, Memory Components, Memory Components
 @subsection Main Memory
 
 @deftp Class main_memory
 Memory component for the main memory.
 @end deftp
 
-@node IOCS and System ROM, Text Video Memory, Main Memory, Machine
+@node IOCS and System ROM, Text Video Memory, Main Memory, Memory Components
 @subsection The IOCS and the System ROM
 @cindex IOCS
 @cindex input/output control sybsystem
@@ -523,7 +534,7 @@ Sets the handler for IOCS call @var{number} to @var{handler}.
 @deftypemethod system_rom void call_iocs (int @var{number}, context &@var{c})
 @end deftypemethod
 
-@node Text Video Memory, Graphic Video Memory, IOCS and System ROM, Machine
+@node Text Video Memory, Graphic Video Memory, IOCS and System ROM, Memory Components
 @subsection Text Video Memory
 @cindex text video memory
 @cindex video memory, text
@@ -560,7 +571,7 @@ Fills a rectangular area in a plane.  This method implements the
 function of an IOCS call @code{_TXFILL}.
 @end deftypemethod
 
-@node Graphic Video Memory, SCC, Text Video Memory, Machine
+@node Graphic Video Memory, SCC, Text Video Memory, Memory Components
 @subsection Graphic Video Memory
 @cindex graphic video memory
 @cindex video memory, graphic
@@ -568,7 +579,7 @@ function of an IOCS call @code{_TXFILL}.
 @deftp Class graphic_video_memory
 @end deftp
 
-@node SCC,  , Graphic Video Memory, Machine
+@node SCC,  , Graphic Video Memory, Memory Components
 @subsection Z8530 SCC
 @cindex SCC, Z8530
 @cindex serial communication controller, Z8530
@@ -578,6 +589,24 @@ function of an IOCS call @code{_TXFILL}.
 
 X68000 uses a Zilog Z8530 SCC, or serial communication controller, for a
 COM port and a mouse port.
+
+@node Disk I/O,  , Memory Components, X68000 Emulation
+@section Disk I/O
+@cindex disk
+
+@deftp {Abstrace Class} disk_unit
+@end deftp
+
+@menu
+* Floppy Disk::                 
+@end menu
+
+@node Floppy Disk,  , Disk I/O, Disk I/O
+@subsection Floppy Disk
+@cindex floppy disk
+
+@deftp Class floppy_disk_unit
+@end deftp
 
 @node Human68k Emulation, GTK+ User Interface, X68000 Emulation, Top
 @chapter Human68k Emulation
