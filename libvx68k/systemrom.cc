@@ -1,5 +1,5 @@
 /* Virtual X68000 - Sharp X68000 emulator
-   Copyright (C) 1998, 2000 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@
 using vx68k::x68k_address_space;
 using vx68k::system_rom;
 using vm68k::context;
-using vm68k::instruction_data;
 using vm68k::SUPER_DATA;
 using namespace vm68k::types;
 using namespace std;
@@ -119,7 +118,7 @@ namespace
 {
   /* Handles an IOCS trap.  This function is an instruction handler.  */
   void
-  iocs_trap(uint_type, context &c, instruction_data *data)
+  iocs_trap(uint_type, context &c, unsigned long data)
   {
     system_rom *rom = reinterpret_cast<system_rom *>(data);
     I(rom != NULL);
@@ -136,8 +135,8 @@ system_rom::attach(exec_unit *eu)
 
   attached_eu = eu;
 
-  instruction_data *d = reinterpret_cast<instruction_data *>(this);
-  attached_eu->set_instruction(0x4e4f, exec_unit::instruction(&iocs_trap, d));
+  unsigned long data = reinterpret_cast<unsigned long>(this);
+  attached_eu->set_instruction(0x4e4f, make_pair(&iocs_trap, data));
 }
 
 void

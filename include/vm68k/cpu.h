@@ -20,6 +20,8 @@
 #define _VM68K_CPU_H 1
 
 #include <vm68k/memory.h>
+
+#include <vector>
 #include <utility>
 #include <cassert>
 
@@ -368,46 +370,40 @@ namespace vm68k
 					 regs.pc + offset));
   }
 
-  /* Base object that can be passed to instructions.  */
-  struct instruction_data
-  {
-  }; 
-
   /* Execution unit.  */
   class exec_unit
   {
   public:
-    typedef void (*instruction_handler)(unsigned int, context &,
-					instruction_data *);
+    typedef void (*instruction_handler)(uint_type, context &, unsigned long);
 
     /* Type of an instruction.  */
-    typedef pair<instruction_handler, instruction_data *> instruction;
+    typedef pair<instruction_handler, unsigned long> instruction_type;
 
   public:
-    static void illegal(unsigned int, context &, instruction_data *);
-  protected:
-    static void install_instructions(exec_unit &);
+    static void illegal(uint_type, context &, unsigned long);
+
   private:
-    instruction instructions[0x10000];
+    vector<instruction_type> instructions;
 
   public:
     exec_unit();
+
   public:
     /* Sets an instruction for an operation word.  The old value is
        returned.  */
-    instruction set_instruction(uint_type op, const instruction &i)
+    instruction_type set_instruction(uint_type op, const instruction_type &i)
     {
       op &= 0xffffu;
-      instruction old_value = instructions[op];
+      instruction_type old_value = instructions[op];
       instructions[op] = i;
       return old_value;
     }
 
     /* Sets an instruction to operation codes.  */
-    void set_instruction(int op, int mask, instruction_handler,
-			 instruction_data *);
+    void set_instruction(int op, int mask, const instruction_type &i);
+
     void set_instruction(int op, int mask, instruction_handler h)
-      {set_instruction(op, mask, h, NULL);}
+      {set_instruction(op, mask, instruction_type(h, 0));}
 
   protected:
     /* Dispatches for instruction handlers.  */

@@ -40,7 +40,6 @@
 
 using vm68k::exec_unit;
 using vm68k::context;
-using vm68k::instruction_data;
 using vm68k::byte_size;
 using vm68k::word_size;
 using vm68k::long_word_size;
@@ -74,8 +73,7 @@ exec_unit::run(context &c) const
 }
 
 void
-exec_unit::set_instruction(int code, int mask, instruction_handler h,
-			   instruction_data *data)
+exec_unit::set_instruction(int code, int mask, const instruction_type &in)
 {
   I (code >= 0);
   I (code < 0x10000);
@@ -84,7 +82,7 @@ exec_unit::set_instruction(int code, int mask, instruction_handler h,
     {
       if ((i & ~mask) == code)
 	{
-	  instruction old_value = set_instruction(i, make_pair(h, data));
+	  instruction_type old_value = set_instruction(i, in);
 #ifdef L
 	  if (old_value.first != &illegal)
 	    L("warning: Replacing instruction handler at 0x%04x\n", i);
@@ -104,7 +102,7 @@ namespace
 
   /* Handles an ADD instruction.  */
   template <class Size, class Source> void
-  m68k_add(uint_type op, context &c, instruction_data *data)
+  m68k_add(uint_type op, context &c, unsigned long data)
   {
     typedef typename Size::uvalue_type uvalue_type;
     typedef typename Size::svalue_type svalue_type;
@@ -128,7 +126,7 @@ namespace
 
   /* Handles an ADD instruction (reverse).  */
   template <class Size, class Destination> void
-  m68k_add_r(uint_type op, context &c, instruction_data *data)
+  m68k_add_r(uint_type op, context &c, unsigned long data)
   {
     typedef typename Size::uvalue_type uvalue_type;
     typedef typename Size::svalue_type svalue_type;
@@ -152,7 +150,7 @@ namespace
 
   /* Handles an ADDA instruction.  */
   template <class Size, class Source> void
-  m68k_adda(uint_type op, context &c, instruction_data *data)
+  m68k_adda(uint_type op, context &c, unsigned long data)
   {
     typedef long_word_size::uvalue_type uvalue_type;
     typedef long_word_size::svalue_type svalue_type;
@@ -177,7 +175,7 @@ namespace
 
   /* Handles an ADDI instruction.  */
   template <class Size, class Destination> void
-  m68k_addi(uint_type op, context &c, instruction_data *data)
+  m68k_addi(uint_type op, context &c, unsigned long data)
   {
     typedef typename Size::uvalue_type uvalue_type;
     typedef typename Size::svalue_type svalue_type;
@@ -200,7 +198,7 @@ namespace
 
   /* Handles an ADDQ instruction.  */
   template <class Size, class Destination> void
-  m68k_addq(uint_type op, context &c, instruction_data *data)
+  m68k_addq(uint_type op, context &c, unsigned long data)
   {
     typedef typename Size::uvalue_type uvalue_type;
     typedef typename Size::svalue_type svalue_type;
@@ -225,7 +223,7 @@ namespace
 
   /* Handles an ADDQ instruction (address register).  */
   template <class Size> void
-  m68k_addq_a(uint_type op, context &c, instruction_data *data)
+  m68k_addq_a(uint_type op, context &c, unsigned long data)
   {
     typedef long_word_size::uvalue_type uvalue_type;
     typedef long_word_size::svalue_type svalue_type;
@@ -252,7 +250,7 @@ namespace
 
   /* Handles an AND instruction.  */
   template <class Size, class Source> void
-  m68k_and(uint_type op, context &c, instruction_data *data)
+  m68k_and(uint_type op, context &c, unsigned long data)
   {
     typedef typename Size::uvalue_type uvalue_type;
     typedef typename Size::svalue_type svalue_type;
@@ -277,7 +275,7 @@ namespace
 
   /* Handles ANDI instruction for byte.  */
   template <class Destination> void
-  andib(uint_type op, context &c, instruction_data *data)
+  andib(uint_type op, context &c, unsigned long data)
   {
     sint_type value2 = extsb(c.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
@@ -296,7 +294,7 @@ namespace
   }
 
   template <class Destination> void
-  andiw(unsigned int op, context &ec, instruction_data *data)
+  andiw(uint_type op, context &ec, unsigned long data)
   {
     sint_type value2 = extsw(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
@@ -315,7 +313,7 @@ namespace
   }
 
   template <class Destination> void
-  andil(unsigned int op, context &ec, instruction_data *data)
+  andil(uint_type op, context &ec, unsigned long data)
   {
     sint32_type value2 = extsl(ec.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
@@ -335,7 +333,7 @@ namespace
 
   /* Handles an ASL instruction with an immediate count.  */
   template <class Size> void
-  m68k_asl_i(uint_type op, context &c, instruction_data *data)
+  m68k_asl_i(uint_type op, context &c, unsigned long data)
   {
     typedef typename Size::uvalue_type uvalue_type;
     typedef typename Size::svalue_type svalue_type;
@@ -359,7 +357,7 @@ namespace
 
 #if 0
   void
-  asll_i(uint_type op, context &ec, instruction_data *data)
+  asll_i(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
@@ -380,7 +378,7 @@ namespace
 #endif
 
   void
-  asll_r(unsigned int op, context &ec, instruction_data *data)
+  asll_r(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -399,7 +397,7 @@ namespace
   }
 
   void
-  asrl_i(uint_type op, context &c, instruction_data *data)
+  asrl_i(uint_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
@@ -419,7 +417,7 @@ namespace
   }
 
   void
-  asrl_r(unsigned int op, context &ec, instruction_data *data)
+  asrl_r(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -438,7 +436,7 @@ namespace
   }
 
   template <class Condition> void 
-  b(unsigned int op, context &ec, instruction_data *data)
+  b(uint_type op, context &ec, unsigned long data)
   {
     Condition cond;
     sint_type disp = op & 0xff;
@@ -462,7 +460,7 @@ namespace
   }
 
 #if 0
-  void bcc(unsigned int op, context &ec, instruction_data *data)
+  void bcc(uint_type op, context &ec, unsigned long data)
     {
       int len = 2;
       int disp = op & 0xff;
@@ -478,9 +476,8 @@ namespace
       // XXX: The condition codes are not affected.
       ec.regs.pc += ec.regs.sr.cc() ? 2 + disp : len;
     }
-#endif
 
-  void beq(unsigned int op, context &ec, instruction_data *data)
+  void beq(uint_type op, context &ec, unsigned long data)
     {
       int len = 2;
       int disp = op & 0xff;
@@ -499,8 +496,7 @@ namespace
       ec.regs.pc += ec.regs.sr.eq() ? 2 + disp : len;
     }
 
-#if 0
-  void bge(unsigned int op, context &ec, instruction_data *data)
+  void bge(uint_type op, context &ec, unsigned long data)
     {
       int len = 2;
       int disp = op & 0xff;
@@ -519,8 +515,7 @@ namespace
       ec.regs.pc += ec.regs.sr.ge() ? 2 + disp : len;
     }
 
-  void bmi(unsigned int op,
-	   context &ec, instruction_data *data)
+  void bmi(uint_type op, context &ec, unsigned long data)
     {
       int len = 2;
       int disp = op & 0xff;
@@ -538,9 +533,8 @@ namespace
       // XXX: The condition codes are not affected.
       ec.regs.pc += ec.regs.sr.mi() ? 2 + disp : len;
     }
-#endif
 
-  void bne(unsigned int op, context &ec, instruction_data *data)
+  void bne(uint_type op, context &ec, unsigned long data)
     {
       int len = 2;
       int disp = op & 0xff;
@@ -558,9 +552,10 @@ namespace
       // XXX: The condition codes are not affected.
       ec.regs.pc += ec.regs.sr.ne() ? 2 + disp : len;
     }
+#endif
 
   void
-  bclrl_i(unsigned int op, context &ec, instruction_data *data)
+  bclrl_i(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int bit = ec.fetch(word_size(), 2) & 0x1f;
@@ -580,7 +575,7 @@ namespace
   }
 
   void
-  bra(unsigned int op, context &ec, instruction_data *data)
+  bra(uint_type op, context &ec, unsigned long data)
     {
       int len = 2;
       int disp = op & 0xff;
@@ -600,7 +595,7 @@ namespace
     }
 
   void
-  bsetl_i(uint_type op, context &ec, instruction_data *data)
+  bsetl_i(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int bit = ec.fetch(word_size(), 2) & 0x1f;
@@ -620,7 +615,7 @@ namespace
   }
 
   void
-  bsr(unsigned int op, context &ec, instruction_data *data)
+  bsr(uint_type op, context &ec, unsigned long data)
     {
       int len = 2;
       int disp = op & 0xff;
@@ -643,7 +638,7 @@ namespace
     }
 
   template <class Destination> void
-  btstb_i(uint_type op, context &c, instruction_data *data)
+  btstb_i(uint_type op, context &c, unsigned long data)
   {
     unsigned int bit = c.fetch(word_size(), 2) & 0x7;
     Destination ea1(op & 0x7, 2 + 2);
@@ -660,7 +655,7 @@ namespace
   }
 
   void
-  btstl_i(unsigned int op, context &ec, instruction_data *data)
+  btstl_i(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int bit = ec.fetch(word_size(), 2) & 0x1f;
@@ -677,7 +672,7 @@ namespace
   }
 
   template <class Destination> void
-  clrb(unsigned int op, context &ec, instruction_data *data)
+  clrb(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
@@ -692,7 +687,7 @@ namespace
     }
 
   template <class Destination> void
-  clrw(unsigned int op, context &ec, instruction_data *data)
+  clrw(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
@@ -712,7 +707,7 @@ namespace
 #endif
 
   template <class Destination> void
-  clrl(unsigned int op, context &ec, instruction_data *data)
+  clrl(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
@@ -727,7 +722,7 @@ namespace
     }
 
   template <class Source> void
-  cmpb(unsigned int op, context &ec, instruction_data *data)
+  cmpb(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -746,7 +741,7 @@ namespace
   }
 
   template <class Source> void
-  cmpw(unsigned int op, context &ec, instruction_data *data)
+  cmpw(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -765,7 +760,7 @@ namespace
   }
 
   template <class Source> void
-  cmpl(unsigned int op, context &ec, instruction_data *data)
+  cmpl(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -784,7 +779,7 @@ namespace
   }
 
   template <class Source> void
-  cmpaw(unsigned int op, context &ec, instruction_data *data)
+  cmpaw(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -803,7 +798,7 @@ namespace
   }
 
   template <class Source> void
-  cmpal(unsigned int op, context &ec, instruction_data *data)
+  cmpal(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -822,7 +817,7 @@ namespace
   }
 
   template <class Destination> void
-  cmpib(unsigned int op, context &ec, instruction_data *data)
+  cmpib(uint_type op, context &ec, unsigned long data)
   {
     sint_type value2 = extsb(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
@@ -840,7 +835,7 @@ namespace
   }
 
   template <class Destination> void
-  cmpiw(unsigned int op, context &ec, instruction_data *data)
+  cmpiw(uint_type op, context &ec, unsigned long data)
   {
     sint_type value2 = extsw(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
@@ -858,7 +853,7 @@ namespace
   }
 
   template <class Destination> void
-  cmpil(uint_type op, context &c, instruction_data *data)
+  cmpil(uint_type op, context &c, unsigned long data)
   {
     sint32_type value2 = extsw(c.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
@@ -876,7 +871,7 @@ namespace
   }
 
   void
-  cmpmb(uint_type op, context &c, instruction_data *data)
+  cmpmb(uint_type op, context &c, unsigned long data)
   {
     postinc_indirect ea1(op & 0x7, 2);
     postinc_indirect ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
@@ -896,7 +891,7 @@ namespace
   }
 
   template <class Source> void
-  divuw(unsigned int op, context &ec, instruction_data *data)
+  divuw(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -917,7 +912,7 @@ namespace
   }
 
   template <class Destination> void
-  eorb_r(unsigned int op, context &ec, instruction_data *data)
+  eorb_r(uint_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -937,7 +932,7 @@ namespace
   }
 
   template <class Destination> void
-  eorw_r(unsigned int op, context &ec, instruction_data *data)
+  eorw_r(uint_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -957,7 +952,7 @@ namespace
   }
 
   template <class Destination> void
-  eorl_r(uint_type op, context &c, instruction_data *data)
+  eorl_r(uint_type op, context &c, unsigned long data)
   {
     data_register ea2(op >> 9 & 0x7, 2);
     Destination ea1(op & 0x7, 2 + ea2.isize(4));
@@ -978,7 +973,7 @@ namespace
   }
 
   template <class Destination> void
-  eoriw(unsigned int op, context &ec, instruction_data *data)
+  eoriw(uint_type op, context &ec, unsigned long data)
   {
     sint_type value2 = extsw(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
@@ -997,7 +992,7 @@ namespace
   }
 
   void
-  dbf(unsigned int op, context &ec, instruction_data *data)
+  dbf(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     int disp = extsw(ec.fetch(word_size(), 2));
@@ -1014,7 +1009,7 @@ namespace
   }
 
   template <class Register2, class Register1> void
-  exgl(uint_type op, context &c, instruction_data *data)
+  exgl(uint_type op, context &c, unsigned long data)
   {
     Register1 ea1(op & 0x7, 2);
     Register2 ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
@@ -1035,7 +1030,7 @@ namespace
   }
 
   void
-  extw(uint_type op, context &c, instruction_data *data)
+  extw(uint_type op, context &c, unsigned long data)
   {
     data_register ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
@@ -1051,7 +1046,7 @@ namespace
   }
 
   void
-  extl(unsigned int op, context &ec, instruction_data *data)
+  extl(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
 #ifdef TRACE_INSTRUCTIONS
@@ -1066,7 +1061,7 @@ namespace
   }
 
   template <class Destination> void
-  jmp(uint_type op, context &c, instruction_data *data)
+  jmp(uint_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
@@ -1080,7 +1075,7 @@ namespace
   }
 
   template <class Destination> void
-  jsr(unsigned int op, context &ec, instruction_data *data)
+  jsr(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
@@ -1096,7 +1091,7 @@ namespace
     }
 
   template <class Destination> void
-  lea(unsigned int op, context &ec, instruction_data *data)
+  lea(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
@@ -1113,7 +1108,7 @@ namespace
     }
 
   void
-  link_a(unsigned int op, context &ec, instruction_data *data)
+  link_a(uint_type op, context &ec, unsigned long data)
     {
       int reg = op & 0x0007;
       int disp = extsw(ec.fetch(word_size(), 2));
@@ -1132,7 +1127,7 @@ namespace
     }
 
   void
-  lslb_i(unsigned int op, context &ec, instruction_data *data)
+  lslb_i(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
@@ -1153,7 +1148,7 @@ namespace
   }
 
   void
-  lslw_i(unsigned int op, context &ec, instruction_data *data)
+  lslw_i(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
@@ -1174,7 +1169,7 @@ namespace
   }
 
   void
-  lslw_r(unsigned int op, context &ec, instruction_data *data)
+  lslw_r(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -1194,7 +1189,7 @@ namespace
   }
 
   void
-  lsll_i(unsigned int op, context &ec, instruction_data *data)
+  lsll_i(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
@@ -1214,7 +1209,7 @@ namespace
   }
 
   void
-  lsll_r(unsigned int op, context &ec, instruction_data *data)
+  lsll_r(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -1233,7 +1228,7 @@ namespace
   }
 
   void
-  lsrb_i(uint_type op, context &c, instruction_data *data)
+  lsrb_i(uint_type op, context &c, unsigned long data)
   {
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
@@ -1253,7 +1248,7 @@ namespace
   }
 
   void
-  lsrw_i(unsigned int op, context &ec, instruction_data *data)
+  lsrw_i(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     uint_type count = op >> 9 & 0x7;
@@ -1274,7 +1269,7 @@ namespace
   }
 
   void
-  lsrw_r(unsigned int op, context &ec, instruction_data *data)
+  lsrw_r(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -1294,7 +1289,7 @@ namespace
   }
 
   void
-  lsrl_i(unsigned int op, context &ec, instruction_data *data)
+  lsrl_i(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     uint_type count = op >> 9 & 0x7;
@@ -1314,7 +1309,7 @@ namespace
   }
 
   void
-  lsrl_r(unsigned int op, context &ec, instruction_data *data)
+  lsrl_r(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -1333,7 +1328,7 @@ namespace
   }
 
   template <class Source, class Destination> void
-  moveb(unsigned int op, context &ec, instruction_data *data)
+  moveb(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
@@ -1351,46 +1346,8 @@ namespace
     ec.regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
   }
 
-#if 0
-  void moveb_d_postinc(unsigned int op, context &ec, instruction_data *data)
-    {
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      uint32_type d_addr = ec.regs.a[d_reg];
-      VL((" moveb %%d%d,%%a%d@+ |*,0x%lx\n",
-	  s_reg, d_reg, (unsigned long) d_addr));
-
-      int fc = ec.data_fc();
-      int val = extsb(ec.regs.d[s_reg]);
-      ec.mem->putb(fc, d_addr, val);
-      ec.regs.a[d_reg] = d_addr + 1;
-      ec.regs.sr.set_cc(val);
-
-      ec.regs.pc += 2;
-    }
-
-  void moveb_postinc_postinc(unsigned int op, context &ec, instruction_data *data)
-    {
-      int s_reg = op & 0x7;
-      uint32_type s_addr = ec.regs.a[s_reg];
-      int d_reg = op >> 9 & 0x7;
-      uint32_type d_addr = ec.regs.a[d_reg];
-      VL((" moveb %%a%d@+,%%a%d@+ |0x%lx,0x%lx\n",
-	  s_reg, d_reg, (unsigned long) s_addr, (unsigned long) d_addr));
-
-      int fc = ec.data_fc();
-      int value = extsb(ec.mem->getb(fc, s_addr));
-      ec.mem->putb(fc, d_addr, value);
-      ec.regs.a[s_reg] = s_addr + 1;
-      ec.regs.a[d_reg] = d_addr + 1;
-      ec.regs.sr.set_cc(value);
-
-      ec.regs.pc += 2;
-    }
-#endif
-
   template <class Source, class Destination> void
-  movew(unsigned int op, context &ec, instruction_data *data)
+  movew(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
@@ -1408,58 +1365,8 @@ namespace
     ec.regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
   }
 
-#if 0
-  void movew_d_predec(unsigned int op, context &ec, instruction_data *data)
-    {
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      uint32_type d_addr = ec.regs.a[d_reg] - 2;
-      VL((" movew %%d%d,%%a%x@- |*,0x%lx\n",
-	  s_reg, d_reg, (unsigned long) d_addr));
-
-      int fc = ec.data_fc();
-      int value = extsw(ec.regs.d[s_reg]);
-      ec.mem->putw(fc, d_addr, value);
-      ec.regs.a[d_reg] = d_addr;
-      ec.regs.sr.set_cc(value);
-
-      ec.regs.pc += 2;
-    }
-
-  void movew_absl_predec(unsigned int op, context &ec, instruction_data *data)
-    {
-      int d_reg = op >> 9 & 0x7;
-      uint32_type d_addr = ec.regs.a[d_reg] - 2;
-      uint32_type s_addr = ec.fetch(long_word_size(), 2);
-      VL((" movew 0x%lx,%%a%x@- |*,0x%lx\n",
-	  (unsigned long) s_addr, d_reg, (unsigned long) d_addr));
-
-      int fc = ec.data_fc();
-      int value = extsw(ec.mem->getw(fc, s_addr));
-      ec.mem->putw(fc, d_addr, value);
-      ec.regs.a[d_reg] = d_addr;
-      ec.regs.sr.set_cc(value);
-
-      ec.regs.pc += 2 + 4;
-    }
-
-  void movew_d_absl(unsigned int op, context &ec, instruction_data *data)
-    {
-      int reg = op & 0x7;
-      uint32_type address = ec.fetch(long_word_size(), 2);
-      VL((" movew %%d%d,0x%x\n", reg, address));
-
-      int fc = ec.data_fc();
-      int value = extsw(ec.regs.d[reg]);
-      ec.mem->putw(fc, address, value);
-      ec.regs.sr.set_cc(value);
-
-      ec.regs.pc += 2 + 4;
-    }
-#endif
-
   template <class Source, class Destination> void
-  movel(unsigned int op, context &ec, instruction_data *data)
+  movel(uint_type op, context &ec, unsigned long data)
     {
       Source ea1(op & 0x7, 2);
       Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
@@ -1479,7 +1386,7 @@ namespace
 
   /* Handles an MOVE-from-USP instruction.  */
   void
-  m68k_move_from_usp(uint_type op, context &c, instruction_data *data)
+  m68k_move_from_usp(uint_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
 #ifdef TRACE_INSTRUCTIONS
@@ -1502,7 +1409,7 @@ namespace
 
   /* Handles an MOVEA instruction.  */
   template <class Size, class Source> void
-  m68k_movea(uint_type op, context &c, instruction_data *data)
+  m68k_movea(uint_type op, context &c, unsigned long data)
   {
     typedef long_word_size::uvalue_type uvalue_type;
     typedef long_word_size::svalue_type svalue_type;
@@ -1524,7 +1431,7 @@ namespace
 
 #if 0
   template <class Source> void
-  moveaw(uint_type op, context &c, instruction_data *data)
+  moveaw(uint_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     address_register ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
@@ -1543,7 +1450,7 @@ namespace
   }
 
   template <class Source> void
-  moveal(unsigned int op, context &ec, instruction_data *data)
+  moveal(uint_type op, context &ec, unsigned long data)
     {
       Source ea1(op & 0x7, 2);
       address_register ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
@@ -1565,7 +1472,7 @@ namespace
 
   /* movem regs to EA (postdec).  */
   void
-  moveml_r_predec(unsigned int op, context &ec, instruction_data *data)
+  moveml_r_predec(uint_type op, context &ec, unsigned long data)
     {
       int reg = op & 0x0007;
       unsigned int bitmap = ec.fetch(word_size(), 2);
@@ -1601,7 +1508,7 @@ namespace
 
   /* moveml instruction (memory to register) */
   template <class Source> void
-  moveml_mr(unsigned int op, context &ec, instruction_data *data)
+  moveml_mr(uint_type op, context &ec, unsigned long data)
     {
       Source ea1(op & 0x7, 4);
       unsigned int bitmap = ec.fetch(word_size(), 2);
@@ -1637,8 +1544,7 @@ namespace
 
   /* moveml (postinc) */
   template <> void
-  moveml_mr<postinc_indirect>(unsigned int op, context &ec,
-			      instruction_data *data)
+  moveml_mr<postinc_indirect>(uint_type op, context &ec, unsigned long data)
     {
       int reg1 = op & 0x7;
       unsigned int bitmap = ec.fetch(word_size(), 2);
@@ -1674,7 +1580,7 @@ namespace
     }
 
   void
-  moveql_d(unsigned int op, context &ec, instruction_data *data)
+  moveql_d(uint_type op, context &ec, unsigned long data)
     {
       int value = extsb(op & 0xff);
       int reg = op >> 9 & 0x7;
@@ -1689,7 +1595,7 @@ namespace
     }
 
   template <class Source> void
-  mulsw(unsigned int op, context &ec, instruction_data *data)
+  mulsw(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -1709,7 +1615,7 @@ namespace
   }
 
   template <class Source> void
-  muluw(unsigned int op, context &ec, instruction_data *data)
+  muluw(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -1730,7 +1636,7 @@ namespace
   }
 
   template <class Destination> void
-  negb(uint_type op, context &c, instruction_data *data)
+  negb(uint_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
@@ -1747,7 +1653,7 @@ namespace
   }
 
   template <class Destination> void
-  negw(uint_type op, context &ec, instruction_data *data)
+  negw(uint_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
@@ -1764,7 +1670,7 @@ namespace
   }
 
   template <class Destination> void
-  negl(unsigned int op, context &ec, instruction_data *data)
+  negl(uint_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
@@ -1781,7 +1687,7 @@ namespace
   }
 
   template <class Source> void
-  orb(uint_type op, context &ec, instruction_data *data)
+  orb(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -1802,7 +1708,7 @@ namespace
   }
 
   template <class Source> void
-  orw(unsigned int op, context &ec, instruction_data *data)
+  orw(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     int reg2 = op >> 9 & 0x7;
@@ -1823,7 +1729,7 @@ namespace
   }
 
   template <class Source> void
-  orl(unsigned int op, context &ec, instruction_data *data)
+  orl(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -1843,7 +1749,7 @@ namespace
   }
 
   template <class Destination> void
-  orib(unsigned int op, context &ec, instruction_data *data)
+  orib(uint_type op, context &ec, unsigned long data)
   {
     sint_type value2 = extsb(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
@@ -1862,7 +1768,7 @@ namespace
   }
 
   template <class Destination> void
-  oriw(uint_type op, context &c, instruction_data *data)
+  oriw(uint_type op, context &c, unsigned long data)
   {
     sint_type value2 = extsw(c.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
@@ -1881,7 +1787,7 @@ namespace
   }
 
   template <class Destination> void
-  oril(uint_type op, context &c, instruction_data *data)
+  oril(uint_type op, context &c, unsigned long data)
   {
     sint32_type value2 = extsl(c.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
@@ -1900,7 +1806,7 @@ namespace
   }
 
   template <class Destination> void
-  pea(unsigned int op, context &ec, instruction_data *data)
+  pea(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
@@ -1917,7 +1823,7 @@ namespace
     }
 
   void
-  rolb_r(unsigned int op, context &ec, instruction_data *data)
+  rolb_r(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -1938,7 +1844,7 @@ namespace
   }
 
   void
-  rolw_i(uint_type op, context &ec, instruction_data *data)
+  rolw_i(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
@@ -1960,7 +1866,7 @@ namespace
   }
 
   void
-  roll_i(uint_type op, context &c, instruction_data *data)
+  roll_i(uint_type op, context &c, unsigned long data)
   {
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
@@ -1983,7 +1889,7 @@ namespace
   }
 
   void
-  rorw_i(uint_type op, context &c, instruction_data *data)
+  rorw_i(uint_type op, context &c, unsigned long data)
   {
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
@@ -2005,7 +1911,7 @@ namespace
   }
 
   void
-  roxrw_i(uint_type op, context &c, instruction_data *data)
+  roxrw_i(uint_type op, context &c, unsigned long data)
   {
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
@@ -2028,7 +1934,7 @@ namespace
   }
 
   void
-  roxrl_i(uint_type op, context &c, instruction_data *data)
+  roxrl_i(uint_type op, context &c, unsigned long data)
   {
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
@@ -2052,7 +1958,7 @@ namespace
 
   /* Handles a RTE instruction.  */
   void
-  m68k_rte(uint_type op, context &c, instruction_data *data)
+  m68k_rte(uint_type op, context &c, unsigned long data)
   {
 #ifdef TRACE_INSTRUCTIONS
     L(" rte\n");
@@ -2073,7 +1979,7 @@ namespace
   }
 
   void
-  rts(unsigned int op, context &ec, instruction_data *data)
+  rts(uint_type op, context &ec, unsigned long data)
     {
 #ifdef TRACE_INSTRUCTIONS
       VL((" rts\n"));
@@ -2087,7 +1993,7 @@ namespace
     }
 
   template <class Condition, class Destination> void
-  s_b(unsigned int op, context &ec, instruction_data *data)
+  s_b(uint_type op, context &ec, unsigned long data)
   {
     Condition cond;
     Destination ea1(op & 0x7, 2);
@@ -2103,7 +2009,7 @@ namespace
   }
 
   template <class Source> void
-  subb(unsigned int op, context &ec, instruction_data *data)
+  subb(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -2123,30 +2029,8 @@ namespace
     ec.regs.pc += 2 + ea1.isize(2);
   }
 
-#if 0
-  void subb_postinc_d(unsigned int op, context &ec, instruction_data *data)
-    {
-      int reg1 = op & 0x7;
-      int reg2 = op >> 9 & 0x7;
-      uint32_type addr1 = ec.regs.a[reg1];
-      VL((" subb %%a%d@+,%%d%d |0x%lx,*\n",
-	  reg1, reg2, (unsigned long) addr1));
-
-      int fc = ec.data_fc();
-      int val1 = extsb(ec.mem->getb(fc, addr1));
-      int val2 = extsb(ec.regs.d[reg2]);
-      int val = extsb(val2 - val1);
-      const uint32_type MASK = ((uint32) 1u << 8) - 1;
-      ec.regs.d[reg2] = ec.regs.d[reg2] & ~MASK | (uint32) val & MASK;
-      ec.regs.a[reg1] = addr1 + 1;
-      ec.regs.sr.set_cc(val);	// FIXME.
-
-      ec.regs.pc += 2;
-    }
-#endif
-
   template <class Source> void
-  subw(unsigned int op, context &ec, instruction_data *data)
+  subw(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -2167,7 +2051,7 @@ namespace
   }
 
   template <class Destination> void
-  subl(unsigned int op, context &ec, instruction_data *data)
+  subl(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
@@ -2187,7 +2071,7 @@ namespace
     }
 
   template <class Destination> void
-  subl_r(unsigned int op, context &ec, instruction_data *data)
+  subl_r(uint_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -2207,7 +2091,7 @@ namespace
   }
 
   template <class Source> void
-  subal(unsigned int op, context &ec, instruction_data *data)
+  subal(uint_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -2227,7 +2111,7 @@ namespace
   }
 
   template <class Destination> void
-  subib(unsigned int op, context &ec, instruction_data *data)
+  subib(uint_type op, context &ec, unsigned long data)
     {
       int value2 = extsb(ec.fetch(word_size(), 2));
       Destination ea1(op & 0x7, 2 + 2);
@@ -2246,7 +2130,7 @@ namespace
     }
 
   template <class Destination> void
-  subil(unsigned int op, context &ec, instruction_data *data)
+  subil(uint_type op, context &ec, unsigned long data)
   {
     sint32_type value2 = extsl(ec.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
@@ -2265,7 +2149,7 @@ namespace
   }
 
   template <class Destination> void
-  subqw(unsigned int op, context &ec, instruction_data *data)
+  subqw(uint_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     int value2 = op >> 9 & 0x7;
@@ -2286,7 +2170,7 @@ namespace
   }
 
   template <> void
-  subqw<address_register>(unsigned int op, context &ec, instruction_data *data)
+  subqw<address_register>(uint_type op, context &ec, unsigned long data)
   {
     address_register ea1(op & 0x7, 2);
     int value2 = op >> 9 & 0x7;
@@ -2307,7 +2191,7 @@ namespace
   }
 
   template <class Destination> void
-  subql(uint_type op, context &ec, instruction_data *data)
+  subql(uint_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     int value2 = op >> 9 & 0x7;
@@ -2328,7 +2212,7 @@ namespace
   }
 
   template <> void
-  subql<address_register>(uint_type op, context &ec, instruction_data *data)
+  subql<address_register>(uint_type op, context &ec, unsigned long data)
   {
     address_register ea1(op & 0x7, 2);
     int value2 = op >> 9 & 0x7;
@@ -2348,42 +2232,8 @@ namespace
     ec.regs.pc += 2 + ea1.isize(4);
   }
 
-#if 0
   void
-  subql_d(unsigned int op, context &ec, instruction_data *data)
-    {
-      int reg1 = op & 0x7;
-      int val2 = op >> 9 & 0x7;
-      if (val2 == 0)
-	val2 = 8;
-      VL((" subql #%d,%%d%d\n", val2, reg1));
-
-      sint32_type val1 = extsl(ec.regs.d[reg1]);
-      sint32_type val = extsl(val1 - val2);
-      ec.regs.d[reg1] = val;
-      ec.regs.sr.set_cc_sub(val, val1, val2);
-
-      ec.regs.pc += 2;
-    }
-
-  void
-  subql_a(unsigned int op, context &ec, instruction_data *data)
-    {
-      int value = op >> 9 & 0x7;
-      int reg = op & 0x7;
-      if (value == 0)
-	value = 8;
-      VL((" subql #%d,%%a%d\n", value, reg));
-
-      // XXX: The condition codes are not affected.
-      ec.regs.a[reg] -= value;
-
-      ec.regs.pc += 2;
-    }
-#endif
-
-  void
-  swapw(unsigned int op, context &ec, instruction_data *data)
+  swapw(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
 #ifdef TRACE_INSTRUCTIONS
@@ -2400,7 +2250,7 @@ namespace
   }
 
   template <class Destination> void
-  tstb(unsigned int op, context &ec, instruction_data *data)
+  tstb(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
@@ -2415,7 +2265,7 @@ namespace
     }
 
   template <class Destination> void
-  tstw(unsigned int op, context &ec, instruction_data *data)
+  tstw(uint_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
@@ -2429,21 +2279,8 @@ namespace
     ec.regs.pc += 2 + ea1.isize(2);
   }
 
-#if 0
-  void tstw_d(unsigned int op, context &ec, instruction_data *data)
-    {
-      int reg = op & 0x7;
-      VL((" tstw %%d%d\n", reg));
-
-      int value = extsw(ec.regs.d[reg]);
-      ec.regs.sr.set_cc(value);
-
-      ec.regs.pc += 2;
-    }
-#endif
-
   template <class Destination> void
-  tstl(unsigned int op, context &ec, instruction_data *data)
+  tstl(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
 #ifdef TRACE_INSTRUCTIONS
@@ -2458,7 +2295,7 @@ namespace
     }
 
   void
-  unlk_a(unsigned int op, context &ec, instruction_data *data)
+  unlk_a(uint_type op, context &ec, unsigned long data)
     {
       int reg = op & 0x0007;
 #ifdef TRACE_INSTRUCTIONS
@@ -3022,8 +2859,8 @@ namespace
     eu.set_instruction(0x6300, 0x00ff, &b<ls>);
     eu.set_instruction(0x6400, 0x00ff, &b<cc>);
     eu.set_instruction(0x6500, 0x00ff, &b<cs>);
-    eu.set_instruction(0x6600, 0x00ff, &bne);
-    eu.set_instruction(0x6700, 0x00ff, &beq);
+    eu.set_instruction(0x6600, 0x00ff, &b<ne>);
+    eu.set_instruction(0x6700, 0x00ff, &b<eq>);
     eu.set_instruction(0x6a00, 0x00ff, &b<pl>);
     eu.set_instruction(0x6b00, 0x00ff, &b<mi>);
     eu.set_instruction(0x6c00, 0x00ff, &b<ge>);
@@ -3409,22 +3246,14 @@ namespace
 } // (unnamed namespace)
 
 exec_unit::exec_unit()
+  : instructions(0x10000, instruction_type(&illegal, 0))
 {
-  fill(instructions + 0, instructions + 0x10000,
-       make_pair(&illegal, (instruction_data *) 0));
-  install_instructions(*this);
+  add_instructions(*this);
 }
 
 /* Executes an illegal instruction.  */
 void
-exec_unit::illegal(unsigned int op, context &ec, instruction_data *data)
+exec_unit::illegal(uint_type op, context &c, unsigned long data)
 {
   throw illegal_instruction();
-}
-
-/* Installs instructions into the execution unit.  */
-void
-exec_unit::install_instructions(exec_unit &eu)
-{
-  add_instructions(eu);
 }

@@ -1,3 +1,36 @@
+2000-05-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (attach): Use make_pair.
+
+	* libvx68k/dos.cc: Use uint_type for all instruction handlers.
+	(dos_close, dos_create, dos_delete, dos_dup, dos_exit2,
+	dos_filedate, dos_fgetc, dos_fputs, dos_getdate, dos_getpdb,
+	dos_gettim2, dos_intvcs, dos_ioctrl, dos_malloc, dos_open,
+	dos_print, dos_putchar, dos_read, dos_seek, dos_setblock,
+	dos_vernum, dos_write): Change the name of argument ec to c.
+	(add_instructions): Use a simpler version of set_instruction.
+
+	* libvm68k/execunit.cc: Use uint_type for all instruction
+	handlers.
+	(set_instruction): Change the arguments.
+	[0] (beq, bne): Disabled.
+	[0] (moveb_d_postinc, moveb_postinc_postinc, movew_d_predec,
+	movew_absl_predec, movew_d_absl, subb_postinc_d, subql_d, subql_a,
+	tstw_d): Removed.
+	(add_instructions): Use b<ne> and b<eq>.
+	(exec_unit): Change initialization of member instructions.
+	(install_instrcutions): Removed.
+
+	* include/vm68k/cpu.h (struct instruction_data): Removed.  Also
+	replace all use of instruction_data * to unsigned long.
+	(class exec_unit): Use uint_type for instruction_handler.
+	(class exec_unit): Change the name of intruction to
+	instruction_type.  Also change all users.
+	(class exec_unit): Remove member install_instructions.  Change
+	member instructions to a vector.
+	(class exec_unit): Change arguments of member function
+	set_instruction.
+
 2000-05-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvm68k/statusreg.cc: Define status_register::bitset_tester.

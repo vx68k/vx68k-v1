@@ -1,5 +1,5 @@
 /* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -42,7 +42,7 @@ using namespace std;
 namespace
 {
   void
-  dos_chmod(uint_type op, context &c, instruction_data *data)
+  dos_chmod(uint_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
     uint32_type nameptr = c.mem->getl(SUPER_DATA, sp + 0);
@@ -59,75 +59,75 @@ namespace
   }
 
   void
-  dos_close(unsigned int op, context &ec, instruction_data *data)
+  dos_close(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    sint_type fd = word_size::svalue(ec.mem->getw(SUPER_DATA, sp));
+    uint32_type sp = c.regs.a[7];
+    sint_type fd = word_size::svalue(c.mem->getw(SUPER_DATA, sp));
 #ifdef L
     L(" DOS _CLOSE\n");
 #endif
 
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).close(fd);
+    c.regs.d[0] = static_cast<dos_exec_context &>(c).close(fd);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_create(unsigned int op, context &ec, instruction_data *data)
+  dos_create(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    uint32_type nameptr = ec.mem->getl(SUPER_DATA, sp + 0);
-    uint_type atr = ec.mem->getw(SUPER_DATA, sp + 4);
+    uint32_type sp = c.regs.a[7];
+    uint32_type nameptr = c.mem->getl(SUPER_DATA, sp + 0);
+    uint_type atr = c.mem->getw(SUPER_DATA, sp + 4);
 #ifdef L
     L(" DOS _CREATE\n");
 #endif
 
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).create(nameptr, atr);
+    c.regs.d[0] = static_cast<dos_exec_context &>(c).create(nameptr, atr);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_delete(unsigned int op, context &ec, instruction_data *data)
+  dos_delete(uint_type op, context &c, unsigned long data)
   {
 #ifdef L
     L(" DOS _DELETE\n");
 #endif
 
     // FIXME.
-    ec.regs.d[0] = 0;
+    c.regs.d[0] = 0;
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_dup(unsigned int op, context &ec, instruction_data *data)
+  dos_dup(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    uint_type filno = ec.mem->getw(SUPER_DATA, sp);
+    uint32_type sp = c.regs.a[7];
+    uint_type filno = c.mem->getw(SUPER_DATA, sp);
 #ifdef L
     L(" DOS _DUP\n");
 #endif
 
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).dup(filno);
+    c.regs.d[0] = static_cast<dos_exec_context &>(c).dup(filno);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_exit2(unsigned int op, context &ec, instruction_data *data)
+  dos_exit2(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    unsigned int status = ec.mem->getw(SUPER_DATA, sp + 0);
+    uint32_type sp = c.regs.a[7];
+    unsigned int status = c.mem->getw(SUPER_DATA, sp + 0);
 #ifdef L
     L(" DOS _EXIT2\n");
 #endif
 
-    static_cast<dos_exec_context &>(ec).exit(status);
+    static_cast<dos_exec_context &>(c).exit(status);
   }
 
   void
-  dos_fflush(uint_type op, context &c, instruction_data *data)
+  dos_fflush(uint_type op, context &c, unsigned long data)
   {
 #ifdef L
     L(" DOS _FFLUSH\n");
@@ -141,51 +141,51 @@ namespace
   }
 
   void
-  dos_filedate(unsigned int op, context &ec, instruction_data *data)
+  dos_filedate(uint_type op, context &c, unsigned long data)
   {
 #ifdef L
     L(" DOS _FILEDATE\n");
 #endif
 
     // FIXME.
-    ec.regs.d[0] = 0;
+    c.regs.d[0] = 0;
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_fgetc(unsigned int op, context &ec, instruction_data *data)
+  dos_fgetc(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    int fd = word_size::svalue(ec.mem->getw(SUPER_DATA, sp));
+    uint32_type sp = c.regs.a[7];
+    int fd = word_size::svalue(c.mem->getw(SUPER_DATA, sp));
 #ifdef L
     L(" DOS _FGETC\n");
 #endif
 
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).fgetc(fd);
+    c.regs.d[0] = static_cast<dos_exec_context &>(c).fgetc(fd);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_fputs(uint_type op, context &ec, instruction_data *data)
+  dos_fputs(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    uint32_type mesptr = ec.mem->getl(SUPER_DATA, sp + 0);
-    sint_type filno = word_size::svalue(ec.mem->getw(SUPER_DATA, sp + 4));
+    uint32_type sp = c.regs.a[7];
+    uint32_type mesptr = c.mem->getl(SUPER_DATA, sp + 0);
+    sint_type filno = word_size::svalue(c.mem->getw(SUPER_DATA, sp + 4));
 #ifdef L
     L(" DOS _FPUTS\n");
 #endif
 
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).fputs(mesptr, filno);
+    c.regs.d[0] = static_cast<dos_exec_context &>(c).fputs(mesptr, filno);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   /* Handles DOS _GETC function.  This function is similar to DOS
      _GETCHAR except no echo-back is made.  */
   void
-  dos_getc(uint_type op, context &c, instruction_data *data)
+  dos_getc(uint_type op, context &c, unsigned long data)
   {
 #ifdef L
     L(" DOS _GETC\n");
@@ -198,7 +198,7 @@ namespace
   }
 
   void
-  dos_getdate(uint_type op, context &ec, instruction_data *data)
+  dos_getdate(uint_type op, context &c, unsigned long data)
   {
 #ifdef L
     L(" DOS _GETDATE\n");
@@ -212,16 +212,16 @@ namespace
     struct tm *lt = localtime(&t);
 #endif
 
-    ec.regs.d[0] = (lt->tm_wday << 16
-		    | lt->tm_year - 80 << 9
-		    | lt->tm_mon + 1 << 5
-		    | lt->tm_mday);
+    c.regs.d[0] = (lt->tm_wday << 16
+		   | lt->tm_year - 80 << 9
+		   | lt->tm_mon + 1 << 5
+		   | lt->tm_mday);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_getenv(uint_type op, context &c, instruction_data *data)
+  dos_getenv(uint_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
     uint32_type getname = c.mem->getw(SUPER_DATA, sp + 0);
@@ -238,19 +238,19 @@ namespace
   }
 
   void
-  dos_getpdb(unsigned int op, context &ec, instruction_data *data)
+  dos_getpdb(uint_type op, context &c, unsigned long data)
   {
 #ifdef L
     L(" DOS _GETPDB\n");
 #endif
 
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).getpdb();
+    c.regs.d[0] = static_cast<dos_exec_context &>(c).getpdb();
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_gettim2(uint_type op, context &ec, instruction_data *data)
+  dos_gettim2(uint_type op, context &c, unsigned long data)
   {
 #ifdef L
     L(" DOS _GETTIM2\n");
@@ -264,55 +264,55 @@ namespace
     struct tm *lt = localtime(&t);
 #endif
 
-    ec.regs.d[0] = (lt->tm_hour << 16
-		    | lt->tm_min << 8
-		    | lt->tm_sec);
+    c.regs.d[0] = (lt->tm_hour << 16
+		   | lt->tm_min << 8
+		   | lt->tm_sec);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_intvcs(unsigned int op, context &ec, instruction_data *data)
+  dos_intvcs(uint_type op, context &c, unsigned long data)
   {
 #ifdef L
     L(" DOS _INTVCS\n");
 #endif
 
     // FIXME.
-    ec.regs.d[0] = 0;
+    c.regs.d[0] = 0;
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_ioctrl(unsigned int op, context &ec, instruction_data *data)
+  dos_ioctrl(uint_type op, context &c, unsigned long data)
   {
 #ifdef L
     L(" DOS _IOCTRL\n");
 #endif
 
     // FIXME.
-    ec.regs.d[0] = 0;
+    c.regs.d[0] = 0;
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_malloc(unsigned int op, context &ec, instruction_data *data)
+  dos_malloc(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    uint32_type len = ec.mem->getl(SUPER_DATA, sp + 0);
+    uint32_type sp = c.regs.a[7];
+    uint32_type len = c.mem->getl(SUPER_DATA, sp + 0);
 #ifdef L
     L(" DOS _MALLOC\n");
 #endif
 
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).malloc(len);
+    c.regs.d[0] = static_cast<dos_exec_context &>(c).malloc(len);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_nameck(uint_type op, context &c, instruction_data *data)
+  dos_nameck(uint_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
     uint32_type file = c.mem->getl(SUPER_DATA, sp + 0);
@@ -344,101 +344,101 @@ namespace
   }
 
   void
-  dos_open(unsigned int op, context &ec, instruction_data *data)
+  dos_open(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    uint32_type nameptr = ec.mem->getl(SUPER_DATA, sp + 0);
-    uint_type mode = ec.mem->getw(SUPER_DATA, sp + 4);
+    uint32_type sp = c.regs.a[7];
+    uint32_type nameptr = c.mem->getl(SUPER_DATA, sp + 0);
+    uint_type mode = c.mem->getw(SUPER_DATA, sp + 4);
 #ifdef L
     L(" DOS _OPEN\n");
 #endif
 
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).open(nameptr, mode);
+    c.regs.d[0] = static_cast<dos_exec_context &>(c).open(nameptr, mode);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_print(unsigned int op, context &ec, instruction_data *data)
+  dos_print(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    uint32_type mesptr = ec.mem->getl(SUPER_DATA, sp + 0);
+    uint32_type sp = c.regs.a[7];
+    uint32_type mesptr = c.mem->getl(SUPER_DATA, sp + 0);
 #ifdef L
     L(" DOS _PRINT\n");
 #endif
 
-    static_cast<dos_exec_context &>(ec).fputs(mesptr, 1);
-    ec.regs.d[0] = 0;		// FIXME: is it correct?
+    static_cast<dos_exec_context &>(c).fputs(mesptr, 1);
+    c.regs.d[0] = 0;		// FIXME: is it correct?
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_putchar(unsigned int op, context &ec, instruction_data *data)
+  dos_putchar(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    sint_type code = word_size::svalue(ec.mem->getw(SUPER_DATA, sp + 0));
+    uint32_type sp = c.regs.a[7];
+    sint_type code = word_size::svalue(c.mem->getw(SUPER_DATA, sp + 0));
 #ifdef L
     L(" DOS _PUTCHAR\n");
 #endif
 
-    static_cast<dos_exec_context &>(ec).fputc(code, 1);
-    ec.regs.d[0] = 0;		// FIXME: is it correct?
+    static_cast<dos_exec_context &>(c).fputc(code, 1);
+    c.regs.d[0] = 0;		// FIXME: is it correct?
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_read(unsigned int op, context &ec, instruction_data *data)
+  dos_read(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    sint_type fd = word_size::svalue(ec.mem->getw(SUPER_DATA, sp));
-    uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
-    uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
+    uint32_type sp = c.regs.a[7];
+    sint_type fd = word_size::svalue(c.mem->getw(SUPER_DATA, sp));
+    uint32_type buf = c.mem->getl(SUPER_DATA, sp + 2);
+    uint32_type size = c.mem->getl(SUPER_DATA, sp + 6);
 #ifdef L
     L(" DOS _READ\n");
 #endif
 
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).read(fd, buf, size);
+    c.regs.d[0] = static_cast<dos_exec_context &>(c).read(fd, buf, size);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_seek(unsigned int op, context &ec, instruction_data *data)
+  dos_seek(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    int fd = word_size::svalue(ec.mem->getw(SUPER_DATA, sp));
-    sint32_type offset = long_word_size::svalue(ec.mem->getl(SUPER_DATA, sp + 2));
-    unsigned int whence = ec.mem->getw(SUPER_DATA, sp + 6);
+    uint32_type sp = c.regs.a[7];
+    int fd = word_size::svalue(c.mem->getw(SUPER_DATA, sp));
+    sint32_type offset = long_word_size::svalue(c.mem->getl(SUPER_DATA, sp + 2));
+    unsigned int whence = c.mem->getw(SUPER_DATA, sp + 6);
 #ifdef L
     L(" DOS _SEEK\n");
 #endif
 
-    ec.regs.d[0]
-      = static_cast<dos_exec_context &>(ec).seek(fd, offset, whence);
+    c.regs.d[0]
+      = static_cast<dos_exec_context &>(c).seek(fd, offset, whence);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_setblock(unsigned int op, context &ec, instruction_data *data)
+  dos_setblock(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    uint32_type memptr = ec.mem->getl(SUPER_DATA, sp + 0);
-    uint32_type newlen = ec.mem->getl(SUPER_DATA, sp + 4);
+    uint32_type sp = c.regs.a[7];
+    uint32_type memptr = c.mem->getl(SUPER_DATA, sp + 0);
+    uint32_type newlen = c.mem->getl(SUPER_DATA, sp + 4);
 #ifdef L
     L(" DOS _SETBLOCK\n");
 #endif
 
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).setblock(memptr, newlen);
+    c.regs.d[0] = static_cast<dos_exec_context &>(c).setblock(memptr, newlen);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   /* Handles DOS call _SUPER.  */
   void
-  dos_super(uint_type op, context &c, instruction_data *data)
+  dos_super(uint_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
     uint32_type stack = c.mem->getl(SUPER_DATA, sp + 0);
@@ -474,7 +474,7 @@ namespace
 
   /* Handles DOS _SUPER_JSR syscall.  */
   void
-  dos_super_jsr(uint_type op, context &c, instruction_data *data)
+  dos_super_jsr(uint_type op, context &c, unsigned long data)
   {
     uint32_type sp = c.regs.a[7];
     uint32_type empadr = c.mem->getl(SUPER_DATA, sp + 0);
@@ -513,71 +513,71 @@ namespace
   }
 
   void
-  dos_vernum(uint_type op, context &ec, instruction_data *data)
+  dos_vernum(uint_type op, context &c, unsigned long data)
   {
 #ifdef L
     L(" DOS _VERNUM\n");
 #endif
 
-    ec.regs.d[0] = (uint32_type(0x3638) << 16 | 3u << 8 | 2u);
+    c.regs.d[0] = (uint32_type(0x3638) << 16 | 3u << 8 | 2u);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
-  dos_write(unsigned int op, context &ec, instruction_data *data)
+  dos_write(uint_type op, context &c, unsigned long data)
   {
-    uint32_type sp = ec.regs.a[7];
-    int fd = word_size::svalue(ec.mem->getw(SUPER_DATA, sp));
-    uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
-    uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
+    uint32_type sp = c.regs.a[7];
+    int fd = word_size::svalue(c.mem->getw(SUPER_DATA, sp));
+    uint32_type buf = c.mem->getl(SUPER_DATA, sp + 2);
+    uint32_type size = c.mem->getl(SUPER_DATA, sp + 6);
 #ifdef L
     L(" DOS _WRITE\n");
 #endif
 
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).write(fd, buf, size);
+    c.regs.d[0] = static_cast<dos_exec_context &>(c).write(fd, buf, size);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   /* Adds DOS-call instructions to exec_unit EU.  */
   void
-  add_instructions(exec_unit &eu, dos *data)
+  add_instructions(exec_unit &eu, dos *d)
   {
-    instruction_data *d = reinterpret_cast<instruction_data *>(data);
-    eu.set_instruction(0xff02, 0, &dos_putchar, d);
-    eu.set_instruction(0xff08, 0, &dos_getc, d);
-    eu.set_instruction(0xff09, 0, &dos_print, d);
-    eu.set_instruction(0xff0d, 0, &dos_fflush, d);
-    eu.set_instruction(0xff1b, 0, &dos_fgetc, d);
-    eu.set_instruction(0xff1e, 0, &dos_fputs, d);
-    eu.set_instruction(0xff20, 0, &dos_super, d);
-    eu.set_instruction(0xff25, 0, &dos_intvcs, d);
-    eu.set_instruction(0xff27, 0, &dos_gettim2, d);
-    eu.set_instruction(0xff2a, 0, &dos_getdate, d);
-    eu.set_instruction(0xff30, 0, &dos_vernum, d);
-    eu.set_instruction(0xff37, 0, &dos_nameck, d);
-    eu.set_instruction(0xff3c, 0, &dos_create, d);
-    eu.set_instruction(0xff3d, 0, &dos_open, d);
-    eu.set_instruction(0xff3e, 0, &dos_close, d);
-    eu.set_instruction(0xff3f, 0, &dos_read, d);
-    eu.set_instruction(0xff40, 0, &dos_write, d);
-    eu.set_instruction(0xff41, 0, &dos_delete, d);
-    eu.set_instruction(0xff42, 0, &dos_seek, d);
-    eu.set_instruction(0xff43, 0, &dos_chmod, d);
-    eu.set_instruction(0xff44, 0, &dos_ioctrl, d);
-    eu.set_instruction(0xff45, 0, &dos_dup, d);
-    eu.set_instruction(0xff48, 0, &dos_malloc, d);
-    eu.set_instruction(0xff4a, 0, &dos_setblock, d);
-    eu.set_instruction(0xff4c, 0, &dos_exit2, d);
-    eu.set_instruction(0xff51, 0, &dos_getpdb, d);
-    eu.set_instruction(0xff53, 0, &dos_getenv, d);
-    eu.set_instruction(0xff57, 0, &dos_filedate, d);
-    eu.set_instruction(0xfff6, 0, &dos_super_jsr, d);
+    unsigned long data = reinterpret_cast<unsigned long>(d);
+    eu.set_instruction(0xff02u, make_pair(&dos_putchar, data));
+    eu.set_instruction(0xff08u, make_pair(&dos_getc, data));
+    eu.set_instruction(0xff09u, make_pair(&dos_print, data));
+    eu.set_instruction(0xff0du, make_pair(&dos_fflush, data));
+    eu.set_instruction(0xff1bu, make_pair(&dos_fgetc, data));
+    eu.set_instruction(0xff1eu, make_pair(&dos_fputs, data));
+    eu.set_instruction(0xff20u, make_pair(&dos_super, data));
+    eu.set_instruction(0xff25u, make_pair(&dos_intvcs, data));
+    eu.set_instruction(0xff27u, make_pair(&dos_gettim2, data));
+    eu.set_instruction(0xff2au, make_pair(&dos_getdate, data));
+    eu.set_instruction(0xff30u, make_pair(&dos_vernum, data));
+    eu.set_instruction(0xff37u, make_pair(&dos_nameck, data));
+    eu.set_instruction(0xff3cu, make_pair(&dos_create, data));
+    eu.set_instruction(0xff3du, make_pair(&dos_open, data));
+    eu.set_instruction(0xff3eu, make_pair(&dos_close, data));
+    eu.set_instruction(0xff3fu, make_pair(&dos_read, data));
+    eu.set_instruction(0xff40u, make_pair(&dos_write, data));
+    eu.set_instruction(0xff41u, make_pair(&dos_delete, data));
+    eu.set_instruction(0xff42u, make_pair(&dos_seek, data));
+    eu.set_instruction(0xff43u, make_pair(&dos_chmod, data));
+    eu.set_instruction(0xff44u, make_pair(&dos_ioctrl, data));
+    eu.set_instruction(0xff45u, make_pair(&dos_dup, data));
+    eu.set_instruction(0xff48u, make_pair(&dos_malloc, data));
+    eu.set_instruction(0xff4au, make_pair(&dos_setblock, data));
+    eu.set_instruction(0xff4cu, make_pair(&dos_exit2, data));
+    eu.set_instruction(0xff51u, make_pair(&dos_getpdb, data));
+    eu.set_instruction(0xff53u, make_pair(&dos_getenv, data));
+    eu.set_instruction(0xff57u, make_pair(&dos_filedate, data));
+    eu.set_instruction(0xfff6u, make_pair(&dos_super_jsr, data));
 
-    eu.set_instruction(0xff81, 0, &dos_getpdb, d);
-    eu.set_instruction(0xff83, 0, &dos_getenv, d);
-    eu.set_instruction(0xff87, 0, &dos_filedate, d);
+    eu.set_instruction(0xff81u, make_pair(&dos_getpdb, data));
+    eu.set_instruction(0xff83u, make_pair(&dos_getenv, data));
+    eu.set_instruction(0xff87u, make_pair(&dos_filedate, data));
   }
 } // (unnamed namespace)
 
