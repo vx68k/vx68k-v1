@@ -1,8 +1,10 @@
 To-Do List for Virtual X68000
 
-$Date: Tue, 16 Nov 1999 20:58:28 +0900 $
+$Date: Thu, 18 Nov 1999 20:18:46 +0900 $
 
-Version 1.1
+* Rename directories for libraries as libXXX?
+
+* Make LIBS empty for libvm68k.la.
 
 * Use the GdkRgb visual.  This will initialize GdkRgb automagically.
 
@@ -10,13 +12,17 @@ Version 1.1
 
 * Better text VRAM emulation.
 
-** Color.
+** Implement the text color map.
 
-** Optimization.
+** Optimize the text VRAM drawing.
 
-* Better console device behaviour, especially on input.
+** Implement text scrolling, or at least prepare for it.
 
-* Basic FLOAT handlers.
+* Improve console device behaviour.
+
+* Implement minimum FLOAT calls.
+
+* Implement DOS calls _FILES and _NFILES.
 
 Maybe version 1.1 or later
 
