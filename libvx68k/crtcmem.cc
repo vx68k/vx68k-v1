@@ -52,7 +52,7 @@ crtc_memory::check_timeouts(console::time_type t, context &c)
       vdisp_start_time += vdisp_interval;
 
       if (vdisp_interrupt_enabled())
-	c.interrupt(6, 0x46);
+	c.interrupt(6, 0x4d);
     }
 }
 

@@ -1034,7 +1034,7 @@ namespace
 	    if (count == 0)
 	      count = 0x100;
 
-	    as->putl(SUPER_DATA, 0x46 * 4, address);
+	    as->putl(SUPER_DATA, 0x4d * 4, address);
 	    as->machine()->set_vdisp_interrupt_enabled(true);
 	    long_word_size::put(c.regs.d[0], 0);
 	  }

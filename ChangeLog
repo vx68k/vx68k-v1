@@ -1,5 +1,9 @@
 2000-08-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/crtcmem.cc (check_timeouts): Change interrupt vector to
+	0x4d.
+	* libvx68k/systemrom.cc (iocs_vdispst): Likewise.
+
 	* libvx68k/systemrom.cc (iocs_b_drvchk): Print FIXME message only
 	once.
 
