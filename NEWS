@@ -1,8 +1,10 @@
 Virtual X68000 User-Visible Changes
 
-$Date: Fri, 21 May 1999 21:49:22 +0900 $
+$Date: Sat, 22 May 1999 07:49:55 +0900 $
 
 Version 0.33
+
+* The LHA self-extractor now runs to exit with an error.
 
 * Some instructions are implemented using templates.
 

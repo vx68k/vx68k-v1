@@ -1,3 +1,11 @@
+1999-05-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Makefile.am (EXTRA_DIST): Add MEMO.ja.
+
+	* MEMO.ja: New file.
+
+	* NEWS: Modified.
+
 1999-05-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/memory.cc (getw, putw): Replace abort with throw.

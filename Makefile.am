@@ -7,7 +7,7 @@ bin_PROGRAMS = vx68k
 vx68k_SOURCES = main.cc
 vx68k_LDADD = lib/vx68k/libvx68k.a lib/vm68k/libvm68k.a
 
-EXTRA_DIST = VERSION-ID
+EXTRA_DIST = MEMO.ja VERSION-ID
 
 SUBDIRS = include lib
 
