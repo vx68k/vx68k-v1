@@ -41,13 +41,24 @@ using namespace std;
 namespace
 {
   void
+  iocs_b_lpeek(context &c, machine &m, iocs_function_data *data)
+  {
+    uint32_type address = c.regs.a[1];
+
+    c.regs.d[0] = m.address_space()->getl(SUPER_DATA, address);
+    c.regs.a[1] = address + 4;
+  }
+
+  void
   set_iocs_functions(machine &m)
   {
+    m.set_iocs_function(0x84, &iocs_b_lpeek, NULL);
   }
 } // (unnamed namespace)
 
 void
-machine::invalid_iocs_function(context &c, iocs_function_data *data)
+machine::invalid_iocs_function(context &c, machine &m,
+			       iocs_function_data *data)
 {
   throw runtime_error("invalid iocs function");	// FIXME
 }
@@ -62,7 +73,7 @@ machine::iocs(uint_type op, context &c, instruction_data *data)
 
   machine *m = static_cast<machine *>(data);
   I(m != NULL);
-  (*m->iocs_functions[funcno].first)(c, m->iocs_functions[funcno].second);
+  (*m->iocs_functions[funcno].first)(c, *m, m->iocs_functions[funcno].second);
 
   c.regs.pc += 2;
 }

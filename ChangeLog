@@ -1,8 +1,17 @@
 1999-07-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/machine.cc (iocs): Pass machine to handler.
+
+	* include/vx68k/machine.h (class machine): Add machine * argument
+	to iocs_function_handler.  Also change all referrers.
+
+	* lib/vx68k/machine.cc (iocs_b_lpeek): New function.
+	(set_iocs_functions): Add new handler.
+
 	* include/vx68k/machine.h (struct iocs_function_data): New class.
 	(class machine): Add typedef iocs_function_handler and member
 	iocs_functions, and update with new members.
+	(class machine): Add instructions_data to base class.
 
 	* lib/vx68k/machine.cc: Add using namespace vm68k and Nana
 	support.

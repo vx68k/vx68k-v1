@@ -118,10 +118,12 @@ namespace vx68k
     : public instruction_data
   {
   public:
-    typedef void (*iocs_function_handler)(context &, iocs_function_data *);
+    typedef void (*iocs_function_handler)(context &, machine &,
+					  iocs_function_data *);
 
   protected:
-    static void invalid_iocs_function(context &, iocs_function_data *);
+    static void invalid_iocs_function(context &, machine &,
+				      iocs_function_data *);
     static void iocs(uint_type, context &, instruction_data *);
 
   private:
