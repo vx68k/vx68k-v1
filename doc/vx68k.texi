@@ -5,9 +5,9 @@
 @synindex vr fn
 @set VERSION 1.1
 @c $Format: "@set REVISION $Revision$" $
-@set REVISION 1.24
+@set REVISION 1.25
 @c $Format: "@set DATE $Date$" $
-@set DATE Sun, 24 Dec 2000 00:13:58 +0900
+@set DATE Wed, 20 Jun 2001 20:45:26 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -137,8 +137,8 @@ Human68k Emulation
 
 Document Type Definitions
 
-* Disk Set Descriptors::        
-* Options Settings::            
+* Target Program Descriptors::  
+* Option Settings::             
 
 @end detailmenu
 @end menu
@@ -747,19 +747,30 @@ This chapter describes the implementation of the sample application
 @appendix Document Type Definitions
 
 @menu
-* Disk Set Descriptors::        
-* Options Settings::            
+* Target Program Descriptors::  
+* Option Settings::             
 @end menu
 
-@node Disk Set Descriptors, Options Settings, Document Type Definitions, Document Type Definitions
-@appendixsec Disk Set Descriptors
+@node Target Program Descriptors, Option Settings, Document Type Definitions, Document Type Definitions
+@appendixsec Target Program Descriptors
 
 @smallexample
-[Insert DTD here.]
+<!-- Target Program Descriptor DTD -->
+<!ELEMENT program (title, disk*)>
+<!ATTLIST program
+  xmlns CDATA #FIXED "http://www.vx68k.org/vx68k/program1">
+
+<!ELEMENT title (#PCDATA)>
+
+<!ELEMENT disk (#PCDATA)*>
+<!ATTLIST disk
+  file CDATA #REQUIRED
+  type (floppy|fixed) "floppy"
+  unit CDATA #IMPLIED>
 @end smallexample
 
-@node Options Settings,  , Disk Set Descriptors, Document Type Definitions
-@appendixsec Options Setting
+@node Option Settings,  , Target Program Descriptors, Document Type Definitions
+@appendixsec Option Setting
 
 @smallexample
 [Insert DTD here.]

@@ -1,4 +1,4 @@
 ## Process this file with automake to produce a Makefile.in.
 
-SUBDIRS = vm68k vx68k
+SUBDIRS = vx68k
 

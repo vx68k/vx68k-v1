@@ -24,6 +24,7 @@
 #include <vx68k/memory.h>
 #include <vm68k/mutex.h>
 
+#include <stdexcept>
 #include <cstdio>
 
 #ifdef HAVE_NANA_H

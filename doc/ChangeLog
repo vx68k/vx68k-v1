@@ -1,3 +1,7 @@
+2001-06-20  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* vx68k.texi: Updated.
+
 2000-12-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* vx68k.texi (Memory Exceptions): New node.

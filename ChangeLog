@@ -1,3 +1,22 @@
+2001-06-20  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* libvx68k/sccmem.cc: Add #include <stdexcept>.
+
+	* libvx68k/Makefile.am (INCLUDES): Add -I$(prefix)/include.
+	* vx68kui/Makefile.am (INCLUDES): Likewise.
+	* bin/Makefile.am (INCLUDES): Likewise.
+	(vx68k_LDADD): Use installed Libvm68k.
+
+	* include/Makefile.am (SUBDIRS): Remove vm68k.
+
+	* Makefile.am (SUBDIRS): Remove libvm68k.
+
+	* configure.in (ALL_LINGUAS): Remove include/vm68k/Makefile and
+	libvm68k/Makefile from AC_OUTPUT.
+
+	* include/vm68k: Removed including its contents.
+	* libvm68k: Removed including its contents.
+
 2000-12-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* include/vm68k/memory.h (class memory_map): Add throw specs to
