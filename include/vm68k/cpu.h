@@ -52,8 +52,13 @@ namespace vm68k
 
   class status_register
   {
+  protected:
+    enum {S = 1 << 13};
   private:
     int32 result;
+    uint16 value;
+  public:
+    status_register();
   public:
     bool cc() const {return !cs();}
     bool cs() const;
@@ -62,7 +67,7 @@ namespace vm68k
     bool ge() const {return !lt();}
     bool lt() const;
     void set_cc(int32);
-    bool supervisor_state() const;
+    bool supervisor_state() const {return (value & S) != 0;}
   };
 
   /* CPU registers (mc68000).  */

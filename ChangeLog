@@ -1,5 +1,12 @@
 1999-04-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/statusreg.cc (status_register): New constructor.
+	(supervisor_state): Removed.
+
+	* include/vm68k/cpu.h (class status_register): Add constructor and
+	member value.
+	(class status_register): Make supervisor_state inline.
+
 	* lib/vm68k/execunit.cc (struct data_register, struct
 	address_register, struct indirect): Removed.
 	(addil, addqb): Updated for <vm68k/addressing.h> classes.

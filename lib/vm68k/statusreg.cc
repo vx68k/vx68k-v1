@@ -52,9 +52,8 @@ status_register::set_cc(int32 r)
   result = r;
 }
 
-bool
-status_register::supervisor_state() const
+status_register::status_register()
+  : value(S)
 {
-  return true;			// FIXME.
 }
 
