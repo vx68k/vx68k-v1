@@ -1,5 +1,8 @@
 2000-08-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/sccmem.cc (mouse_motion): Call sched_yield and
+	pthread_testcancel.
+
 	* libvx68k/mainmem.cc (get_16, get_8, get_32, put_16, put_8,
 	put_32): Use only lower 24 bits of the address.
 

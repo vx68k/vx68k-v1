@@ -93,6 +93,9 @@ scc_memory::set_mouse_position(int x, int y)
 scc_memory::point
 scc_memory::mouse_motion() const
 {
+  sched_yield();
+  pthread_testcancel();
+
   mutex_lock lock(&mutex);
 
   point p = {_mouse_position.x - old_mouse_position.x,
