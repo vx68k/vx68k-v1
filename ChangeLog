@@ -1,5 +1,15 @@
 1999-10-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/Makefile.am (vx68k_LDADD): Change directory of vx68k libs.
+
+	* Makefile.am (SUBDIRS): Add vx68k and remove lib.
+
+	* configure.in: Modify AC_OUTPUT.
+
+	* lib/Makefile.am: Removed.
+
+	* Move lib/vx68k to vx68k.
+
 	* bin/Makefile.am (vx68k_LDADD): Use libvm68k.la.
 
 	* vm68k/Makefile.am (lib_LTLIBRARIES): Changed from
@@ -18,7 +28,7 @@
 
 	* configure.in: Modify AC_OUTPUT.
 
-	* lib/Makefile.am: Move lib/vm68k to vm68k.
+	* Move lib/vm68k to vm68k.
 
 1999-09-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
