@@ -34,7 +34,14 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include "debug.h"
+#ifdef HAVE_NANA_H
+# include <nana.h>
+# include <cstdio>
+#else
+# include <cassert>
+# define I assert
+# define VL(EXPR)
+#endif
 
 using namespace vx68k::human;
 using namespace vm68k;
