@@ -1,5 +1,10 @@
 1999-03-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/memory.cc: Add `using namespace vx68k' and move
+	functions out of the namespace.
+	(read, write): Write real code.
+	(x68k_address_space): Map only available pages.
+
 	* include/vm68k/memory.h (class address_space): Remove _signed
 	member function, and add gets and puts.
 

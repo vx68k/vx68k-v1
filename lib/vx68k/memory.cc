@@ -21,28 +21,35 @@
 #undef const
 #undef inline
 
-#include "vx68k/memory.h"
+#include <vx68k/memory.h>
 
 #include <cstdlib>
 
+using namespace vx68k;
 using namespace std;
 
-namespace vx68k
-{
-#if 0
-};
-#endif
-
 size_t
-main_memory_page::read (int fc, uint32 address, void *, size_t) const
+main_memory_page::read(int fc, uint32 address, void *data, size_t size) const
 {
-  abort ();			// FIXME
-}
+  if (address >= end)
+    throw bus_error(fc, address);
+  if (address + size >= end)
+    size = end - address;
 
-size_t
-main_memory_page::write (int fc, uint32 address, const void *, size_t)
-{
-  abort ();			// FIXME
+  uint8 *p = static_cast<uint8 *>(data);
+  uint8 *last = p + size;
+  if (p != last && (address & 1) != 0)
+    *p++ = getb(fc, address++);
+  while (last - p >> 1 != 0)
+    {
+      vm68k::putw(p, array[address >> 1]);
+      address += 2;
+      p += 2;
+    }
+  if (p != last)
+    *p++ = getb(fc, address++);
+
+  return size;
 }
 
 uint8
@@ -51,6 +58,40 @@ main_memory_page::getb (int fc, uint32 address) const
 {
   uint16 wvalue = getw(fc, address & ~0x1);
   return address & 0x1 != 0 ? wvalue : wvalue >> 8;
+}
+
+uint16
+main_memory_page::getw (int fc, uint32 address) const
+  throw (bus_error)
+{
+  // Address error?
+  if (address >= end)
+    abort ();			// FIXME
+  return array[address >> 1];
+}
+
+size_t
+main_memory_page::write(int fc, uint32 address, const void *data, size_t size)
+{
+  if (address >= end)
+    throw bus_error(fc, address);
+  if (address + size >= end)
+    size = end - address;
+
+  uint8 *p = static_cast<uint8 *>(data);
+  uint8 *last = p + size;
+  if (p != last && (address & 1) != 0)
+    putb(fc, address++, *p++);
+  while (last - p >> 1 != 0)
+    {
+      array[address >> 1] = vm68k::getw(p);
+      p += 2;
+      address += 2;
+    }
+  if (p != last)
+    putb(fc, address++, *p++);
+
+  return size;
 }
 
 void
@@ -70,16 +111,6 @@ main_memory_page::putb(int fc, uint32 address, uint8 value)
       wvalue |= value << 8;
     }
   putw(fc, address & ~0x1, wvalue);
-}
-
-uint16
-main_memory_page::getw (int fc, uint32 address) const
-  throw (bus_error)
-{
-  // Address error?
-  if (address >= end)
-    abort ();			// FIXME
-  return array[address >> 1];
 }
 
 void
@@ -108,11 +139,9 @@ x68k_address_space::x68k_address_space (size_t n)
   : main_memory (n)
 {
   using vm68k::PAGE_SHIFT;
-  set_pages (0, 0xc00000 >> PAGE_SHIFT, &main_memory);
+  set_pages (0, n >> PAGE_SHIFT, &main_memory);
 #if 0
   set_pages (0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &graphic_vram);
   set_pages (0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &text_vram);
 #endif
 }
-
-};				// namespace vx68k
