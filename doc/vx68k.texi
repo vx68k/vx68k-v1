@@ -11,10 +11,22 @@
 @titlepage
 @title Virtual X68000 Reference Manual
 @author Kaz Sasayama 
+@page
+@vskip 0pt plus 1fill
+Copyright @copyright{} 1999, 2000 Hypercore Software Design, Ltd.
+
+Permission is granted to make and distribute verbatim copies
+of this manual provided the copyright notice and this
+permission notice are preserved on all copies.
+
 @end titlepage
 
 @node top
 @top Virtual X68000 Reference Manual
+Abstract: 
+Virtual X68000 is a host-architecture independent emulator of
+Sharp X68000 written in C++.
+
 @menu
 * Using Virtual X68000::	
 * Command Reference::	
@@ -31,9 +43,6 @@
 
 @node Introdution
 @section Introdution
-Virtual X68000 is a host-architecture independent emulator of
-Sharp X68000 written in C++.
-
 ....
 
 @node Command Reference

@@ -1,3 +1,14 @@
+2000-07-02  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/vx68k.xml: Updated.
+	* doc/vx68k.texi: Regenerated.
+
+	* doc/Makefile.am (EXTRA_DIST): Add docbook2texi.
+	(DOCBOOK2TEXI): Use the included one.
+	(${srcdir}/vx68k.texi): Simplify commands.
+
+	* doc/docbook2texi: New file.
+
 2000-07-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvm68k/execunit.cc (m68k_btst_r): New function template.

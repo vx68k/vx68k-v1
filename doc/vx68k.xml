@@ -10,21 +10,31 @@
     </author>
     <copyright>
       <year>1999</year>
+      <year>2000</year>
       <holder>Hypercore Software Design, Ltd.</holder>
     </copyright>
+    <legalnotice>
+      <para>
+	Permission is granted to make and distribute verbatim copies
+	of this manual provided the copyright notice and this
+	permission notice are preserved on all copies.
+      </para>
+    </legalnotice>
+    <abstract>
+      <para>
+	Virtual X68000 is a host-architecture independent emulator of
+	Sharp X68000 written in C++.
+      </para>
+    </abstract>
   </bookinfo>
   <chapter>
     <title>Using Virtual X68000</title>
     <sect1>
       <title>Introdution</title>
-      <para>
-	Virtual X68000 is a host-architecture independent emulator of
-	Sharp X68000 written in C++.
-      </para>
       <para>....</para>
     </sect1>
   </chapter>
-  <chapter><!--reference had problem with docbook2texi-->
+  <reference>
     <title>Command Reference</title>
     <refentry>
       <refmeta>
@@ -66,7 +76,7 @@
 	</variablelist>
       </refsect1>
     </refentry>
-  </chapter>
+  </reference>
   <!--part had problems with docbook2texi-->
   <chapter>
     <title>Inside Virtual X68000</title>
