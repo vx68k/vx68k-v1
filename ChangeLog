@@ -1,5 +1,7 @@
 1999-10-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vx68k/doscontext.cc (start): Clear the supervisor state.
+
 	* include/vm68k/cpu.h (class context): Add method
 	supervisor_state.
 	(class context): Rename member pfc to pfc_cache, and dfc to

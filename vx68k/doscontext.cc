@@ -177,6 +177,10 @@ dos_exec_context::exit(unsigned int status)
 uint16
 dos_exec_context::start(uint32 address, const char *const *argv)
 {
+  /* Program must be started in user state.  */
+  regs.usp = regs.a[7];
+  set_supervisor_state(false);
+
   regs.pc = address;
   uint16 status = 0;
   try
