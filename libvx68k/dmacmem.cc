@@ -48,7 +48,6 @@ dmac_memory::get_16(int fc, uint32_type address) const
   static bool once;
   if (!once++)
     fprintf(stderr, "class dmac_memory: FIXME: `get_16' not implemented\n");
-
   return 0;
 }
 
@@ -61,7 +60,6 @@ dmac_memory::get_8(int fc, uint32_type address) const
   static bool once;
   if (!once++)
     fprintf(stderr, "class dmac_memory: FIXME: `get_8' not implemented\n");
-
   return 0;
 }
 
