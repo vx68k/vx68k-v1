@@ -140,6 +140,23 @@ namespace
       ec->regs.pc += 2 + disp;
     }
 
+  void clrw_predec(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int reg = op & 0x7;
+#ifdef TRACE_STEPS
+      fprintf(stderr, " clrw %%a%d@-\n", reg);
+#endif
+
+      int fc = ec->regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA;
+      int value = 0;
+      ec->mem->putw(fc, (&ec->regs.a0)[reg] - 2, value);
+      // FIXME: The condition codes must be set.
+      (&ec->regs.a0)[reg] -= 2;
+
+      ec->regs.pc += 2;
+    }
+
   void lea_offset_a(int op, execution_context *ec)
     {
       assert(ec != NULL);
@@ -271,6 +288,23 @@ namespace
       ec->regs.pc += 4;
     }
 
+  void pea_absl(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int fc = (ec->regs.sr.supervisor_state()
+		? SUPER_PROGRAM : USER_PROGRAM);
+      uint32 address = ec->mem->getl(fc, ec->regs.pc + 2);
+#ifdef TRACE_STEPS
+      fprintf(stderr, " pea 0x%lx:l\n", (unsigned long) address);
+#endif
+
+      // XXX: The condition codes are not affected.
+      fc = ec->regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA;
+      ec->mem->putl(fc, ec->regs.a7 - 4, address);
+
+      ec->regs.pc += 6;
+    }
+
   void rts(int op, execution_context *ec)
     {
       assert(ec != NULL);
@@ -313,6 +347,8 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x2108, 0x0e07, &movel_a_predec);
   eu->set_instruction(0x41e8, 0x0e07, &lea_offset_a);
   eu->set_instruction(0x41f9, 0x0e00, &lea_absl_a);
+  eu->set_instruction(0x4260, 0x0007, &clrw_predec);
+  eu->set_instruction(0x4879, 0x0000, &pea_absl);
   eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
   eu->set_instruction(0x4e50, 0x0007, &link);
   eu->set_instruction(0x4e75, 0x0000, &rts);

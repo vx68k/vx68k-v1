@@ -3,7 +3,8 @@
 	* lib/vm68k/statusreg.cc: New file.
 	* lib/vm68k/Makefile.am (libvm68k_a_SOURCES): Add the new file.
 
-	* lib/vm68k/execunit.cc (bne, subql_a): New function.
+	* lib/vm68k/execunit.cc (bne, subql_a, clrw_predec, pea_absl): New
+	functions.
 	(install_instructions): Set the new instructions.
 
 	* acconfig.h: Add _REENTRANT.
