@@ -5,9 +5,9 @@
 @synindex vr fn
 @set VERSION 1.1
 @c $Format: "@set REVISION $Revision$" $
-@set REVISION 1.14
+@set REVISION 1.15
 @c $Format: "@set DATE $Date$" $
-@set DATE Tue, 12 Dec 2000 23:18:36 +0900
+@set DATE Tue, 12 Dec 2000 23:37:33 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -118,7 +118,14 @@ Machine
 
 * Main Memory::                 The main memory.
 * IOCS and System ROM::         
+* Text Video Memory::           
+* Graphic Video Memory::        
 * SCC::                         
+
+Human68k Emulation
+
+* Memory Management::           
+* Filesystem::                  
 
 @end detailmenu
 @end menu
@@ -446,6 +453,8 @@ This class is an abstract interface to the host system.
 @menu
 * Main Memory::                 The main memory.
 * IOCS and System ROM::         
+* Text Video Memory::           
+* Graphic Video Memory::        
 * SCC::                         
 @end menu
 
@@ -456,7 +465,7 @@ This class is an abstract interface to the host system.
 Memory component for the main memory.
 @end deftp
 
-@node IOCS and System ROM, SCC, Main Memory, Machine
+@node IOCS and System ROM, Text Video Memory, Main Memory, Machine
 @subsection The IOCS and the System ROM
 @cindex IOCS
 @cindex input/output control sybsystem
@@ -514,7 +523,23 @@ Sets the handler for IOCS call @var{number} to @var{handler}.
 @deftypemethod system_rom void call_iocs (int @var{number}, context &@var{c})
 @end deftypemethod
 
-@node SCC,  , IOCS and System ROM, Machine
+@node Text Video Memory, Graphic Video Memory, IOCS and System ROM, Machine
+@subsection Text Video Memory
+@cindex text video memory
+@cindex video memory, text
+
+@deftp Class text_video_memory
+@end deftp
+
+@node Graphic Video Memory, SCC, Text Video Memory, Machine
+@subsection Graphic Video Memory
+@cindex graphic video memory
+@cindex video memory, graphic
+
+@deftp Class graphic_video_memory
+@end deftp
+
+@node SCC,  , Graphic Video Memory, Machine
 @subsection Z8530 SCC
 @cindex SCC, Z8530
 @cindex serial communication controller, Z8530
@@ -535,6 +560,19 @@ COM port and a mouse port.
 Virtual X68000 is unique as it also offers functions of the
 basic operating system, Human68k.
 
+@menu
+* Memory Management::           
+* Filesystem::                  
+@end menu
+
+@node Memory Management, Filesystem, Human68k Emulation, Human68k Emulation
+@section Memory Management
+@cindex memory management, DOS
+
+@node Filesystem,  , Memory Management, Human68k Emulation
+@section Filesystem
+@cindex filesystem
+
 @node GTK+ User Interface, Sample Application, Human68k Emulation, Top
 @chapter GTK+ User Interface
 
@@ -549,7 +587,6 @@ Implements a console using the GTK+ user interface toolkit.
 @end deftp
 
 @node Sample Application, Function and Variable Index, GTK+ User Interface, Top
-@comment  node-name,  next,  previous,  up
 @chapter Sample Application
 
 This chapter describes the implementation of the sample application

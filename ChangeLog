@@ -1,5 +1,10 @@
 2000-12-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* doc/vx68k.texi (Text Video Memory): New node.
+	(Graphic Video Memory): New node.
+	(Memory Management): New node.
+	(Filesystem): New node.
+
 	* bin/Makefile.am (vx68k_LDADD): Add libvx68kdos.la.
 
 	* libvx68k/Makefile.am (lib_LTLIBRARIES): Add libvx68kdos.la.
