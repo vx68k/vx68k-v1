@@ -59,12 +59,14 @@ dos::load_executable (const char *name)
   uint32 start_offset = getl (head + 8);
   size_t text_size = getl (head + 12);
   size_t data_size = getl (head + 16);
-  size_t reloc_size = getl (head + 20);	// OK?
-  cerr << hex << "Base     : 0x" << base << "\n";
-  cerr << "Start    : 0x" << start_offset << "\n" << dec;
-  cerr << "Text size: " << text_size << "\n";
-  cerr << "Data size: " << data_size << "\n";
-  cerr << "Reloc    : " << reloc_size << "\n";
+  size_t bss_size = getl (head + 20);
+  size_t reloc_size = getl (head + 24);
+  cerr << hex << "Base : 0x" << base << "\n";
+  cerr << "Start: 0x" << start_offset << "\n" << dec;
+  cerr << "Text : " << text_size << "\n";
+  cerr << "Data : " << data_size << "\n";
+  cerr << "BSS  : " << bss_size << "\n";
+  cerr << "Reloc: " << reloc_size << "\n";
 
   char *buf = static_cast <char *> (malloc (text_size + data_size));
   try
