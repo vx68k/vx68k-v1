@@ -1,7 +1,8 @@
 2000-12-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/systemrom.cc (initialize_iocs_handlers): Renamed from
-	initialize_iocs_functions.  Use make_pair.
+	initialize_iocs_functions.  Also change all callers.
+	(initialize_iocs_handlers, system_rom): Use make_pair.
 
 	* include/vx68k/memory.h (class system_rom): Rename
 	iocs_function_handler to iocs_handler_function.  Rename
