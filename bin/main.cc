@@ -75,6 +75,9 @@ private:
   gtk_console con;
   int status;
 
+  /* Main window of this application.  */
+  GtkWidget *main_window;
+
 public:
   vx68k_app(const char *const *args);
 
@@ -161,10 +164,8 @@ vx68k_app::show_about_dialog()
   gtk_widget_show(dialog);
   gtk_window_set_policy(GTK_WINDOW(dialog), false, false, false);
   gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-#if 0
   if (main_window != NULL)
     gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(main_window));
-#endif
   gtk_window_set_modal(GTK_WINDOW(dialog), true);
 
   const char *title_format = _("About %s");
@@ -379,7 +380,8 @@ const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
 vx68k_app::vx68k_app(const char *const *a)
   : args(a),
     vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE),
-    con(&vm)
+    con(&vm),
+    main_window(NULL)
 {
   gtk_widget_set_default_visual(gdk_rgb_get_visual());
   vm.connect(&con);
