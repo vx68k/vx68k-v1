@@ -60,7 +60,9 @@ system_rom::get_16(int fc, uint32_type address) const
     return 0xf84f;
   else
     {
-      fprintf(stderr, "class system_rom: FIXME: `get_16' not implemented\n");
+      static bool once;
+      if (!once++)
+	fprintf(stderr, "class system_rom: FIXME: `get_16' not implemented\n");
       return 0x4e73;
     }
 }
@@ -77,7 +79,9 @@ system_rom::get_8(int fc, uint32_type address) const
   if (fc == SUPER_PROGRAM || fc == USER_PROGRAM)
     throw bus_error_exception(true, fc, address);
 
-  fprintf(stderr, "class system_rom: FIXME: `get_8' not implemented\n");
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class system_rom: FIXME: `get_8' not implemented\n");
   return 0;
 }
 
@@ -91,7 +95,9 @@ system_rom::put_16(int fc, uint32_type address, uint_type value)
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);
 
-  fprintf(stderr, "class system_rom: FIXME: `put_16' not implemented\n");
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class system_rom: FIXME: `put_16' not implemented\n");
 }
 
 void
@@ -104,7 +110,9 @@ system_rom::put_8(int fc, uint32_type address, uint_type value)
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);
 
-  fprintf(stderr, "class system_rom: FIXME: `put_8' not implemented\n");
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class system_rom: FIXME: `put_8' not implemented\n");
 }
 
 void
