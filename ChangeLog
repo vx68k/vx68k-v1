@@ -1,5 +1,9 @@
 1999-06-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/Makefile.am (noinst_HEADERS): Remove all.
+
+	* debug.h: Removed.
+
 	* lib/vx68k/doscontext.cc: Expand "debug.h".
 
 	* lib/vx68k/dos.cc (execute): Make process p and pass it to the
