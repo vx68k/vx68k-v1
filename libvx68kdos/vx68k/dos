@@ -27,6 +27,45 @@ namespace vx68k
 {
   using namespace vm68k;
 
+  /* Main memory of an X68000 virtual machine.  This memory is mapped to
+     the address range from 0 to 0xc00000.  */
+  class main_memory: public bus_target
+  {
+  public:
+    explicit main_memory(uint32_type size);
+
+    uint32_type size() const throw() {return _size;}
+    uint32_type protected_size() const throw() {return _protected_size;}
+    void set_protected_size(uint32_type size);
+
+    /* Reads data from this object.  */
+    int get_8(uint32_type address, function_code fc) const throw (bus_error);
+    uint16_type get_16(uint32_type address, function_code fc) const
+      throw (bus_error);
+    uint32_type get_32(uint32_type address, function_code fc) const
+      throw (bus_error);
+
+    /* Writes data to this object.  */
+    void put_8(uint32_type address, int value, function_code fc)
+      throw (bus_error);
+    void put_16(uint32_type address, uint16_type value, function_code fc)
+      throw (bus_error);
+    void put_32(uint32_type address, uint32_type value, function_code fc)
+      throw (bus_error);
+
+    ~main_memory();
+
+  private:
+    /* End of available memory.  */
+    const uint32_type _size;
+
+    /* End of supervisor area.  */
+    uint32_type _protected_size;
+
+    /* Memory contents.  */
+    unsigned short *content;
+  };
+
   class dos_machine
   {
   private:
