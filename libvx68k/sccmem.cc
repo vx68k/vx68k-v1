@@ -23,9 +23,10 @@
 
 #include <vx68k/memory.h>
 
+#include <cstdio>
+
 #ifdef HAVE_NANA_H
 # include <nana.h>
-# include <cstdio>
 #else
 # include <cassert>
 # define I assert
@@ -123,7 +124,9 @@ namespace
        long_word_size::get(c.regs.d[1]) + 0UL);
 #endif
 
-    fprintf(stderr, "iocs_ms_curst: FIXME: not implemented\n");
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_ms_curst: FIXME: not implemented\n");
   }
 
   /* Handles a _MS_GETDT IOCS call.  */
@@ -150,7 +153,9 @@ namespace
        "IOCS _MS_INIT\n");
 #endif
 
-    fprintf(stderr, "iocs_ms_init: FIXME: not implemented\n");
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_ms_init: FIXME: not implemented\n");
   }
 
   /* Handles a _MS_LIMIT IOCS call.  */
@@ -164,7 +169,9 @@ namespace
        long_word_size::get(c.regs.d[2]) + 0UL);
 #endif
 
-    fprintf(stderr, "iocs_ms_limit: FIXME: not implemented\n");
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_ms_limit: FIXME: not implemented\n");
   }
 
   /* Handles a _SET232C IOCS call.  */
@@ -176,7 +183,9 @@ namespace
        "IOCS _SET232C; %%d1:w=0x%04x\n", word_size::get(c.regs.d[1]));
 #endif
 
-    fprintf(stderr, "iocs_set232c: FIXME: not implemented\n");
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_set232c: FIXME: not implemented\n");
     c.regs.d[0] = 0;
   }
 

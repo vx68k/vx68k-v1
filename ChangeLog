@@ -1,5 +1,8 @@
 2000-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/sccmem.cc (iocs_ms_curst, iocs_ms_init, iocs_ms_limit,
+	iocs_set232c): Print a FIXME message only once.
+
 	* libvx68k/fontrom.cc (get_16, get_8, put_16, put_8): Use DL
 	instead of L.
 	(put_16, put_8): Print a FIXME message only once.
