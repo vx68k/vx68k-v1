@@ -1,5 +1,13 @@
 1999-10-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Updated.
+
+	* vm68k/execunit.cc (install_instructions): Replace
+	postincrement_indirect and predecrement_indirect.
+
+	* include/vm68k/addressing.h: Remove typedefs
+	postincrement_indirect and predecrement_indirect.
+
 	* vm68k/execunit.cc (install_instructions): Add instructions.
 
 1999-10-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>

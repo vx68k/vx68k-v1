@@ -1,6 +1,6 @@
 Virtual X68000 User-Visible Changes
 
-$Date: Fri, 22 Oct 1999 22:35:35 +0900 $
+$Date: Sun, 31 Oct 1999 18:26:16 +0900 $
 
 Version 1.1.0 (snapshots only)
 
@@ -8,7 +8,7 @@ Version 1.1.0 (snapshots only)
 
 ** Common condition codes are implemented.
 
-** 716 instruction handlers are implemented though some do not update
+** 725 instruction handlers are implemented though some do not update
 the condition codes properly.
 
 ** It is close to run DIS source code generator for itself.
@@ -21,7 +21,7 @@ the condition codes properly.
 
 * Changes in Human68k DOS layer
 
-** 27 DOS-call handlers including stubs are implemented
+** 28 DOS-call handlers including stubs are implemented
 
 ** Memory management is implemented.
 

@@ -225,9 +225,6 @@ namespace vm68k
 	{return textw(ec);}
     };
 
-    typedef postinc_indirect postincrement_indirect;
-    typedef predec_indirect predecrement_indirect;
-
     class disp_indirect
     {
     private:
