@@ -1160,6 +1160,27 @@ namespace
       ec->regs.pc += 2;
     }
 
+  template <class Source> void
+  orw(unsigned int op, execution_context *ec)
+  {
+    Source ea1(op & 0x7, 2);
+    int reg2 = op >> 9 & 0x7;
+#ifdef L
+    L(" orw %s", ea1.textw(ec));
+    L(",%%d%d", reg2);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
+
+    unsigned int value1 = ea1.getw(ec);
+    unsigned int value2 = ec->regs.d[reg2];
+    unsigned int value = value2 | value1;
+    ec->regs.d[reg2] = value;
+    ea1.finishw(ec);
+    ec->regs.sr.set_cc(value);
+
+    ec->regs.pc += 2 + ea1.isize(2);
+  }
+
   template <class Destination> void pea(unsigned int op,
 					execution_context *ec)
     {
@@ -1586,6 +1607,14 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x6b00, 0x00ff, &bmi);
   eu->set_instruction(0x6c00, 0x00ff, &bge);
   eu->set_instruction(0x7000, 0x0eff, &moveql_d);
+  eu->set_instruction(0x8040, 0x0e07, &orw<data_register>);
+  eu->set_instruction(0x8050, 0x0e07, &orw<indirect>);
+  eu->set_instruction(0x8058, 0x0e07, &orw<postinc_indirect>);
+  eu->set_instruction(0x8060, 0x0e07, &orw<predec_indirect>);
+  eu->set_instruction(0x8068, 0x0e07, &orw<disp_indirect>);
+  eu->set_instruction(0x8079, 0x0e00, &orw<absolute_long>);
+  eu->set_instruction(0x807a, 0x0e00, &orw<disp_pc>);
+  eu->set_instruction(0x807c, 0x0e00, &orw<immediate>);
   eu->set_instruction(0x9018, 0x0e07, &subb_postinc_d);
   eu->set_instruction(0x9080, 0x0e07, &subl<data_register>);
   eu->set_instruction(0x9088, 0x0e07, &subl<address_register>);

@@ -1,5 +1,8 @@
 1999-06-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (orw): New function.
+	(install_instructions): Add new handlers.
+
 	* configure.in: Move config.h into include.
 
 1999-06-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
