@@ -1,10 +1,10 @@
 TO DO List for Virtual X68000
 
-$Date: Sat, 12 Aug 2000 21:08:31 +0900 $
-
-* Use L in IOCS handlers.
+$Date: Sat, 12 Aug 2000 21:36:13 +0900 $
 
 * Implement VDISP interrupt using counter.
+
+* Use GdkImage to improve screen update.
 
 * Implement text cursor.
 

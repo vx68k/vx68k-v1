@@ -1,5 +1,9 @@
 2000-08-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* TODO: Modified.
+
+	* libvx68k/gvideomem.cc: Fix erroneous casts in DL.
+
 	* libvx68k/systemrom.cc: Fix erroneous casts in DL.  Add variable
 	iocs_call_trace to switch IOCS call trace.
 
