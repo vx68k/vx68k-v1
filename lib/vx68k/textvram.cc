@@ -40,84 +40,44 @@ text_vram::scroll()
 }
 
 void
-text_vram::draw_char(unsigned int c)
+text_vram::draw_char(int x, int y, unsigned int c)
 {
-  if (c <= 0x1f)
+  int high = c >> 8;
+  if (high >= 0x21 && high <= 0x7e)
     {
-      switch (c)
-	{
-	case 0x09:		// HT
-	  curx = (curx + 8) & ~7;
-	  break;
-	  
-	case 0x0a:		// LF
-	  ++cury;
-	  if (cury == 31)
-	    {
-	      scroll();
-	      --cury;
-	    }
-	  break;
-
-	case 0x0d:		// CR
-	  curx = 0;
-	  break;
-	}
     }
   else
     {
-      int high = c >> 8;
-      if (high >= 0x21 && high <= 0x7e)
+      unsigned char img[16];
+      connected_console->get_b16_image(c, img, 1);
+
+      if (x % 2 != 0)
 	{
+	  for (uint16 *plane = buf;
+	       plane != buf + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
+	       plane += TEXT_VRAM_PLANE_SIZE >> 1)
+	    {
+	      uint16 *p = plane + (y * 16 * ROW_SIZE + x >> 1);
+	      for (unsigned char *i = img + 0; i != img + 16; ++i)
+		{
+		  *p = *p & ~0xff | i[0] & 0xff;
+		  advance_row(p);
+		}
+	    }
 	}
       else
 	{
-	  if (curx == 96)
+	  for (uint16 *plane = buf;
+	       plane != buf + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
+	       plane += TEXT_VRAM_PLANE_SIZE >> 1)
 	    {
-	      ++cury;
-	      curx = 0;
-
-	      if (cury == 31)
+	      uint16 *p = plane + (y * 16 * ROW_SIZE + x >> 1);
+	      for (unsigned char *i = img + 0; i != img + 16; ++i)
 		{
-		  scroll();
-		  --cury;
+		  *p = i[0] << 8 | *p & 0xff;
+		  advance_row(p);
 		}
 	    }
-
-	  unsigned char img[16];
-	  connected_console->get_b16_image(c, img, 1);
-
-	  uint16 *p = buf + (cury * 16 * ROW_SIZE + curx >> 1);
-	  if (curx % 2 != 0)
-	    {
-	      for (uint16 *q = p + 0;
-		   q != p + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
-		   q += TEXT_VRAM_PLANE_SIZE >> 1)
-		{
-		  uint16 *r = q;
-		  for (unsigned char *i = img + 0; i != img + 16; ++i)
-		    {
-		      *r = *r & ~0xff | i[0] & 0xff;
-		      advance_row(r);
-		    }
-		}
-	    }
-	  else
-	    {
-	      for (uint16 *q = p + 0;
-		   q != p + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
-		   q += TEXT_VRAM_PLANE_SIZE >> 1)
-		{
-		  uint16 *r = q;
-		  for (unsigned char *i = img + 0; i != img + 16; ++i)
-		    {
-		      *r = i[0] << 8 | *r & 0xff;
-		      advance_row(r);
-		    }
-		}
-	    }
-
-	  ++curx;
 	}
     }
 }
@@ -212,8 +172,7 @@ text_vram::~text_vram()
 
 text_vram::text_vram()
   : buf(NULL),
-    connected_console(NULL),
-    curx(0), cury(0)
+    connected_console(NULL)
 {
   buf = new uint16 [TEXT_VRAM_SIZE >> 1];
 }

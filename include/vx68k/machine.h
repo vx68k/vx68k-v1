@@ -97,7 +97,6 @@ namespace vx68k
   private:
     uint16 *buf;
     console *connected_console;
-    unsigned int curx, cury;
 
   public:
     text_vram();
@@ -114,7 +113,10 @@ namespace vx68k
     void putw(int, uint32_type, uint_type);
 
   public:
-    void draw_char(unsigned int);
+    /* Draw a character CODE at [X Y].  */
+    void draw_char(int x, int y, unsigned int code);
+
+    /* Scroll one line up.  */
     void scroll();
 
   public:
@@ -146,6 +148,9 @@ namespace vx68k
     class address_space as;
     class exec_unit eu;
     pair<iocs_function_handler, iocs_function_data *> iocs_functions[0x100];
+
+    /* Cursor position.  */
+    unsigned int curx, cury;
 
   public:
     explicit machine(size_t);

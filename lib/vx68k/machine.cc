@@ -48,17 +48,58 @@ machine::b_putc(uint_type code)
   write(STDOUT_FILENO, c, 1);
 #endif
 
-  if (0)
+  if (code <= 0x1f || code == 0x7f)
     {
+      switch (code)
+	{
+	case 0x09:		// HT
+	  curx = (curx + 8) & ~7;
+	  break;
+	  
+	case 0x0a:		// LF
+	  ++cury;
+	  if (cury == 31)
+	    {
+	      --cury;
+	      tvram.scroll();
+	    }
+	  break;
+
+	case 0x0d:		// CR
+	  curx = 0;
+	  break;
+	}
     }
   else
     {
-      if ((code >= 0x81 && code <= 0x9f)
-	  || (code >= 0xe0 && code <= 0xff))
+      if (0)			// test saved first byte.
 	{
 	}
       else
-	tvram.draw_char(code);
+	{
+	  if (curx == 96)
+	    {
+	      curx = 0;
+	      ++cury;
+
+	      if (cury == 31)
+		{
+		  --cury;
+		  tvram.scroll();
+		}
+	    }
+
+	  if ((code >= 0x81 && code <= 0x9f)
+	      || (code >= 0xe0 && code <= 0xff))
+	    {
+	      // FIXME
+	      tvram.draw_char(curx, cury, code);
+	    }
+	  else
+	    tvram.draw_char(curx, cury, code);
+
+	  ++curx;
+	}
     }
 }
 
@@ -146,7 +187,8 @@ machine::get_image(int x, int y, int width, int height,
 
 machine::machine(size_t memory_size)
   : _memory_size(memory_size),
-    mem(memory_size)
+    mem(memory_size),
+    curx(0), cury(0)
 {
   fill(iocs_functions + 0, iocs_functions + 0x100,
        make_pair(&invalid_iocs_function, (iocs_function_data *) 0));
