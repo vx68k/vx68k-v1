@@ -1,5 +1,11 @@
 1999-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/textvram.cc (draw_char): Handle kanji.
+
+	* lib/vx68k/gtkconsole.cc (kanji16_font_array): Use pointer
+	increments to write into kanji16_font.
+	(get_k16_image): Fix font to use.
+
 	* lib/vx68k/machine.cc (b_putc): Handle double-byte characters.
 	(machine): Initialize saved_byte1.
 

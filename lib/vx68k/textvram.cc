@@ -42,9 +42,63 @@ text_vram::scroll()
 void
 text_vram::draw_char(int x, int y, unsigned int c)
 {
-  int high = c >> 8;
-  if (high >= 0x21 && high <= 0x7e)
+  if (c > 0xff)
     {
+      unsigned int byte1 = c >> 8;
+      if (byte1 >= 0x81 && byte1 <= 0x9f
+	  || byte1 >= 0xe0 && byte1 <= 0xef)
+	{
+	  if (byte1 >= 0xe0)
+	    byte1 -= 0xe0 - 0xa0;
+	  byte1 -= 0x81;
+
+	  unsigned int byte2 = c & 0xff;
+	  if (byte2 >= 0x80)
+	    --byte2;
+	  byte2 -= 0x40;
+
+	  byte1 *= 2;
+	  if (byte2 >= 94)
+	    {
+	      byte2 -= 94;
+	      ++byte1;
+	    }
+
+	  c = byte1 + 0x21 << 8 | byte2 + 0x21;
+	}
+
+      unsigned char img[16 * 2];
+      connected_console->get_k16_image(c, img, 2);
+
+      if (x % 2 != 0)
+	{
+	  for (uint16 *plane = buf;
+	       plane != buf + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
+	       plane += TEXT_VRAM_PLANE_SIZE >> 1)
+	    {
+	      uint16 *p = plane + (y * 16 * ROW_SIZE + x >> 1);
+	      for (unsigned char *i = img + 0; i != img + 16 * 2; i += 2)
+		{
+		  p[0] = p[0] & ~0xff | i[0] & 0xff;
+		  p[1] = i[1] << 8 | p[1] & 0xff;
+		  advance_row(p);
+		}
+	    }
+	}
+      else
+	{
+	  for (uint16 *plane = buf;
+	       plane != buf + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
+	       plane += TEXT_VRAM_PLANE_SIZE >> 1)
+	    {
+	      uint16 *p = plane + (y * 16 * ROW_SIZE + x >> 1);
+	      for (unsigned char *i = img + 0; i != img + 16 * 2; i += 2)
+		{
+		  p[0] = i[0] << 8 | i[1] & 0xff;
+		  advance_row(p);
+		}
+	    }
+	}
     }
   else
     {

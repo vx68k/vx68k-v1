@@ -169,6 +169,7 @@ namespace
 
     GdkColor zero = {0, 0x0000, 0x0000, 0x0000};
     GdkColor one = {1, 0xffff, 0xffff, 0xffff};
+    unsigned char *wp = kanji16_font;
     for (unsigned int h = 0x21; h != 0x7f; ++h)
       {
 	char str[2];
@@ -193,14 +194,14 @@ namespace
 		if (gdk_image_get_pixel(pi, j, i) != 0)
 		  d |= 0x80 >> j;
 	      }
-	    kanji16_font[(h * 94 + i) * 2 + 0] = d;
+	    *wp++ = d;
 	    d = 0;
 	    for (int j = 8; j != 16; ++j)
 	      {
 		if (gdk_image_get_pixel(pi, j, i) != 0)
 		  d |= 0x80 >> (j - 8);
 	      }
-	    kanji16_font[(h * 94 + i) * 2 + 1] = d;
+	    *wp++ = d;
 	  }
 	gdk_image_destroy(pi);
       }
@@ -235,8 +236,8 @@ gtk_console::get_k16_image(unsigned int c,
       unsigned int p = (h - 0x21) * 94 + (l - 0x21);
       for (int i = 0; i != 16; ++i)
 	{
-	  buf[i * row_size + 0] = primary_font[(p * 16 + i) * 2 + 0];
-	  buf[i * row_size + 1] = primary_font[(p * 16 + i) * 2 + 1];
+	  buf[i * row_size + 0] = kanji16_font[(p * 16 + i) * 2 + 0];
+	  buf[i * row_size + 1] = kanji16_font[(p * 16 + i) * 2 + 1];
 	}
     }
 }
