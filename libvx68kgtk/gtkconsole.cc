@@ -46,8 +46,8 @@ const char *const BASE16_FONT_NAME
 const char *const KANJI16_FONT_NAME
   = "-*-fixed-medium-r-normal--16-*-*-*-c-*-jisx0208.1983-0";
 
-const unsigned int TIMEOUT_INTERVAL = 50;
-const unsigned int SCREEN_CHECK_INTERVAL = 8;
+const unsigned int TIMEOUT_INTERVAL = 20;
+const unsigned int SCREEN_CHECK_INTERVAL = 25;
 
 namespace
 {

@@ -1,5 +1,7 @@
 2000-09-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68kgtk/gtkconsole.cc: Change timeout parameters.
+
 	* libvx68k/sccmem.cc (iocs_ms_curof, iocs_ms_curon, iocs_ms_stat):
 	New function.
 	(install_iocs_calls): Add new handlers.
