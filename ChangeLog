@@ -1,5 +1,14 @@
 1999-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/gtkconsole.cc (base16_font_array, kanji16_font_array):
+	New functions.
+	(get_k16_image): Add code.
+	(~gtk_console): Delete kanji16_font.
+	(gtk_console): Use new functions.
+
+	* include/vx68k/gtk.h (class gtk_console): Add new member
+	kanji16_font.
+
 	* lib/vx68k/gtkconsole.cc [gtk_console] (handle_expose_event,
 	handle_destroy, handle_timeout): Changed to non-static.
 	(handle_expose_event, handle_destroy, handle_timeout): New

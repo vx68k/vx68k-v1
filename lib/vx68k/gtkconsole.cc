@@ -38,6 +38,11 @@ using namespace vx68k::gtk;
 using namespace vx68k;
 using namespace std;
 
+const char *const BASE16_FONT_NAME
+  = "-*-fixed-medium-r-normal--16-*-*-*-c-*-jisx0201.1976-0";
+const char *const KANJI16_FONT_NAME
+  = "-*-fixed-medium-r-normal--16-*-*-*-c-*-jisx0208.1983-0";
+
 const unsigned int TIMEOUT_INTERVAL = 500;
 
 bool
@@ -106,6 +111,135 @@ gtk_console::create_widget()
   widgets.push_back(drawing_area);
   return drawing_area;
 }
+
+namespace
+{
+  unsigned char *
+  base16_font_array()
+  {
+    unsigned char *base16_font = new unsigned char [256 * 16];
+
+    GdkFont *f = gdk_font_load(BASE16_FONT_NAME);
+    GdkPixmap *p = gdk_pixmap_new(NULL, 8, 256 * 16, 1);
+    GdkGC *gc = gdk_gc_new(p);
+
+    GdkColor zero = {0, 0x0000, 0x0000, 0x0000};
+    GdkColor one = {1, 0xffff, 0xffff, 0xffff};
+
+    gdk_gc_set_foreground(gc, &zero);
+    gdk_draw_rectangle(p, gc, true, 0, 0, 8, 256 * 16);
+
+    gdk_gc_set_foreground(gc, &one);
+    for (unsigned int c = 0; c != 0x100; ++c)
+      {
+	char str[1];
+	str[0] = c;
+
+	gdk_draw_text(p, f, gc, 0, c * 16 + f->ascent, str, 1);
+      }
+
+    GdkImage *pi = gdk_image_get(p, 0, 0, 8, 256 * 16);
+    for (int i = 0; i != 256 * 16; ++i)
+      {
+	unsigned int d = 0;
+	for (int j = 0; j != 8; ++j)
+	  {
+	    if (gdk_image_get_pixel(pi, j, i) != 0)
+	      d |= 0x80 >> j;
+	  }
+	base16_font[i] = d;
+      }
+    gdk_image_destroy(pi);
+
+    gdk_gc_unref(gc);
+    gdk_pixmap_unref(p);
+    gdk_font_unref(f);
+
+    return base16_font;
+  }
+
+  unsigned char *
+  kanji16_font_array()
+  {
+    unsigned char *kanji16_font = new unsigned char [94 * 94 * 2 * 16];
+
+    GdkFont *f = gdk_font_load(KANJI16_FONT_NAME);
+    GdkPixmap *p = gdk_pixmap_new(NULL, 16, 94 * 16, 1);
+    GdkGC *gc = gdk_gc_new(p);
+
+    GdkColor zero = {0, 0x0000, 0x0000, 0x0000};
+    GdkColor one = {1, 0xffff, 0xffff, 0xffff};
+    for (unsigned int h = 0x21; h != 0x7f; ++h)
+      {
+	char str[2];
+	str[0] = h;
+
+	gdk_gc_set_foreground(gc, &zero);
+	gdk_draw_rectangle(p, gc, true, 0, 0, 16, 94 * 16);
+
+	gdk_gc_set_foreground(gc, &one);
+	for (unsigned int c = 0x21; c != 0x7f; ++c)
+	  {
+	    str[1] = c;
+	    gdk_draw_text(p, f, gc, 0, (c - 0x21) * 16 + f->ascent, str, 2);
+	  }
+
+	GdkImage *pi = gdk_image_get(p, 0, 0, 16, 94 * 16);
+	for (int i = 0; i != 94 * 16; ++i)
+	  {
+	    unsigned int d = 0;
+	    for (int j = 0; j != 8; ++j)
+	      {
+		if (gdk_image_get_pixel(pi, j, i) != 0)
+		  d |= 0x80 >> j;
+	      }
+	    kanji16_font[(h * 94 + i) * 2 + 0] = d;
+	    d = 0;
+	    for (int j = 8; j != 16; ++j)
+	      {
+		if (gdk_image_get_pixel(pi, j, i) != 0)
+		  d |= 0x80 >> (j - 8);
+	      }
+	    kanji16_font[(h * 94 + i) * 2 + 1] = d;
+	  }
+	gdk_image_destroy(pi);
+      }
+
+    gdk_gc_unref(gc);
+    gdk_pixmap_unref(p);
+    gdk_font_unref(f);
+
+    return kanji16_font;
+  }
+} // (unnamed namespace)
+
+void
+gtk_console::get_b16_image(unsigned int c,
+			   unsigned char *buf, size_t row_size) const
+{
+  if (primary_font != NULL)
+    {
+      for (int i = 0; i != 16; ++i)
+	buf[i * row_size] = primary_font[c * 16 + i];
+    }
+}
+
+void
+gtk_console::get_k16_image(unsigned int c,
+			   unsigned char *buf, size_t row_size) const
+{
+  if (kanji16_font != NULL)
+    {
+      unsigned int h = c >> 8;
+      unsigned int l = c & 0xff;
+      unsigned int p = (h - 0x21) * 94 + (l - 0x21);
+      for (int i = 0; i != 16; ++i)
+	{
+	  buf[i * row_size + 0] = primary_font[(p * 16 + i) * 2 + 0];
+	  buf[i * row_size + 1] = primary_font[(p * 16 + i) * 2 + 1];
+	}
+    }
+}
 
 bool
 gtk_console::handle_timeout()
@@ -136,22 +270,6 @@ namespace
   }
 } // (unnamed namespace)
 
-void
-gtk_console::get_b16_image(unsigned int c,
-			   unsigned char *buf, size_t row_size) const
-{
-  if (primary_font != NULL)
-    {
-      for (int i = 0; i != 16; ++i)
-	buf[i * row_size] = primary_font[c * 16 + i];
-    }
-}
-
-void
-gtk_console::get_k16_image(unsigned int, unsigned char *, size_t) const
-{
-}
-
 gtk_console::~gtk_console()
 {
   for (vector<GtkWidget *>::iterator i = widgets.begin();
@@ -162,6 +280,7 @@ gtk_console::~gtk_console()
       gtk_signal_disconnect_by_data(GTK_OBJECT(*i), this);
     }
 
+  delete [] kanji16_font;
   delete [] primary_font;
   gtk_timeout_remove(timeout);
   delete [] rgb_buf;
@@ -173,49 +292,14 @@ gtk_console::gtk_console(machine *m)
     row_size(768 * 3),
     rgb_buf(NULL),
     timeout(0),
-    primary_font(NULL)
+    primary_font(NULL),
+    kanji16_font(NULL)
 {
   rgb_buf = new guchar [height * row_size];
   timeout = gtk_timeout_add(TIMEOUT_INTERVAL, &::handle_timeout, this);
 
   /* Retrieve font bitmap in the main thread.  */
-  primary_font = new unsigned char [256 * 16];
-  fill(primary_font + 0, primary_font + 256 * 16, 0);
-
-  GdkPixmap *pixmap = gdk_pixmap_new(NULL, 8, 256 * 16, 1);
-
-  GdkFont *font
-    = gdk_font_load("-*-fixed-medium-r-normal--16-*-*-*-c-*-jisx0201.1976-0");
-  GdkGC *gc = gdk_gc_new(pixmap);
-  GdkColor zero = {0, 0x0000, 0x0000, 0x0000};
-  gdk_gc_set_foreground(gc, &zero);
-  gdk_draw_rectangle(pixmap, gc, true, 0, 0, 8, 256 * 16);
-  GdkColor one = {1, 0xffff, 0xffff, 0xffff};
-  gdk_gc_set_foreground(gc, &one);
-  for (unsigned int c = 0; c != 0x100; ++c)
-    {
-      char str[1];
-      str[0] = c;
-
-      gdk_draw_text(pixmap, font, gc, 0, c * 16 + font->ascent, str, 1);
-    }
-  gdk_gc_unref(gc);
-  gdk_font_unref(font);
-
-  gdk_flush();
-  GdkImage *image = gdk_image_get(pixmap, 0, 0, 8, 256 * 16);
-  for (int i = 0; i != 256 * 16; ++i)
-    {
-      unsigned int d = 0;
-      for (int j = 0; j != 8; ++j)
-	{
-	  if (gdk_image_get_pixel(image, j, i) != 0)
-	    d |= 0x80 >> j;
-	}
-      primary_font[i] = d;
-    }
-  gdk_image_destroy(image);
-
-  gdk_pixmap_unref(pixmap);
+  primary_font = base16_font_array();
+  kanji16_font = kanji16_font_array();
 }
 

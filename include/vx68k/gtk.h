@@ -43,6 +43,7 @@ namespace vx68k
     private:
       guint timeout;
       unsigned char *primary_font;
+      unsigned char *kanji16_font;
       vector<GtkWidget *> widgets;
 
     public:
