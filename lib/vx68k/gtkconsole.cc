@@ -104,8 +104,8 @@ gtk_console::create_widget()
   gtk_signal_connect(GTK_OBJECT(drawing_area), "expose_event",
 		     GTK_SIGNAL_FUNC(&::handle_expose_event), this);
 
-  GtkStyle *style = gtk_widget_get_style(drawing_area);
-  style->bg[0] = style->black;
+  GtkStyle *style = gtk_style_copy(gtk_widget_get_style(drawing_area));
+  style->bg[GTK_STATE_NORMAL] = style->black;
   gtk_widget_set_style(drawing_area, style);
 
   widgets.push_back(drawing_area);

@@ -3,6 +3,7 @@
 	* lib/vx68k/gtkconsole.cc (handle_timeout): Use gdk with thread
 	lock.
 	(gtk_console): Likewise.
+	(create_widget): Copy the widget's style to modify.
 
 	* bin/main.cc (run): Use gdk with thread lock.
 	(main): Add gthread initialization.
