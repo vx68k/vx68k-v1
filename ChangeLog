@@ -1,5 +1,10 @@
 1999-03-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc: Modify comments.
+	(addqw_a, rts, movel_postinc_a): New function.
+	(install_instructions): Set addqw_a and rts for operation words.
+	(bsr): Fix the write address
+
 	* libvm68k/execunit.cc: Print instructions only ifdef TRACE_STEPS.
 
 	* acconfig.h: Add new macros.

@@ -74,6 +74,22 @@ exec_unit::illegal(int op, execution_context *)
 
 namespace
 {
+  void addqw_a(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int value = op >> 9 & 0x7;
+      if (value == 0)
+	value = 8;
+      int reg = op & 0x7;
+#ifdef TRACE_STEPS
+      fprintf(stderr, " addqw #%d,%%a%d\n", value, reg);
+#endif
+
+      // XXX: The condition codes are not affected.
+      ec->regs.a[reg] += value;
+
+      ec->regs.pc += 2;
+    }
 
   void bsr(int op, execution_context *ec)
     {
@@ -94,12 +110,11 @@ namespace
       fprintf(stderr, " bsr 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
 #endif
 
+      // XXX: The condition codes are not affected.
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
-      ec->mem->putl(fc, ec->regs.a[7], ec->regs.pc + len);
+      ec->mem->putl(fc, ec->regs.a[7] - 4, ec->regs.pc + len);
       ec->regs.a[7] -= 4;
       ec->regs.pc += 2 + disp;
-
-      // Condition code is not affected.
     }
 
   void lea_absl_a(int op, execution_context *ec)
@@ -112,9 +127,9 @@ namespace
       fprintf(stderr, " lea 0x%lx:l,%%a%d\n", (unsigned long) address, reg);
 #endif
 
+      // XXX: The condition codes are not affected.
       ec->regs.a[reg] = address;
 
-      // Condition code is not affected.
       ec->regs.pc += 6;
     }
 
@@ -155,6 +170,23 @@ namespace
       ec->regs.pc += 2;
     }
 
+  void movel_postinc_a(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+#ifdef TRACE_STEPS
+      fprintf(stderr, " movel %%a%d@+,%%a%d\n", s_reg, d_reg);
+#endif
+
+      // XXX: The condition codes are not affected.
+      int fc = 1 ? SUPER_DATA : USER_DATA; // FIXME.
+      ec->regs.a[d_reg] = ec->mem->getl(fc, ec->regs.a[s_reg]);
+      ec->regs.a[s_reg] += 4;
+
+      ec->regs.pc += 2;
+    }
+
   /* movem regs to EA (postdec).  */
   void moveml_r_predec(int op, execution_context *ec)
     {
@@ -179,6 +211,19 @@ namespace
       ec->regs.pc += 4;
     }
 
+  void rts(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+#ifdef TRACE_STEPS
+      fprintf(stderr, " rts\n");
+#endif
+
+      // XXX: The condition codes are not affected.
+      int fc = 1 ? SUPER_DATA : USER_PROGRAM; // FIXME.
+      uint32 value = ec->mem->getl(fc, ec->regs.a[7]);
+      ec->regs.a[7] += 4;
+      ec->regs.pc = value;
+    }
 } // (unnamed namespace)
 
 /* Installs instructions into the execution unit.  */
@@ -186,10 +231,13 @@ void
 exec_unit::install_instructions(exec_unit *eu)
 {
   assert(eu != NULL);
+  eu->set_instruction(0x2058, 0x0e07, &movel_postinc_a);
   eu->set_instruction(0x2108, 0x0e07, &movel_a_predec);
   eu->set_instruction(0x41f9, 0x0e00, &lea_absl_a);
   eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
   eu->set_instruction(0x4e50, 0x0007, &link);
+  eu->set_instruction(0x4e75, 0x0000, &rts);
   eu->set_instruction(0x6100, 0x00ff, &bsr);
+  eu->set_instruction(0x5048, 0x0e07, &addqw_a);
 }
 
