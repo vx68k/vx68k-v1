@@ -1,5 +1,7 @@
 1999-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Modified.
+
 	* lib/vx68k/textvram.cc (draw_char): Handle kanji.
 	(scroll): Add code.
 

@@ -1,6 +1,6 @@
 Virtual X68000 User-Visible Changes
 
-$Date: Sun, 15 Aug 1999 00:12:45 +0900 $
+$Date: Sun, 15 Aug 1999 11:44:56 +0900 $
 
 Version 0.36
 
@@ -15,7 +15,7 @@ the condition codes properly.
 
 * Changes in X68000 machine layer
 
-** Text VRAM can display characters in a window.
+** Text VRAM now displays characters in a very limmited way.
 
 ** TRAP #15 handler is implemented.
 
