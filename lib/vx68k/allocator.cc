@@ -258,13 +258,14 @@ memory_allocator::memory_allocator(address_space *as,
 				   uint32_type address, uint32_type lim)
   : _as(as),
     limit(lim & ~0xf),
+    root_block(0),
     last_block(0)
 {
   address = (address + 0xf) & ~0xf;
   _as->putl(SUPER_DATA, address + 0, 0);
   _as->putl(SUPER_DATA, address + 4, 0);
-  _as->putl(SUPER_DATA, address + 8, address + 0x2000);
+  _as->putl(SUPER_DATA, address + 8, address + 0x10);
   _as->putl(SUPER_DATA, address + 12, 0);
-  last_block = address;
+  last_block = root_block = address;
 }
 

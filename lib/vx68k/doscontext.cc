@@ -342,8 +342,6 @@ dos_exec_context::dos_exec_context(address_space *m, exec_unit *eu,
     current_pdb(0),
     debug_level(0)
 {
-  // FIXME
-  uint32_type shell = malloc(512);
-  current_pdb = shell;
+  current_pdb = _allocator->root();
 }
 

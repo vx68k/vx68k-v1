@@ -32,10 +32,15 @@ namespace vx68k
     private:
       address_space *_as;
       uint32_type limit;
+      uint32_type root_block;
       uint32_type last_block;
 
     public:
       memory_allocator(address_space *, uint32_type, uint32_type);
+
+    public:
+      uint32_type root() const
+	{return root_block + 0x10;}
 
     public:
       sint32_type alloc(uint32_type len, uint32_type parent);
