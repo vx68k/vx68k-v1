@@ -1238,7 +1238,9 @@ namespace
 #ifdef HAVE_NANA_H
     L("IOCS _TXFILL; %%a1=0x%08lx\n", long_word_size::get(c.regs.a[1]) + 0UL);
 #endif
-    fprintf(stderr, "iocs_txfill: FIXME: not implemented\n");
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_txfill: FIXME: not implemented\n");
   }
 
   /* Handles a _VDISPST call.  */
