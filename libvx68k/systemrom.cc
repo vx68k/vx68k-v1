@@ -557,9 +557,9 @@ namespace
   iocs_romver(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    L("system_rom: _ROMVER\n");
+    L("IOCS _ROMVER\n");
 #endif
-    uint32_type romver = ((0x11 << 8 | 0x00) << 8 | 0x01) << 8 | 0x01;
+    uint32_type romver = ((0x13 << 8 | 0x00) << 8 | 0x01) << 8 | 0x01;
 
     long_word_size::put(c.regs.d[0], romver);
   }

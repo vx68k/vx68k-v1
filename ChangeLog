@@ -1,3 +1,8 @@
+2000-07-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_romver): Change the ROM version and
+	the debug message.
+
 2000-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/ppimem.cc (read, write): Deleted.
