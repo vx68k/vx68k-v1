@@ -1,5 +1,93 @@
 2000-09-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc: Include cstdio unconditionally.  Remove
+	moved functions.
+	(exec_unit): Install instructions using new functions.
+
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Add inst0.cc,
+	inst1to3.cc, inst4.cc, inst5.cc, inst6.cc, inst7.cc, inst8.cc,
+	inst9.cc, inst11.cc, inst12.cc, inst13.cc, and inst14.cc.
+	(noinst_HEADERS): New macro.
+
+	* libvm68k/inst14.cc: New file.
+	(m68k_asl_r, m68k_asl_i, m68k_asr_r, m68k_asr_i, m68k_lsl_r,
+	m68k_lsl_i, m68k_lsr_r, m68k_lsr_i, m68k_lsr_m, m68k_rol_r,
+	m68k_rol_i, m68k_ror_i, m68k_roxr_i): Moved from execunit.cc.
+	[0] (asrl_r, lslw_r, lsll_r, lslb_i, lslw_i, lsll_i, lsrw_r,
+	lsrl_r, lsrb_i, lsrw_i, lsrl_i, rolb_r, rolw_i, roll_i, roxrw_i,
+	roxrl_i): Moved from execunit.cc.
+	(install_instructions_14): New function.
+
+	* libvm68k/inst13.cc: New file.
+	(m68k_add, m68k_add_m, m68k_adda, m68k_addx_r): Moved from
+	execunit.cc.
+	(install_instructions_13): New function.
+
+	* libvm68k/inst12.cc: New file.
+	(m68k_and, m68k_and_m, m68k_exg_d_d, m68k_exg_a_a, m68k_exg_d_a,
+	m68k_muls, m68k_mulu): Moved from execunit.cc.
+	[0] (exgl): Moved from execunit.cc.
+	(install_instructions_12): New function.
+
+	* libvm68k/inst11.cc: New file.
+	(m68k_cmp, m68k_cmpa, m68k_cmpm, m68k_eor_m): Moved from
+	execunit.cc.
+	[0] (cmpb, cmpw, cmpl, cmpaw, cmpal, eorb_r, eorw_r, eorl_r):
+	Moved from execunit.cc.
+	(install_instructions_11): New function.
+
+	* libvm68k/inst9.cc: New file.
+	(m68k_sub, m68k_sub_m, m68k_suba): Moved from execunit.cc.
+	[0] (subb, subw, subl): Moved from execunit.cc.
+	(install_instructions_9): New function.
+
+	* libvm68k/inst8.cc: New file.
+	(m68k_divu, m68k_or, m68k_or_m): Moved from execunit.cc.
+	[0] (orb, orw, orl): Moved from execunit.cc.
+	(install_instructions_8): New function.
+
+	* libvm68k/inst7.cc: New file.
+	(m68k_moveq): Moved from execunit.cc.
+	(install_instructions_7): New function.
+
+	* libvm68k/inst6.cc: New file.
+	(m68k_b, m68k_bra, m68k_bsr): Moved from execunit.cc.
+	(install_instructions_6): New function.
+
+	* libvm68k/inst5.cc: New file.
+	(m68k_addq, m68k_addq_a, m68k_db, m68k_s, m68k_subq, m68k_subq_a):
+	Moved from execunit.cc.
+	[0] (dbf): Moved from execunit.cc.
+	(install_instructions_5): New function.
+
+	* libvm68k/inst4.cc: New file.
+	(m68k_clr, m68k_ext, m68k_jmp, m68k_jsr, m68k_lea, m68k_link,
+	m68k_move_from_sr, m68k_move_to_sr, m68k_move_from_usp,
+	m68k_move_to_usp, m68k_movem_r_m, m68k_movem_r_predec,
+	m68k_movem_m_r, m68k_movem_postinc_r, m68k_neg, m68k_nop,
+	m68k_not, m68k_pea, m68k_rte, m68k_rts, m68k_swap, m68k_tst,
+	m68k_unlk): Moved from execunit.cc.
+	[0] (clrb, clrw, clrl, extw, extl, moveml_mr, negb, negw, negl,
+	tstb, tstw, tstl): Moved from execunit.cc.
+	(install_instructions_4): New function.
+
+	* libvm68k/inst1to3.cc: New file.
+	(m68k_move, m68k_movea): Moved from execunit.cc.
+	(install_instructions_1, install_instructions_2,
+	install_instructions_3): New function.
+
+	* libvm68k/inst0.cc: New file.
+	(m68k_addi, m68k_andi, m68k_andi_to_ccr, m68k_andi_to_sr,
+	m68k_bclr_r, m68k_bclr_i, m68k_bset_r, m68k_bset_i, m68k_btst_r,
+	m68k_btst_i, m68k_cmpi, m68k_eori, m68k_ori, m68k_ori_to_ccr,
+	m68k_ori_sr, m68k_subi): Moved from execunit.cc.
+	[0] (btstb_i, btstl_i, cmpib, cmpiw, cmpil, eoriw, orib, oriw,
+	oril): Moved from execunit.cc.
+	(install_instructions_0): New function.
+
+	* libvm68k/inst.h: New file.
+	(struct instruction_map): New struct.
+
 	* libvx68k/systemrom.cc (iocs_trap): Call sched_yield.
 
 	* libvx68k/textvram.cc (row_changed): New function.
