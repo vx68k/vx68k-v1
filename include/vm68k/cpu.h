@@ -121,22 +121,6 @@ struct exception_listener
       {return mem->getl(program_fc(), regs.pc + disp);}
     void run();
   };
-
-  /* A CPU.
-
-     This CPU will emulate non-exceptional operations of a m68k
-     processor.  Exceptional operations must be handled by callbacks.  */
-  class cpu
-  {
-  private:
-    exec_unit eu;
-  public:
-    cpu ();
-    void run (execution_context *);
-    void set_exception_listener (exception_listener *);
-    void set_handlers (int begin, int end, exec_unit::insn_handler);
-  };
-
 } // namespace vm68k
 
 #endif
