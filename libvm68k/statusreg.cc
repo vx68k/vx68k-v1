@@ -56,11 +56,16 @@ namespace
     : public general_condition_tester
   {
   public:
-    // FIXME: Check if these tests are correct.
     bool ls(const sint32_type *values) const
-    {return uint32_type(1 - values[1]) <= uint32_type(values[2]);}
+    {return eq(values) || cs(values);}
+
     bool cs(const sint32_type *values) const
-    {return uint32_type(1 - values[1]) < uint32_type(values[2]);}
+    {
+      return (values[0] >= 0 && (values[1] < 0 || values[2] < 0)
+	      || values[1] < 0 && values[2] < 0);
+    }
+
+    // FIXME: Check if these tests are correct.
     bool lt(const sint32_type *values) const
     {return values[1] < 1 - values[2];}
     bool le(const sint32_type *values) const
