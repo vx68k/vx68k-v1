@@ -1,12 +1,12 @@
 Virtual X68000 User-Visible Changes
 
-$Date: Fri, 21 May 1999 21:02:02 +0900 $
+$Date: Fri, 21 May 1999 21:31:59 +0900 $
 
 Version 0.33
 
 * Some instructions are implemented using templates.
 
-* 164 instruction handlers are implemented though some do not update
+* 176 instruction handlers are implemented though some do not update
 the condition codes properly.
 
 * 7 DOS-call handlers are partially implemented.

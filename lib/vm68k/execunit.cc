@@ -767,7 +767,7 @@ namespace
       Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
       VL((" movel %s", ea1.textl(ec)));
       VL((",%s", ea2.textl(ec)));
-      VL((" | %%pc = 0x%lx\n", (unsigned long) ec->regs.pc));
+      VL(("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc));
 
       int32 value = ea1.getl(ec);
       ea2.putl(ec, value);
@@ -866,7 +866,6 @@ namespace
 
       ec->regs.pc += 2 + 4;
     }
-#endif
 
   void movel_d_absl(unsigned int op, execution_context *ec)
     {
@@ -897,6 +896,7 @@ namespace
 
       ec->regs.pc += 2 + 4;
     }
+#endif
 
   template <class Source>
     void moveal(unsigned int op, execution_context *ec)
@@ -1257,8 +1257,20 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x2128, 0x0e07, &movel<disp_indirect, predec_indirect>);
   eu->set_instruction(0x2139, 0x0e00, &movel<absolute_long, predec_indirect>);
   eu->set_instruction(0x213c, 0x0e00, &movel<immediate, predec_indirect>);
-  eu->set_instruction(0x23c0, 0x0007, &movel_d_absl);
-  eu->set_instruction(0x23c8, 0x0007, &movel_a_absl);
+  eu->set_instruction(0x2140, 0x0e07, &movel<data_register, disp_indirect>);
+  eu->set_instruction(0x2148, 0x0e07, &movel<address_register, disp_indirect>);
+  eu->set_instruction(0x2150, 0x0e07, &movel<indirect, disp_indirect>);
+  eu->set_instruction(0x2158, 0x0e07, &movel<postinc_indirect, disp_indirect>);
+  eu->set_instruction(0x2160, 0x0e07, &movel<predec_indirect, disp_indirect>);
+  eu->set_instruction(0x2168, 0x0e07, &movel<disp_indirect, disp_indirect>);
+  eu->set_instruction(0x2179, 0x0e00, &movel<absolute_long, disp_indirect>);
+  eu->set_instruction(0x217c, 0x0e00, &movel<immediate, disp_indirect>);
+  eu->set_instruction(0x23c0, 0x0007, &movel<data_register, absolute_long>);
+  eu->set_instruction(0x23c8, 0x0007, &movel<address_register, absolute_long>);
+  eu->set_instruction(0x23d0, 0x0007, &movel<indirect, absolute_long>);
+  eu->set_instruction(0x23d8, 0x0007, &movel<postinc_indirect, absolute_long>);
+  eu->set_instruction(0x23e0, 0x0007, &movel<predec_indirect, absolute_long>);
+  eu->set_instruction(0x23e8, 0x0007, &movel<disp_indirect, absolute_long>);
   eu->set_instruction(0x23fc, 0x0000, &movel<immediate, absolute_long>);
   eu->set_instruction(0x3000, 0x0e07, &movew<data_register, data_register>);
   eu->set_instruction(0x3008, 0x0e07, &movew<address_register, data_register>);

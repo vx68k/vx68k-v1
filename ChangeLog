@@ -1,5 +1,7 @@
 1999-05-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (movel): Modify the log message.
+
 	* Makefile.am (dist-snapshot): Change the version number format.
 
 	* NEWS: Modified.
