@@ -2,7 +2,7 @@
 
 	* NEWS: Updated.
 
-	* bin/main.cc: Remove use of uint_type and sint_type.
+	* bin/main.cc: Remove the use of uint_type and sint_type.
 	* libvx68k/mainmem.cc: Likewise.
 	* include/vx68k/human.h: Likewise.
 	* libvx68k/dos.cc: Likewise.
