@@ -24,9 +24,6 @@
 
 #include <vx68k/human.h>
 
-#ifdef HAVE_FCNTL_H
-# include <fcntl.h>
-#endif
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
@@ -103,8 +100,6 @@ namespace
 
     process *p = static_cast<dos_exec_context &>(ec).current_process();
     ec.regs.d[0] = p->create(name, attr);
-    // FIXME.
-    ec.regs.d[0] = open("create.out", O_RDWR | O_CREAT | O_TRUNC, 0666);
 
     ec.regs.pc += 2;
   }
