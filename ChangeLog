@@ -1,5 +1,7 @@
 2000-08-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* TODO: Modified.
+
 	* libvx68k/mainmem.cc: Use GNU Nana.  Include <vx68k/memory.h>
 	instead.
 	(get_16): Moved before get_8.
