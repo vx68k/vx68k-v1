@@ -1,5 +1,16 @@
 2000-12-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (initialize_iocs_handlers): Renamed from
+	initialize_iocs_functions.  Use make_pair.
+
+	* include/vx68k/memory.h (class system_rom): Rename
+	iocs_function_handler to iocs_handler_function.  Rename
+	iocs_function_type to iocs_handler_type.
+	(class system_rom): Rename member iocs_functions to iocs_handlers.
+	Also change all users.
+	(class system_rom): Rename member set_iocs_function to
+	set_iocs_handler.  Also change all users.
+
 	* doc/vx68k.texi (X68000 Components): Removed.  Raise children's
 	levels.
 	(IOCS and System ROM): Rename the title and add documentation.
