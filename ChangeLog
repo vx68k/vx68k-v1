@@ -1,5 +1,13 @@
 1999-11-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Updated.
+
+	* vm68k/execunit.cc (m68k_add, m68k_add_r): Add conversion to
+ 	signed for value2.
+	(m68k_adda): New function.
+	(addaw, addal): Removed.
+	(install_instructions): Replace addaw and addal using m68k_adda.
+
 	* vx68k/textvram.cc (draw_char): Fix width for update_area.
 
 	* vm68k/execunit.cc (m68k_add_r): New function.

@@ -115,7 +115,7 @@ namespace
 #endif
 
     svalue_type value1 = ea1.get(c);
-    svalue_type value2 = Size::get(c.regs.d[reg2]);
+    svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
     svalue_type value
       = Size::svalue(uvalue_type(value2 + value1) & Size::value_mask());
     Size::put(c.regs.d[reg2], value);
@@ -139,7 +139,7 @@ namespace
     L(",%s\n", ea1.textw(c));
 #endif
 
-    svalue_type value2 = Size::get(c.regs.d[reg2]);
+    svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
     svalue_type value1 = ea1.get(c);
     svalue_type value
       = Size::svalue(uvalue_type(value1 + value2) & Size::value_mask());
@@ -150,46 +150,31 @@ namespace
     c.regs.pc += 2 + ea1.extension_size();
   }
 
-  template <class Source> void
-  addaw(uint_type op, context &c, instruction_data *data)
+  /* Handles M68000 ADDA instruction.  */
+  template <class Size, class Destination> void
+  m68k_adda(uint_type op, context &c, instruction_data *data)
   {
-    Source ea1(op & 0x7, 2);
-    address_register ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
+    typedef long_word_size::uvalue_type uvalue_type;
+    typedef long_word_size::svalue_type svalue_type;
+
+    Destination ea1(op & 0x7, 2);
+    unsigned int reg2 = op >> 9 & 0x7;
 #ifdef TRACE_INSTRUCTIONS
-    L(" addaw %s", ea1.textw(c));
-    L(",%s\n", ea2.textw(c));
+    L(" adda%s %s", Size::suffix(), ea1.text(c));
+    L(",%%a%u\n", reg2);
 #endif
 
     // The condition codes are not affected by this instruction.
-    sint32_type value1 = ea1.getw(c);
-    sint32_type value2 = ea2.getl(c);
-    sint32_type value = extsl(value2 + value1);
-    ea2.putl(c, value);
-    ea1.finishw(c);
-    ea2.finishw(c);
+    svalue_type value1 = ea1.get(c);
+    svalue_type value2 = long_word_size::get(c.regs.a[reg2]);
+    svalue_type value
+      = long_word_size::svalue(uvalue_type(value2 + value1)
+			       & long_word_size::value_mask());
+    long_word_size::put(c.regs.a[reg2], value);
+    ea1.finish(c);
 
-    c.regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
+    c.regs.pc += 2 + ea1.extension_size();
   }
-
-  template <class Destination> void
-  addal(unsigned int op, context &ec, instruction_data *data)
-    {
-      Destination ea1(op & 0x7, 2);
-      int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
-      L(" addal %s", ea1.textl(ec));
-      L(",%%a%d\n", reg2);
-#endif
-
-      sint32_type value1 = ea1.getl(ec);
-      sint32_type value2 = extsl(ec.regs.a[reg2]);
-      sint32_type value = extsl(value2 + value1);
-      ec.regs.a[reg2] = value;
-      ea1.finishl(ec);
-      // XXX: The condition codes are not affected.
-
-      ec.regs.pc += 2 + ea1.isize(4);
-    }
 
   template <class Destination> void
   addil(unsigned int op, context &ec, instruction_data *data)
@@ -3208,15 +3193,24 @@ exec_unit::install_instructions(exec_unit &eu)
 		     &m68k_add<long_word_size, long_word_index_pc_indirect>);
   eu.set_instruction(0xd0bc, 0x0e00,
 		     &m68k_add<long_word_size, long_word_immediate>);
-  eu.set_instruction(0xd0c0, 0x0e07, &addaw<data_register>);
-  eu.set_instruction(0xd0c8, 0x0e07, &addaw<address_register>);
-  eu.set_instruction(0xd0d0, 0x0e07, &addaw<indirect>);
-  eu.set_instruction(0xd0d8, 0x0e07, &addaw<postinc_indirect>);
-  eu.set_instruction(0xd0e0, 0x0e07, &addaw<predec_indirect>);
-  eu.set_instruction(0xd0e8, 0x0e07, &addaw<disp_indirect>);
-  eu.set_instruction(0xd0f0, 0x0e07, &addaw<indexed_indirect>);
-  eu.set_instruction(0xd0f9, 0x0e00, &addaw<absolute_long>);
-  eu.set_instruction(0xd0fc, 0x0e00, &addaw<immediate>);
+  eu.set_instruction(0xd0c0, 0x0e07, &m68k_adda<word_size, word_d_register>);
+  eu.set_instruction(0xd0c8, 0x0e07, &m68k_adda<word_size, word_a_register>);
+  eu.set_instruction(0xd0d0, 0x0e07, &m68k_adda<word_size, word_indirect>);
+  eu.set_instruction(0xd0d8, 0x0e07,
+		     &m68k_adda<word_size, word_postinc_indirect>);
+  eu.set_instruction(0xd0e0, 0x0e07,
+		     &m68k_adda<word_size, word_predec_indirect>);
+  eu.set_instruction(0xd0e8, 0x0e07,
+		     &m68k_adda<word_size, word_disp_indirect>);
+  eu.set_instruction(0xd0f0, 0x0e07,
+		     &m68k_adda<word_size, word_index_indirect>);
+  eu.set_instruction(0xd0f8, 0x0e00, &m68k_adda<word_size, word_abs_short>);
+  eu.set_instruction(0xd0f9, 0x0e00, &m68k_adda<word_size, word_abs_long>);
+  eu.set_instruction(0xd0fa, 0x0e00,
+		     &m68k_adda<word_size, word_disp_pc_indirect>);
+  eu.set_instruction(0xd0fb, 0x0e00,
+		     &m68k_adda<word_size, word_index_pc_indirect>);
+  eu.set_instruction(0xd0fc, 0x0e00, &m68k_adda<word_size, word_immediate>);
   eu.set_instruction(0xd110, 0x0e07, &m68k_add_r<byte_size, byte_indirect>);
   eu.set_instruction(0xd118, 0x0e07,
 		     &m68k_add_r<byte_size, byte_postinc_indirect>);
@@ -3253,15 +3247,30 @@ exec_unit::install_instructions(exec_unit &eu)
 		     &m68k_add_r<long_word_size, long_word_abs_short>);
   eu.set_instruction(0xd1b9, 0x0e00,
 		     &m68k_add_r<long_word_size, long_word_abs_long>);
-  eu.set_instruction(0xd1c0, 0x0e07, &addal<data_register>);
-  eu.set_instruction(0xd1c8, 0x0e07, &addal<address_register>);
-  eu.set_instruction(0xd1d0, 0x0e07, &addal<indirect>);
-  eu.set_instruction(0xd1d8, 0x0e07, &addal<postinc_indirect>);
-  eu.set_instruction(0xd1e0, 0x0e07, &addal<predec_indirect>);
-  eu.set_instruction(0xd1e8, 0x0e07, &addal<disp_indirect>);
-  eu.set_instruction(0xd1f0, 0x0e07, &addal<indexed_indirect>);
-  eu.set_instruction(0xd1f9, 0x0e00, &addal<absolute_long>);
-  eu.set_instruction(0xd1fc, 0x0e00, &addal<immediate>);
+  eu.set_instruction(0xd1c0, 0x0e07,
+		     &m68k_adda<long_word_size, long_word_d_register>);
+  eu.set_instruction(0xd1c8, 0x0e07,
+		     &m68k_adda<long_word_size, long_word_a_register>);
+  eu.set_instruction(0xd1d0, 0x0e07,
+		     &m68k_adda<long_word_size, long_word_indirect>);
+  eu.set_instruction(0xd1d8, 0x0e07,
+		     &m68k_adda<long_word_size, long_word_postinc_indirect>);
+  eu.set_instruction(0xd1e0, 0x0e07,
+		     &m68k_adda<long_word_size, long_word_predec_indirect>);
+  eu.set_instruction(0xd1e8, 0x0e07,
+		     &m68k_adda<long_word_size, long_word_disp_indirect>);
+  eu.set_instruction(0xd1f0, 0x0e07,
+		     &m68k_adda<long_word_size, long_word_index_indirect>);
+  eu.set_instruction(0xd1f8, 0x0e00,
+		     &m68k_adda<long_word_size, long_word_abs_short>);
+  eu.set_instruction(0xd1f9, 0x0e00,
+		     &m68k_adda<long_word_size, long_word_abs_long>);
+  eu.set_instruction(0xd1fa, 0x0e00,
+		     &m68k_adda<long_word_size, long_word_disp_pc_indirect>);
+  eu.set_instruction(0xd1fb, 0x0e00,
+		     &m68k_adda<long_word_size, long_word_index_pc_indirect>);
+  eu.set_instruction(0xd1fc, 0x0e00,
+		     &m68k_adda<long_word_size, long_word_immediate>);
   eu.set_instruction(0xe008, 0x0e07, &lsrb_i);
   eu.set_instruction(0xe048, 0x0e07, &lsrw_i);
   eu.set_instruction(0xe050, 0x0e07, &roxrw_i);
