@@ -71,7 +71,7 @@ namespace vx68k
     uint_type getb(int, uint32_type) const;
     size_t read(int, uint32_type, void *, size_t) const;
 
-    /* Writes data to this object.  These methods shall always fail.  */
+    /* Writes data to this object.  */
     void putw(int, uint32_type, uint_type);
     void putb(int, uint32_type, uint_type);
     size_t write(int, uint32_type, const void *, size_t);
