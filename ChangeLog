@@ -1,5 +1,21 @@
 2002-05-07  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* Makefile.am (SUBDIRS): Remove @subdirs@.  Add intl, programs and
+	po.
+
+	* configure.in: Remove AC_CONFIG_SUBDIRS.  Add AM_GNU_GETTEXT.
+	Add intl/Makefile, programs/Makefile and po/Makefile.in to
+	AC_OUTPUT.
+
+	* gtkvx68k: Removed.
+
+	* ChangeLog.gtk: Moved from gtkvx68k/ChangeLog.
+	* NEWS.gtk: Moved from gtkvx68k/NEWS.
+
+	* programs: Moved from gtkvx68k/bin.
+	* intl: Moved from gtkvx68k/intl.
+	* po: Moved from gtkvx68k/po.
+
 	* Makefile.am (SUBDIRS): Add libvx68k-gtk.  Move @subdirs@ to the
 	beginning.
 

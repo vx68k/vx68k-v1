@@ -1,5 +1,12 @@
 2002-05-07  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* README: Removed.
+	* INSTALL: Removed.
+	* COPYING: Removed.
+	* AUTHORS: Removed.
+	* Makefile.am: Removed.
+	* configure.in: Removed.
+
 	* Makefile.am (SUBDIRS): Remove libvx68k-gtk.
 
 	* configure.in: Change the file for AC_INIT.  Remove
