@@ -1,5 +1,8 @@
 2000-05-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/machine.h: Remove the forward declaration of class
+	machine.
+
 	* libvx68k/systemrom.cc (dispatch_iocs_function): Remove the debug
 	message.
 	(iocs_b_lpeek): Change the debug message.

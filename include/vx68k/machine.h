@@ -55,8 +55,6 @@ namespace vx68k
     void putw(int, uint32_type, uint_type);
   };
 
-  class machine;
-
   /* System ROM.  This object handles the IOCS calls.  */
   class system_rom: public memory
   {
