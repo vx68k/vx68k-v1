@@ -23,9 +23,10 @@
 
 #include <vx68k/memory.h>
 
+#include <cstdio>
+
 #ifdef HAVE_NANA_H
 # include <nana.h>
-# include <cstdio>
 #else
 # include <cassert>
 # define I assert
