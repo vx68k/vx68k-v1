@@ -167,32 +167,32 @@ status_register::status_register()
 {
 }
 
-const bitmap_condition_tester status_register::bitmap_tester;
+const bitset_condition_tester status_register::bitset_tester;
 const condition_tester *const
 status_register::general_condition_tester = &const_general_condition_tester;
 const condition_tester *const
 status_register::add_condition_tester = &const_add_condition_tester;
 
 bool
-bitmap_condition_tester::cs(const sint32_type *v) const
+bitset_condition_tester::cs(const sint32_type *v) const
 {
   return v[0] & 0x1;
 }
 
 bool
-bitmap_condition_tester::eq(const sint32_type *v) const
+bitset_condition_tester::eq(const sint32_type *v) const
 {
   return v[0] & 0x4;
 }
 
 bool
-bitmap_condition_tester::mi(const sint32_type *v) const
+bitset_condition_tester::mi(const sint32_type *v) const
 {
   return v[0] & 0x8;
 }
 
 bool
-bitmap_condition_tester::lt(const sint32_type *v) const
+bitset_condition_tester::lt(const sint32_type *v) const
 {
   return mi(v) != bool(v[0] & 0x2);
 }

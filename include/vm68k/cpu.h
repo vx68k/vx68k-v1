@@ -178,7 +178,7 @@ namespace vm68k
     {return eq(v) || lt(v);}
   };
 
-  class bitmap_condition_tester: public condition_tester
+  class bitset_condition_tester: public condition_tester
   {
   public:
     bool cs(const sint32_type *) const;
@@ -195,7 +195,7 @@ namespace vm68k
     {S = 1 << 13};
 
   private:			// Condition testers
-    static const bitmap_condition_tester bitmap_tester;
+    static const bitset_condition_tester bitset_tester;
     static const condition_tester *const general_condition_tester;
     static const condition_tester *const add_condition_tester;
 
@@ -213,7 +213,7 @@ namespace vm68k
     operator uint_type() const;
     status_register &operator=(uint_type v)
     {
-      x_eval = cc_eval = &bitmap_tester;
+      x_eval = cc_eval = &bitset_tester;
       x_values[0] = cc_values[0] = v;
       return *this;
     }

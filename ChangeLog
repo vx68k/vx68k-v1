@@ -1,8 +1,8 @@
 2000-05-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* libvm68k/statusreg.cc: Define status_register::bitmap_tester.
+	* libvm68k/statusreg.cc: Define status_register::bitset_tester.
 	(cs, eq, mi, lt): New member function for class
-	bitmap_condition_tester.
+	bitset_condition_tester.
 
 	* libvm68k/execunit.cc (m68k_move_from_usp, m68k_rte): New
 	function.
@@ -12,8 +12,8 @@
 
 	* include/vm68k/cpu.h (class condition_tester): Add inline
 	implementations for member ls and le.
-	(class bitmap_condition_tester): New class.
-	(class status_register): Add new members bitmap_tester and
+	(class bitset_condition_tester): New class.
+	(class status_register): Add new members bitset_tester and
 	operator=.
 	(class context): Add new members sr and set_sr.
 
