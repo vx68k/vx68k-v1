@@ -336,6 +336,22 @@ namespace
     c.regs.d[0] = 0;
   }
 
+  /* Handles a _TIMEGET call.  */
+  void
+  iocs_timeget(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _TIMEGET\n");
+#endif
+    time_t t = time(NULL);
+    struct tm *lt = localtime(&t);
+
+    uint32_type bcd = (((lt->tm_hour + lt->tm_hour / 10 * 6 << 8)
+			+ lt->tm_min + lt->tm_min / 10 * 6 << 8)
+		       + lt->tm_sec + lt->tm_sec / 10 * 6);
+    long_word_size::put(c.regs.d[0], bcd);
+  }
+
   /* Handles a 0x37 call.  */
   void
   iocs_x37(context &c, unsigned long data)
@@ -364,6 +380,7 @@ namespace
     rom->set_iocs_function(0x47, iocs_function_type(&iocs_b_recali, 0));
     rom->set_iocs_function(0x4e, iocs_function_type(&iocs_b_drvchk, 0));
     rom->set_iocs_function(0x4f, iocs_function_type(&iocs_b_eject, 0));
+    rom->set_iocs_function(0x56, iocs_function_type(&iocs_timeget, 0));
     rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));
     rom->set_iocs_function(0x8e, iocs_function_type(&iocs_bootinf, 0));
     rom->set_iocs_function(0xaf, iocs_function_type(&iocs_os_curof, 0));

@@ -2420,9 +2420,9 @@ namespace
 		       &m68k_bset_d<byte_size, byte_disp_indirect>);
     eu.set_instruction(0x01f0, 0x0e07,
 		       &m68k_bset_d<byte_size, byte_index_indirect>);
-    eu.set_instruction(0x01f8, 0x0e07,
+    eu.set_instruction(0x01f8, 0x0e00,
 		       &m68k_bset_d<byte_size, byte_abs_short>);
-    eu.set_instruction(0x01f9, 0x0e07,
+    eu.set_instruction(0x01f9, 0x0e00,
 		       &m68k_bset_d<byte_size, byte_abs_long>);
     eu.set_instruction(0x0200, 0x0007, &andib<data_register>);
     eu.set_instruction(0x0210, 0x0007, &andib<indirect>);
