@@ -27,6 +27,9 @@
 #include <vx68k/version.h>
 #include <libintl.h>
 
+#include <cstdlib>
+#include <cstdio>
+
 #ifdef HAVE_NANA_H
 # include <nana.h>
 # include <cstdio>

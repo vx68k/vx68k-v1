@@ -1,5 +1,7 @@
 2000-08-06  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/gtkabout.cc: Include cstdlib and cstdio.
+
 	* bin/main.cc (console_callback): Add console_callback to base.
 	Add member window_closed.
 	(create_window): Add callback to main_window.
