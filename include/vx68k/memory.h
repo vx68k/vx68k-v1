@@ -20,6 +20,7 @@
 #ifndef _VX68K_MEMORY_H
 #define _VX68K_MEMORY_H 1
 
+#include <vm68k/cpu.h>
 #include <vm68k/memory.h>
 
 #include <vector>
@@ -27,6 +28,7 @@
 namespace vx68k
 {
   using vm68k::memory;
+  using vm68k::context;
   using namespace vm68k::types;
   using namespace std;
 
@@ -35,6 +37,8 @@ namespace vx68k
   /* Interface to console.  */
   struct console
   {
+    typedef uint32_type time_type;
+    virtual time_type current_time() const = 0;
     virtual void update_area(int x, int y, int width, int height) = 0;
     virtual void get_b16_image(unsigned int, unsigned char *, size_t) const = 0;
     virtual void get_k16_image(unsigned int, unsigned char *, size_t) const = 0;
@@ -175,6 +179,48 @@ namespace vx68k
     /* Writes data to this object.  */
     void put_16(int, uint32_type, uint_type);
     void put_8(int, uint32_type, uint_type);
+  };
+
+  /* OPM input/output port memory.  */
+  class opm_memory: public memory
+  {
+  private:
+    console *_console;
+    vector<unsigned char> _regs;
+    unsigned int _status;
+    bool _interrupt_enabled;
+
+    unsigned int reg_index;
+
+    /* Intervals for timers A and B.  */
+    console::time_type timer_a_interval, timer_b_interval;
+
+    /* Reset times for timers A and B.  */
+    console::time_type timer_a_reset_time, timer_b_reset_time;
+
+  public:
+    opm_memory();
+    explicit opm_memory(console *);
+    ~opm_memory();
+
+  public:
+    /* Reads data from this object.  */
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
+
+    /* Writes data to this object.  */
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
+
+  public:
+    void add_console(console *);
+    void set_interrupt_enabled(bool);
+
+  public:
+    unsigned int status() const {return _status;}
+    void set_reg(unsigned int, unsigned int);
+
+    void check_timeout(context &c);
   };
 
   /* SCC registers memory.  */

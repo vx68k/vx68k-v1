@@ -56,6 +56,9 @@ namespace vx68k
       ~gtk_console();
 
     public:
+      /* Returns the current time in milliseconds.  */
+      time_type current_time() const;
+
       /* Updates the displayed image in an rectangular area specified
          by X, Y, WIDTH, and HEIGHT.  */
       void update_area(int x, int y, int width, int height);

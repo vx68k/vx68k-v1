@@ -201,6 +201,13 @@ gtk_console::create_widget()
   return drawing_area;
 }
 
+console::time_type
+gtk_console::current_time() const
+{
+  guint32 t = gdk_time_get();
+  return t;
+}
+
 void
 gtk_console::update_area(int x, int y, int width, int height)
 {

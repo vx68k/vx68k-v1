@@ -158,6 +158,7 @@ namespace vx68k
     crtc_memory crtc;
     palettes_memory palettes;
     area_set _area_set;
+    opm_memory opm;
     scc_memory scc;
     ppi_memory ppi;
     sprites_memory sprites;
@@ -202,8 +203,12 @@ namespace vx68k
       {return &eu;}
 
   public:
+    void set_opm_reg(unsigned int r, unsigned int v) {opm.set_reg(r, v);}
+    unsigned int opm_status() const {return opm.status();}
+
+  public:
     void connect(console *con)
-      {tvram.connect(con); font.copy_data(con);}
+      {opm.add_console(con); tvram.connect(con); font.copy_data(con);}
 
     /* Checks timers.  */
     void check_timers(uint32_type t);

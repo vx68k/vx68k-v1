@@ -1,3 +1,27 @@
+2000-08-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68kgtk/gtkconsole.cc (current_time): New function.
+
+	* libvx68k/machine.cc (configure): Map opm into the address space.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add opmmem.cc.
+
+	* libvx68k/opmmem.cc: New file.
+	(set_reg, check_timeout, add_console, set_interrupt_enabled,
+	get_8, get_16, put_8, put_16, ~opm_memory, opm_memory): New
+	function.
+
+	* include/vx68k/gtk.h (class gtk_console): Add new member
+	current_time.
+
+	* include/vx68k/machine.h (class machine): Add member opm,
+	set_opm_reg, and opm_status.  Call opm.add_console in connect.
+
+	* include/vx68k/memory.h (struct console): Add type time_type and
+	new member current_time.
+
+	(class opm_memory): New class.
+
 2000-08-06  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68kgtk/gtkconsole.cc (handle_machine_timeout): New
