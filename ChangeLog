@@ -1,10 +1,26 @@
 1999-07-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/Makefile.am (vx68k_LDADD): Add libvx68kgtk.a.
+
+	* lib/vx68k/Makefile.am (noinst_LIBRARIES): Add libvx68kgtk.a.
+	(libvx68kgtk_a_SOURCES): New macro.
+	(INCLUDES): Add ${GTK_CFLAGS}.
+
+	* lib/vx68k/gtkconsole.cc: New file.
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Add gtk.h.
+
+	* include/vx68k/gtk.h: New file.
+
 	* bin/main.cc: Add Nana support.
 	(display_help): Modify message.
 	(struct machine_data, run_machine): Removed.
 	(class vx68k_app): New class.
 	(main): Use vx68k_app.
+	(class vx68k_app): Add member con.
+	(create_window): New function.
+	(run): Call gtk_main.
+	(main): Create window.
 
 1999-07-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 

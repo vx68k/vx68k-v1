@@ -24,6 +24,7 @@
 
 #include "getopt.h"
 #include <vx68k/human.h>
+#include <vx68k/gtk.h>
 #include <gtk/gtk.h>
 #include <pthread.h>
 #ifdef HAVE_UNISTD_H
@@ -43,8 +44,9 @@
 # define I assert
 #endif
 
-using namespace std;
+using namespace vx68k::gtk;
 using namespace vx68k;
+using namespace std;
 
 namespace
 {
@@ -124,6 +126,7 @@ namespace
   private:
     const char *const *args;
     machine vm;
+    gtk_console con;
     int status;
 
   public:
@@ -136,6 +139,7 @@ namespace
     void run();
     int exit_status() const
       {return status;}
+    GtkWidget *create_window();
   };
 } // (unnamed namespace)
 
@@ -172,15 +176,52 @@ vx68k_app::run_machine_thread(void *data)
   return NULL;
 }
 
+GtkWidget *
+vx68k_app::create_window()
+{
+  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_signal_connect(GTK_OBJECT(window), "delete_event",
+		     GTK_SIGNAL_FUNC(&gtk_main_quit), NULL);
+  {
+    GtkWidget *vbox = gtk_vbox_new(false, 0);
+    {
+      GtkWidget *statusbar = gtk_statusbar_new();
+      gtk_widget_show(statusbar);
+      gtk_box_pack_end(GTK_BOX(vbox), statusbar, false, false, 0);
+    }
+    {
+      GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+      {
+	GtkWidget *console_widget = con.create_widget();
+	gtk_widget_show(console_widget);
+	gtk_scrolled_window_add_with_viewport
+	  (GTK_SCROLLED_WINDOW(scrolled_window), console_widget);
+      }
+      gtk_widget_show(scrolled_window);
+      gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, true, true, 0);
+    }
+    gtk_widget_show(vbox);
+    gtk_container_add(GTK_CONTAINER(window), vbox);
+  }
+  gtk_widget_show(window);
+
+  return window;
+}
+
 void
 vx68k_app::run()
 {
   if (opt_one_thread)
-    run_machine();
+    {
+      run_machine();
+      gtk_main();
+    }
   else
     {
       pthread_t vm_thread;
       pthread_create(&vm_thread, NULL, &run_machine_thread, this);
+
+      gtk_main();
 
       pthread_join(vm_thread, NULL);
     }
@@ -229,6 +270,10 @@ main(int argc, char **argv)
   try
     {
       vx68k_app app(argv + optind);
+
+      GtkWidget *window = app.create_window();
+      gtk_widget_show(window);
+
       app.run();
       return app.exit_status();
     }
