@@ -2649,6 +2649,7 @@ namespace
     eu.set_instruction(0x0c60, 0x0007, &cmpiw<predec_indirect>);
     eu.set_instruction(0x0c68, 0x0007, &cmpiw<disp_indirect>);
     eu.set_instruction(0x0c70, 0x0007, &cmpiw<indexed_indirect>);
+    eu.set_instruction(0x0c78, 0x0000, &cmpiw<absolute_short>);
     eu.set_instruction(0x0c79, 0x0000, &cmpiw<absolute_long>);
     eu.set_instruction(0x0c80, 0x0007, &cmpil<data_register>);
     eu.set_instruction(0x0c90, 0x0007, &cmpil<indirect>);

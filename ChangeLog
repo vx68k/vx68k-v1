@@ -1,5 +1,8 @@
 2000-05-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (initialize_instructions): Add another
+	handler.
+
 	* libvx68k/systemrom.cc (iocs_timerdst, iocs_x39): New function.
 	(initialize_iocs_functions): Use the new function.
 
