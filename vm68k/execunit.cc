@@ -173,24 +173,27 @@ namespace
     c.regs.pc += 2 + ea1.extension_size();
   }
 
-  template <class Destination> void
-  addil(unsigned int op, context &ec, instruction_data *data)
-    {
-      sint32_type value2 = extsl(ec.fetchl(2));
-      Destination ea1(op & 0x7, 2 + 4);
+  template <class Size, class Destination> void
+  m68k_addi(uint_type op, context &c, instruction_data *data)
+  {
+    typedef long_word_size::uvalue_type uvalue_type;
+    typedef long_word_size::svalue_type svalue_type;
+
+    svalue_type value2 = Size::svalue(c.fetch(Size(), 2));
+    Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
 #ifdef TRACE_INSTRUCTIONS
-      L(" addil #%ld", (long) value2);
-      L(",%s\n", ea1.textl(ec));
+    L(" addi%s #%#lx", Size::suffix(), (unsigned long) value2);
+    L(",%s\n", ea1.text(c));
 #endif
 
-      sint32_type value1 = ea1.getl(ec);
-      sint32_type value = extsl(value1 + value2);
-      ea1.putl(ec, value);
-      ea1.finishl(ec);
-      ec.regs.sr.set_cc(value); // FIXME.
+    svalue_type value1 = ea1.get(c);
+    svalue_type value = Size::svalue(Size::get(value1 + value2));
+    ea1.put(c, value);
+    c.regs.sr.set_cc(value);	// FIXME.
+    ea1.finish(c);
 
-      ec.regs.pc += 2 + 4 + ea1.isize(4);
-    }
+    c.regs.pc += 2 + Size::aligned_value_size() + ea1.extension_size();
+  }
 
   template <class Destination> void
   addqb(unsigned int op, context &ec, instruction_data *data)
@@ -2539,10 +2542,46 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x04a8, 0x0007, &subil<disp_indirect>);
   eu.set_instruction(0x04b0, 0x0007, &subil<indexed_indirect>);
   eu.set_instruction(0x04b9, 0x0000, &subil<absolute_long>);
-  eu.set_instruction(0x0680, 0x0007, &addil<data_register>);
-  eu.set_instruction(0x0690, 0x0007, &addil<indirect>);
-  eu.set_instruction(0x0698, 0x0007, &addil<postinc_indirect>);
-  eu.set_instruction(0x06a0, 0x0007, &addil<predec_indirect>);
+  eu.set_instruction(0x0600, 0x0007, &m68k_addi<byte_size, byte_d_register>);
+  eu.set_instruction(0x0610, 0x0007, &m68k_addi<byte_size, byte_indirect>);
+  eu.set_instruction(0x0618, 0x0007,
+		     &m68k_addi<byte_size, byte_postinc_indirect>);
+  eu.set_instruction(0x0620, 0x0007,
+		     &m68k_addi<byte_size, byte_predec_indirect>);
+  eu.set_instruction(0x0628, 0x0007,
+		     &m68k_addi<byte_size, byte_disp_indirect>);
+  eu.set_instruction(0x0630, 0x0007,
+		     &m68k_addi<byte_size, byte_index_indirect>);
+  eu.set_instruction(0x0638, 0x0000, &m68k_addi<byte_size, byte_abs_short>);
+  eu.set_instruction(0x0639, 0x0000, &m68k_addi<byte_size, byte_abs_long>);
+  eu.set_instruction(0x0640, 0x0007, &m68k_addi<word_size, word_d_register>);
+  eu.set_instruction(0x0650, 0x0007, &m68k_addi<word_size, word_indirect>);
+  eu.set_instruction(0x0658, 0x0007,
+		     &m68k_addi<word_size, word_postinc_indirect>);
+  eu.set_instruction(0x0660, 0x0007,
+		     &m68k_addi<word_size, word_predec_indirect>);
+  eu.set_instruction(0x0668, 0x0007,
+		     &m68k_addi<word_size, word_disp_indirect>);
+  eu.set_instruction(0x0670, 0x0007,
+		     &m68k_addi<word_size, word_index_indirect>);
+  eu.set_instruction(0x0678, 0x0000, &m68k_addi<word_size, word_abs_short>);
+  eu.set_instruction(0x0679, 0x0000, &m68k_addi<word_size, word_abs_long>);
+  eu.set_instruction(0x0680, 0x0007,
+		     &m68k_addi<long_word_size, long_word_d_register>);
+  eu.set_instruction(0x0690, 0x0007,
+		     &m68k_addi<long_word_size, long_word_indirect>);
+  eu.set_instruction(0x0698, 0x0007,
+		     &m68k_addi<long_word_size, long_word_postinc_indirect>);
+  eu.set_instruction(0x06a0, 0x0007,
+		     &m68k_addi<long_word_size, long_word_predec_indirect>);
+  eu.set_instruction(0x06a8, 0x0007,
+		     &m68k_addi<long_word_size, long_word_disp_indirect>);
+  eu.set_instruction(0x06b0, 0x0007,
+		     &m68k_addi<long_word_size, long_word_index_indirect>);
+  eu.set_instruction(0x06b8, 0x0000,
+		     &m68k_addi<long_word_size, long_word_abs_short>);
+  eu.set_instruction(0x06b9, 0x0000,
+		     &m68k_addi<long_word_size, long_word_abs_long>);
   eu.set_instruction(0x0800, 0x0007, &btstl_i);
   eu.set_instruction(0x0810, 0x0007, &btstb_i<indirect>);
   eu.set_instruction(0x0818, 0x0007, &btstb_i<postinc_indirect>);

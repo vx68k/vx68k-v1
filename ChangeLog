@@ -1,5 +1,15 @@
 1999-11-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Updated.
+
+	* vm68k/execunit.cc (m68k_addi): New function.
+	(addil): Removed.
+	(install_instructions): Replace addil with m68k_add.  Add m68k_add
+ 	for byte and word.
+
+	* include/vm68k/cpu.h (class context): Add member fetch.
+	(fetch): Specialize for byte_size.
+
 	* vx68k/dos.cc (dos_super_jsr): New function.
 	(add_instructions): Add dos_super_jsr.
 

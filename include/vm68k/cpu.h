@@ -309,11 +309,22 @@ namespace vm68k
       {return dfc_cache;}
 
   public:
+    template <class Size>
+      typename Size::uvalue_type fetch(Size, size_t offset) const
+      {return Size::get(*mem, program_fc(), regs.pc + offset);}
+
     uint_type fetchw(int disp) const
       {return mem->getw_aligned(program_fc(), regs.pc + disp);}
     uint32_type fetchl(int disp) const
       {return mem->getl(program_fc(), regs.pc + disp);}
   };
+
+  template <> inline byte_size::uvalue_type
+  context::fetch(byte_size, size_t offset) const
+  {
+    return byte_size::get(word_size::get(*mem, program_fc(),
+					 regs.pc + offset));
+  }
 
   /* Execution unit.  */
   class exec_unit
