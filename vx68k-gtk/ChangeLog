@@ -1,5 +1,29 @@
 2001-07-12  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* libvx68k-gtk/gtkconsole.cc: Enclose in namespace blocks.
+	(call_expose_event_handler): Renamed from handle_expose_event.
+	Also change all users.
+	(call_destroy_handler): Renamed from handle_destroy.  Also change
+	all users.
+	(call_key_press_event_handler): Renamed from
+	deliver_key_press_event.  Also change all users.
+	(call_key_release_event_handler): Renamed from
+	deliver_key_release_event.  Also change all users.
+	(best_visual): New function.
+	(call_timeout_handler): Renamed from handle_timeout.  Also change
+	all users.
+
+	* bin/main.cc (gtk_app): Use gtk_console::best_visual.
+
+	* libvx68k-gtk/vx68k/gtk.h (class gtk_console): Add static member
+	function best_visual.
+
+	* libvx68k-gtk/Makefile.am (libvx68kui_gtk_a_SOURCES): Add gl.cc.
+
+	* libvx68k-gtk/gl.cc: New file.
+	(gl::initialize): New function.
+	(gl::best_visual): New function.
+
 	* configure.in: Move AC_ISC_POSIX.  Add AC_SEARCH_LIBS for -lGL
 	and -lGLU.  Add GL/gl.h, GL/glu.h, and GL/glx.h to
 	AC_CHECK_HEADERS.
@@ -12,6 +36,7 @@
 	gtk_gl.h.
 
 	* libvx68k-gtk/gtk_gl.h: New file.
+	(class gl): New class.
 
 2001-07-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 

@@ -5,7 +5,7 @@ $(GTK_CFLAGS)
 
 noinst_LIBRARIES = libvx68kui_gtk.a
 
-libvx68kui_gtk_a_SOURCES = gtkconsole.cc
+libvx68kui_gtk_a_SOURCES = gtkconsole.cc gl.cc
 
 noinst_HEADERS = gtk_gl.h
 

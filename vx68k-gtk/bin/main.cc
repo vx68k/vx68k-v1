@@ -299,7 +299,7 @@ gtk_app::gtk_app()
     main_window(NULL)
 {
   vm_thread = pthread_self();
-  gtk_widget_set_default_visual(gdk_rgb_get_visual());
+  gtk_widget_set_default_visual(gtk_console::best_visual());
   vm.connect(&con);
 }
 

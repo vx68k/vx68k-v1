@@ -1,6 +1,6 @@
 /* -*- C++ -*- */
 /* Virtual X68000 - X68000 virtual machine
-   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2001 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -61,6 +61,9 @@ namespace vx68k
     public:
       explicit gtk_console(machine *);
       ~gtk_console();
+
+    public:
+      static GdkVisual *best_visual();
 
     public:
       /* Returns the current time in milliseconds.  */
