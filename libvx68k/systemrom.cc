@@ -24,6 +24,7 @@
 #include <vx68k/machine.h>
 
 #include <stdexcept>
+#include <cstdio>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>

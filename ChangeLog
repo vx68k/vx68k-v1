@@ -1,6 +1,7 @@
 2000-05-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* libvx68k/systemrom.cc (iocs_timeget): New function.
+	* libvx68k/systemrom.cc: Include <cstdio>.
+	(iocs_timeget): New function.
 	(initialize_iocs_functions): Use the new function.
 
 	* libvm68k/execunit.cc (m68k_bset_d, m68k_db): New function
