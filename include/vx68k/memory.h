@@ -34,14 +34,12 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    uint_type getw(int, uint32_type) const;
-    uint_type getb(int, uint32_type) const;
-    size_t read(int, uint32_type, void *, size_t) const;
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
 
     /* Writes data to this object.  */
-    void putw(int, uint32_type, uint_type);
-    void putb(int, uint32_type, uint_type);
-    size_t write(int, uint32_type, const void *, size_t);
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
   };
 
   /* Area set register.  This object is mapped from 0xe86000 to
@@ -58,14 +56,12 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    uint_type getw(int, uint32_type) const;
-    uint_type getb(int, uint32_type) const;
-    size_t read(int, uint32_type, void *, size_t) const;
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
 
     /* Writes data to this object.  */
-    void putw(int, uint32_type, uint_type);
-    void putb(int, uint32_type, uint_type);
-    size_t write(int, uint32_type, const void *, size_t);
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
   };
 
   /* SCC registers memory.  */
@@ -73,14 +69,12 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    uint_type getw(int, uint32_type) const;
-    uint_type getb(int, uint32_type) const;
-    size_t read(int, uint32_type, void *, size_t) const;
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
 
     /* Writes data to this object.  */
-    void putw(int, uint32_type, uint_type);
-    void putb(int, uint32_type, uint_type);
-    size_t write(int, uint32_type, const void *, size_t);
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
   };
 
   /* PPI (a.k.a 8255A) registers memory.  On X68000, a PPI is used for
@@ -89,14 +83,12 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    uint_type getw(int, uint32_type) const;
-    uint_type getb(int, uint32_type) const;
-    size_t read(int, uint32_type, void *, size_t) const;
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
 
     /* Writes data to this object.  */
-    void putw(int, uint32_type, uint_type);
-    void putb(int, uint32_type, uint_type);
-    size_t write(int, uint32_type, const void *, size_t);
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
   };
 } // namespace vx68k
 

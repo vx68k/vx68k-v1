@@ -184,8 +184,8 @@ text_vram::get_image(int x, int y, int width, int height,
     }
 }
 
-size_t
-text_vram::read(int fc, uint32_type address, void *, size_t) const
+uint_type
+text_vram::get_8(int fc, uint32_type address) const
 {
   if (fc != SUPER_DATA)
     generate_bus_error(true, fc, address);
@@ -194,16 +194,7 @@ text_vram::read(int fc, uint32_type address, void *, size_t) const
 }
 
 uint_type
-text_vram::getb(int fc, uint32_type address) const
-{
-  if (fc != SUPER_DATA)
-    generate_bus_error(true, fc, address);
-
-  abort();			// FIXME
-}
-
-uint_type
-text_vram::getw(int fc, uint32_type address) const
+text_vram::get_16(int fc, uint32_type address) const
 {
   if (fc != SUPER_DATA)
     generate_bus_error(true, fc, address);
@@ -211,8 +202,8 @@ text_vram::getw(int fc, uint32_type address) const
   return buf[(address & TEXT_VRAM_SIZE - 1) >> 1];
 }
 
-size_t
-text_vram::write(int fc, uint32_type address, const void *, size_t)
+void
+text_vram::put_8(int fc, uint32_type address, uint_type value)
 {
   if (fc != SUPER_DATA)
     generate_bus_error(false, fc, address);
@@ -221,19 +212,10 @@ text_vram::write(int fc, uint32_type address, const void *, size_t)
 }
 
 void
-text_vram::putb(int fc, uint32_type address, uint_type value)
-{
-  if (fc != SUPER_DATA)
-    generate_bus_error(false, fc, address);
-
-  abort();			// FIXME
-}
-
-void
-text_vram::putw(int fc, uint32_type address, uint_type value)
+text_vram::put_16(int fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
-  L("class text_vram: putw fc=%d address=%#010lx\n",
+  L("class text_vram: put_16 fc=%d address=%#010lx\n",
     fc, (unsigned long) address);
 #endif
   if (fc != SUPER_DATA)

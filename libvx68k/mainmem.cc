@@ -35,36 +35,8 @@
 using namespace vx68k;
 using namespace std;
 
-size_t
-main_memory::read(int fc, uint32_type address, void *data, size_t size) const
-{
-  if (address >= end)
-    {
-      generate_bus_error(true, fc, address);
-      abort();
-    }
-
-  if (address + size >= end)
-    size = end - address;
-
-  unsigned char *p = static_cast<unsigned char *>(data);
-  unsigned char *last = p + size;
-  if (p != last && (address & 1) != 0)
-    *p++ = getb(fc, address++);
-  while (last - p >> 1 != 0)
-    {
-      vm68k::putw(p, array[address >> 1]);
-      address += 2;
-      p += 2;
-    }
-  if (p != last)
-    *p++ = getb(fc, address++);
-
-  return size;
-}
-
 uint_type
-main_memory::getb(int fc, uint32_type address) const
+main_memory::get_8(int fc, uint32_type address) const
 {
   if (address >= end)
     {
@@ -77,7 +49,7 @@ main_memory::getb(int fc, uint32_type address) const
 }
 
 uint_type
-main_memory::getw(int fc, uint32_type address) const
+main_memory::get_16(int fc, uint32_type address) const
 {
   // Address error?
   if (address >= end)
@@ -90,7 +62,7 @@ main_memory::getw(int fc, uint32_type address) const
 }
 
 uint32_type
-main_memory::getl(int fc, uint32_type address) const
+main_memory::get_32(int fc, uint32_type address) const
 {
   // Address error?
   uint32_type address2 = address + 2;
@@ -103,36 +75,8 @@ main_memory::getl(int fc, uint32_type address) const
   return uint32_type(array[address >> 1]) << 16 | array[address2 >> 1];
 }
 
-size_t
-main_memory::write(int fc, uint32_type address, const void *data, size_t size)
-{
-  if (address >= end)
-    {
-      generate_bus_error(false, fc, address);
-      abort();
-    }
-
-  if (address + size >= end)
-    size = end - address;
-
-  unsigned char *p = static_cast<unsigned char *>(data);
-  unsigned char *last = p + size;
-  if (p != last && (address & 1) != 0)
-    putb(fc, address++, *p++);
-  while (last - p >> 1 != 0)
-    {
-      array[address >> 1] = vm68k::getw(p);
-      p += 2;
-      address += 2;
-    }
-  if (p != last)
-    putb(fc, address++, *p++);
-
-  return size;
-}
-
 void
-main_memory::putb(int fc, uint32_type address, uint_type value)
+main_memory::put_8(int fc, uint32_type address, uint_type value)
 {
   if (address >= end)
     {
@@ -149,7 +93,7 @@ main_memory::putb(int fc, uint32_type address, uint_type value)
 }
 
 void
-main_memory::putw(int fc, uint32_type address, uint_type value)
+main_memory::put_16(int fc, uint32_type address, uint_type value)
 {
   // Address error?
   if (address >= end)

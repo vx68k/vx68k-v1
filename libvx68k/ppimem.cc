@@ -31,45 +31,44 @@
 # define I assert
 #endif
 
-using vx68k::area_set;
+using vx68k::ppi_memory;
 using namespace vm68k::types;
 using namespace std;
 
 uint_type
-area_set::get_16(int fc, uint32_type address) const
+ppi_memory::get_16(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("class area_set: get_16 fc=%d address=%#010x\n", fc, address);
+  L("class ppi_memory: get_16 fc=%d address=%#010x\n", fc, address);
 #endif
-  return 0;
+  return get_8(fc, address | 1u);
 }
 
 uint_type
-area_set::get_8(int fc, uint32_type address) const
+ppi_memory::get_8(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("class area_set: get_8 fc=%d address=%#010x\n", fc, address);
+  L("class ppi_memory: get_8 fc=%d address=%#010x\n", fc, address);
 #endif
-  return 0;
+  address &= 0x1fff;
+  switch (address) {
+  default:
+    return 0;
+  }
 }
 
 void
-area_set::put_16(int, uint32_type, uint_type)
+ppi_memory::put_16(int, uint32_type, uint_type)
 {
 #ifdef HAVE_NANA_H
-  L("class area_set: FIXME: `put_16' not implemented\n");
+  L("class ppi_memory: FIXME: `put_16' not implemented\n");
 #endif
 }
 
 void
-area_set::put_8(int, uint32_type, uint_type)
+ppi_memory::put_8(int, uint32_type, uint_type)
 {
 #ifdef HAVE_NANA_H
-  L("class area_set: FIXME: `put_8' not implemented\n");
+  L("class ppi_memory: FIXME: `put_8' not implemented\n");
 #endif
-}
-
-area_set::area_set(main_memory *mm)
-  : _mm(mm)
-{
 }

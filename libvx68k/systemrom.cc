@@ -42,10 +42,10 @@ using namespace vm68k::types;
 using namespace std;
 
 uint_type
-system_rom::getw(int fc, uint32_type address) const
+system_rom::get_16(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("system_rom: FIXME: `getw' not implemented\n");
+  L("class system_rom: FIXME: `get_16' not implemented\n");
 #endif
   // A program access generates a bus error to detect emulation bugs
   // easily.
@@ -56,42 +56,24 @@ system_rom::getw(int fc, uint32_type address) const
 }
 
 uint_type
-system_rom::getb(int, uint32_type) const
+system_rom::get_8(int, uint32_type) const
 {
 #ifdef HAVE_NANA_H
-  L("system_rom: FIXME: `getb' not implemented\n");
-#endif
-  return 0;
-}
-
-size_t
-system_rom::read(int, uint32_type, void *, size_t) const
-{
-#ifdef HAVE_NANA_H
-  L("system_rom: FIXME: `read' not implemented\n");
+  L("class system_rom: FIXME: `get_8' not implemented\n");
 #endif
   return 0;
 }
 
 void
-system_rom::putw(int fc, uint32_type address, uint_type)
+system_rom::put_16(int fc, uint32_type address, uint_type)
 {
   throw bus_error_exception(false, fc, address);
 }
 
 void
-system_rom::putb(int fc, uint32_type address, uint_type)
+system_rom::put_8(int fc, uint32_type address, uint_type)
 {
   throw bus_error_exception(false, fc, address);
-}
-
-size_t
-system_rom::write(int, uint32_type, const void *, size_t)
-{
-#ifdef HAVE_NANA_H
-  L("system_rom: FIXME: `write' not implemented\n");
-#endif
-  return 0;
 }
 
 void

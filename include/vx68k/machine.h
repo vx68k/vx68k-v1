@@ -33,8 +33,8 @@ namespace vx68k
   /* Number of FD units.  */
   const size_t NFDS = 2;
 
-  class main_memory
-    : public memory
+  /* X68000 main memory.  */
+  class main_memory: public memory
   {
   private:
     uint32_type end;
@@ -45,15 +45,12 @@ namespace vx68k
     ~main_memory();
 
   public:
-    size_t read(int, uint32_type, void *, size_t) const;
-    uint_type getb(int, uint32_type) const;
-    uint_type getw(int, uint32_type) const;
-    uint32_type getl(int fc, uint32_type address) const;
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
+    uint32_type get_32(int, uint32_type) const;
 
-  public:
-    size_t write(int, uint32_type, const void *, size_t);
-    void putb(int, uint32_type, uint_type);
-    void putw(int, uint32_type, uint_type);
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
   };
 
   /* SRAM.  */
@@ -68,14 +65,12 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    uint_type getw(int, uint32_type) const;
-    uint_type getb(int, uint32_type) const;
-    size_t read(int, uint32_type, void *, size_t) const;
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
 
     /* Writes data to this object.  */
-    void putw(int, uint32_type, uint_type);
-    void putb(int, uint32_type, uint_type);
-    size_t write(int, uint32_type, const void *, size_t);
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
   };
 
   /* System ROM.  This object handles the IOCS calls.  */
@@ -116,14 +111,12 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    uint_type getw(int, uint32_type) const;
-    uint_type getb(int, uint32_type) const;
-    size_t read(int, uint32_type, void *, size_t) const;
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
 
     /* Writes data to this object.  These methods shall always fail.  */
-    void putw(int, uint32_type, uint_type);
-    void putb(int, uint32_type, uint_type);
-    size_t write(int, uint32_type, const void *, size_t);
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
   };
 
 
@@ -210,8 +203,7 @@ namespace vx68k
   };
 
   /* Text VRAM.  */
-  class text_vram
-    : public memory
+  class text_vram: public memory
   {
   public:
     typedef text_vram_raster_iterator raster_iterator;
@@ -225,14 +217,11 @@ namespace vx68k
     ~text_vram();
 
   public:
-    size_t read(int, uint32_type, void *, size_t) const;
-    uint_type getb(int, uint32_type) const;
-    uint_type getw(int, uint32_type) const;
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
 
-  public:
-    size_t write(int, uint32_type, const void *, size_t);
-    void putb(int, uint32_type, uint_type);
-    void putw(int, uint32_type, uint_type);
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
 
   public:
     /* Draw a character CODE at [X Y].  */

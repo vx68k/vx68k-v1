@@ -1,5 +1,70 @@
 2000-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/ppimem.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/sccmem.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/crtcmem.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/areaset.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/sram.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/systemrom.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/textvram.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/mainmem.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(get_32): Renamed from getl.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvm68k/addrspace.cc (read): Rewritten only using getb.
+	(write): Rewritten only using putb.
+
+	* libvm68k/memory.cc (get_32): Renamed from getl.
+	(put_32): Renamed from putl.
+	(read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* include/vm68k/memory.h (class memory): Rename members getw to
+	get_16, getb to get_8, getl to get_32, putw to put_16, putb to
+	put_8, and putl to put_32.  Remove members read and write.  Also
+	change all derived classes and all users.
+
 	* libvx68k/machine.cc (configure): Set maps for crtc, scc, and
 	ppi.
 

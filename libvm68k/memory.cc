@@ -58,7 +58,7 @@ vm68k::putl(void *address, uint32_type value)
   putw(p + 0, value >> 16);
   putw(p + 2, value);
 }
-
+
 void
 memory::generate_bus_error(bool read, int fc, uint32_type address) const
 {
@@ -66,56 +66,42 @@ memory::generate_bus_error(bool read, int fc, uint32_type address) const
 }
 
 uint32_type
-memory::getl(int fc, uint32_type address) const
+memory::get_32(int fc, uint32_type address) const
 {
-  return (uint32_type(getw(fc, address + 0)) << 16
-	  | uint32_type(getw(fc, address + 2)));
+  return (uint32_type(get_16(fc, address + 0)) << 16
+	  | uint32_type(get_16(fc, address + 2)));
 }
 
 void
-memory::putl(int fc, uint32_type address, uint32_type value)
+memory::put_32(int fc, uint32_type address, uint32_type value)
 {
-  putw(fc, address + 0, value >> 16);
-  putw(fc, address + 2, value);
+  put_16(fc, address + 0, value >> 16);
+  put_16(fc, address + 2, value);
 }
-
-size_t
-no_memory::read(int fc, uint32_type address, void *, size_t) const
+
+uint_type
+no_memory::get_8(int fc, uint32_type address) const
 {
   generate_bus_error(true, fc, address);
   abort();
 }
 
 uint_type
-no_memory::getb(int fc, uint32_type address) const
+no_memory::get_16(int fc, uint32_type address) const
 {
   generate_bus_error(true, fc, address);
   abort();
 }
 
-uint_type
-no_memory::getw(int fc, uint32_type address) const
-{
-  generate_bus_error(true, fc, address);
-  abort();
-}
-
-size_t
-no_memory::write(int fc, uint32_type address, const void *, size_t)
+void
+no_memory::put_8(int fc, uint32_type address, uint_type)
 {
   generate_bus_error(false, fc, address);
   abort();
 }
 
 void
-no_memory::putb(int fc, uint32_type address, uint_type)
-{
-  generate_bus_error(false, fc, address);
-  abort();
-}
-
-void
-no_memory::putw(int fc, uint32_type address, uint_type)
+no_memory::put_16(int fc, uint32_type address, uint_type)
 {
   generate_bus_error(false, fc, address);
   abort();

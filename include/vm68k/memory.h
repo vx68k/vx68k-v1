@@ -27,6 +27,7 @@ namespace vm68k
 {
   using namespace std;
 
+  /* Bus function code.  */
   enum function_code
   {
     USER_DATA = 1,
@@ -47,6 +48,7 @@ namespace vm68k
   void putw(void *, uint_type);
   void putl(void *, uint32_type);
 
+  /* Abstract memory class.  */
   class memory
   {
   public:
@@ -56,31 +58,24 @@ namespace vm68k
     void generate_bus_error(bool, int, uint32_type) const;
 
   public:
-    virtual size_t read(int, uint32_type, void *, size_t) const = 0;
-    virtual uint_type getb(int, uint32_type) const = 0;
-    virtual uint_type getw(int, uint32_type) const = 0;
-    virtual uint32_type getl(int, uint32_type) const;
+    virtual uint_type get_16(int, uint32_type) const = 0;
+    virtual uint_type get_8(int, uint32_type) const = 0;
+    virtual uint32_type get_32(int, uint32_type) const;
 
-  public:
-    virtual size_t write(int, uint32_type, const void *, size_t) = 0;
-    virtual void putb(int, uint32_type, uint_type) = 0;
-    virtual void putw(int, uint32_type, uint_type) = 0;
-    virtual void putl(int, uint32_type, uint32_type);
+    virtual void put_16(int, uint32_type, uint_type) = 0;
+    virtual void put_8(int, uint32_type, uint_type) = 0;
+    virtual void put_32(int, uint32_type, uint32_type);
   };
 
   /* Memory page that always raises a bus error.  */
-  class no_memory
-    : public memory
+  class no_memory: public memory
   {
   public:
-    size_t read(int, uint32_type, void *, size_t) const;
-    uint_type getb(int, uint32_type) const;
-    uint_type getw(int, uint32_type) const;
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
 
-  public:
-    size_t write(int, uint32_type, const void *, size_t);
-    void putb(int, uint32_type, uint_type);
-    void putw(int, uint32_type, uint_type);
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
   };
 
   /* Address space.  An address space is a software view of a target
@@ -116,20 +111,20 @@ namespace vm68k
 
     /* Returns one byte at address ADDRESS in this address space.  */
     uint_type getb(int fc, uint32_type address) const
-      {
-	address = canonical_address(address);
-	const memory *p = find_page(address);
-	return p->getb(fc, address);
-      }
+    {
+      address = canonical_address(address);
+      const memory *p = find_page(address);
+      return p->get_8(fc, address);
+    }
 
     /* Returns one word at address ADDRESS in this address space.
        The address must be word-aligned.  */
     uint_type getw_aligned(int fc, uint32_type address) const
-      {
-	address = canonical_address(address);
-	const memory *p = find_page(address);
-	return p->getw(fc, address);
-      }
+    {
+      address = canonical_address(address);
+      const memory *p = find_page(address);
+      return p->get_16(fc, address);
+    }
 
     /* Returns one word at address ADDRESS in this address space.  Any
        unaligned address will be handled.  */
@@ -146,20 +141,20 @@ namespace vm68k
 
     /* Stores byte VALUE at address ADDRESS in this address space.  */
     void putb(int fc, uint32_type address, uint_type value)
-      {
-	address = canonical_address(address);
-	memory *p = find_page(address);
-	p->putb(fc, address, value);
-      }
+    {
+      address = canonical_address(address);
+      memory *p = find_page(address);
+      p->put_8(fc, address, value);
+    }
 
     /* Stores word VALUE at address ADDRESS in this address space.
        The address must be word-aligned.  */
     void putw_aligned(int fc, uint32_type address, uint_type value)
-      {
-	address = canonical_address(address);
-	memory *p = find_page(address);
-	p->putw(fc, address, value);
-      }
+    {
+      address = canonical_address(address);
+      memory *p = find_page(address);
+      p->put_16(fc, address, value);
+    }
 
     /* Stores word VALUE at address ADDRESS in this address space.
        Any unaligned address will be handled.  */

@@ -46,17 +46,11 @@ void
 address_space::read(int fc, uint32_type address,
 		    void *data, size_t size) const
 {
-  while (size != 0)
-    {
-      address = canonical_address(address);
-      const memory *p = find_page(address);
-      size_t done = p->read(fc, address, data, size);
-      I(done != 0);
-      I(done <= size);
-      address += done;
-      data = static_cast<unsigned char *>(data) + done;
-      size -= done;
-    }
+  unsigned char *i = static_cast<unsigned char *>(data);
+  unsigned char *last = i + size;
+
+  while (i != last)
+    *i++ = getb(fc, address++);
 }
 
 uint_type
@@ -79,9 +73,9 @@ address_space::getl(int fc, uint32_type address) const
   const memory *p = find_page(address);
   const memory *p2 = find_page(address2);
   if (p2 != p)
-    return uint32_type(p->getw(fc, address)) << 16 | p2->getw(fc, address2);
+    return uint32_type(p->get_16(fc, address)) << 16 | p2->get_16(fc, address2);
   else
-    return p->getl(fc, address);
+    return p->get_32(fc, address);
 }
 
 string
@@ -105,17 +99,11 @@ void
 address_space::write(int fc, uint32_type address,
 		     const void *data, size_t size)
 {
-  while (size != 0)
-    {
-      address = canonical_address(address);
-      memory *p = find_page(address);
-      size_t done = p->write(fc, address, data, size);
-      I(done != 0);
-      I(done <= size);
-      address += done;
-      data = static_cast<const unsigned char *>(data) + done;
-      size -= done;
-    }
+  unsigned char *i = static_cast<unsigned char *>(data);
+  unsigned char *last = i + size;
+
+  while (i != last)
+    putb(fc, address++, *i++);
 }
 
 void
@@ -139,11 +127,11 @@ address_space::putl(int fc, uint32_type address, uint32_type value)
   memory *p2 = find_page(address2);
   if (p2 != p)
     {
-      p->putw(fc, address, value >> 16);
-      p2->putw(fc, address2, value);
+      p->put_16(fc, address, value >> 16);
+      p2->put_16(fc, address2, value);
     }
   else
-    p->putl(fc, address, value);
+    p->put_32(fc, address, value);
 }
 
 void

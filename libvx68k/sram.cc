@@ -49,10 +49,10 @@ using namespace vm68k::types;
 using namespace std;
 
 uint_type
-sram::getw(int fc, uint32_type address) const
+sram::get_16(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("sram: getw fc=%d address=%#010x\n", fc, address);
+  L("class sram: get_16 fc=%d address=%#010x\n", fc, address);
 #endif
   address &= 0x3fff;
   uint_type value = ::getw(buf + address);
@@ -60,48 +60,30 @@ sram::getw(int fc, uint32_type address) const
 }
 
 uint_type
-sram::getb(int fc, uint32_type address) const
+sram::get_8(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("sram: getb fc=%d address=%#010x\n", fc, address);
+  L("class sram: get_8 fc=%d address=%#010x\n", fc, address);
 #endif
   address &= 0x3fff;
   uint_type value = *(buf + address) & 0xffu;
   return value;
 }
 
-size_t
-sram::read(int, uint32_type, void *, size_t) const
-{
-#ifdef HAVE_NANA_H
-  L("sram: FIXME: `read' not implemented\n");
-#endif
-  return 0;
-}
-
 void
-sram::putw(int, uint32_type, uint_type)
+sram::put_16(int, uint32_type, uint_type)
 {
 #ifdef HAVE_NANA_H
-  L("sram: FIXME: `putw' not implemented\n");
+  L("class sram: FIXME: `put_16' not implemented\n");
 #endif
 }
 
 void
-sram::putb(int, uint32_type, uint_type)
+sram::put_8(int, uint32_type, uint_type)
 {
 #ifdef HAVE_NANA_H
-  L("sram: FIXME: `putb' not implemented\n");
+  L("class sram: FIXME: `put_8' not implemented\n");
 #endif
-}
-
-size_t
-sram::write(int, uint32_type, const void *, size_t)
-{
-#ifdef HAVE_NANA_H
-  L("sram: FIXME: `write' not implemented\n");
-#endif
-  return 0;
 }
 
 sram::~sram()
