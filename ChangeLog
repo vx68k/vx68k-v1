@@ -1,3 +1,11 @@
+1999-03-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (movew_absl_predec, movel_i_predec): New
+	functions.
+	(install_instructions): Set instructions.
+
+	* include/vm68k/cpu.h (extsl): New inline function.
+
 1999-03-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* NEWS: Modified.

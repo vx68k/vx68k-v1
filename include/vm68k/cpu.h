@@ -40,6 +40,13 @@ namespace vm68k
       return value >= M >> 1 ? -(int) (M - value) : (int) value;
     }
 
+  inline int32 extsl(uint32 value)
+    {
+      const uint32 M = 1u << 32;
+      value &= M - 1;
+      return value >= M >> 1 ? -(int32) (M - value) : (int32) value;
+    }
+
   class status_register
   {
   private:
