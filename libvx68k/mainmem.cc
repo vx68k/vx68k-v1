@@ -47,6 +47,12 @@ using vm68k::bus_error_exception;
 using namespace vm68k::types;
 using namespace std;
 
+void
+main_memory::set_super_area(size_t n)
+{
+  super_area = n;
+}
+
 uint_type
 main_memory::get_16(int fc, uint32_type address) const
 {
@@ -108,7 +114,8 @@ main_memory::put_16(int fc, uint32_type address, uint_type value)
   address &= 0xfffffffeU;
   value &= 0xffff;
 
-  if (address >= end)
+  if (address >= end
+      || fc != vm68k::SUPER_DATA && address < super_area)
     throw bus_error_exception(false, fc, address);
 
   uint32_type i = address / 2;
@@ -121,7 +128,8 @@ main_memory::put_8(int fc, uint32_type address, unsigned int value)
   address &= 0xffffffffU;
   value &= 0xff;
 
-  if (address >= end)
+  if (address >= end
+      || fc != vm68k::SUPER_DATA && address < super_area)
     throw bus_error_exception(false, fc, address);
 
   uint32_type i = address / 2;
@@ -141,7 +149,8 @@ main_memory::put_32(int fc, uint32_type address, uint32_type value)
   address &= 0xfffffffcU;
   value &= 0xffffffffU;
 
-  if (address >= end)
+  if (address >= end
+      || fc != vm68k::SUPER_DATA && address < super_area)
     throw bus_error_exception(false, fc, address);
 
   uint32_type i = address / 2;

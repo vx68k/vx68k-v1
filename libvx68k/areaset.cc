@@ -1,4 +1,4 @@
-/* vx68k - Virtual X68000
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,7 @@
 #endif
 
 using vx68k::area_set;
+using vm68k::bus_error_exception;
 using namespace vm68k::types;
 using namespace std;
 
@@ -54,19 +55,38 @@ area_set::get_8(int fc, uint32_type address) const
 }
 
 void
-area_set::put_16(int, uint32_type, uint_type)
+area_set::put_8(int fc, uint32_type address, unsigned int value)
 {
+  address &= 0xffffffffu;
+  value &= 0xffu;
 #ifdef HAVE_NANA_H
-  L("class area_set: FIXME: `put_16' not implemented\n");
+  L("class area_set: put_8: fc=%d address=0x%08lx value=0x%02x\n",
+    fc, (unsigned long) address, value);
 #endif
+
+  I(fc != vm68k::SUPER_PROGRAM);
+  if (fc != vm68k::SUPER_DATA)
+    throw bus_error_exception(false, fc, address);
+
+  uint_type i = address & 0x1fff;
+  switch (i)
+    {
+    case 0x1:
+      {
+	uint32_type area = uint32_type(value + 1) * 0x2000;
+	_mm->set_super_area(area);
+	break;
+      }
+
+    default:
+      throw bus_error_exception(false, fc, address);
+    }
 }
 
 void
-area_set::put_8(int, uint32_type, uint_type)
+area_set::put_16(int fc, uint32_type address, uint_type value)
 {
-#ifdef HAVE_NANA_H
-  L("class area_set: FIXME: `put_8' not implemented\n");
-#endif
+  this->put_8(fc, address / 2 * 2 + 1, value);
 }
 
 area_set::area_set(main_memory *mm)

@@ -1,5 +1,13 @@
 2000-08-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/areaset.cc: Modify comments.
+	(put_8): Moved before put_16.
+	(put_8): Set the supervisor area in _mm.
+	(put_16): Implement.
+
+	* libvx68k/mainmem.cc (set_super_area): New function.
+	(put_16, put_8, put_32): Add a test for the supervisor area.
+
 	* TODO: Modified.
 
 	* libvx68k/mainmem.cc: Use GNU Nana.  Include <vx68k/memory.h>
