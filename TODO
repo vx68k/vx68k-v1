@@ -1,6 +1,8 @@
 To-Do List for Virtual X68000
 
-$Date: Thu, 18 Nov 1999 21:10:00 +0900 $
+$Date: Thu, 18 Nov 1999 21:10:40 +0900 $
+
+* Add comments about version information of libvm68k.la.
 
 * Modify vx68k.texi generation as rglclock does.
 
