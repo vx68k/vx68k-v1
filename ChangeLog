@@ -1,5 +1,11 @@
 1999-03-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* main.cc: Modify comments.
+	(_): New macro.
+	(parse_options): New function.
+	(main): Parse options via parse_options and handle options.
+	(main): Handle unhandled exceptions.
+
 	* README: Modified.
 
 	* libvm68k/execunit.cc (bsr): Print absolute address.
