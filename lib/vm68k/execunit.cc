@@ -488,6 +488,8 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
+    if (count == 0)
+      count = 8;
 #ifdef L
     L(" asll #%u", count);
     L(",%%d%u\n", reg1);
@@ -525,6 +527,8 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
+    if (count == 0)
+      count = 8;
 #ifdef L
     L(" asrl #%u", count);
     L(",%%d%u\n", reg1);
@@ -1916,7 +1920,7 @@ namespace
     sint32_type value2 = extsl(c.fetchl(2));
     Destination ea1(op & 0x7, 2 + 4);
 #ifdef L
-    L(" oril #0x%x", (unsigned long) value2);
+    L(" oril #0x%lx", (unsigned long) value2);
     L(",%s\n", ea1.textl(c));
 #endif
 
@@ -1972,6 +1976,8 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
+    if (count == 0)
+      count = 8;
 #ifdef L
     L(" rolw #%u", count);
     L(",%%d%u\n", reg1);
@@ -1991,6 +1997,8 @@ namespace
   roll_i(uint_type op, context &c, instruction_data *data)
   {
     unsigned int count = op >> 9 & 0x7;
+    if (count == 0)
+      count = 8;
     data_register ea1(op & 0x7, 2);
 #ifdef L
     L(" roll #%u", count);
@@ -2012,6 +2020,8 @@ namespace
   rorw_i(uint_type op, context &c, instruction_data *data)
   {
     unsigned int count = op >> 9 & 0x7;
+    if (count == 0)
+      count = 8;
     data_register ea1(op & 0x7, 2);
 #ifdef L
     L(" rorw #%u", count);
@@ -2026,6 +2036,52 @@ namespace
     ea1.finishw(c);
 
     c.regs.pc += 2 + ea1.isize(2);
+  }
+
+  void
+  roxrw_i(uint_type op, context &c, instruction_data *data)
+  {
+    unsigned int count = op >> 9 & 0x7;
+    if (count == 0)
+      count = 8;
+    data_register ea1(op & 0x7, 2);
+#ifdef L
+    L(" roxrw #%u", count);
+    L(",%s\n", ea1.textw(c));
+#endif
+
+    sint_type value1 = ea1.getw(c);
+    sint_type value = extsw((uint_type(value1) & 0xffffu) >> count
+			    | c.regs.sr.x() << 16 - count
+			    | uint_type(value1) << 17 - count);
+    ea1.putw(c, value);
+    c.regs.sr.set_cc(value);	// FIXME.
+    ea1.finishw(c);
+
+    c.regs.pc += 2 + ea1.isize(2);
+  }
+
+  void
+  roxrl_i(uint_type op, context &c, instruction_data *data)
+  {
+    unsigned int count = op >> 9 & 0x7;
+    if (count == 0)
+      count = 8;
+    data_register ea1(op & 0x7, 2);
+#ifdef L
+    L(" roxrl #%u", count);
+    L(",%s\n", ea1.textl(c));
+#endif
+
+    sint32_type value1 = ea1.getl(c);
+    sint32_type value = extsl((uint32_type(value1) & 0xffffffffu) >> count
+			      | uint32_type(c.regs.sr.x()) << 32 - count
+			      | uint32_type(value1) << 33 - count);
+    ea1.putl(c, value);
+    c.regs.sr.set_cc(value);	// FIXME.
+    ea1.finishl(c);
+
+    c.regs.pc += 2 + ea1.isize(4);
   }
 
   void
@@ -3115,10 +3171,12 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0xd1fc, 0x0e00, &addal<immediate>);
   eu.set_instruction(0xe008, 0x0e07, &lsrb_i);
   eu.set_instruction(0xe048, 0x0e07, &lsrw_i);
+  eu.set_instruction(0xe050, 0x0e07, &roxrw_i);
   eu.set_instruction(0xe058, 0x0e07, &rorw_i);
   eu.set_instruction(0xe068, 0x0e07, &lsrw_r);
   eu.set_instruction(0xe080, 0x0e07, &asrl_i);
   eu.set_instruction(0xe088, 0x0e07, &lsrl_i);
+  eu.set_instruction(0xe090, 0x0e07, &roxrl_i);
   eu.set_instruction(0xe0a0, 0x0e07, &asrl_r);
   eu.set_instruction(0xe0a8, 0x0e07, &lsrl_r);
   eu.set_instruction(0xe108, 0x0e07, &lslb_i);

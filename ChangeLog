@@ -1,5 +1,18 @@
 1999-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (oril): Fix debug message.
+	(roxrw_i, roxrl_i): New function.
+	(asll_i, asrl_i, rolw_i, roll_i, rorw_i): Fix bit count.
+	(install_instructions): Add new handlers.
+
+	* lib/vm68k/statusreg.cc (set_cc_sub): Rewrite code to set x_eval
+	and x_values.
+	(set_cc_asr, set_cc_lsl): Set x_eval and x_values too.
+	(status_register): Initialize x_eval.
+
+	* include/vm68k/cpu.h (cass status_register): Add members x_eval,
+	x_values, and x.
+
 	* lib/vx68k/doscontext.cc (start): Add catch for bus_error.
 
 	* lib/vm68k/execunit.cc (andib, oril): New function.

@@ -96,32 +96,35 @@ status_register::set_cc_cmp(sint32_type r, sint32_type d, sint32_type s)
 void
 status_register::set_cc_sub(sint32_type r, sint32_type d, sint32_type s)
 {
-  // FIXME: The X bit must change.
-  set_cc_cmp(r, d, s);
+  x_eval = cc_eval = &cmp_cc_eval;
+  x_values[0] = cc_values[0] = r;
+  x_values[1] = cc_values[1] = d;
+  x_values[2] = cc_values[2] = s;
 }
 
 void
 status_register::set_cc_asr(sint32_type r, sint32_type d, uint_type s)
 {
-  cc_eval = &asr_cc_eval;
-  cc_values[0] = r;
-  cc_values[1] = d;
-  cc_values[2] = s;
+  x_eval = cc_eval = &asr_cc_eval;
+  x_values[0] = cc_values[0] = r;
+  x_values[1] = cc_values[1] = d;
+  x_values[2] = cc_values[2] = s;
 }
 
 void
 status_register::set_cc_lsl(sint32_type r, sint32_type d, uint_type s)
 {
-  cc_eval = &lsl_cc_eval;
-  cc_values[0] = r;
-  cc_values[1] = d;
-  cc_values[2] = s;
+  x_eval = cc_eval = &lsl_cc_eval;
+  x_values[0] = cc_values[0] = r;
+  x_values[1] = cc_values[1] = d;
+  x_values[2] = cc_values[2] = s;
 }
 
 const cc_evaluator *const status_register::common_cc_eval = &::common_cc_eval;
 
 status_register::status_register()
   : cc_eval(common_cc_eval),
+    x_eval(common_cc_eval),
     value(S)
 {
 }

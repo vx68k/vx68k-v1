@@ -72,6 +72,8 @@ namespace vm68k
   private:
     const cc_evaluator *cc_eval;
     sint32_type cc_values[3];
+    const cc_evaluator *x_eval;
+    sint32_type x_values[3];
     uint16 value;
   public:
     status_register();
@@ -100,6 +102,11 @@ namespace vm68k
       {return !le();}
     bool le() const
       {return cc_eval->le(cc_values);}
+
+  public:
+    uint_type x() const
+      {return x_eval->cs(x_values) ? 1 : 0;}
+
   public:
     /* Sets the condition codes by a result.  */
     void set_cc(sint32_type r)
