@@ -93,6 +93,11 @@ void putl (void *, uint32);
     address_space ();
     void set_pages (size_t begin, size_t end, memory_page *);
 
+  protected:
+    /* Finds a page that contains canonical address ADDRESS.  */
+    memory_page *find_page(uint32_type address) const
+      {return page_table[address >> PAGE_SHIFT];}
+
   public:
     /* Returns one byte at address ADDRESS in this address space.  */
     uint_type getb(int fc, uint32_type address) const
@@ -149,11 +154,6 @@ void putl (void *, uint32);
 
     void write (int, uint32, const void *, size_t);
     size_t puts(int, uint32, const char *);
-
-  protected:
-    /* Finds a page that contains canonical address ADDRESS.  */
-    memory_page *find_page(uint32_type address) const
-      {return page_table[address >> PAGE_SHIFT];}
 
   private:
     bus_error_page default_page;

@@ -1,5 +1,8 @@
 1999-06-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/memory.h (class address_space): Move find_page for
+	possibly better optimization.
+
 	* NEWS: Modified.
 
 	* lib/vm68k/execunit.cc (bclrl_i): Fix log message.
