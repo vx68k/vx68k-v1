@@ -6,6 +6,8 @@
 	(run): Moved.
 	(create_window): Create the main window only if not created.
 	Reform code.
+	(handle_run_command): New function.
+	(create_window): Add new menu item.
 
 2000-02-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 

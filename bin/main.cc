@@ -275,6 +275,13 @@ vx68k_app::show_about_dialog()
 
 namespace
 {
+  /* Handles a `run' command.  */
+  void
+  handle_run_command(gpointer data, guint i, GtkWidget *item) throw ()
+  {
+    g_message("`run' command is not implemented yet");
+  }
+
   /* Handles a `FD load' command.  */
   void
   handle_fd_load_command(gpointer data, guint i, GtkWidget *item) throw ()
@@ -318,7 +325,9 @@ vx68k_app::create_window()
 	    = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<Window>", NULL);
 #define ITEM_FACTORY_CALLBACK(f) (reinterpret_cast<GtkItemFactoryCallback>(f))
 	  GtkItemFactoryEntry entries[]
-	    = {{_("/_File/FD _0/_Load..."), NULL,
+	    = {{_("/_File/_Run..."), NULL,
+		ITEM_FACTORY_CALLBACK(&handle_run_command), 0, "<Item>"},
+	       {_("/_File/FD _0/_Load..."), NULL,
 		ITEM_FACTORY_CALLBACK(&handle_fd_load_command), 0, "<Item>"},
 	       {_("/_File/FD _0/_Eject"), NULL,
 		ITEM_FACTORY_CALLBACK(&handle_fd_eject_command), 0, "<Item>"},
