@@ -1,19 +1,19 @@
 Virtual X68000 User-Visible Changes
 
-$Date: Thu, 01 Jul 1999 20:58:29 +0900 $
+$Date: Thu, 08 Jul 1999 19:40:58 +0900 $
 
 Version 0.35
 
-* CPU core changes
+* Changes in M68000 core
 
 ** Some of condition codes are implemented.
 
-** 534 instruction handlers are implemented though some do not update
+** 561 instruction handlers are implemented though some do not update
 the condition codes properly.
 
-* X68000 machine layer changes
+* Changes in X68000 machine layer
 
-* Human68k DOS layer changes
+* Changes in Human68k DOS layer
 
 ** 23 DOS-call handlers are partially implemented.
 

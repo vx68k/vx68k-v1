@@ -1,3 +1,11 @@
+1999-07-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (orb, subql): New functions.
+	(subql_d, subql_a, movew_d_absl): #if out the entire functions.
+	(install_instructions): Add new handlers.
+
 1999-07-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/allocator.cc (memory_allocator): Set root_block.
