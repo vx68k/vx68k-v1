@@ -1,5 +1,8 @@
 1999-10-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vx68k/dos.cc (dos_super): New function.
+	(dos): Install dos_super.
+
 	* vx68k/doscontext.cc (start): Clear the supervisor state.
 	(exit): Add comments.
 

@@ -445,6 +445,42 @@ namespace
     ec.regs.pc += 2;
   }
 
+  /* Handles DOS call _SUPER.  */
+  void
+  dos_super(uint_type op, context &c, instruction_data *data)
+  {
+    uint32_type sp = c.regs.a[7];
+    uint32_type stack = c.mem->getl(SUPER_DATA, sp + 0);
+#ifdef L
+    L(" DOS _SUPER\n");
+#endif
+
+    if (stack != 0)
+      {
+	if (c.supervisor_state())
+	  {
+	    c.regs.usp = c.regs.a[7];
+	    c.regs.a[7] = stack;
+	    c.set_supervisor_state(false);
+	  }
+      }
+    else
+      {
+	if (c.supervisor_state())
+	  {
+	    c.regs.d[0] = uint32_type(-26);
+	  }
+	else
+	  {
+	    c.set_supervisor_state(true);
+	    c.regs.d[0] = c.regs.a[7];
+	    c.regs.a[7] = c.regs.usp;
+	  }
+      }
+
+    c.regs.pc += 2;
+  }
+
   void
   dos_vernum(uint_type op, context &ec, instruction_data *data)
   {
@@ -502,6 +538,7 @@ dos::dos(machine *m)
   eu->set_instruction(0xff0d, 0, &dos_fflush, this);
   eu->set_instruction(0xff1b, 0, &dos_fgetc, this);
   eu->set_instruction(0xff1e, 0, &dos_fputs, this);
+  eu->set_instruction(0xff20, 0, &dos_super, this);
   eu->set_instruction(0xff25, 0, &dos_intvcs, this);
   eu->set_instruction(0xff27, 0, &dos_gettim2, this);
   eu->set_instruction(0xff2a, 0, &dos_getdate, this);
