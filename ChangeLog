@@ -1,5 +1,22 @@
 2000-08-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/mainmem.cc: Use GNU Nana.  Include <vx68k/memory.h>
+	instead.
+	(get_16): Moved before get_8.
+	(put_16): Moved before put_8.
+	(get_16, get_8, get_32, put_16, put_8, put_32): Reconstruct code.
+	(main_memory): Use calloc for data.  Also change the destructor.
+	(main_memory): Initialize the new member.
+
+	* include/vx68k/machine.h (class main_memory): Removed.
+
+	* include/vx68k/memory.h (class main_memory): Moved from
+	machine.h.
+	(class main_memory): Add new member super_area, and
+	set_super_area.
+	(class main_memory): Rename member array to data.  Also change all
+	users.
+
 	* TODO: Modified.
 
 2000-08-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>

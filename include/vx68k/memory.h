@@ -1,4 +1,5 @@
-/* vx68k - Virtual X68000 (-*- C++ -*-)
+/* -*- C++ -*- */
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
@@ -32,8 +33,6 @@ namespace vx68k
   using namespace vm68k::types;
   using namespace std;
 
-  class main_memory;
-
   /* Interface to console.  */
   struct console
   {
@@ -42,6 +41,39 @@ namespace vx68k
 
     virtual void get_b16_image(unsigned int, unsigned char *, size_t) const = 0;
     virtual void get_k16_image(unsigned int, unsigned char *, size_t) const = 0;
+  };
+
+  /* Main memory.  This memory is mapped to the address range from 0
+     to 0xc00000.  */
+  class main_memory: public memory
+  {
+  private:
+    /* End of available memory.  */
+    uint32_type end;
+
+    /* End of supervisor area.  */
+    uint32_type super_area;
+
+    /* Memory contents.  */
+    unsigned short *data;
+
+  public:
+    explicit main_memory(size_t n);
+    ~main_memory();
+
+  public:
+    /* Reads data from this object.  */
+    uint_type get_16(int, uint32_type) const;
+    unsigned int get_8(int, uint32_type) const;
+    uint32_type get_32(int, uint32_type) const;
+
+    /* Writes data to this object.  */
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, unsigned int);
+    void put_32(int, uint32_type, uint32_type);
+
+  public:
+    void set_super_area(size_t n);
   };
 
   /* Raster iterator for the text VRAM.  This class is used by the

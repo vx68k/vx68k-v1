@@ -36,27 +36,6 @@ namespace vx68k
   /* Number of FD units.  */
   const size_t NFDS = 2;
 
-  /* X68000 main memory.  */
-  class main_memory: public memory
-  {
-  private:
-    uint32_type end;
-    unsigned short *array;
-
-  public:
-    explicit main_memory(size_t);
-    ~main_memory();
-
-  public:
-    uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
-    uint32_type get_32(int, uint32_type) const;
-
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
-    void put_32(int, uint32_type, uint32_type);
-  };
-
   /* SRAM.  */
   class sram: public memory
   {

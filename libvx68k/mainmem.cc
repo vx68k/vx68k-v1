@@ -1,4 +1,4 @@
-/* vx68k - Virtual X68000
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 #undef const
 #undef inline
 
-#include <vx68k/machine.h>
+#include <vx68k/memory.h>
 
 #ifdef DUMP_MEMORY
 # ifdef HAVE_FCNTL_H
@@ -32,104 +32,143 @@
 # endif
 #endif
 
-using namespace vx68k;
+#include <cstdlib>
+
+#ifdef HAVE_NANA_H
+# include <nana.h>
+# include <cstdio>
+#else
+# include <cassert>
+# define I assert
+#endif
+
+using vx68k::main_memory;
+using vm68k::bus_error_exception;
+using namespace vm68k::types;
 using namespace std;
-
-uint_type
-main_memory::get_8(int fc, uint32_type address) const
-{
-  if (address >= end)
-    {
-      generate_bus_error(true, fc, address);
-      abort();
-    }
-
-  uint_type w = array[address >> 1];
-  return address & 0x1 != 0 ? w & 0xffu : w >> 8;
-}
 
 uint_type
 main_memory::get_16(int fc, uint32_type address) const
 {
-  // Address error?
+  address &= 0xfffffffeU;
+
   if (address >= end)
     throw bus_error_exception(true, fc, address);
 
   uint32_type i = address / 2;
-  uint_type value = array[i];
+  uint_type value = data[i];
+  I(value <= 0xffff);
+
   return value;
+}
+
+unsigned int
+main_memory::get_8(int fc, uint32_type address) const
+{
+  address &= 0xffffffffU;
+
+  if (address >= end)
+    throw bus_error_exception(true, fc, address);
+
+  uint32_type i = address / 2;
+  if (address % 2 != 0)
+    {
+      unsigned int value = data[i] & 0xff;
+      return value;
+    }
+  else
+    {
+      unsigned int value = data[i] >> 8;
+      I(value <= 0xff);
+      return value;
+    }
 }
 
 uint32_type
 main_memory::get_32(int fc, uint32_type address) const
 {
-  // Address error?
+  address &= 0xfffffffcU;
+
   if (address >= end)
     throw bus_error_exception(true, fc, address);
 
   uint32_type i = address / 2;
-  uint32_type value = uint32_type(array[i]) << 16 | array[i + 1];
+  uint_type value0 = data[i];
+  uint_type value1 = data[i + 1];
+  I(value0 <= 0xffff);
+  I(value1 <= 0xffff);
+
+  uint32_type value = uint32_type(value0) << 16 | value1;
   return value;
-}
-
-void
-main_memory::put_8(int fc, uint32_type address, uint_type value)
-{
-  if (address >= end)
-    {
-      generate_bus_error(false, fc, address);
-      abort();
-    }
-
-  uint_type w = array[address >> 1];
-  if (address & 0x1 != 0)
-    w = w & ~0xffu | value & 0xffu;
-  else
-    w = value << 8 | w & 0xffu;
-  array[address >> 1] = w & 0xffffu;
 }
 
 void
 main_memory::put_16(int fc, uint32_type address, uint_type value)
 {
-  // Address error?
+  address &= 0xfffffffeU;
+  value &= 0xffff;
+
   if (address >= end)
     throw bus_error_exception(false, fc, address);
 
   uint32_type i = address / 2;
-  array[i] = value & 0xffffu;
+  data[i] = value;
+}
+
+void
+main_memory::put_8(int fc, uint32_type address, unsigned int value)
+{
+  address &= 0xffffffffU;
+  value &= 0xff;
+
+  if (address >= end)
+    throw bus_error_exception(false, fc, address);
+
+  uint32_type i = address / 2;
+  if (address % 2 != 0)
+    {
+      data[i] = data[i] & 0xff00 | value;
+    }
+  else
+    {
+      data[i] = data[i] & 0xff | value << 8;
+    }
 }
 
 void
 main_memory::put_32(int fc, uint32_type address, uint32_type value)
 {
-  // Address error?
+  address &= 0xfffffffcU;
+  value &= 0xffffffffU;
+
   if (address >= end)
     throw bus_error_exception(false, fc, address);
 
   uint32_type i = address / 2;
-  array[i] = value >> 16 & 0xffffu;
-  array[i + 1] = value & 0xffffu;
+  data[i] = value >> 16;
+  data[i + 1] = value & 0xffffu;
 }
-
+
 main_memory::~main_memory()
 {
 #ifdef DUMP_MEMORY
   int fd = open("dump", O_WRONLY | O_CREAT | O_TRUNC, 0666);
-  ::write(fd, array, end);
+  ::write(fd, data, end);
   close(fd);
 #endif
-  delete [] array;
+  free(data);
 }
 
 main_memory::main_memory(size_t n)
-  : end((n + 1u) & ~1u),
-    array(NULL)
+  : end((n + 1) / 2 * 2),
+    super_area(0),
+    data(NULL)
 {
-  array = new unsigned short [end >> 1];
+  data = static_cast<unsigned short *>(calloc(end / 2,
+					      sizeof (unsigned short)));
 #ifndef NDEBUG
-  // These ILLEGAL instructions makes the debug easy.
-  fill(array + 0, array + (end >> 1), 0x4afc);
+  // These ILLEGAL instructions makes debugging easy.
+  fill(data + 0, data + (end >> 1), 0x4afc);
 #endif
 }
 
