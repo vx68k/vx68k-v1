@@ -173,6 +173,7 @@ namespace
     c.regs.pc += 2 + ea1.extension_size();
   }
 
+  /* Handles M68000 ADDI instruction.  */
   template <class Size, class Destination> void
   m68k_addi(uint_type op, context &c, instruction_data *data)
   {
@@ -195,111 +196,57 @@ namespace
     c.regs.pc += 2 + Size::aligned_value_size() + ea1.extension_size();
   }
 
-  template <class Destination> void
-  addqb(unsigned int op, context &ec, instruction_data *data)
-    {
-      Destination ea1(op & 0x7, 2);
-      int value2 = op >> 9 & 0x7;
-      if (value2 == 0)
-	value2 = 8;
+  /* Handles M68000 ADDQ instruction.  */
+  template <class Size, class Destination> void
+  m68k_addq(uint_type op, context &c, instruction_data *data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    Destination ea1(op & 0x7, 2);
+    int value2 = op >> 9 & 0x7;
+    if (value2 == 0)
+      value2 = 8;
 #ifdef TRACE_INSTRUCTIONS
-      L(" addqb #%d", value2);
-      L(",%s\n", ea1.textb(ec));
+    L(" addq%s #%d", Size::suffix(), value2);
+    L(",%s\n", ea1.text(c));
 #endif
 
-      int value1 = ea1.getb(ec);
-      int value = extsb(value1 + value2);
-      ea1.putb(ec, value);
-      ea1.finishb(ec);
-      ec.regs.sr.set_cc(value); // FIXME.
+    svalue_type value1 = ea1.get(c);
+    svalue_type value = Size::svalue(Size::get(value1 + value2));
+    ea1.put(c, value);
+    c.regs.sr.set_cc(value);	// FIXME.
+    ea1.finish(c);
 
-      ec.regs.pc += 2 + ea1.isize(2);
-    }
+    c.regs.pc += 2 + ea1.extension_size();
+  }
 
-  template <class Destination> void
-  addqw(unsigned int op, context &ec, instruction_data *data)
-    {
-      Destination ea1(op & 0x7, 2);
-      int value2 = op >> 9 & 0x7;
-      if (value2 == 0)
-	value2 = 8;
+  /* Handles M68000 ADDQ instruction (address register).  */
+  template <class Size> void
+  m68k_addq_a(uint_type op, context &c, instruction_data *data)
+  {
+    typedef long_word_size::uvalue_type uvalue_type;
+    typedef long_word_size::svalue_type svalue_type;
+
+    unsigned int reg1 = op & 0x7;
+    int value2 = op >> 9 & 0x7;
+    if (value2 == 0)
+      value2 = 8;
 #ifdef TRACE_INSTRUCTIONS
-      L(" addqw #%d", value2);
-      L(",%s\n", ea1.textw(ec));
+    L(" addq%s #%d", Size::suffix(), value2);
+    L(",%%a%u\n", reg1);
 #endif
 
-      int value1 = ea1.getw(ec);
-      int value = extsw(value1 + value2);
-      ea1.putw(ec, value);
-      ea1.finishw(ec);
-      ec.regs.sr.set_cc(value); // FIXME.
+    // The condition codes are not affected by this instruction.
+    svalue_type value1 = long_word_size::get(c.regs.a[reg1]);
+    svalue_type value
+      = long_word_size::svalue(long_word_size::get(value1 + value2));
+    long_word_size::put(c.regs.a[reg1], value);
 
-      ec.regs.pc += 2 + ea1.isize(2);
-    }
+    c.regs.pc += 2;
+  }
 
-  template <> void
-  addqw<address_register>(unsigned int op, context &ec, instruction_data *data)
-    {
-      address_register ea1(op & 0x7, 2);
-      int value2 = op >> 9 & 0x7;
-      if (value2 == 0)
-	value2 = 8;
-#ifdef TRACE_INSTRUCTIONS
-      L(" addqw #%d", value2);
-      L(",%s\n", ea1.textw(ec));
-#endif
-
-      // XXX: The entire register is used.
-      sint32_type value1 = ea1.getl(ec);
-      sint32_type value = extsl(value1 + value2);
-      ea1.putl(ec, value);
-      ea1.finishl(ec);
-      // XXX: The condition codes are not affected.
-
-      ec.regs.pc += 2 + ea1.isize(2);
-    }
-
-  template <class Destination> void
-  addql(unsigned int op, context &ec, instruction_data *data)
-    {
-      Destination ea1(op & 0x7, 2);
-      int value2 = op >> 9 & 0x7;
-      if (value2 == 0)
-	value2 = 8;
-#ifdef TRACE_INSTRUCTIONS
-      L(" addql #%d", value2);
-      L(",%s\n", ea1.textl(ec));
-#endif
-
-      sint32_type value1 = ea1.getl(ec);
-      sint32_type value = extsl(value1 + value2);
-      ea1.putl(ec, value);
-      ea1.finishl(ec);
-      ec.regs.sr.set_cc(value); // FIXME.
-
-      ec.regs.pc += 2 + ea1.isize(4);
-    }
-
-  template <> void
-  addql<address_register>(unsigned int op, context &ec, instruction_data *data)
-    {
-      address_register ea1(op & 0x7, 2);
-      int value2 = op >> 9 & 0x7;
-      if (value2 == 0)
-	value2 = 8;
-#ifdef TRACE_INSTRUCTIONS
-      L(" addql #%d", value2);
-      L(",%s\n", ea1.textl(ec));
-#endif
-
-      sint32_type value1 = ea1.getl(ec);
-      sint32_type value = extsl(value1 + value2);
-      ea1.putl(ec, value);
-      ea1.finishl(ec);
-      // XXX: The condition codes are not affected.
-
-      ec.regs.pc += 2 + ea1.isize(4);
-    }
+  /* FIXME m68k_addx is missing.  */
 
   template <class Source> void
   andb(uint_type op, context &c, instruction_data *data)
@@ -2916,29 +2863,48 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x4ef9, 0x0000, &jmp<absolute_long>);
   eu.set_instruction(0x4efa, 0x0000, &jmp<disp_pc>);
   eu.set_instruction(0x4efb, 0x0000, &jmp<indexed_pc_indirect>);
-  eu.set_instruction(0x5000, 0x0e07, &addqb<data_register>);
-  eu.set_instruction(0x5010, 0x0e07, &addqb<indirect>);
-  eu.set_instruction(0x5018, 0x0e07, &addqb<postinc_indirect>);
-  eu.set_instruction(0x5020, 0x0e07, &addqb<predec_indirect>);
-  eu.set_instruction(0x5028, 0x0e07, &addqb<disp_indirect>);
-  eu.set_instruction(0x5030, 0x0e07, &addqb<indexed_indirect>);
-  eu.set_instruction(0x5039, 0x0e00, &addqb<absolute_long>);
-  eu.set_instruction(0x5040, 0x0e07, &addqw<data_register>);
-  eu.set_instruction(0x5048, 0x0e07, &addqw<address_register>);
-  eu.set_instruction(0x5050, 0x0e07, &addqw<indirect>);
-  eu.set_instruction(0x5058, 0x0e07, &addqw<postinc_indirect>);
-  eu.set_instruction(0x5060, 0x0e07, &addqw<predec_indirect>);
-  eu.set_instruction(0x5068, 0x0e07, &addqw<disp_indirect>);
-  eu.set_instruction(0x5070, 0x0e07, &addqw<indexed_indirect>);
-  eu.set_instruction(0x5079, 0x0e00, &addqw<absolute_long>);
-  eu.set_instruction(0x5080, 0x0e07, &addql<data_register>);
-  eu.set_instruction(0x5088, 0x0e07, &addql<address_register>);
-  eu.set_instruction(0x5090, 0x0e07, &addql<indirect>);
-  eu.set_instruction(0x5098, 0x0e07, &addql<postinc_indirect>);
-  eu.set_instruction(0x50a0, 0x0e07, &addql<predec_indirect>);
-  eu.set_instruction(0x50a8, 0x0e07, &addql<disp_indirect>);
-  eu.set_instruction(0x50b0, 0x0e07, &addql<indexed_indirect>);
-  eu.set_instruction(0x50b9, 0x0e00, &addql<absolute_long>);
+  eu.set_instruction(0x5000, 0x0e07, &m68k_addq<byte_size, byte_d_register>);
+  eu.set_instruction(0x5010, 0x0e07, &m68k_addq<byte_size, byte_indirect>);
+  eu.set_instruction(0x5018, 0x0e07,
+		     &m68k_addq<byte_size, byte_postinc_indirect>);
+  eu.set_instruction(0x5020, 0x0e07,
+		     &m68k_addq<byte_size, byte_predec_indirect>);
+  eu.set_instruction(0x5028, 0x0e07,
+		     &m68k_addq<byte_size, byte_disp_indirect>);
+  eu.set_instruction(0x5030, 0x0e07,
+		     &m68k_addq<byte_size, byte_index_indirect>);
+  eu.set_instruction(0x5038, 0x0e00, &m68k_addq<byte_size, byte_abs_short>);
+  eu.set_instruction(0x5039, 0x0e00, &m68k_addq<byte_size, byte_abs_long>);
+  eu.set_instruction(0x5040, 0x0e07, &m68k_addq<word_size, word_d_register>);
+  eu.set_instruction(0x5048, 0x0e07, &m68k_addq_a<word_size>);
+  eu.set_instruction(0x5050, 0x0e07, &m68k_addq<word_size, word_indirect>);
+  eu.set_instruction(0x5058, 0x0e07,
+		     &m68k_addq<word_size, word_postinc_indirect>);
+  eu.set_instruction(0x5060, 0x0e07,
+		     &m68k_addq<word_size, word_predec_indirect>);
+  eu.set_instruction(0x5068, 0x0e07,
+		     &m68k_addq<word_size, word_disp_indirect>);
+  eu.set_instruction(0x5070, 0x0e07,
+		     &m68k_addq<word_size, word_index_indirect>);
+  eu.set_instruction(0x5078, 0x0e00, &m68k_addq<word_size, word_abs_short>);
+  eu.set_instruction(0x5079, 0x0e00, &m68k_addq<word_size, word_abs_long>);
+  eu.set_instruction(0x5080, 0x0e07,
+		     &m68k_addq<long_word_size, long_word_d_register>);
+  eu.set_instruction(0x5088, 0x0e07, &m68k_addq_a<long_word_size>);
+  eu.set_instruction(0x5090, 0x0e07,
+		     &m68k_addq<long_word_size, long_word_indirect>);
+  eu.set_instruction(0x5098, 0x0e07,
+		     &m68k_addq<long_word_size, long_word_postinc_indirect>);
+  eu.set_instruction(0x50a0, 0x0e07,
+		     &m68k_addq<long_word_size, long_word_predec_indirect>);
+  eu.set_instruction(0x50a8, 0x0e07,
+		     &m68k_addq<long_word_size, long_word_disp_indirect>);
+  eu.set_instruction(0x50b0, 0x0e07,
+		     &m68k_addq<long_word_size, long_word_index_indirect>);
+  eu.set_instruction(0x50b8, 0x0e00,
+		     &m68k_addq<long_word_size, long_word_abs_short>);
+  eu.set_instruction(0x50b9, 0x0e00,
+		     &m68k_addq<long_word_size, long_word_abs_long>);
   eu.set_instruction(0x50c0, 0x0007, &s_b<t, data_register>);
   eu.set_instruction(0x50d0, 0x0007, &s_b<t, indirect>);
   eu.set_instruction(0x50d8, 0x0007, &s_b<t, postinc_indirect>);

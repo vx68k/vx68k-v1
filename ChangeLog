@@ -1,5 +1,12 @@
 1999-11-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Updated.
+
+	* vm68k/execunit.cc (m68k_addq, m68k_addq_a): New functions.
+	(addqb, addqw, addql): Removed.
+	(install_instructions): Replace addqb, addqw, and addql using
+ 	m68k_addq and m68k_addq_a.
+
 	* include/vm68k/cpu.h (class byte_size, word_size): Truncate
  	the return types.
 
