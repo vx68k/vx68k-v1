@@ -59,6 +59,7 @@ dos::open(const char *name, unsigned int flag)
   static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
   if ((flag & 0xf) > 2)
     return -12;			// FIXME.
+  VL(("Opening %s\n", name));
   int fd = ::open(name, uflag[flag & 0xf]);
   if (fd == -1)
     return -2;			// FIXME: errno test.
@@ -227,7 +228,7 @@ namespace
       // FIXME.
       uint32 sp = ec->regs.a[7];
       uint32 name_address = ec->mem->getl(SUPER_DATA, sp + 0);
-      unsigned int flags = ec->mem->getw(SUPER_DATA, sp + 2);
+      unsigned int flags = ec->mem->getw(SUPER_DATA, sp + 4);
 
       char name[256];
       ec->mem->read(SUPER_DATA, name_address, name, 256);

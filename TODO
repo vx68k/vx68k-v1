@@ -1,8 +1,6 @@
 TO DO
 
-$Date: Fri, 19 Mar 1999 18:19:57 +0900 $
-
-* (&ec->regs.a0)[reg] seems not so portable.  Change them.
+$Date: Sat, 20 Mar 1999 21:44:04 +0900 $
 
 * Instructions must be implemented.
 
