@@ -72,8 +72,7 @@ exec_unit::run(context &c) const
 	}
 # endif
       LG(nana_instruction_trace, "| 0x%08lx (0x%04x)\n",
-	 long_word_size::uvalue(c.regs.pc) + 0UL,
-	 word_size::uvalue(c.fetch(word_size(), 0)));
+	 long_word_size::uvalue(c.regs.pc) + 0UL, c.ufetch(word_size(), 0));
 #endif
       step(c);
     }

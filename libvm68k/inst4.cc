@@ -330,8 +330,7 @@ namespace
   template <class Size, class Destination> void
   m68k_movem_r_m(uint_type op, context &c, unsigned long data)
   {
-    word_size::uvalue_type mask
-      = word_size::uvalue(c.fetch(word_size(), 2));
+    word_size::uvalue_type mask = c.ufetch(word_size(), 2);
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef HAVE_NANA_H
     L("\tmovem%s #%#x,%s\n", Size::suffix(), mask, ea1.text(c).c_str());
@@ -368,8 +367,7 @@ namespace
   m68k_movem_r_predec(uint_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
-    word_size::uvalue_type mask
-      = word_size::uvalue(c.fetch(word_size(), 2));
+    word_size::uvalue_type mask = c.ufetch(word_size(), 2);
 #ifdef HAVE_NANA_H
     L("\tmovem%s #%#x,%%a%u@-\n", Size::suffix(), mask, reg1);
 #endif
@@ -406,8 +404,7 @@ namespace
   template <class Size, class Source> void
   m68k_movem_m_r(uint_type op, context &c, unsigned long data)
   {
-    word_size::uvalue_type mask
-      = word_size::uvalue(c.fetch(word_size(), 2));
+    word_size::uvalue_type mask = c.ufetch(word_size(), 2);
     Source ea1(op & 0x7, 2 + word_size::aligned_value_size());
 #ifdef HAVE_NANA_H
     L("\tmovem%s %s,#%#x\n", Size::suffix(), ea1.text(c).c_str(), mask);
@@ -483,8 +480,7 @@ namespace
   m68k_movem_postinc_r(uint_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
-    word_size::uvalue_type mask
-      = word_size::uvalue(c.fetch(word_size(), 2));
+    word_size::uvalue_type mask = c.ufetch(word_size(), 2);
 #ifdef HAVE_NANA_H
     L("\tmovem%s %%a%u@+,#%#x\n", Size::suffix(), reg1, mask);
 #endif

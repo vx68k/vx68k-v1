@@ -100,8 +100,7 @@ namespace
   void
   m68k_andi_to_ccr(uint_type op, context &c, unsigned long data)
   {
-    byte_size::uvalue_type value2
-      = byte_size::uvalue(c.fetch(byte_size(), 2));
+    byte_size::uvalue_type value2 = c.ufetch(byte_size(), 2);
 #ifdef HAVE_NANA_H
     L("\tandi%s #%#x,%%ccr\n", byte_size::suffix(), value2);
 #endif
@@ -117,8 +116,7 @@ namespace
   void
   m68k_andi_to_sr(uint_type op, context &c, unsigned long data)
   {
-    word_size::uvalue_type value2
-      = word_size::uvalue(c.fetch(word_size(), 2));
+    word_size::uvalue_type value2 = c.ufetch(word_size(), 2);
 #ifdef HAVE_NANA_H
     L("\tandi%s #%#x,%%sr\n", word_size::suffix(), value2);
 #endif
@@ -161,8 +159,7 @@ namespace
   m68k_bclr_i(uint_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2 + 2);
-    unsigned int value2
-      = word_size::uvalue(c.fetch(word_size(), 2)) % Size::value_bit();
+    unsigned int value2 = c.ufetch(word_size(), 2) % Size::value_bit();
 #ifdef HAVE_NANA_H
     L("\tbclr%s #%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
@@ -202,8 +199,7 @@ namespace
   template <class Size, class Destination> void
   m68k_bset_i(uint_type op, context &c, unsigned long data)
   {
-    unsigned int value2
-      = word_size::uvalue(c.fetch(word_size(), 2)) % Size::value_bit();
+    unsigned int value2 = c.ufetch(word_size(), 2) % Size::value_bit();
     Destination ea1(op & 0x7, 2 + word_size::aligned_value_size());
 #ifdef HAVE_NANA_H
     L("\tbset%s #%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
@@ -246,8 +242,7 @@ namespace
   template <class Size, class Destination> void
   m68k_btst_i(uint_type op, context &c, unsigned long data)
   {
-    unsigned int value2
-      = word_size::uvalue(c.fetch(word_size(), 2)) % Size::value_bit();
+    unsigned int value2 = c.ufetch(word_size(), 2) % Size::value_bit();
     Destination ea1(op & 0x7, 2 + word_size::aligned_value_size());
 #ifdef HAVE_NANA_H
     L("\tbtst%s #%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
@@ -503,8 +498,7 @@ namespace
   void
   m68k_ori_to_ccr(uint_type op, context &c, unsigned long data)
   {
-    byte_size::uvalue_type value2
-      = byte_size::uvalue(c.fetch(byte_size(), 2));
+    byte_size::uvalue_type value2 = c.ufetch(byte_size(), 2);
 #ifdef HAVE_NANA_H
     L("\tori%s #%#x,%%ccr\n", byte_size::suffix(), value2);
 #endif
@@ -520,8 +514,7 @@ namespace
   void
   m68k_ori_to_sr(uint_type op, context &c, unsigned long data)
   {
-    word_size::uvalue_type value2
-      = word_size::uvalue(c.fetch(word_size(), 2));
+    word_size::uvalue_type value2 = c.ufetch(word_size(), 2);
 #ifdef HAVE_NANA_H
     L("\tori%s #%#x,%%sr\n", word_size::suffix(), value2);
 #endif

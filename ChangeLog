@@ -1,3 +1,19 @@
+2000-09-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/inst0.cc (m68k_andi_to_ccr, m68k_andi_to_sr,
+	m68k_bclr_i, m68k_bset_i, m68k_btst_i m68k_ori_to_ccr,
+	m68k_ori_to_sr): Use ufetch.
+
+	* libvm68k/inst4.cc (m68k_movem_r_m, m68k_movem_r_predec,
+	m68k_movem_m_r, m68k_movem_postinc_r): Use ufetch.
+
+	* include/vm68k/addressing.h [basic_index_indirect,
+	basic_index_pc_indirect] (address, text): Use ufetch for the
+	extention word.
+
+	* include/vm68k/cpu.h (class exec_unit): Move inline definition of
+	step out of the class definition.  Use ufetch.
+
 2000-09-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/systemrom.cc (iocs_b_recali): Print message only once.

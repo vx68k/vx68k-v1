@@ -386,7 +386,7 @@ namespace vm68k
     template <class Size> inline uint32_type
     basic_index_indirect<Size>::address(const context &c) const
     {
-      uint_type w = c.fetch(word_size(), offset);
+      uint_type w = c.ufetch(word_size(), offset);
       unsigned int r = w >> 12 & 0xf;
       uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
       if (w & 0x800)
@@ -404,7 +404,7 @@ namespace vm68k
     template <class Size> string
     basic_index_indirect<Size>::text(const context &c) const
     {
-      uint_type w = c.fetch(word_size(), offset);
+      uint_type w = c.ufetch(word_size(), offset);
       unsigned int r = w >> 12 & 0xf;
       char buf[64];
       if (r >= 8)
@@ -608,7 +608,7 @@ namespace vm68k
     template <class Size> inline uint32_type
     basic_index_pc_indirect<Size>::address(const context &c) const
     {
-      uint_type w = c.fetch(word_size(), offset);
+      uint_type w = c.ufetch(word_size(), offset);
       unsigned int r = w >> 12 & 0xf;
       uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
       if (w & 0x800)
@@ -626,7 +626,7 @@ namespace vm68k
     template <class Size> string
     basic_index_pc_indirect<Size>::text(const context &c) const
     {
-      uint_type w = c.fetch(word_size(), offset);
+      uint_type w = c.ufetch(word_size(), offset);
       unsigned int r = w >> 12 & 0xf;
       char buf[64];
       if (r >= 8)

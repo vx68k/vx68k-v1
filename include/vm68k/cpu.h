@@ -642,12 +642,17 @@ namespace vm68k
 
   public:
     /* Steps one instruction.  */
-    void step(context &c) const
-      {dispatch(c.fetch(word_size(), 0), c);}
+    void step(context &c) const;
 
     /* Starts the program.  */
     void run(context &c) const;
   };
+
+  inline void
+  exec_unit::step(context &c) const
+  {
+    dispatch(c.ufetch(word_size(), 0), c);
+  }
 } // vm68k
 
 #endif /* not _VM68K_CPU_H */
