@@ -1,5 +1,10 @@
 2000-08-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/gvideomem.cc: Use DL instead of L.
+
+	* libvm68k/Makefile.am (CLEANFILES): New macro.
+	(libvm68k.gdb): New target.
+
 	* libvx68k/opmmem.cc (check_timeouts, set_reg,
 	set_interrupt_enabled): Lock mutex.
 	(check_timeouts): Use function interrupt_enabled.
