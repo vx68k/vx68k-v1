@@ -1,6 +1,8 @@
 TO DO List for Virtual X68000
 
-$Date: Sun, 13 Aug 2000 01:51:39 +0900 $
+$Date: Mon, 14 Aug 2000 16:11:29 +0900 $
+
+* Implement the DMA controller.
 
 * Implement a mouse.
 

@@ -57,24 +57,22 @@ exec_unit::run(context &c) const
     {
       if (c.interrupted())
 	c.handle_interrupts();
-      else
-	{
+
 #ifdef HAVE_NANA_H
 # ifdef DUMP_REGISTERS
-	  for (unsigned int i = 0; i != 8; ++i)
-	    {
-	      LG(nana_instruction_trace,
-		 "| %%d%u = 0x%08lx, %%a%u = 0x%08lx\n",
-		 i, (unsigned long) c.regs.d[i],
-		 i, (unsigned long) c.regs.a[i]);
-	    }
-# endif
-	  LG(nana_instruction_trace, "| 0x%08lx (0x%04x)\n",
-	     (unsigned long) long_word_size::get(c.regs.pc),
-	     c.fetch(word_size(), 0));
-#endif
-	  step(c);
+      for (unsigned int i = 0; i != 8; ++i)
+	{
+	  LG(nana_instruction_trace,
+	     "| %%d%u = 0x%08lx, %%a%u = 0x%08lx\n",
+	     i, (unsigned long) c.regs.d[i],
+	     i, (unsigned long) c.regs.a[i]);
 	}
+# endif
+      LG(nana_instruction_trace, "| 0x%08lx (0x%04x)\n",
+	 (unsigned long) long_word_size::get(c.regs.pc),
+	 c.fetch(word_size(), 0));
+#endif
+      step(c);
     }
 }
 

@@ -212,6 +212,7 @@ system_rom::initialize(memory_address_space &as)
 
 namespace
 {
+  using vx68k::machine;
   using vm68k::byte_size;
   using vm68k::word_size;
   using vm68k::long_word_size;
@@ -679,6 +680,232 @@ namespace
 #endif
     fprintf(stderr, "iocs_defchr: FIXME: not implemented\n");
     c.regs.d[0] = 0;
+  }
+
+  /* Handles a _DMAMOVE call.  */
+  void
+  iocs_dmamove(context &c, unsigned long data)
+  {
+    unsigned int mode = byte_size::get(c.regs.d[1]);
+    uint32_type n = long_word_size::get(c.regs.d[2]);
+    uint32_type i = long_word_size::get(c.regs.a[1]);
+    uint32_type j = long_word_size::get(c.regs.a[2]);
+#ifdef HAVE_NANA_H
+    L("IOCS _DMAMOVE; %%d1:b=0x%02x %%d2=0x%08lx %%a1=0x%08lx %%a2=0x%08lx\n",
+      mode, n + 0UL, i + 0UL, j + 0UL);
+#endif
+
+    static const int increments[4] = {0, 1, -1, 0};
+    int i_inc = increments[mode & 0x3];
+    int j_inc = increments[mode >> 2 & 0x3];
+
+    if (mode >> 7 & 0x1)
+      {
+	// Copy from %a2@ to %a1@.
+	while (n-- > 0)
+	  {
+	    byte_size::put(*c.mem, SUPER_DATA, i,
+			   byte_size::get(*c.mem, SUPER_DATA, j));
+	    j += j_inc;
+	    i += i_inc;
+	  }
+      }
+    else
+      {
+	// Copy from %a1@ to %a2@.
+	while (n-- > 0)
+	  {
+	    byte_size::put(*c.mem, SUPER_DATA, j,
+			   byte_size::get(*c.mem, SUPER_DATA, i));
+	    i += i_inc;
+	    j += j_inc;
+	  }
+      }
+  }
+
+  /* Handles a _FNTADR call.  */
+  void
+  iocs_fntadr(context &c, unsigned long data)
+  {
+    uint_type ch = word_size::get(c.regs.d[1]);
+    uint32_type size = long_word_size::get(c.regs.d[2]);
+#ifdef HAVE_NANA_H
+    L("IOCS _FNTADR; %%d1:w=0x%04x %%d2=0x%08lx\n", ch, size + 0UL);
+#endif
+
+    unsigned int ch1 = ch >> 8;
+    unsigned int ch2 = ch & 0xff;
+    if (ch1 >= 0x81 && ch1 <= 0x9f || ch1 >= 0xe0 && ch1 <= 0xef)
+      {
+	if (ch1 >= 0xe0)
+	  ch1 -= 0x81 + (0xe0 - 0xa0);
+	else
+	  ch1 -= 0x81;
+
+	if (ch2 >= 0x80)
+	  ch2 -= 0x40 + 1;
+	else
+	  ch2 -= 0x40;
+
+	ch1 *= 2;
+	if (ch2 >= 94)
+	  {
+	    ch2 -= 94;
+	    ++ch1;
+	  }
+
+	ch1 += 0x21;
+	ch2 += 0x21;
+      }
+
+    if (ch1 != 0)
+      {
+	switch (size)
+	  {
+	  case 6:
+	    fprintf(stderr, "iocs_fntadr: FIXME: not implemented\n");
+	    long_word_size::put(c.regs.d[0],
+				machine::jisx0208_16_address(ch1, ch2));
+	    word_size::put(c.regs.d[1], 2 - 1);
+	    word_size::put(c.regs.d[2], 12 - 1);
+	    break;
+
+	  case 12:
+	    long_word_size::put(c.regs.d[0],
+				machine::jisx0208_24_address(ch1, ch2));
+	    word_size::put(c.regs.d[1], 3 - 1);
+	    word_size::put(c.regs.d[2], 24 - 1);
+	    break;
+
+	  default:
+	  case 8:
+	    long_word_size::put(c.regs.d[0],
+				machine::jisx0208_16_address(ch1, ch2));
+	    word_size::put(c.regs.d[1], 2 - 1);
+	    word_size::put(c.regs.d[2], 16 - 1);
+	    break;
+	  }
+      }
+    else
+      {
+	switch (size)
+	  {
+	  case 6:
+	    fprintf(stderr, "iocs_fntadr: FIXME: not implemented\n");
+	    long_word_size::put(c.regs.d[0],
+				machine::jisx0201_16_address(ch2));
+	    word_size::put(c.regs.d[1], 1 - 1);
+	    word_size::put(c.regs.d[2], 12 - 1);
+	    break;
+
+	  case 12:
+	    long_word_size::put(c.regs.d[0],
+				machine::jisx0201_24_address(ch2));
+	    word_size::put(c.regs.d[1], 2 - 1);
+	    word_size::put(c.regs.d[2], 24 - 1);
+	    break;
+
+	  default:
+	  case 8:
+	    long_word_size::put(c.regs.d[0],
+				machine::jisx0201_16_address(ch2));
+	    word_size::put(c.regs.d[1], 1 - 1);
+	    word_size::put(c.regs.d[2], 16 - 1);
+	    break;
+	  }
+      }
+  }
+
+  /* Handles a _FNTGET call.  */
+  void
+  iocs_fntget(context &c, unsigned long data)
+  {
+    uint32_type size_ch = long_word_size::get(c.regs.d[1]);
+    uint32_type i = long_word_size::get(c.regs.a[1]);
+#ifdef HAVE_NANA_H
+    L("IOCS _FNTGET; %%d1=0x%08lx %%a1=0x%08lx\n", size_ch + 0UL, i + 0UL);
+#endif
+
+    unsigned int ch1 = size_ch >> 8 & 0xff;
+    unsigned int ch2 = size_ch & 0xff;
+    if (ch1 >= 0x81 && ch1 <= 0x9f || ch1 >= 0xe0 && ch1 <= 0xef)
+      {
+	if (ch1 >= 0xe0)
+	  ch1 -= 0x81 + (0xe0 - 0xa0);
+	else
+	  ch1 -= 0x81;
+
+	if (ch2 >= 0x80)
+	  ch2 -= 0x40 + 1;
+	else
+	  ch2 -= 0x40;
+
+	ch1 *= 2;
+	if (ch2 >= 94)
+	  {
+	    ch2 -= 94;
+	    ++ch1;
+	  }
+
+	ch1 += 0x21;
+	ch2 += 0x21;
+      }
+
+    unsigned char buf[24 * 3];
+    if (ch1 != 0)
+      {
+	switch (size_ch >> 16)
+	  {
+	  case 6:
+	    fprintf(stderr, "iocs_fntadr: FIXME: not implemented\n");
+	    break;
+
+	  case 12:
+	    word_size::put(*c.mem, SUPER_DATA, i, 24);
+	    word_size::put(*c.mem, SUPER_DATA, i + 2, 24);
+	    c.mem->read(SUPER_DATA, machine::jisx0208_24_address(ch1, ch2),
+			buf, 24 * 3);
+	    c.mem->write(SUPER_DATA, i + 4, buf, 24 * 3);
+	    break;
+
+	  default:
+	  case 0:
+	  case 8:
+	    word_size::put(*c.mem, SUPER_DATA, i, 16);
+	    word_size::put(*c.mem, SUPER_DATA, i + 2, 16);
+	    c.mem->read(SUPER_DATA, machine::jisx0208_16_address(ch1, ch2),
+			buf, 16 * 2);
+	    c.mem->write(SUPER_DATA, i + 4, buf, 16 * 2);
+	    break;
+	  }
+      }
+    else
+      {
+	switch (size_ch >> 16)
+	  {
+	  case 6:
+	    fprintf(stderr, "iocs_fntadr: FIXME: not implemented\n");
+	    break;
+
+	  case 12:
+	    word_size::put(*c.mem, SUPER_DATA, i, 12);
+	    word_size::put(*c.mem, SUPER_DATA, i + 2, 24);
+	    c.mem->read(SUPER_DATA, machine::jisx0201_24_address(ch2),
+			buf, 24 * 2);
+	    c.mem->write(SUPER_DATA, i + 4, buf, 24 * 2);
+	    break;
+
+	  default:
+	  case 0:
+	  case 8:
+	    word_size::put(*c.mem, SUPER_DATA, i, 8);
+	    word_size::put(*c.mem, SUPER_DATA, i + 2, 16);
+	    c.mem->read(SUPER_DATA, machine::jisx0201_16_address(ch2),
+			buf, 16 * 1);
+	    c.mem->write(SUPER_DATA, i + 4, buf, 16 * 1);
+	    break;
+	  }
+      }
   }
 
   /* Handles a _G_CLR_ON call.  */
@@ -1167,6 +1394,8 @@ namespace
     rom->set_iocs_function(0x10, iocs_function_type(&iocs_crtmod, 0));
     rom->set_iocs_function(0x13, iocs_function_type(&iocs_tpalet, 0));
     rom->set_iocs_function(0x15, iocs_function_type(&iocs_tcolor, 0));
+    rom->set_iocs_function(0x16, iocs_function_type(&iocs_fntadr, 0));
+    rom->set_iocs_function(0x19, iocs_function_type(&iocs_fntget, 0));
     rom->set_iocs_function(0x1b, iocs_function_type(&iocs_textput, 0));
     rom->set_iocs_function(0x1d, iocs_function_type(&iocs_scroll, 0));
     rom->set_iocs_function(0x1e, iocs_function_type(&iocs_b_curon, 0));
@@ -1211,6 +1440,7 @@ namespace
     rom->set_iocs_function(0x80, iocs_function_type(&iocs_b_intvcs, 0));
     rom->set_iocs_function(0x81, iocs_function_type(&iocs_b_super, 0));
     rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));
+    rom->set_iocs_function(0x8a, iocs_function_type(&iocs_dmamove, 0));
     rom->set_iocs_function(0x8e, iocs_function_type(&iocs_bootinf, 0));
     rom->set_iocs_function(0x8f, iocs_function_type(&iocs_romver, 0));
     rom->set_iocs_function(0x90, iocs_function_type(&iocs_g_clr_on, 0));

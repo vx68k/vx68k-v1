@@ -35,14 +35,57 @@ using vx68k::font_rom;
 using namespace vm68k::types;
 using namespace std;
 
+namespace
+{
+  inline unsigned int
+  linear_jisx0208(unsigned int ch1, unsigned int ch2)
+  {
+    if (ch1 >= 0x30)
+      return (ch1 - 0x30 + 8) * 94 + (ch2 - 0x21);
+    else
+      return (ch1 - 0x21) * 94 + (ch2 - 0x21);
+  }
+}
+
+uint32_type
+font_rom::jisx0201_16_offset(unsigned int ch)
+{
+  return ch * size_t(16 * 1) + 0x3a800;
+}
+
+uint32_type
+font_rom::jisx0201_24_offset(unsigned int ch)
+{
+  return ch * size_t(24 * 2) + 0x3d000;
+}
+
+uint32_type
+font_rom::jisx0208_16_offset(unsigned int ch1, unsigned int ch2)
+{
+  return linear_jisx0208(ch1, ch2) * size_t(16 * 2);
+}
+
+uint32_type
+font_rom::jisx0208_24_offset(unsigned int ch1, unsigned int ch2)
+{
+  return linear_jisx0208(ch1, ch2) * size_t(24 * 3) + 0x40000;
+}
+
 void
 font_rom::copy_data(const console *c)
 {
-  unsigned char *p = data + 0x3a800;
   for (unsigned int i = 0; i != 0x100; ++i)
+    c->get_b16_image(i, data + jisx0201_16_offset(i), 1);
+
+  for (unsigned int i = 0x21; i != 0x29; ++i)
     {
-      c->get_b16_image(i, p, 1);
-      p += 16;
+      for (unsigned int j = 0x21; j != 0x7f; ++j)
+	c->get_k16_image(i << 8 | j, data + jisx0208_16_offset(i, j), 2);
+    }
+  for (unsigned int i = 0x30; i != 0x75; ++i)
+    {
+      for (unsigned int j = 0x21; j != 0x7f; ++j)
+	c->get_k16_image(i << 8 | j, data + jisx0208_16_offset(i, j), 2);
     }
 }
 

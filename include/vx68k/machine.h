@@ -139,6 +139,19 @@ namespace vx68k
       int left_x, top_y, right_x, bottom_y;
     };
 
+  public:
+    static uint32_type jisx0201_16_address(unsigned int ch)
+    {return font_rom::jisx0201_16_offset(ch) + 0xf00000;}
+
+    static uint32_type jisx0201_24_address(unsigned int ch)
+    {return font_rom::jisx0201_24_offset(ch) + 0xf00000;}
+
+    static uint32_type jisx0208_16_address(unsigned int ch1, unsigned int ch2)
+    {return font_rom::jisx0208_16_offset(ch1, ch2) + 0xf00000;}
+
+    static uint32_type jisx0208_24_address(unsigned int ch1, unsigned int ch2)
+    {return font_rom::jisx0208_24_offset(ch1, ch2) + 0xf00000;}
+
   private:
     size_t _memory_size;
 

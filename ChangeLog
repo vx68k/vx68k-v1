@@ -1,3 +1,27 @@
+2000-08-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Modified.
+
+	* libvm68k/execunit.cc (run): Step execution even if an interrupt
+	is handled.
+
+	* libvx68k/systemrom.cc (iocs_dmamove, iocs_fntadr, iocs_fntget):
+	New function.
+	(initialize_iocs_functions): Add new handlers.
+
+	* libvx68k/fontrom.cc (linear_jisx0208): New function.
+	(jisx0201_16_offset, jisx0201_24_offset, jisx0208_16_offset,
+	jisx0208_24_offset): New function.
+	(copy_data): Copy JIS X0208 data too.  Use the new functions.
+
+	* include/vx68k/machine.h (class machine): Add new static members
+	jisx0201_16_address, jisx0201_24_address, jisx0208_16_address, and
+	jisx0208_24_address.
+
+	* include/vx68k/memory.h (class font_rom): Add new static members
+	jisx0201_16_offset, jisx0201_24_offset, jisx0208_16_offset, and
+	jisx0208_24_offset.
+
 2000-08-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/systemrom.cc (iocs_bitsns, iocs_joyget, iocs_ms_curgt):

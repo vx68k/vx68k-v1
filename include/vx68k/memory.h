@@ -415,6 +415,23 @@ namespace vx68k
   /* Font ROM.  */
   class font_rom: public memory
   {
+  public:
+    /* Returns the address offset of the 16-pixel font data for a JIS
+       X 0201 character.  */
+    static uint32_type jisx0201_16_offset(unsigned int ch);
+
+    /* Returns the address offset of the 24-pixel font data for a JIS
+       X 0201 character.  */
+    static uint32_type jisx0201_24_offset(unsigned int ch);
+
+    /* Returns the address offset of the 16-pixel font data for a JIS
+       X 0208 character.  */
+    static uint32_type jisx0208_16_offset(unsigned int ch1, unsigned int ch2);
+
+    /* Returns the address offset of the 24-pixel font data for a JIS
+       X 0208 character.  */
+    static uint32_type jisx0208_24_offset(unsigned int ch1, unsigned int ch2);
+
   private:
     unsigned char *data;
 
