@@ -1,5 +1,8 @@
 1999-06-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* configure.in: Use AC_SEARCH_LIBS for a pthread library.
+	Reformat lines.
+
 	* lib/vm68k/addrspace.cc (getl): Use find_page.
 	(putw): Use putw_aligned.
 	(putl): Use memory_page::putl in the case that address does not
