@@ -1,6 +1,6 @@
 /* -*-C++-*- */
 /* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #define _VM68K_CONDITION_H 1
 
 #include <vm68k/cpu.h>
+
 #include <functional>
 
 namespace vm68k
@@ -28,133 +29,148 @@ namespace vm68k
 
   namespace condition
   {
-    struct t
-      : unary_function<context, bool>
+    /* T condition.  */
+    struct t: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return true;}
-      const char *text() const
-	{return "t";}
+      bool operator()(const context &c) const
+      {return true;}
+
+      static const char *text()
+      {return "t";}
     };
 
-    struct f
-      : unary_function<context, bool>
+    /* F condition.  */
+    struct f: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return false;}
-      const char *text() const
-	{return "f";}
+      bool operator()(const context &c) const
+      {return false;}
+
+      static const char *text()
+      {return "f";}
     };
 
-    struct hi
-      : unary_function<context, bool>
+    /* HI condition.  */
+    struct hi: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return ec.regs.sr.hi();}
-      const char *text() const
-	{return "hi";}
+      bool operator()(const context &c) const
+      {return c.regs.sr.hi();}
+
+      static const char *text()
+      {return "hi";}
     };
 
-    struct ls
-      : unary_function<context, bool>
+    /* LS condition.  */
+    struct ls: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return ec.regs.sr.ls();}
-      const char *text() const
-	{return "ls";}
+      bool operator()(const context &c) const
+      {return c.regs.sr.ls();}
+
+      static const char *text()
+      {return "ls";}
     };
 
-    struct cc
-      : unary_function<context, bool>
+    /* CC (HS) condition.  */
+    struct cc: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return ec.regs.sr.cc();}
-      const char *text() const
-	{return "cc";}
+      bool operator()(const context &c) const
+      {return c.regs.sr.cc();}
+
+      static const char *text()
+      {return "cc";}
     };
 
-    struct cs
-      : unary_function<context, bool>
+    /* CS (LO) condition.  */
+    struct cs: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return ec.regs.sr.cs();}
-      const char *text() const
-	{return "cs";}
+      bool operator()(const context &c) const
+      {return c.regs.sr.cs();}
+
+      static const char *text()
+      {return "cs";}
     };
 
-    struct ne
-      : unary_function<context, bool>
+    /* NE condition.  */
+    struct ne: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return ec.regs.sr.ne();}
-      const char *text() const
-	{return "ne";}
+      bool operator()(const context &c) const
+      {return c.regs.sr.ne();}
+
+      static const char *text()
+      {return "ne";}
     };
 
-    struct eq
-      : unary_function<context, bool>
+    /* EQ condition.  */
+    struct eq: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return ec.regs.sr.eq();}
-      const char *text() const
-	{return "eq";}
+      bool operator()(const context &c) const
+      {return c.regs.sr.eq();}
+
+      static const char *text()
+      {return "eq";}
     };
 
-    struct pl
-      : unary_function<context, bool>
+    /* FIXME: VC and VS conditions missing.  */
+
+    /* PL condition.  */
+    struct pl: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return ec.regs.sr.pl();}
-      const char *text() const
-	{return "pl";}
+      bool operator()(const context &c) const
+      {return c.regs.sr.pl();}
+
+      static const char *text()
+      {return "pl";}
     };
 
-    struct mi
-      : unary_function<context, bool>
+    /* MI condition.  */
+    struct mi: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return ec.regs.sr.mi();}
-      const char *text() const
-	{return "mi";}
+      bool operator()(const context &c) const
+      {return c.regs.sr.mi();}
+
+      static const char *text()
+      {return "mi";}
     };
 
-    struct ge
-      : unary_function<context, bool>
+    /* GE condition.  */
+    struct ge: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return ec.regs.sr.ge();}
-      const char *text() const
-	{return "ge";}
+      bool operator()(const context &c) const
+      {return c.regs.sr.ge();}
+
+      static const char *text()
+      {return "ge";}
     };
 
-    struct lt
-      : unary_function<context, bool>
+    /* LT condition.  */
+    struct lt: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return ec.regs.sr.lt();}
-      const char *text() const
-	{return "lt";}
+      bool operator()(const context &c) const
+      {return c.regs.sr.lt();}
+
+      static const char *text()
+      {return "lt";}
     };
 
-    struct gt
-      : unary_function<context, bool>
+    /* GT condition.  */
+    struct gt: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return ec.regs.sr.gt();}
-      const char *text() const
-	{return "gt";}
+      bool operator()(const context &c) const
+      {return c.regs.sr.gt();}
+
+      static const char *text()
+      {return "gt";}
     };
 
-    struct le
-      : unary_function<context, bool>
+    /* LE condition.  */
+    struct le: unary_function<context, bool>
     {
-      bool operator()(const context &ec) const
-	{return ec.regs.sr.le();}
-      const char *text() const
-	{return "le";}
+      bool operator()(const context &c) const
+      {return c.regs.sr.le();}
+
+      static const char *text()
+      {return "le";}
     };
   } // condition
 } // vm68k
 
 #endif /* not _VM68K_CONDITION_H */
-

@@ -1,5 +1,14 @@
 2000-06-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (m68k_cmp): New function template.
+	(cmpb, cmpw, cmpl): Disabled in #if-#endif.
+	(initialize_instructions): Use the new handlers.
+
+	* include/vm68k/condition.h (struct t, struct f, struct hi, struct
+	ls, struct cc, struct cs, struct ne, struct eq, struct pl, struct
+	mi, struct ge, struct lt, struct gt, struct le): Make member
+	function text static.
+
 	* libvx68k/systemrom.cc (iocs_x3a): New function.
 	(initialize_iocs_functions): Use the new handler.
 

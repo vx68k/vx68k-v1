@@ -793,6 +793,31 @@ namespace
       ec.regs.pc += 2 + ea1.isize(2);
     }
 
+  /* Handles a CMP instruction.  */
+  template <class Size, class Source> void
+  m68k_cmp(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    Source ea1(op & 0x7, 2);
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef TRACE_INSTRUCTIONS
+    L("\tcmp%s\t", Size::suffix());
+    L("%s,", ea1.text(c));
+    L("%%d%u\n", reg2);
+#endif
+
+    svalue_type value1 = ea1.get(c);
+    svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
+    svalue_type value = Size::svalue(Size::get(value2 - value1));
+    c.regs.sr.set_cc_cmp(value, value2, value1);
+    ea1.finish(c);
+
+    c.regs.pc += 2 + ea1.extension_size();
+  }
+
+#if 0
   template <class Source> void
   cmpb(uint_type op, context &ec, unsigned long data)
   {
@@ -849,6 +874,7 @@ namespace
 
     ec.regs.pc += 2 + ea1.isize(4);
   }
+#endif
 
   template <class Source> void
   cmpaw(uint_type op, context &ec, unsigned long data)
@@ -3332,30 +3358,76 @@ namespace
     eu.set_instruction(0x91f9, 0x0e00, &subal<absolute_long>);
     eu.set_instruction(0x91fa, 0x0e00, &subal<disp_pc>);
     eu.set_instruction(0x91fc, 0x0e00, &subal<immediate>);
-    eu.set_instruction(0xb000, 0x0e07, &cmpb<data_register>);
-    eu.set_instruction(0xb010, 0x0e07, &cmpb<indirect>);
-    eu.set_instruction(0xb018, 0x0e07, &cmpb<postinc_indirect>);
-    eu.set_instruction(0xb020, 0x0e07, &cmpb<predec_indirect>);
-    eu.set_instruction(0xb028, 0x0e07, &cmpb<disp_indirect>);
-    eu.set_instruction(0xb039, 0x0e00, &cmpb<absolute_long>);
-    eu.set_instruction(0xb03c, 0x0e00, &cmpb<immediate>);
-    eu.set_instruction(0xb040, 0x0e07, &cmpw<data_register>);
-    eu.set_instruction(0xb048, 0x0e07, &cmpw<address_register>);
-    eu.set_instruction(0xb050, 0x0e07, &cmpw<indirect>);
-    eu.set_instruction(0xb058, 0x0e07, &cmpw<postinc_indirect>);
-    eu.set_instruction(0xb060, 0x0e07, &cmpw<predec_indirect>);
-    eu.set_instruction(0xb068, 0x0e07, &cmpw<disp_indirect>);
-    eu.set_instruction(0xb079, 0x0e00, &cmpw<absolute_long>);
-    eu.set_instruction(0xb07c, 0x0e00, &cmpw<immediate>);
-    eu.set_instruction(0xb080, 0x0e07, &cmpl<data_register>);
-    eu.set_instruction(0xb088, 0x0e07, &cmpl<address_register>);
-    eu.set_instruction(0xb090, 0x0e07, &cmpl<indirect>);
-    eu.set_instruction(0xb098, 0x0e07, &cmpl<postinc_indirect>);
-    eu.set_instruction(0xb0a0, 0x0e07, &cmpl<predec_indirect>);
-    eu.set_instruction(0xb0a8, 0x0e07, &cmpl<disp_indirect>);
-    eu.set_instruction(0xb0b0, 0x0e07, &cmpl<indexed_indirect>);
-    eu.set_instruction(0xb0b9, 0x0e00, &cmpl<absolute_long>);
-    eu.set_instruction(0xb0bc, 0x0e00, &cmpl<immediate>);
+    eu.set_instruction(0xb000, 0x0e07,
+		       &m68k_cmp<byte_size, byte_d_register>);
+    eu.set_instruction(0xb010, 0x0e07,
+		       &m68k_cmp<byte_size, byte_indirect>);
+    eu.set_instruction(0xb018, 0x0e07,
+		       &m68k_cmp<byte_size, byte_postinc_indirect>);
+    eu.set_instruction(0xb020, 0x0e07,
+		       &m68k_cmp<byte_size, byte_predec_indirect>);
+    eu.set_instruction(0xb028, 0x0e07,
+		       &m68k_cmp<byte_size, byte_disp_indirect>);
+    eu.set_instruction(0xb030, 0x0e07,
+		       &m68k_cmp<byte_size, byte_index_indirect>);
+    eu.set_instruction(0xb038, 0x0e00,
+		       &m68k_cmp<byte_size, byte_abs_short>);
+    eu.set_instruction(0xb039, 0x0e00,
+		       &m68k_cmp<byte_size, byte_abs_long>);
+    eu.set_instruction(0xb03a, 0x0e00,
+		       &m68k_cmp<byte_size, byte_disp_pc_indirect>);
+    eu.set_instruction(0xb03b, 0x0e00,
+		       &m68k_cmp<byte_size, byte_index_pc_indirect>);
+    eu.set_instruction(0xb03c, 0x0e00,
+		       &m68k_cmp<byte_size, byte_immediate>);
+    eu.set_instruction(0xb040, 0x0e07,
+		       &m68k_cmp<word_size, word_d_register>);
+    eu.set_instruction(0xb048, 0x0e07,
+		       &m68k_cmp<word_size, word_a_register>);
+    eu.set_instruction(0xb050, 0x0e07,
+		       &m68k_cmp<word_size, word_indirect>);
+    eu.set_instruction(0xb058, 0x0e07,
+		       &m68k_cmp<word_size, word_postinc_indirect>);
+    eu.set_instruction(0xb060, 0x0e07,
+		       &m68k_cmp<word_size, word_predec_indirect>);
+    eu.set_instruction(0xb068, 0x0e07,
+		       &m68k_cmp<word_size, word_disp_indirect>);
+    eu.set_instruction(0xb070, 0x0e07,
+		       &m68k_cmp<word_size, word_index_indirect>);
+    eu.set_instruction(0xb078, 0x0e00,
+		       &m68k_cmp<word_size, word_abs_short>);
+    eu.set_instruction(0xb079, 0x0e00,
+		       &m68k_cmp<word_size, word_abs_long>);
+    eu.set_instruction(0xb07a, 0x0e00,
+		       &m68k_cmp<word_size, word_disp_pc_indirect>);
+    eu.set_instruction(0xb07b, 0x0e00,
+		       &m68k_cmp<word_size, word_index_pc_indirect>);
+    eu.set_instruction(0xb07c, 0x0e00,
+		       &m68k_cmp<word_size, word_immediate>);
+    eu.set_instruction(0xb080, 0x0e07,
+		       &m68k_cmp<long_word_size, long_word_d_register>);
+    eu.set_instruction(0xb088, 0x0e07,
+		       &m68k_cmp<long_word_size, long_word_a_register>);
+    eu.set_instruction(0xb090, 0x0e07,
+		       &m68k_cmp<long_word_size, long_word_indirect>);
+    eu.set_instruction(0xb098, 0x0e07,
+		       &m68k_cmp<long_word_size, long_word_postinc_indirect>);
+    eu.set_instruction(0xb0a0, 0x0e07,
+		       &m68k_cmp<long_word_size, long_word_predec_indirect>);
+    eu.set_instruction(0xb0a8, 0x0e07,
+		       &m68k_cmp<long_word_size, long_word_disp_indirect>);
+    eu.set_instruction(0xb0b0, 0x0e07,
+		       &m68k_cmp<long_word_size, long_word_index_indirect>);
+    eu.set_instruction(0xb0b8, 0x0e00,
+		       &m68k_cmp<long_word_size, long_word_abs_short>);
+    eu.set_instruction(0xb0b9, 0x0e00,
+		       &m68k_cmp<long_word_size, long_word_abs_long>);
+    eu.set_instruction(0xb0ba, 0x0e00,
+		       &m68k_cmp<long_word_size, long_word_disp_pc_indirect>);
+    eu.set_instruction(0xb0bb, 0x0e00,
+		       &m68k_cmp<long_word_size, long_word_index_pc_indirect>);
+    eu.set_instruction(0xb0bc, 0x0e00,
+		       &m68k_cmp<long_word_size, long_word_immediate>);
     eu.set_instruction(0xb0c0, 0x0e07, &cmpaw<data_register>);
     eu.set_instruction(0xb0c8, 0x0e07, &cmpaw<address_register>);
     eu.set_instruction(0xb0d0, 0x0e07, &cmpaw<indirect>);
