@@ -1,7 +1,9 @@
 2000-05-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* libvm68k/execunit.cc (initialize_iocs_functions): Add new
+	* libvm68k/execunit.cc (initialize_instructions): Add new
 	handler.
+	(m68k_movem_r_m): New function template.
+	(initialize_instructions): Add new handlers.
 
 	* libvx68k/systemrom.cc (initialize): Initialize the interrupt
 	vector table, too.

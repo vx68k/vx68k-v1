@@ -1544,6 +1544,43 @@ namespace
     }
 #endif
 
+  /* Handles a MOVEM instruction (register to memory) */
+  template <class Size, class Destination> void
+  m68k_movem_r_m(uint_type op, context &c, unsigned long data)
+  {
+    uint_type mask = c.fetch(word_size(), 2);
+    Destination ea1(op & 0x7, 2 + 2);
+#ifdef TRACE_INSTRUCTIONS
+    L(" movem%s %#06x,", Size::suffix(), mask);
+    L("%s\n", ea1.text(c));
+#endif
+
+    // This instruction does not affect the condition codes.
+    uint_type m = 1;
+    int fc = c.data_fc();
+    uint32_type address = ea1.address(c);
+    for (uint32_type *i = c.regs.d + 0; i != c.regs.d + 8; ++i)
+      {
+	if (mask & m)
+	  {
+	    Size::put(*c.mem, fc, address, Size::get(*i));
+	    address += Size::value_size();
+	  }
+	m <<= 1;
+      }
+    for (uint32_type *i = c.regs.a + 0; i != c.regs.a + 8; ++i)
+      {
+	if (mask & m)
+	  {
+	    Size::put(*c.mem, fc, address, Size::get(*i));
+	    address += Size::value_size();
+	  }
+	m <<= 1;
+      }
+
+    c.regs.pc += 2 + 2 + ea1.extension_size();
+  }
+
   /* movem regs to EA (postdec).  */
   void
   moveml_r_predec(uint_type op, context &ec, unsigned long data)
@@ -2966,8 +3003,30 @@ namespace
     eu.set_instruction(0x4879, 0x0000, &pea<absolute_long>);
     eu.set_instruction(0x487a, 0x0000, &pea<disp_pc>);
     eu.set_instruction(0x4880, 0x0007, &extw);
+    eu.set_instruction(0x4890, 0x0007,
+		       &m68k_movem_r_m<word_size, word_indirect>);
+    eu.set_instruction(0x48a8, 0x0007,
+		       &m68k_movem_r_m<word_size, word_disp_indirect>);
+    eu.set_instruction(0x48b0, 0x0007,
+		       &m68k_movem_r_m<word_size, word_index_indirect>);
+    eu.set_instruction(0x48b8, 0x0000,
+		       &m68k_movem_r_m<word_size, word_abs_short>);
+    eu.set_instruction(0x48b9, 0x0000,
+		       &m68k_movem_r_m<word_size, word_abs_long>);
     eu.set_instruction(0x48c0, 0x0007, &extl);
+    eu.set_instruction(0x48d0, 0x0007,
+		       &m68k_movem_r_m<long_word_size, long_word_indirect>);
     eu.set_instruction(0x48e0, 0x0007, &moveml_r_predec);
+    eu.set_instruction(0x48e8, 0x0007,
+		       &m68k_movem_r_m<long_word_size,
+		                       long_word_disp_indirect>);
+    eu.set_instruction(0x48f0, 0x0007,
+		       &m68k_movem_r_m<long_word_size,
+		                       long_word_index_indirect>);
+    eu.set_instruction(0x48f8, 0x0000,
+		       &m68k_movem_r_m<long_word_size, long_word_abs_short>);
+    eu.set_instruction(0x48f9, 0x0000,
+		       &m68k_movem_r_m<long_word_size, long_word_abs_long>);
     eu.set_instruction(0x4cd0, 0x0007, &moveml_mr<indirect>);
     eu.set_instruction(0x4cd8, 0x0007, &moveml_mr<postinc_indirect>);
     eu.set_instruction(0x4ce8, 0x0007, &moveml_mr<disp_indirect>);
