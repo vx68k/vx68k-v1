@@ -1,6 +1,6 @@
 TO DO
 
-$Date: Thu, 25 Mar 1999 23:30:24 +0900 $
+$Date: Fri, 26 Mar 1999 23:24:37 +0900 $
 
 * More instructions must be implemented.
 
@@ -8,6 +8,8 @@ $Date: Thu, 25 Mar 1999 23:30:24 +0900 $
 
 The DOS memory management must be implemented.  Currently, the
 executable is loaded at a constant address.
+
+* Filesystem translation layer must be added.
 
 * The value of errno must be looked at for DOS calls.
 
