@@ -1,3 +1,8 @@
+1999-06-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/memory.h (struct memory_page): Remove throw-specs
+	from methods.  Also change all classes derived from this class.
+
 1999-06-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* include/vm68k/addressing.h (class indexed_indirect): Fix

@@ -54,7 +54,6 @@ main_memory_page::read(int fc, uint32 address, void *data, size_t size) const
 
 uint8
 main_memory_page::getb (int fc, uint32 address) const
-  throw (bus_error)
 {
   uint16 wvalue = getw(fc, address & ~0x1);
   return address & 0x1 != 0 ? wvalue : wvalue >> 8;
@@ -62,7 +61,6 @@ main_memory_page::getb (int fc, uint32 address) const
 
 uint16
 main_memory_page::getw (int fc, uint32 address) const
-  throw (bus_error)
 {
   // Address error?
   if (address >= end)
@@ -96,7 +94,6 @@ main_memory_page::write(int fc, uint32 address, const void *data, size_t size)
 
 void
 main_memory_page::putb(int fc, uint32 address, uint8 value)
-  throw (bus_error)
 {
   // FIXME.  Is it slow?
   uint16 wvalue = getw(fc, address & ~0x1);
@@ -115,7 +112,6 @@ main_memory_page::putb(int fc, uint32 address, uint8 value)
 
 void
 main_memory_page::putw (int fc, uint32 address, uint16 value)
-  throw (bus_error)
 {
   // Address error?
   if (address >= end)

@@ -72,7 +72,6 @@ bus_error::bus_error (int s, uint32 a)
 
 uint32
 memory_page::getl (int fc, uint32 address) const
-  throw (bus_error)
 {
   return (uint32 (getw (fc, address + 0)) << 16
 	  | uint32 (getw (fc, address + 2)));
@@ -80,7 +79,6 @@ memory_page::getl (int fc, uint32 address) const
 
 void
 memory_page::putl (int fc, uint32 address, uint32 value)
-  throw (bus_error)
 {
   putw (fc, address + 0, value >> 16);
   putw (fc, address + 2, value);
@@ -100,28 +98,24 @@ bus_error_page::write (int fc, uint32 address, const void *, size_t)
 
 uint8
 bus_error_page::getb (int fc, uint32 address) const
-  throw (bus_error)
 {
   throw bus_error (fc + bus_error::READ, address);
 }
 
 uint16
 bus_error_page::getw (int fc, uint32 address) const
-  throw (bus_error)
 {
   throw bus_error (fc + bus_error::READ, address);
 }
 
 void
 bus_error_page::putb (int fc, uint32 address, uint8)
-  throw (bus_error)
 {
   throw bus_error (fc + bus_error::WRITE, address);
 }
 
 void
 bus_error_page::putw (int fc, uint32 address, uint16)
-  throw (bus_error)
 {
   throw bus_error (fc + bus_error::WRITE, address);
 }

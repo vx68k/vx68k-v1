@@ -51,12 +51,12 @@ void putl (void *, uint32);
     virtual ~memory_page () {}
     virtual size_t read(int, uint32, void *, size_t) const = 0;
     virtual size_t write(int, uint32, const void *, size_t) = 0;
-    virtual uint8 getb (int, uint32) const throw (bus_error) = 0;
-    virtual uint16 getw (int, uint32) const throw (bus_error) = 0;
-    virtual uint32 getl (int, uint32) const throw (bus_error);
-    virtual void putb (int, uint32, uint8) throw (bus_error) = 0;
-    virtual void putw (int, uint32, uint16) throw (bus_error) = 0;
-    virtual void putl (int, uint32, uint32) throw (bus_error);
+    virtual uint8 getb (int, uint32) const = 0;
+    virtual uint16 getw (int, uint32) const = 0;
+    virtual uint32 getl (int, uint32) const;
+    virtual void putb (int, uint32, uint8) = 0;
+    virtual void putw (int, uint32, uint16) = 0;
+    virtual void putl (int, uint32, uint32);
   };
 
   /* Memory page that always raises a bus error.  */
@@ -66,10 +66,10 @@ void putl (void *, uint32);
   public:
     virtual size_t read(int, uint32, void *, size_t) const;
     virtual size_t write(int, uint32, const void *, size_t);
-    virtual uint8 getb (int, uint32) const throw (bus_error);
-    virtual uint16 getw (int, uint32) const throw (bus_error);
-    virtual void putb (int, uint32, uint8) throw (bus_error);
-    virtual void putw (int, uint32, uint16) throw (bus_error);
+    virtual uint8 getb (int, uint32) const;
+    virtual uint16 getw (int, uint32) const;
+    virtual void putb (int, uint32, uint8);
+    virtual void putw (int, uint32, uint16);
   };
 
   /* Address space.  */

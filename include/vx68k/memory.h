@@ -35,10 +35,10 @@ using vm68k::bus_error;
     ~main_memory_page ();
     size_t read(int, uint32, void *, size_t) const;
     size_t write(int, uint32, const void *, size_t);
-    uint8 getb (int, uint32) const throw (bus_error);
-    uint16 getw (int, uint32) const throw (bus_error);
-    void putb (int, uint32, uint8) throw (bus_error);
-    void putw (int, uint32, uint16) throw (bus_error);
+    uint8 getb (int, uint32) const;
+    uint16 getw (int, uint32) const;
+    void putb (int, uint32, uint8);
+    void putw (int, uint32, uint16);
   private:
     size_t end;
     uint16 *array;
