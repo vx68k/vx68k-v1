@@ -144,34 +144,41 @@ namespace vm68k
       unsigned int reg;
 
     public:
-      basic_postinc_indirect(unsigned int r, size_t off): reg(r) {}
+      basic_postinc_indirect(unsigned int r, size_t off)
+	: reg(r)
+      {}
 
     protected:
       size_t advance_size() const
-	{
-	  if (reg == 7)		// XXX: %a7 is special.
-	    return Size::aligned_value_size();
-	  else
-	    return Size::value_size();
-	}
+      {
+	if (reg == 7)		// XXX: %a7 is special.
+	  return Size::aligned_value_size();
+	else
+	  return Size::value_size();
+      }
 
     public:
-      size_t extension_size() const {return 0;}
+      size_t extension_size() const
+      {return 0;}
+
       // XXX: address is left unimplemented.
+
       svalue_type get(const context &c) const
-	{return Size::svalue(Size::get(*c.mem, c.data_fc(), c.regs.a[reg]));}
+      {return Size::svalue(Size::get(*c.mem, c.data_fc(), c.regs.a[reg]));}
+
       void put(context &c, svalue_type value) const
-	{Size::put(*c.mem, c.data_fc(), c.regs.a[reg], value);}
+      {Size::put(*c.mem, c.data_fc(), c.regs.a[reg], value);}
+
       void finish(context &c) const
-        {c.regs.a[reg] += advance_size();}
+      {c.regs.a[reg] += advance_size();}
 
     public:
       const char *text(const context &c) const
-	{
-	  static char buf[8];
-	  sprintf(buf, "%%a%u@+", reg);
-	  return buf;
-	}
+      {
+	static char buf[64];
+	sprintf(buf, "%%a%u@+/* %#lx */", reg, (unsigned long) c.regs.a[reg]);
+	return buf;
+      }
     };
 
     typedef basic_postinc_indirect<byte_size> byte_postinc_indirect;
@@ -280,46 +287,54 @@ namespace vm68k
       size_t offset;
 
     public:
-      basic_index_indirect(unsigned int r, size_t off): reg(r), offset(off) {}
+      basic_index_indirect(unsigned int r, size_t off)
+	: reg(r), offset(off)
+      {}
 
     public:
-      size_t extension_size() const {return 2;}
+      size_t extension_size() const
+      {return 2;}
+
       uint32_type address(const context &c) const
-	{
-	  uint_type w = c.fetch(word_size(), offset);
-	  unsigned int r = w >> 12 & 0xf;
-	  uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
-	  if (w & 0x800 != 0)
-	    return (c.regs.a[reg]
-		    + byte_size::svalue(byte_size::get(w))
-		    + long_word_size::svalue(long_word_size::get(x)));
-	  else
-	    return (c.regs.a[reg]
-		    + byte_size::svalue(byte_size::get(w))
-		    + word_size::svalue(word_size::get(x)));
-	}
+      {
+	uint_type w = c.fetch(word_size(), offset);
+	unsigned int r = w >> 12 & 0xf;
+	uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
+	if (w & 0x800 != 0)
+	  return (c.regs.a[reg]
+		  + byte_size::svalue(byte_size::get(w))
+		  + long_word_size::svalue(long_word_size::get(x)));
+	else
+	  return (c.regs.a[reg]
+		  + byte_size::svalue(byte_size::get(w))
+		  + word_size::svalue(word_size::get(x)));
+      }
+
       svalue_type get(const context &c) const
-	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
+      {return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
+
       void put(context &c, svalue_type value) const
-	{Size::put(*c.mem, c.data_fc(), address(c), value);}
-      void finish(context &c) const {}
+      {Size::put(*c.mem, c.data_fc(), address(c), value);}
+
+      void finish(context &c) const
+      {}
 
     public:
       const char *text(const context &c) const
-	{
-	  uint_type w = c.fetch(word_size(), offset);
-	  unsigned int r = w >> 12 & 0xf;
-	  static char buf[32];
-	  if (r >= 8)
-	    sprintf(buf, "%%a%u@(%d,%%a%u%s)", reg,
-		    byte_size::svalue(byte_size::get(w)), r - 8,
-		    w & 0x800 ? ":l" : ":w");
-	  else
-	    sprintf(buf, "%%a%u@(%d,%%d%u%s)", reg,
-		    byte_size::svalue(byte_size::get(w)), r,
-		    w & 0x800 ? ":l" : ":w");
-	  return buf;
-	}
+      {
+	uint_type w = c.fetch(word_size(), offset);
+	unsigned int r = w >> 12 & 0xf;
+	static char buf[64];
+	if (r >= 8)
+	  sprintf(buf, "%%a%u@(%d,%%a%u%s)/* %#lx */", reg,
+		  byte_size::svalue(byte_size::get(w)), r - 8,
+		  w & 0x800 ? ":l" : ":w", (unsigned long) address(c));
+	else
+	  sprintf(buf, "%%a%u@(%d,%%d%u%s)/* %#lx */", reg,
+		  byte_size::svalue(byte_size::get(w)), r,
+		  w & 0x800 ? ":l" : ":w", (unsigned long) address(c));
+	return buf;
+      }
     };
 
     typedef basic_index_indirect<byte_size> byte_index_indirect;
@@ -693,10 +708,10 @@ namespace vm68k
 	{ec.regs.a[reg] += 4;}
       const char *textb(const context &ec) const
 	{return textw(ec);}
-      const char *textw(const context &) const
+      const char *textw(const context &c) const
 	{
-	  static char buf[8];
-	  sprintf(buf, "%%a%d@+", reg);
+	  static char buf[64];
+	  sprintf(buf, "%%a%d@+/* %#lx */", reg, (unsigned long) c.regs.a[reg]);
 	  return buf;
 	}
       const char *textl(const context &ec) const
@@ -780,9 +795,10 @@ namespace vm68k
 	{return textw(ec);}
       const char *textw(const context &ec) const
 	{
-	  static char buf[32];
-	  sprintf(buf, "%%a%d@(%d)", reg,
-		  extsw(ec.fetch(word_size(), offset)));
+	  static char buf[64];
+	  sprintf(buf, "%%a%d@(%d)/* %#lx */", reg,
+		  extsw(ec.fetch(word_size(), offset)),
+		  (unsigned long) address(ec));
 	  return buf;
 	}
       const char *textl(const context &ec) const
