@@ -722,6 +722,24 @@ namespace
       ec->regs.pc += 2;
     }
 
+  template <class Source, class Destination>
+    void movew(unsigned int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      Source ea1(op & 0x7, 2);
+      Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
+      VL((" movew %s", ea1.textw(ec)));
+      VL((",%s\n", ea2.textw(ec)));
+
+      int value = extsw(ea1.getw(ec));
+      ea2.putw(ec, value);
+      ea1.finishw(ec);
+      ea2.finishw(ec);
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
+    }
+
   void movew_off_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -825,6 +843,30 @@ namespace
 
       ec->regs.pc += 2 + 4;
     }
+
+  template <class Source, class Destination>
+    void movel(unsigned int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      Source ea1(op & 0x7, 2);
+      Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
+      VL((" movel %s", ea1.textl(ec)));
+      VL((",%s\n", ea2.textl(ec)));
+
+      int32 value = extsl(ea1.getl(ec));
+      ea2.putl(ec, value);
+      ea1.finishl(ec);
+      ea2.finishl(ec);
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2 + ea1.isize(4) + ea2.isize(4);
+    }
+
+#if 0
+  // This did not work with egcs 1.1.2.
+  template <class Source>
+    void movel<Source, address_register>(unsigned int op, execution_context *ec);
+#endif
 
   void movel_d_d(unsigned int op, execution_context *ec)
     {
@@ -1267,6 +1309,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x1028, 0x0e07, &moveb_off_d);
   eu->set_instruction(0x10c0, 0x0e07, &moveb_d_postinc);
   eu->set_instruction(0x10d8, 0x0e07, &moveb_postinc_postinc);
+  eu->set_instruction(0x13c0, 0x0007, &movew<data_register, absolute_long>);
   eu->set_instruction(0x2000, 0x0e07, &movel_d_d);
   eu->set_instruction(0x2008, 0x0e07, &movel_a_d);
   eu->set_instruction(0x2018, 0x0e07, &movel_postinc_d);
@@ -1278,6 +1321,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x213c, 0x0e00, &movel_i_predec);
   eu->set_instruction(0x23c0, 0x0007, &movel_d_absl);
   eu->set_instruction(0x23c8, 0x0007, &movel_a_absl);
+  eu->set_instruction(0x23fc, 0x0000, &movel<immediate, absolute_long>);
   eu->set_instruction(0x3028, 0x0e07, &movew_off_d);
   eu->set_instruction(0x3039, 0x0e00, &movew_absl_d);
   eu->set_instruction(0x30c0, 0x0e07, &movew_d_postinc);

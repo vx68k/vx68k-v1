@@ -1,6 +1,7 @@
 1999-04-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* lib/vm68k/execunit.cc (cmpl, lea, lsrl_i, subl): New functions.
+	* lib/vm68k/execunit.cc (cmpl, lea, lsrl_i, subl, movew, movel):
+	New functions.
 	(lea_absl_a): #if'd out
 	(cmpib): Change the log output.
 	(install_instructions): Updated with the new functions.
