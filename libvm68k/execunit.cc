@@ -1191,24 +1191,29 @@ namespace
     c.regs.pc += 2 + 4 + ea1.isize(4);
   }
 
-  void
-  cmpmb(uint_type op, context &c, unsigned long data)
+  /* Handles a CMPM instruction.  */
+  template <class Size> void
+  m68k_cmpm(uint_type op, context &c, unsigned long data)
   {
-    postinc_indirect ea1(op & 0x7, 2);
-    postinc_indirect ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    basic_postinc_indirect<Size> ea1(op & 0x7, 2);
+    basic_postinc_indirect<Size> ea2(op >> 9 & 0x7, 2 + ea1.extension_size());
 #ifdef HAVE_NANA_H
-    L(" cmpb %s", ea1.textb(c));
-    L(",%s\n", ea2.textb(c));
+    L("\tcmpm%s\t", Size::suffix());
+    L("%s,", ea1.text(c));
+    L("%s\n", ea2.text(c));
 #endif
 
-    sint_type value1 = ea1.getb(c);
-    sint_type value2 = ea2.getb(c);
-    sint_type value = extsb(value2 - value1);
+    svalue_type value1 = ea1.get(c);
+    svalue_type value2 = ea2.get(c);
+    svalue_type value = Size::svalue(Size::get(value2 - value1));
     c.regs.ccr.set_cc_cmp(value, value2, value1);
-    ea1.finishb(c);
-    ea2.finishb(c);
 
-    c.regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
+    ea1.finish(c);
+    ea2.finish(c);
+    c.regs.pc += 2 + ea1.extension_size() + ea2.extension_size();
   }
 
   template <class Source> void
@@ -4723,7 +4728,8 @@ namespace
     eu.set_instruction(0xb0fa, 0x0e00, &cmpaw<disp_pc>);
     eu.set_instruction(0xb0fc, 0x0e00, &cmpaw<immediate>);
     eu.set_instruction(0xb100, 0x0e07, &eorb_r<data_register>);
-    eu.set_instruction(0xb108, 0x0e07, &cmpmb);
+    eu.set_instruction(0xb108, 0x0e07,
+		       &m68k_cmpm<byte_size>);
     eu.set_instruction(0xb110, 0x0e07, &eorb_r<indirect>);
     eu.set_instruction(0xb118, 0x0e07, &eorb_r<postinc_indirect>);
     eu.set_instruction(0xb120, 0x0e07, &eorb_r<predec_indirect>);
@@ -4732,6 +4738,8 @@ namespace
     eu.set_instruction(0xb138, 0x0e00, &eorb_r<absolute_short>);
     eu.set_instruction(0xb139, 0x0e00, &eorb_r<absolute_long>);
     eu.set_instruction(0xb140, 0x0e07, &eorw_r<data_register>);
+    eu.set_instruction(0xb148, 0x0e07,
+		       &m68k_cmpm<word_size>);
     eu.set_instruction(0xb150, 0x0e07, &eorw_r<indirect>);
     eu.set_instruction(0xb158, 0x0e07, &eorw_r<postinc_indirect>);
     eu.set_instruction(0xb160, 0x0e07, &eorw_r<predec_indirect>);
@@ -4740,6 +4748,8 @@ namespace
     eu.set_instruction(0xb178, 0x0e00, &eorw_r<absolute_short>);
     eu.set_instruction(0xb179, 0x0e00, &eorw_r<absolute_long>);
     eu.set_instruction(0xb180, 0x0e07, &eorl_r<data_register>);
+    eu.set_instruction(0xb188, 0x0e07,
+		       &m68k_cmpm<long_word_size>);
     eu.set_instruction(0xb190, 0x0e07, &eorl_r<indirect>);
     eu.set_instruction(0xb198, 0x0e07, &eorl_r<postinc_indirect>);
     eu.set_instruction(0xb1a0, 0x0e07, &eorl_r<predec_indirect>);
