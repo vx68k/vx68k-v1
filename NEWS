@@ -2,6 +2,8 @@ List of user-visible changes in Virtual X68000.
 
 * Version 1.1.6
 
+** Code was modified to fix errors detected by GCC 3.0.
+
 ** The shared library is now disabled by default.  This was done to
 avoid incompatible shared library updates with Libvm68k.
 
