@@ -22,10 +22,13 @@
 
 #include <vm68k/memory.h>
 
+#include <vector>
+
 namespace vx68k
 {
   using vm68k::memory;
   using namespace vm68k::types;
+  using namespace std;
 
   class main_memory;
 
@@ -122,6 +125,24 @@ namespace vx68k
   /* CRTC registers memory.  */
   class crtc_memory: public memory
   {
+  public:
+    /* Reads data from this object.  */
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
+
+    /* Writes data to this object.  */
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
+  };
+
+  /* Palettes and video controller registers memory.  */
+  class palettes_memory: public memory
+  {
+    vector<unsigned short> _tpalette;
+
+  public:
+    palettes_memory();
+
   public:
     /* Reads data from this object.  */
     uint_type get_16(int, uint32_type) const;

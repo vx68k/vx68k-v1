@@ -1,5 +1,17 @@
 2000-08-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (configure): Map palettes.
+
+	* include/vx68k/machine.h (class machine): Add new member
+	palettes.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add palettemem.cc.
+
+	* libvx68k/palettemem.cc: New file.
+	(get_16, get_8, put_16, put_8, palettes_memory): New function.
+
+	* include/vx68k/memory.h (class palettes_memory): New class.
+
 	* libvx68k/mainmem.cc (get_16, get_32, put_16): Rewrite code.
 	(put_32): New function.
 

@@ -156,6 +156,7 @@ namespace vx68k
     main_memory mem;
     text_video_memory tvram;
     crtc_memory crtc;
+    palettes_memory palettes;
     area_set _area_set;
     scc_memory scc;
     ppi_memory ppi;
