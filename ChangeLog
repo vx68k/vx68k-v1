@@ -1,5 +1,11 @@
 2000-05-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (class gtk_app): Add new members run_boot.  Make
+	member boot out of line.
+	(run_boot): New member function.
+	(call_run_boot): New function.
+	(boot): Rewrite to start a thread.
+
 	* include/vm68k/memory.h: Add comments.
 
 	* libvx68k/dos.cc (dos_super_jsr): Use x68k_address_space.

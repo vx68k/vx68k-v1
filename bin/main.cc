@@ -100,12 +100,14 @@ protected:
   void run_machine();
 
 public:
-  /* Runs a DOS program on the VM.  */
-  void run(const char *const *args);
+  /* Runs a boot thread.  */
+  void run_boot() throw ();
 
   /* Boots the first floppy on the VM.  */
-  void boot()
-  {vm.boot();}
+  void boot();
+
+  /* Runs a DOS program on the VM.  */
+  void run(const char *const *args);
 
   /* Waits for the program to exit.  */
   void join(int *st);
@@ -126,6 +128,19 @@ public:
 size_t gtk_app::opt_memory_size = 0;
 int gtk_app::opt_single_threaded = false;
 int gtk_app::opt_debug_level = 0;
+
+void
+gtk_app::run_boot() throw ()
+{
+  try
+    {
+      vm.boot();
+    }
+  catch (exception &x)
+    {
+      fprintf(stderr, _("Unhandled exception in thread: %s\n"), x.what());
+    }
+}
 
 void
 gtk_app::run_machine()
@@ -170,6 +185,39 @@ gtk_app::run_machine_thread(void *data)
     }
 
   return NULL;
+}
+
+namespace
+{
+  void *
+  call_run_boot(void *data) throw ()
+  {
+    sigset_t sigs;
+    sigemptyset(&sigs);
+#ifdef SIGHUP
+    sigaddset(&sigs, SIGHUP);
+#endif
+#ifdef SIGINT
+    sigaddset(&sigs, SIGINT);
+#endif
+#ifdef SIGTERM
+    sigaddset(&sigs, SIGTERM);
+#endif
+    pthread_sigmask(SIG_BLOCK, &sigs, NULL);
+
+    gtk_app *app = static_cast<gtk_app *>(data);
+    app->run_boot();
+    return app;
+  }
+}
+
+void
+gtk_app::boot()
+{
+  if (opt_single_threaded)
+    run_boot();
+  else
+    pthread_create(&vm_thread, NULL, &call_run_boot, this);
 }
 
 void
