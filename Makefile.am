@@ -12,5 +12,5 @@ EXTRA_DIST = MEMO.ja VERSION-ID
 SUBDIRS = include lib
 
 dist-snapshot distcheck-snapshot:
-	${MAKE} VERSION=${VERSION}x`date +%Y%m%d` `echo $@ | sed -e 's/-snapshot//'`
+	${MAKE} VERSION=${VERSION}.`date +%Y%m%d` `echo $@ | sed -e 's/-snapshot//'`
 

@@ -1,5 +1,12 @@
 1999-06-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* Makefile.am (dist-snapshot distcheck-snapshot): Change version
+	number for snapshots.
+
+	* NEWS: Modified.
+
+	* configure.in: Set VERSION to 0.34.
+
 	* lib/vm68k/execunit.cc (bcc): #if'd out
 	(install_instructions): Add new handlers.
 
