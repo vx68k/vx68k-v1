@@ -769,6 +769,21 @@ namespace
       ec->regs.pc += 2;
     }
 
+  void tstb_predec(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int reg = op & 0x7;
+      uint32 addr = ec->regs.a[reg] - 1;
+      VL((" tstb %%a%d@- |0x%lx\n", reg, (unsigned long) addr));
+
+      int fc = ec->data_fc();
+      int val = extsb(ec->mem->getb(fc, addr));
+      ec->regs.a[reg] = addr;
+      ec->regs.sr.set_cc(val);
+
+      ec->regs.pc += 2;
+    }
+
   void tstw_d(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -838,6 +853,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
   eu->set_instruction(0x4cd8, 0x0007, &moveml_postinc_r);
   eu->set_instruction(0x4a00, 0x0007, &tstb_d);
+  eu->set_instruction(0x4a20, 0x0007, &tstb_predec);
   eu->set_instruction(0x4a40, 0x0007, &tstw_d);
   eu->set_instruction(0x4a80, 0x0007, &tstl_d);
   eu->set_instruction(0x4e50, 0x0007, &link_a);
