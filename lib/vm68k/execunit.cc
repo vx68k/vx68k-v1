@@ -38,8 +38,7 @@ exec_unit::execute(execution_context *ec) const
   assert (ec != NULL);
   for (;;)
     {
-      int fc = ec->program_fc();
-      unsigned int op = ec->mem->getw (fc, ec->regs.pc);
+      unsigned int op = ec->fetchw(0);
       assert (op < 0x10000);
       instruction[op](op, ec);
     }
@@ -99,8 +98,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  int fc = ec->program_fc();
-	  disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
+	  disp = extsw(ec->fetchw(2));
 	}
       else
 	disp = extsb(disp);
@@ -120,8 +118,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  int fc = ec->program_fc();
-	  disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
+	  disp = extsw(ec->fetchw(2));
 	}
       else
 	disp = extsb(disp);
@@ -141,8 +138,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  int fc = ec->program_fc();
-	  disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
+	  disp = extsw(ec->fetchw(2));
 	}
       else
 	disp = extsb(disp);
@@ -162,8 +158,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  int fc = ec->program_fc();
-	  disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
+	  disp = extsw(ec->fetchw(2));
 	}
       else
 	disp = extsb(disp);
@@ -200,8 +195,7 @@ namespace
       assert(ec != NULL);
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
-      int fc = ec->program_fc();
-      int offset = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
+      int offset = extsw(ec->fetchw(2));
 #ifdef TRACE_STEPS
       fprintf(stderr, " lea %%a%d@(%ld),%%a%d\n", s_reg, (long) offset, d_reg);
 #endif
@@ -216,8 +210,7 @@ namespace
     {
       assert(ec != NULL);
       int reg = op >> 9 & 0x7;
-      int fc = ec->program_fc();
-      uint32 address = ec->mem->getl(fc, ec->regs.pc + 2);
+      uint32 address = ec->fetchl(2);
 #ifdef TRACE_STEPS
       fprintf(stderr, " lea 0x%lx:l,%%a%d\n", (unsigned long) address, reg);
 #endif
@@ -231,14 +224,13 @@ namespace
   void link_a(int op, execution_context *ec)
     {
       int reg = op & 0x0007;
-      int fc = ec->program_fc();
-      int disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
+      int disp = extsw(ec->fetchw(2));
 #ifdef TRACE_STEPS
       fprintf(stderr, " link %%a%d,#%d\n", reg, disp);
 #endif
 
       // FIXME.
-      fc = ec->data_fc();
+      int fc = ec->data_fc();
       ec->mem->putl(fc, ec->regs.a7 - 4, (&ec->regs.a0)[reg]);
       ec->regs.a7 -= 4;
       (&ec->regs.a0)[reg] = ec->regs.a7;
@@ -268,13 +260,12 @@ namespace
     {
       assert(ec != NULL);
       int reg = op & 0x7;
-      int fc = ec->program_fc();
-      uint32 address = ec->mem->getl(fc, ec->regs.pc + 2);
+      uint32 address = ec->fetchl(2);
 #ifdef TRACE_STEPS
       fprintf(stderr, " moveb %%d%d,0x%x\n", reg, address);
 #endif
 
-      fc = ec->data_fc();
+      int fc = ec->data_fc();
       ec->mem->putw(fc, address, (&ec->regs.d0)[reg]);
       // FIXME: The condition codes must be set.
 
@@ -319,13 +310,12 @@ namespace
   void moveml_r_predec(int op, execution_context *ec)
     {
       int reg = op & 0x0007;
-      int fc = ec->program_fc();
-      unsigned int bitmap = ec->mem->getw(fc, ec->regs.pc + 2);
+      unsigned int bitmap = ec->fetchw(2);
 #ifdef TRACE_STEPS
       fprintf(stderr, " moveml #0x%x,%%a%d@-\n", bitmap, reg);
 #endif
 
-      fc = ec->data_fc();
+      int fc = ec->data_fc();
       for (int i = 0; i != 16; ++i)
 	{
 	  if (bitmap & 1 != 0)
@@ -361,14 +351,13 @@ namespace
   void pea_absl(int op, execution_context *ec)
     {
       assert(ec != NULL);
-      int fc = ec->program_fc();
-      uint32 address = ec->mem->getl(fc, ec->regs.pc + 2);
+      uint32 address = ec->fetchl(2);
 #ifdef TRACE_STEPS
       fprintf(stderr, " pea 0x%lx:l\n", (unsigned long) address);
 #endif
 
       // XXX: The condition codes are not affected.
-      fc = ec->data_fc();
+      int fc = ec->data_fc();
       ec->mem->putl(fc, ec->regs.a7 - 4, address);
 
       ec->regs.pc += 6;

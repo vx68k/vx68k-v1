@@ -1,5 +1,11 @@
 1999-03-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (execute, bge, bne, bra, bsr,
+	lea_offset_a, lea_absl_a, link_a, movew_d_absl, moveml_r_predec, pea_absl): Use execution_context::fetchw.
+
+	* include/vm68k/cpu.h (class execution_context): Add fetchw and
+	fetchl.
+
 	* lib/vm68k/execunit.cc (execute, bge, bne, bra, bsr, clrw_predec,
 	lea_offset_a, lea_absl_a, link_a, moveb_postinc_postinc,
 	movew_a_absl, movel_a_predec, movel_postinc_a, moveml_r_predec,

@@ -82,6 +82,10 @@ struct exception_listener
       {return regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM;}
     int data_fc() const
       {return regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA;}
+    unsigned int fetchw(int disp) const
+      {return mem->getw(program_fc(), regs.pc + disp);}
+    uint32 fetchl(int disp) const
+      {return mem->getl(program_fc(), regs.pc + disp);}
   };
 
   /* Execution unit.  */
