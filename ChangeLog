@@ -1,3 +1,8 @@
+2000-06-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_b_readid): New function.
+	(initialize_iocs_functions): Use the new function.
+
 2000-06-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvm68k/execunit.cc (m68k_andi, m68k_b): Modify the trace

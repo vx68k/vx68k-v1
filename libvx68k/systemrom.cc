@@ -371,6 +371,23 @@ namespace
     // FIXME?
   }
 
+  /* Handles a _B_READID call.  */
+  void
+  iocs_b_readid(context &c, unsigned long data)
+  {
+    uint_type pda_mode = word_size::get(c.regs.d[1]);
+#ifdef HAVE_NANA_H
+    L("system_rom: _B_READID %#06x %%d2=%#010x %%d3=%#010x %%a1=%#010x\n",
+      pda_mode, c.regs.d[2], c.regs.d[3], c.regs.a[1]);
+#endif
+
+    fprintf(stderr, "iocs_b_readid: FIXME: not implemented\n");
+    if ((pda_mode & 0xf000) == 0x9000 && (pda_mode & 0x0f00) <= 0x0100)
+      long_word_size::put(c.regs.d[0], 0);
+    else
+      long_word_size::put(c.regs.d[0], -1);
+  }
+
   /* Handles a _B_RECALI call.  */
   void
   iocs_b_recali(context &c, unsigned long data)
@@ -707,6 +724,7 @@ namespace
     rom->set_iocs_function(0x45, iocs_function_type(&iocs_b_write, 0));
     rom->set_iocs_function(0x46, iocs_function_type(&iocs_b_read, 0));
     rom->set_iocs_function(0x47, iocs_function_type(&iocs_b_recali, 0));
+    rom->set_iocs_function(0x4a, iocs_function_type(&iocs_b_readid, 0));
     rom->set_iocs_function(0x4e, iocs_function_type(&iocs_b_drvchk, 0));
     rom->set_iocs_function(0x4f, iocs_function_type(&iocs_b_eject, 0));
     rom->set_iocs_function(0x54, iocs_function_type(&iocs_dateget, 0));
