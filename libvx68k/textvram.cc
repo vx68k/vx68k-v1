@@ -180,7 +180,7 @@ size_t
 text_vram::read(int fc, uint32_type address, void *, size_t) const
 {
   if (fc != SUPER_DATA)
-    generate_bus_error(fc, address);
+    generate_bus_error(true, fc, address);
 
   abort();			// FIXME
 }
@@ -189,7 +189,7 @@ uint_type
 text_vram::getb(int fc, uint32_type address) const
 {
   if (fc != SUPER_DATA)
-    generate_bus_error(fc, address);
+    generate_bus_error(true, fc, address);
 
   abort();			// FIXME
 }
@@ -198,7 +198,7 @@ uint_type
 text_vram::getw(int fc, uint32_type address) const
 {
   if (fc != SUPER_DATA)
-    generate_bus_error(fc, address);
+    generate_bus_error(true, fc, address);
 
   return buf[(address & TEXT_VRAM_SIZE - 1) >> 1];
 }
@@ -207,7 +207,7 @@ size_t
 text_vram::write(int fc, uint32_type address, const void *, size_t)
 {
   if (fc != SUPER_DATA)
-    generate_bus_error(fc, address);
+    generate_bus_error(false, fc, address);
 
   abort();			// FIXME
 }
@@ -216,7 +216,7 @@ void
 text_vram::putb(int fc, uint32_type address, uint_type value)
 {
   if (fc != SUPER_DATA)
-    generate_bus_error(fc, address);
+    generate_bus_error(false, fc, address);
 
   abort();			// FIXME
 }
@@ -225,7 +225,7 @@ void
 text_vram::putw(int fc, uint32_type address, uint_type value)
 {
   if (fc != SUPER_DATA)
-    generate_bus_error(fc, address);
+    generate_bus_error(false, fc, address);
 
   buf[(address & TEXT_VRAM_SIZE - 1) >> 1] = value & 0xffffu;
 }

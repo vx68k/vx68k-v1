@@ -1,5 +1,5 @@
 /* Virtual X68000 - Sharp X68000 emulator
-   Copyright (C) 1998, 2000 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -139,17 +139,21 @@ gtk_app::run_boot() throw ()
     {
       vm.boot(c);
     }
-  catch (illegal_instruction &e)
+  catch (illegal_instruction_exception &e)
     {
       /* NOTE: This exception should have the address information.  */
       uint_type op = as.getw(SUPER_DATA, c.regs.pc);
-      fprintf(stderr, "vm68k illegal instruction %%pc=%#010x (%#0x)\n",
+      fprintf(stderr, "vm68k illegal instruction %%pc=%#010x (%#04x)\n",
 	      c.regs.pc, op);
     }
-  catch (bus_error &x)
+  catch (special_exception &x)
     {
-      fprintf(stderr, "vm68k bus error fc=%#x address=%#lx\n",
-	      x.status, (unsigned long) x.address);
+      if (x.vecno == 3u)
+	fprintf(stderr, "vm68k address error fc=%#x address=%#lx\n",
+		x.status, (unsigned long) x.address);
+      else
+	fprintf(stderr, "vm68k bus error fc=%#x address=%#lx\n",
+		x.status, (unsigned long) x.address);
     }
   catch (exception &x)
     {

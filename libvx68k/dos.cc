@@ -500,7 +500,7 @@ namespace
 
 	abort();
       }
-    catch (bus_error &e)
+    catch (bus_error_exception &e)
       {
 	if (e.address != 0xfef600)
 	  throw;

@@ -1,5 +1,5 @@
 /* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -193,17 +193,21 @@ dos_exec_context::start(uint32_type address, const char *const *argv)
     {
       status = x.status;
     }
-  catch (illegal_instruction &e)
+  catch (illegal_instruction_exception &e)
     {
       uint_type op = mem->getw(SUPER_DATA, regs.pc);
-      fprintf(stderr, "vm68k illegal instruction (op = 0x%x)\n", op);
+      fprintf(stderr, "vm68k illegal instruction (op = %#04x)\n", op);
       status = 0xff;
     }
-  catch (bus_error &x)
+  catch (special_exception &x)
     {
       uint_type op = mem->getw(SUPER_DATA, regs.pc);
-      fprintf(stderr, "vm68k bus error (fc = %#x, address = %#lx, op = %#x)\n",
-	      x.status, (unsigned long) x.address, op);
+      if (x.vecno == 3u)
+	fprintf(stderr, "vm68k address error (fc = %#x, address = %#lx, op = %#x)\n",
+		x.status, (unsigned long) x.address, op);
+      else
+	fprintf(stderr, "vm68k bus error (fc = %#x, address = %#lx, op = %#x)\n",
+		x.status, (unsigned long) x.address, op);
       status = 0xff;
     }
 

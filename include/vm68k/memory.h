@@ -1,6 +1,5 @@
-/* -*-C++-*- */
-/* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+/* vx68k - Virtual X68000 (-*- C++ -*-)
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -54,7 +53,7 @@ namespace vm68k
     virtual ~memory() {}
 
   protected:
-    void generate_bus_error(int, uint32_type) const;
+    void generate_bus_error(bool, int, uint32_type) const;
 
   public:
     virtual size_t read(int, uint32_type, void *, size_t) const = 0;
@@ -175,4 +174,3 @@ namespace vm68k
 } // vm68k
 
 #endif /* not _VM68K_MEMORY_H */
-

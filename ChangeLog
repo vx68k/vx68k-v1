@@ -1,5 +1,39 @@
 2000-06-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (boot): Handle bus error and address error
+	correctly.
+
+	* bin/main.cc (run_boot): Catch special_exception.
+
+	* libvx68k/doscontext.cc (start): Catch a special_exception.
+
+	* libvm68k/execunit.cc (m68k_move_to_sr, m68k_move_from_usp,
+	m68k_ori_to_sr, m68k_rte): Use privilege_violation_exception.
+
+	* libvm68k/addrspace.cc (getw, getl, putw, putl): Throw
+	address_error instead of bus_error.
+
+	* libvm68k/memory.cc (bus_error): Removed.
+	(generate_bus_error): Add argument bool read.  Use
+	bus_error_exception.
+
+	* include/vm68k/memory.h (class memory): Add an argument to member
+	function generate_bus_error.  Also change all users.
+
+	* include/vm68k/except.h (struct special_exception): New struct.
+	(struct bus_error_exception): Renamed from bus_error.  Also change
+	all users.
+	(struct address_error_exception): Likewise.
+	(struct bus_error_exception, struct address_error_exception): Use
+	special_exception as a base.
+	(struct ordinary_exception): New struct.
+	(struct illegal_instruction_exception): Renamed from
+	illegal_instruction.  Also change all users.
+	(struct zero_divide_exception): Likewise.
+	(struct privilege_violation_exception): Likewise.
+	(struct illegal_instruction, struct zero_divide_exception, struct
+	privilege_violation_exception): Use ordinary_exception as a base.
+
 	* libvm68k/execunit.cc (m68k_bclr_r, m68k_bclr_i,
 	m68k_move_from_sr): Add missing finish call.
 	(m68k_move_from_sr): Fix diagnostic output.

@@ -1,5 +1,5 @@
 /* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ main_memory::read(int fc, uint32_type address, void *data, size_t size) const
 {
   if (address >= end)
     {
-      generate_bus_error(fc, address);
+      generate_bus_error(true, fc, address);
       abort();
     }
 
@@ -68,7 +68,7 @@ main_memory::getb(int fc, uint32_type address) const
 {
   if (address >= end)
     {
-      generate_bus_error(fc, address);
+      generate_bus_error(true, fc, address);
       abort();
     }
 
@@ -82,7 +82,7 @@ main_memory::getw(int fc, uint32_type address) const
   // Address error?
   if (address >= end)
     {
-      generate_bus_error(fc, address);
+      generate_bus_error(true, fc, address);
       abort();
     }
 
@@ -96,7 +96,7 @@ main_memory::getl(int fc, uint32_type address) const
   uint32_type address2 = address + 2;
   if (address2 >= end)
     {
-      generate_bus_error(fc, address2);
+      generate_bus_error(true, fc, address2);
       abort();
     }
 
@@ -108,7 +108,7 @@ main_memory::write(int fc, uint32_type address, const void *data, size_t size)
 {
   if (address >= end)
     {
-      generate_bus_error(fc, address);
+      generate_bus_error(false, fc, address);
       abort();
     }
 
@@ -136,7 +136,7 @@ main_memory::putb(int fc, uint32_type address, uint_type value)
 {
   if (address >= end)
     {
-      generate_bus_error(fc, address);
+      generate_bus_error(false, fc, address);
       abort();
     }
 
@@ -154,7 +154,7 @@ main_memory::putw(int fc, uint32_type address, uint_type value)
   // Address error?
   if (address >= end)
     {
-      generate_bus_error(fc, address);
+      generate_bus_error(false, fc, address);
       abort();
     }
 

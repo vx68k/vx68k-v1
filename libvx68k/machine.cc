@@ -186,7 +186,7 @@ machine::boot(context &c)
     {
       eu.run(c);
     }
-  catch (illegal_instruction &e)
+  catch (illegal_instruction_exception &e)
     {
       uint_type op = c.mem->getw(SUPER_DATA, c.regs.pc);
 
@@ -215,20 +215,24 @@ machine::boot(context &c)
 
       throw;
     }
-  catch (bus_error &e)
+  catch (special_exception &e)
     {
-      uint32_type vecaddr = 2u * 4u;
+      uint32_type vecaddr = e.vecno * 4u;
       uint32_type addr = c.mem->getl(SUPER_DATA, vecaddr);
       if (addr != vecaddr + 0xfe0000)
 	{
 #ifdef HAVE_NANA_H
-	  L("machine: Installed bus error handler used\n");
+	  L("machine: Installed bus/address error handler used\n");
 #endif
 	  uint_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
-	  c.regs.a[7] -= 6;
-	  c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
-	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	  c.regs.a[7] -= 14;
+	  c.mem->putl(SUPER_DATA, c.regs.a[7] + 10, c.regs.pc);
+	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 8, oldsr);
+	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 6,
+		      c.mem->getw(SUPER_DATA, c.regs.pc));
+	  c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, e.address);
+	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, e.status);
 	  c.regs.pc = addr;
 	  goto rerun;
 	}

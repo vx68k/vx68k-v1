@@ -1,5 +1,5 @@
 /* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ uint_type
 address_space::getw(int fc, uint32_type address) const
 {
   if (address & 0x1)
-    throw bus_error(fc, address); // FIXME: address_error
+    throw address_error_exception(true, fc, address);
 
   return getw_aligned(fc, address);
 }
@@ -72,7 +72,7 @@ uint32_type
 address_space::getl(int fc, uint32_type address) const
 {
   if (address & 0x1)
-    throw bus_error(fc, address); // FIXME: address_error
+    throw address_error_exception(true, fc, address);
 
   address = canonical_address(address);
   uint32_type address2 = canonical_address(address + 2);
@@ -122,7 +122,7 @@ void
 address_space::putw(int fc, uint32_type address, uint_type value)
 {
   if (address & 0x1)
-    throw bus_error(fc, address); // FIXME: address_error
+    throw address_error_exception(false, fc, address);
 
   putw_aligned(fc, address, value);
 }
@@ -131,7 +131,7 @@ void
 address_space::putl(int fc, uint32_type address, uint32_type value)
 {
   if (address & 0x1)
-    throw bus_error(fc, address); // FIXME: address_error
+    throw address_error_exception(false, fc, address);
 
   address = canonical_address(address);
   uint32_type address2 = canonical_address(address + 2);

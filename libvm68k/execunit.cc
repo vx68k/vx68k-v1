@@ -43,6 +43,7 @@ using vm68k::context;
 using vm68k::byte_size;
 using vm68k::word_size;
 using vm68k::long_word_size;
+using vm68k::privilege_violation_exception;
 using namespace vm68k::types;
 using namespace std;
 
@@ -1606,10 +1607,7 @@ namespace
 
     // This instruction is privileged.
     if (!c.supervisor_state())
-      {
-	exec_unit::illegal(op, c, data); // FIXME
-	abort();
-      }
+      throw privilege_violation_exception();
 
     // This instruction sets the condition codes.
     uvalue_type value = ea1.get(c);
@@ -1631,10 +1629,7 @@ namespace
 
     // This instruction is privileged.
     if (!c.supervisor_state())
-      {
-	exec_unit::illegal(op, c, data); // FIXME
-	abort();
-      }
+      throw privilege_violation_exception();
 
     // The condition codes are not affected by this instruction.
     c.regs.a[reg1] = c.regs.usp;
@@ -2057,10 +2052,7 @@ namespace
 
     // This instruction is privileged.
     if (!c.supervisor_state())
-      {
-	exec_unit::illegal(op, c, data); // FIXME
-	abort();
-      }
+      throw privilege_violation_exception();
 
     uvalue_type value1 = c.sr();
     uvalue_type value = value1 | value2;
@@ -2317,10 +2309,7 @@ namespace
 
     // This instruction is privileged.
     if (!c.supervisor_state())
-      {
-	exec_unit::illegal(op, c, data); // FIXME
-	abort();
-      }
+      throw privilege_violation_exception();
 
     uint_type status = c.mem->getw(SUPER_DATA, c.regs.a[7] + 0);
     uint32_type value = c.mem->getl(SUPER_DATA, c.regs.a[7] + 2);
@@ -3972,5 +3961,5 @@ exec_unit::exec_unit()
 void
 exec_unit::illegal(uint_type op, context &c, unsigned long data)
 {
-  throw illegal_instruction();
+  throw illegal_instruction_exception();
 }

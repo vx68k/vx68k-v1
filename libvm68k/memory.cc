@@ -1,5 +1,5 @@
 /* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -59,16 +59,10 @@ vm68k::putl(void *address, uint32_type value)
   putw(p + 2, value);
 }
 
-bus_error::bus_error(int s, uint32_type a)
-  : status (s),
-    address (a)
-{
-}
-
 void
-memory::generate_bus_error(int fc, uint32_type address) const
+memory::generate_bus_error(bool read, int fc, uint32_type address) const
 {
-  throw bus_error(fc, address);
+  throw bus_error_exception(read, fc, address);
 }
 
 uint32_type
@@ -88,42 +82,41 @@ memory::putl(int fc, uint32_type address, uint32_type value)
 size_t
 no_memory::read(int fc, uint32_type address, void *, size_t) const
 {
-  generate_bus_error(fc | bus_error::READ, address);
+  generate_bus_error(true, fc, address);
   abort();
 }
 
 uint_type
 no_memory::getb(int fc, uint32_type address) const
 {
-  generate_bus_error(fc + bus_error::READ, address);
+  generate_bus_error(true, fc, address);
   abort();
 }
 
 uint_type
 no_memory::getw(int fc, uint32_type address) const
 {
-  generate_bus_error(fc + bus_error::READ, address);
+  generate_bus_error(true, fc, address);
   abort();
 }
 
 size_t
 no_memory::write(int fc, uint32_type address, const void *, size_t)
 {
-  generate_bus_error(fc | bus_error::WRITE, address);
+  generate_bus_error(false, fc, address);
   abort();
 }
 
 void
 no_memory::putb(int fc, uint32_type address, uint_type)
 {
-  generate_bus_error(fc + bus_error::WRITE, address);
+  generate_bus_error(false, fc, address);
   abort();
 }
 
 void
 no_memory::putw(int fc, uint32_type address, uint_type)
 {
-  generate_bus_error(fc + bus_error::WRITE, address);
+  generate_bus_error(false, fc, address);
   abort();
 }
-

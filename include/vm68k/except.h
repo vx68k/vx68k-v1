@@ -1,6 +1,5 @@
-/* -*-C++-*- */
-/* vx68k - Virtual X68000
-   Copyright (C) 1998 Hypercore Software Design, Ltd.
+/* vx68k - Virtual X68000 (-*- C++ -*-)
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,42 +19,56 @@
 #define _VM68K_EXCEPT_H 1
 
 #include <vm68k/types.h>
-#include <exception>
+
+#include <stdexcept>
 
 namespace vm68k
 {
   using namespace std;
 
-  struct bus_error
-    : exception
+  /* Bus error or address error.  */
+  struct special_exception: runtime_error
   {
-    enum {WRITE = 0, READ = 0x10};
-    int status;
+    uint_type vecno;
+    uint_type status;
     uint32_type address;
-    bus_error(int, uint32_type);
+    special_exception(uint_type v, bool read, int fc, uint32_type a)
+      : vecno(v), status(read ? fc | 0x10 : fc), address(a) {}
   };
 
-struct address_error
-  : exception
-{
-};
+  /* Bus error exception.  */
+  struct bus_error_exception: special_exception
+  {
+    bus_error_exception(bool read, int fc, uint32_type a)
+      : special_exception(2, read, fc, a) {}
+  };
 
-struct illegal_instruction
-  : exception
-{
-};
+  /* Address error exception.  */
+  struct address_error_exception: special_exception
+  {
+    address_error_exception(bool read, int fc, uint32_type a)
+      : special_exception(3, read, fc, a) {}
+  };
 
-struct zero_divide
-  : exception
-{
-};
+  /* Ordinary exception other than bus error and address error.  */
+  struct ordinary_exception: runtime_error
+  {
+  };
 
-struct privilege_violation
-  : exception
-{
-};
+  /* Illegal instruction exception.  */
+  struct illegal_instruction_exception: ordinary_exception
+  {
+  };
 
+  /* Zero divide exception.  */
+  struct zero_divide_exception: ordinary_exception
+  {
+  };
+
+  /* Privilege violation exception.  */
+  struct privilege_violation_exception: ordinary_exception
+  {
+  };
 } // vm68k
 
 #endif /* not _VM68K_EXCEPT_H */
-

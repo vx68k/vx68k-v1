@@ -50,7 +50,7 @@ system_rom::getw(int fc, uint32_type address) const
   // A program access generates a bus error to detect emulation bugs
   // easily.
   if (fc == SUPER_PROGRAM || fc == USER_PROGRAM)
-    throw bus_error(fc, address);
+    throw bus_error_exception(true, fc, address);
 
   return 0;
 }
@@ -76,13 +76,13 @@ system_rom::read(int, uint32_type, void *, size_t) const
 void
 system_rom::putw(int fc, uint32_type address, uint_type)
 {
-  throw bus_error(fc, address);
+  throw bus_error_exception(false, fc, address);
 }
 
 void
 system_rom::putb(int fc, uint32_type address, uint_type)
 {
-  throw bus_error(fc, address);
+  throw bus_error_exception(false, fc, address);
 }
 
 size_t
