@@ -101,20 +101,21 @@ exec_unit::set_instruction(int code, int mask, const instruction_type &in)
 exec_unit::exec_unit()
   : instructions(0x10000, instruction_type(&illegal, 0))
 {
-  install_instructions_0(*this, 0);
-  install_instructions_1(*this, 0);
-  install_instructions_2(*this, 0);
-  install_instructions_3(*this, 0);
-  install_instructions_4(*this, 0);
-  install_instructions_5(*this, 0);
-  install_instructions_6(*this, 0);
-  install_instructions_7(*this, 0);
-  install_instructions_8(*this, 0);
-  install_instructions_9(*this, 0);
-  install_instructions_11(*this, 0);
-  install_instructions_12(*this, 0);
-  install_instructions_13(*this, 0);
-  install_instructions_14(*this, 0);
+  unsigned long data = reinterpret_cast<unsigned long>(this);
+  install_instructions_0(*this, data);
+  install_instructions_1(*this, data);
+  install_instructions_2(*this, data);
+  install_instructions_3(*this, data);
+  install_instructions_4(*this, data);
+  install_instructions_5(*this, data);
+  install_instructions_6(*this, data);
+  install_instructions_7(*this, data);
+  install_instructions_8(*this, data);
+  install_instructions_9(*this, data);
+  install_instructions_11(*this, data);
+  install_instructions_12(*this, data);
+  install_instructions_13(*this, data);
+  install_instructions_14(*this, data);
 }
 
 /* Executes an illegal instruction.  */
