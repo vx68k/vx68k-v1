@@ -1,3 +1,9 @@
+1998-11-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/cpu.h (class cpu): Add description.
+
+	* TODO: New file.
+
 1998-11-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* Version 0.24.

@@ -60,6 +60,10 @@ struct execution_context
   explicit execution_context (memory *);
 };
 
+/* A CPU.
+
+   This CPU will emulate non-exceptional operations of a m68k
+   processor.  Exceptional operations must be handled by callbacks.  */
 class cpu
 {
 public:

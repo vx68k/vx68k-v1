@@ -1,0 +1,18 @@
+TODO
+
+* Efficient condition code update.
+
+Deferred update seems difficult on m68k architecture.  Some bits in
+CCR may not change by an instruction while others do, so its value
+cannot be determined by the last operation.
+
+* Modular design.
+
+Split X68000-specific code from generic m68k code.  Also GTK-dependent
+code from platform-independent code.
+
+* Non-square pixel graphics.
+
+X68000 has some graphics modes where pixels are not square.  Aspect
+ratio is approx. 3:2.  Run-time scaling may be needed.
+
