@@ -1,5 +1,8 @@
 2002-04-30  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* Rename vx68k-gtk to gtkvx68k.
+	* configure.in: Updated.
+
 	* libvx68k/machine.cc (boot): Use local pc.
 
 2001-11-30  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>

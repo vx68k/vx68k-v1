@@ -45,7 +45,7 @@ if test "$ac_cv_cxx_namespaces" != yes; then
 fi
 
 AM_CONFIG_HEADER(config.h)
-AC_CONFIG_SUBDIRS(vx68k-gtk)
+AC_CONFIG_SUBDIRS(gtkvx68k)
 AC_OUTPUT(Makefile include/Makefile include/vx68k/Makefile \
 libvx68k/Makefile libvx68kdos/Makefile \
 doc/Makefile testsuite/Makefile)
