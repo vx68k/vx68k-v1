@@ -47,7 +47,8 @@ using namespace std;
 uint16
 dos::execute (const char *name, const char *const *argv)
 {
-  dos_exec_context ec(mem, &main_cpu);
+  process p;
+  dos_exec_context ec(&main_cpu, mem, &p);
   return ec.start(ec.load_executable(name), argv);
 }
 

@@ -55,9 +55,16 @@ namespace vx68k
     class dos_exec_context
       : public context
     {
+    private:
+      process *_process;
+
     public:
-      dos_exec_context(address_space *, exec_unit *);
+      dos_exec_context(exec_unit *, address_space *, process *);
+
     public:
+      process *current_process() const
+	{return _process;}
+
       void exit(unsigned int);
       int open(const char *, unsigned int);
       int close(int);

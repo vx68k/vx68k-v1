@@ -253,8 +253,9 @@ dos_exec_context::load_executable(const char *name)
   return load_address + start_offset;
 }
 
-dos_exec_context::dos_exec_context(address_space *m, exec_unit *e)
-  : context(m, e)
+dos_exec_context::dos_exec_context(exec_unit *e, address_space *m, process *p)
+  : context(m, e),
+    _process(p)
 {
 }
 
