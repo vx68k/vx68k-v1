@@ -1,5 +1,8 @@
 2000-06-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_romver): New function.
+	(initialize_iocs_functions): Use the new handler.
+
 	* include/vm68k/cpu.h (struct registers): Rename member sr to ccr.
 	Also change all referrers.
 
