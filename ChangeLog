@@ -1,5 +1,13 @@
 1999-06-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (install_instructions): Add new addressing
+	mode to lea.
+
+	* include/vm68k/addressing.h (class indexed_pc_indirect): New
+	class.
+	(class indexed_indirect): Modify code of address.
+	(class disp_pc): Fix textw.
+
 	* bin/main.cc: Use "getopt.h" instead of <getopt.h>.
 
 	* Makefile.am (bin_PROGRAMS): Removed.

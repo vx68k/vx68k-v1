@@ -2133,6 +2133,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x4190, 0x0e07, &lea<indirect>);
   eu.set_instruction(0x41e8, 0x0e07, &lea<disp_indirect>);
   eu.set_instruction(0x41f9, 0x0e00, &lea<absolute_long>);
+  eu.set_instruction(0x41fb, 0x0e00, &lea<indexed_pc_indirect>);
   eu.set_instruction(0x4200, 0x0007, &clrb<data_register>);
   eu.set_instruction(0x4210, 0x0007, &clrb<indirect>);
   eu.set_instruction(0x4218, 0x0007, &clrb<postincrement_indirect>);
