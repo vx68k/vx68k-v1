@@ -131,7 +131,7 @@ namespace
 	human::dos_exec_context *c = env.create_context();
 	{
 	  human::shell p(c);
-	  md->status = p.exec(md->argv[optind], md->argv + optind + 1, environ);
+	  md->status = p.exec(md->argv[0], md->argv + 1, environ);
 	}
 	delete c;
       }

@@ -1,5 +1,7 @@
 1999-07-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (run_machine): Fix argument offset.
+
 	* include/vx68k/memory.h (class graphics_vram, class text_vram):
 	New classes.
 
