@@ -42,6 +42,8 @@ void
 gtk_console_window::notify_window_destroyed()
 {
   window = NULL;
+  if (callback != 0)
+    callback->window_closed();
 }
 
 void

@@ -68,7 +68,7 @@ using namespace std;
 #define COPYRIGHT_YEAR "1998-2000"
 
 /* Application.  */
-class gtk_app
+class gtk_app: public virtual console_callback
 {
 public:
   /* Program options.  */
@@ -98,6 +98,9 @@ private:
 
 public:
   gtk_app();
+
+public:
+  void window_closed();
 
 protected:
   void run_machine();
@@ -272,11 +275,20 @@ gtk_console_window *
 gtk_app::create_window()
 {
   if (main_window == NULL)
-    main_window = new gtk_console_window(con.create_widget());
+    {
+      main_window = new gtk_console_window(con.create_widget());
+      main_window->add_callback(this);
+    }
 
   return main_window;
 }
 
+void
+gtk_app::window_closed()
+{
+  gtk_main_quit();
+}
+
 const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
 
 gtk_app::gtk_app()

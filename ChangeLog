@@ -1,8 +1,18 @@
 2000-08-06  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (console_callback): Add console_callback to base.
+	Add member window_closed.
+	(create_window): Add callback to main_window.
+	(window_closed): New function.
+
+	* bin/gtkconwin.cc (notify_window_destroyed): Call
+	callback->window_closed.
+
 	* bin/gtkapp.h (class gtk_console_window): Replace members
 	eject_floppy_0_item and eject_floppy_1_item with
 	eject_floppy_subitems array.  Also change all users.
+	(struct console_callback): Rename window_destroyed to
+	window_closed.
 
 	* bin/main.cc (class gtk_app): Remove `#if 0' sections.
 	(class gtk_app): Remove show_about_dialog.

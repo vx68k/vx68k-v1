@@ -21,7 +21,7 @@
 
 struct console_callback
 {
-  virtual void window_destroyed() = 0;
+  virtual void window_closed() = 0;
 };
 
 /* Load Floppy dialog for GTK+.  */
