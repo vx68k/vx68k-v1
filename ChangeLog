@@ -1,5 +1,9 @@
 2000-07-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* Version 1.1.1.
+
+	* configure.in: Set VERSION to 1.1.1.
+
 	* README: Updated.
 
 	* bin/main.cc (COPYRIGHT_YEAR): Modified.
