@@ -1,8 +1,8 @@
 2001-06-24  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
-	* NEWS: Updated and reformated.
+	* NEWS: Updated and reformated for the Emacs outline mode.
 
-	* configure.in: Add AM_DISABLE_SHARED.
+	* configure.in: Add AM_DISABLE_SHARED and enable AC_PROG_CPP.
 
 2001-06-20  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
