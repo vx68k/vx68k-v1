@@ -7,7 +7,7 @@
 @ifinfo
 This file documents Virtual X68000.
 
-Copyright 1999-2000 Hypercoe Software Design, Ltd.
+Copyright 1999-2000 Hypercore Software Design, Ltd.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -26,7 +26,9 @@ manual provided the copyright notice and this permission notice are
 preserved on all copies.
 @end titlepage
 
+@ifnothtml
 @contents
+@end ifnothtml
 
 @ifnottex
 @node Top, Introduction, (dir), (dir)
@@ -36,6 +38,7 @@ Virtual X68000 is a host-architecture independent emulator of
 Sharp X68000 written in C++.
 
 This edition describes version 1.1 of Virtual X68000.
+@end ifnottex
 
 @menu
 * Introduction::                
@@ -91,19 +94,26 @@ X68000 emulation
 
 Machine
 
+* Class machine::               
 * SCC::                         
 
 @end detailmenu
 @end menu
 
-@end ifnottex
-
 @node Introduction, Command Reference, Top, Top
 @chapter Introduction
-....
+
+Virtual X68000 is a virtual machine that emulates a Sharp X68000 system.
+
+Virtual X68000 is written in C++ and uses many templates.
 
 @node Command Reference, M68000 Architecture, Introduction, Top
 @chapter Command Reference
+
+While Virtual X68000 is written primarily as a set of reusable class
+libraries, a sample program is also provided for demonstration.
+
+This chapter describes the usage of the sample program.
 
 @menu
 * Invoking vx68k::              Example command.
@@ -112,7 +122,7 @@ Machine
 @node Invoking vx68k,  , Command Reference, Command Reference
 @section Invoking @code{vx68k}
 
-@code{vx68k} is a sample application to run X68000 programs.
+@code{vx68k} executes X68000 programs.
 
 @code{vx68k}
 [@var{option}]...
@@ -227,7 +237,7 @@ and peripheral devices.
 @node Class memory, Class memory_address_space, Memory and I/O, Memory and I/O
 @subsection Class @code{memory}
 
-@deftp {Abtract Class} memory
+@deftp {Abstract Class} memory
 This class has methods @code{get_16},
 @code{get_8}, @code{get_32},
 @code{put_16}, @code{put_8}, and
@@ -296,7 +306,28 @@ components of a context are a set of registers and a
 reference to an address space.
 
 @deftp Class context
+This class represents the dynamic part of a processor.
 @end deftp
+
+@deftypeivar context registers regs
+This variable keeps values of the processor registers.
+@end deftypeivar
+
+@deftypemethod context bool supervisor_state () const
+This method returns true if this context is in the supervisor state.
+@end deftypemethod
+
+@deftypemethod context void set_supervisor_state (bool @var{state})
+This method sets the supervisor state to @var{state}.
+@end deftypemethod
+
+@deftypemethod context memory::function_code data_fc () const
+This method returns the function code for data.
+@end deftypemethod
+
+@deftypemethod context memory::function_code program_fc () const
+This method returns the function code for programs.
+@end deftypemethod
 
 @node Execution Unit,  , Context, Processor
 @subsection Execution Unit
@@ -306,7 +337,21 @@ Virtual X68000 encapsulates non-dynamic aspects of a M68000
 processor into an execution unit.
 
 @deftp Class exec_unit
+This class represents the static part of a processor.
 @end deftp
+
+@deftypemethod exec_unit instruction_type set_instruction (uint16_type @var{op}, const instruction_type &@var{i})
+This method sets an instruction for operation word @var{op} to @var{i}
+and returns the previous value.
+@end deftypemethod
+
+@deftypemethod exec_unit void step (context &@var{c}) const
+This method executes a single instruction in context @var{c}.
+@end deftypemethod
+
+@deftypemethod exec_unit void run (context &@var{c}) const
+This method executes instructions in context @var{c}.
+@end deftypemethod
 
 @menu
 * Instructions::                
@@ -333,10 +378,19 @@ In Virtual X68000, a machine is an abstraction of X68000
 hardware and firmware BIOS.
 
 @menu
+* Class machine::               
 * SCC::                         
 @end menu
 
-@node SCC,  , Machine, Machine
+@node Class machine, SCC, Machine, Machine
+@subsection Class machine
+
+@deftp Class machine
+This class represents the user-interface independent part of an X68000
+hardware and firmware.
+@end deftp
+
+@node SCC,  , Class machine, Machine
 @subsection Z8530 SCC
 @cindex SCC
 @cindex serial communication controller
