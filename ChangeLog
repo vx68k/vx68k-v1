@@ -1,5 +1,8 @@
 2000-07-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (m68k_nop): New function.
+	(initialize_instructions): Add new handler.
+
 	* libvx68k/systemrom.cc (iocs_b_clr_st, iocs_b_locate,
 	iocs_dateasc, iocs_timeasc): New function.
 	(iocs_textput): Fix debug message.

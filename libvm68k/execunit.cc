@@ -1,4 +1,4 @@
-/* Virtual X68000 - Sharp X68000 emulator
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
@@ -2103,6 +2103,17 @@ namespace
     c.regs.pc += 2 + ea1.extension_size();
   }
 
+  /* Handles a NOP instruction.  */
+  void
+  m68k_nop(uint_type op, context &c, unsigned long data)
+  {
+#ifdef TRACE_INSTRUCTIONS
+    L("\tnop\n");
+#endif
+
+    c.regs.pc += 2;
+  }
+
   template <class Source> void
   orb(uint_type op, context &ec, unsigned long data)
   {
@@ -3695,6 +3706,7 @@ namespace
     eu.set_instruction(0x4e58, 0x0007, &unlk_a);
     eu.set_instruction(0x4e60, 0x0007, &m68k_move_to_usp);
     eu.set_instruction(0x4e68, 0x0007, &m68k_move_from_usp);
+    eu.set_instruction(0x4e71, 0x0000, &m68k_nop);
     eu.set_instruction(0x4e73, 0x0000, &m68k_rte);
     eu.set_instruction(0x4e75, 0x0000, &rts);
     eu.set_instruction(0x4e90, 0x0007, &jsr<indirect>);
