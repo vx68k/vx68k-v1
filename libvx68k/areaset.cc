@@ -64,8 +64,8 @@ area_set::put_8(int fc, uint32_type address, unsigned int value)
     fc, (unsigned long) address, value);
 #endif
 
-  I(fc != vm68k::SUPER_PROGRAM);
-  if (fc != vm68k::SUPER_DATA)
+  I(fc != memory::SUPER_PROGRAM);
+  if (fc != memory::SUPER_DATA)
     throw bus_error_exception(false, fc, address);
 
   uint_type i = address & 0x1fff;

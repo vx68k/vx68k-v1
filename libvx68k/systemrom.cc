@@ -36,7 +36,7 @@
 using vx68k::x68k_address_space;
 using vx68k::system_rom;
 using vm68k::context;
-using vm68k::SUPER_DATA;
+using vm68k::memory;
 using namespace vm68k::types;
 using namespace std;
 
@@ -147,7 +147,7 @@ namespace
     pthread_testcancel();
 
     uint32_type vecaddr = (15u + 32u) * 4u;
-    uint32_type addr = c.mem->getl(SUPER_DATA, vecaddr);
+    uint32_type addr = c.mem->getl(memory::SUPER_DATA, vecaddr);
     if (addr != vecaddr + 0xfe0000)
       {
 #ifdef HAVE_NANA_H
@@ -156,8 +156,8 @@ namespace
 	uint_type oldsr = c.sr();
 	c.set_supervisor_state(true);
 	c.regs.a[7] -= 6;
-	c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
-	c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	c.mem->putl(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+	c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
 	c.regs.pc = addr;
       }
     else
@@ -165,7 +165,7 @@ namespace
 	unsigned int callno = byte_size::get(c.regs.d[0]);
 
 	uint32_type call_address = (callno + 0x100U) * 4U;
-	uint32_type call_handler = c.mem->getl(SUPER_DATA, call_address);
+	uint32_type call_handler = c.mem->getl(memory::SUPER_DATA, call_address);
 	if (call_handler != call_address + 0xfe0000)
 	  {
 #ifdef HAVE_NANA_H
@@ -174,8 +174,8 @@ namespace
 	    uint_type oldsr = c.sr();
 	    c.set_supervisor_state(true);
 	    c.regs.a[7] -= 6;
-	    c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc + 2);
-	    c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	    c.mem->putl(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc + 2);
+	    c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
 
 	    c.regs.pc = call_handler;
 	  }
@@ -202,7 +202,7 @@ namespace
     uint_type callno = (c.regs.pc - 0xfe0400) / 4;
     rom->call_iocs(callno, c);
 
-    c.regs.pc = long_word_size::get(*c.mem, SUPER_DATA,
+    c.regs.pc = long_word_size::get(*c.mem, memory::SUPER_DATA,
 				    long_word_size::get(c.regs.a[7]));
     long_word_size::put(c.regs.a[7],
 			long_word_size::get(c.regs.a[7]
@@ -242,12 +242,12 @@ system_rom::initialize(memory_address_space &as)
   uint32_type f = 0xfe0000;
   for (uint32_type i = 0u; i != 0x800u; i += 4)
     {
-      as.putl(SUPER_DATA, i, f);
+      as.putl(memory::SUPER_DATA, i, f);
       f += 4;
     }
 
   for (uint32_type i = 0x800u; i != 0x1000u; i += 4)
-    as.putl(SUPER_DATA, i, 0);
+    as.putl(memory::SUPER_DATA, i, 0);
 }
 
 namespace
@@ -366,8 +366,8 @@ namespace
       }
 
     uint32_type vecaddr = vecno * 4u;
-    uint32_type oaddr = c.mem->getl(SUPER_DATA, vecaddr);
-    c.mem->putl(SUPER_DATA, vecaddr, addr);
+    uint32_type oaddr = c.mem->getl(memory::SUPER_DATA, vecaddr);
+    c.mem->putl(memory::SUPER_DATA, vecaddr, addr);
 
     long_word_size::put(c.regs.d[0], oaddr);
   }
@@ -426,7 +426,7 @@ namespace
 #endif
     uint32_type address = c.regs.a[1];
 
-    c.regs.d[0] = c.mem->getl(SUPER_DATA, address);
+    c.regs.d[0] = c.mem->getl(memory::SUPER_DATA, address);
     c.regs.a[1] = address + 4;
   }
 
@@ -665,11 +665,11 @@ namespace
     char *p = str + 0;
     while (*p != '\0')
       {
-	c.mem->putb(SUPER_DATA, address, *p++);
+	c.mem->putb(memory::SUPER_DATA, address, *p++);
 	address = long_word_size::get(address + 1);
       }
 
-    c.mem->putb(SUPER_DATA, address, *p);
+    c.mem->putb(memory::SUPER_DATA, address, *p);
 
     long_word_size::put(c.regs.a[1], address);
   }
@@ -868,21 +868,21 @@ namespace
 	    break;
 
 	  case 12:
-	    word_size::put(*c.mem, SUPER_DATA, i, 24);
-	    word_size::put(*c.mem, SUPER_DATA, i + 2, 24);
-	    c.mem->read(SUPER_DATA, machine::jisx0208_24_address(ch1, ch2),
+	    word_size::put(*c.mem, memory::SUPER_DATA, i, 24);
+	    word_size::put(*c.mem, memory::SUPER_DATA, i + 2, 24);
+	    c.mem->read(memory::SUPER_DATA, machine::jisx0208_24_address(ch1, ch2),
 			buf, 24 * 3);
-	    c.mem->write(SUPER_DATA, i + 4, buf, 24 * 3);
+	    c.mem->write(memory::SUPER_DATA, i + 4, buf, 24 * 3);
 	    break;
 
 	  default:
 	  case 0:
 	  case 8:
-	    word_size::put(*c.mem, SUPER_DATA, i, 16);
-	    word_size::put(*c.mem, SUPER_DATA, i + 2, 16);
-	    c.mem->read(SUPER_DATA, machine::jisx0208_16_address(ch1, ch2),
+	    word_size::put(*c.mem, memory::SUPER_DATA, i, 16);
+	    word_size::put(*c.mem, memory::SUPER_DATA, i + 2, 16);
+	    c.mem->read(memory::SUPER_DATA, machine::jisx0208_16_address(ch1, ch2),
 			buf, 16 * 2);
-	    c.mem->write(SUPER_DATA, i + 4, buf, 16 * 2);
+	    c.mem->write(memory::SUPER_DATA, i + 4, buf, 16 * 2);
 	    break;
 	  }
       }
@@ -895,21 +895,21 @@ namespace
 	    break;
 
 	  case 12:
-	    word_size::put(*c.mem, SUPER_DATA, i, 12);
-	    word_size::put(*c.mem, SUPER_DATA, i + 2, 24);
-	    c.mem->read(SUPER_DATA, machine::jisx0201_24_address(ch2),
+	    word_size::put(*c.mem, memory::SUPER_DATA, i, 12);
+	    word_size::put(*c.mem, memory::SUPER_DATA, i + 2, 24);
+	    c.mem->read(memory::SUPER_DATA, machine::jisx0201_24_address(ch2),
 			buf, 24 * 2);
-	    c.mem->write(SUPER_DATA, i + 4, buf, 24 * 2);
+	    c.mem->write(memory::SUPER_DATA, i + 4, buf, 24 * 2);
 	    break;
 
 	  default:
 	  case 0:
 	  case 8:
-	    word_size::put(*c.mem, SUPER_DATA, i, 8);
-	    word_size::put(*c.mem, SUPER_DATA, i + 2, 16);
-	    c.mem->read(SUPER_DATA, machine::jisx0201_16_address(ch2),
+	    word_size::put(*c.mem, memory::SUPER_DATA, i, 8);
+	    word_size::put(*c.mem, memory::SUPER_DATA, i + 2, 16);
+	    c.mem->read(memory::SUPER_DATA, machine::jisx0201_16_address(ch2),
 			buf, 16 * 1);
-	    c.mem->write(SUPER_DATA, i + 4, buf, 16 * 1);
+	    c.mem->write(memory::SUPER_DATA, i + 4, buf, 16 * 1);
 	    break;
 	  }
       }
@@ -997,7 +997,7 @@ namespace
 	    long_word_size::put(c.regs.d[0], 1);
 	else
 	  {
-	    as->putl(SUPER_DATA, 0x43 * 4, address);
+	    as->putl(memory::SUPER_DATA, 0x43 * 4, address);
 	    as->machine()->set_opm_interrupt_enabled(true);
 	    long_word_size::put(c.regs.d[0], 0);
 	  }
@@ -1158,11 +1158,11 @@ namespace
     char *p = str + 0;
     while (*p != '\0')
       {
-	c.mem->putb(SUPER_DATA, address, *p++);
+	c.mem->putb(memory::SUPER_DATA, address, *p++);
 	address = long_word_size::get(address + 1);
       }
 
-    c.mem->putb(SUPER_DATA, address, *p);
+    c.mem->putb(memory::SUPER_DATA, address, *p);
 
     long_word_size::put(c.regs.a[1], address);
   }
@@ -1259,7 +1259,7 @@ namespace
 	    if (count == 0)
 	      count = 0x100;
 
-	    as->putl(SUPER_DATA, 0x4d * 4, address);
+	    as->putl(memory::SUPER_DATA, 0x4d * 4, address);
 	    as->machine()->set_vdisp_counter_data(count);
 	    long_word_size::put(c.regs.d[0], 0);
 	  }

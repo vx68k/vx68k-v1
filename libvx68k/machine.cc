@@ -113,7 +113,7 @@ machine::b_putc(uint_type code)
 void
 machine::b_print(const memory_address_space *as, uint32_type strptr)
 {
-  const string str = as->gets(SUPER_DATA, strptr);
+  const string str = as->gets(memory::SUPER_DATA, strptr);
 
   for (string::const_iterator i = str.begin();
        i != str.end();
@@ -187,16 +187,16 @@ machine::boot(context &c)
     }
   catch (illegal_instruction_exception &e)
     {
-      uint_type op = c.mem->getw(SUPER_DATA, c.regs.pc);
+      uint_type op = c.mem->getw(memory::SUPER_DATA, c.regs.pc);
 
       if ((op & 0xf000u) == 0xf000u)
 	{
 	  uint_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 6;
-	  c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
-	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, oldsr);
-	  c.regs.pc = c.mem->getl(SUPER_DATA, 11u * 4u);
+	  c.mem->putl(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+	  c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	  c.regs.pc = c.mem->getl(memory::SUPER_DATA, 11u * 4u);
 	  goto rerun;
 	}
       else if ((op & 0xfff0u) == 0x4e40)
@@ -206,9 +206,9 @@ machine::boot(context &c)
 	  uint_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 6;
-	  c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
-	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, oldsr);
-	  c.regs.pc = c.mem->getl(SUPER_DATA, ((op & 0xfu) + 32) * 4u);
+	  c.mem->putl(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+	  c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	  c.regs.pc = c.mem->getl(memory::SUPER_DATA, ((op & 0xfu) + 32) * 4u);
 	  goto rerun;
 	}
 
@@ -217,7 +217,7 @@ machine::boot(context &c)
   catch (special_exception &e)
     {
       uint32_type vecaddr = e.vecno * 4u;
-      uint32_type addr = c.mem->getl(SUPER_DATA, vecaddr);
+      uint32_type addr = c.mem->getl(memory::SUPER_DATA, vecaddr);
       if (addr != vecaddr + 0xfe0000)
 	{
 #ifdef HAVE_NANA_H
@@ -226,12 +226,12 @@ machine::boot(context &c)
 	  uint_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 14;
-	  c.mem->putl(SUPER_DATA, c.regs.a[7] + 10, c.regs.pc);
-	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 8, oldsr);
-	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 6,
-		      c.mem->getw(SUPER_DATA, c.regs.pc));
-	  c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, e.address);
-	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, e.status);
+	  c.mem->putl(memory::SUPER_DATA, c.regs.a[7] + 10, c.regs.pc);
+	  c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 8, oldsr);
+	  c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 6,
+		      c.mem->getw(memory::SUPER_DATA, c.regs.pc));
+	  c.mem->putl(memory::SUPER_DATA, c.regs.a[7] + 2, e.address);
+	  c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 0, e.status);
 	  c.regs.pc = addr;
 	  goto rerun;
 	}

@@ -10,9 +10,11 @@ lib_LTLIBRARIES = libvm68k.la
 libvm68k_la_LDFLAGS = -release ${VERSION} -version-info 0
 #libvm68k_la_LDFLAGS = -version-info 1:0:0
 libvm68k_la_SOURCES = memory.cc defaultmem.cc addrspace.cc \
-statusreg.cc execunit.cc context.cc
+statusreg.cc context.cc execunit.cc
 
 CLEANFILES = *.gdb
 
-libvm68k.gdb: $(libvm68k_la_SOURCES)
-	nana $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libvm68k_la_SOURCES) > $@
+SUFFIXES = .gdb
+
+.cc.gdb:
+	nana $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $<  > $@

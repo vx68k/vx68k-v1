@@ -32,6 +32,7 @@
 #endif
 
 using vx68k::dmac_memory;
+using vm68k::memory;
 using namespace vm68k::types;
 using namespace std;
 
@@ -118,8 +119,8 @@ namespace
 	// Copy from %a2@ to %a1@.
 	while (n-- > 0)
 	  {
-	    byte_size::put(*c.mem, vm68k::SUPER_DATA, i,
-			   byte_size::get(*c.mem, vm68k::SUPER_DATA, j));
+	    byte_size::put(*c.mem, memory::SUPER_DATA, i,
+			   byte_size::get(*c.mem, memory::SUPER_DATA, j));
 	    j += j_inc;
 	    i += i_inc;
 	  }
@@ -129,8 +130,8 @@ namespace
 	// Copy from %a1@ to %a2@.
 	while (n-- > 0)
 	  {
-	    byte_size::put(*c.mem, vm68k::SUPER_DATA, j,
-			   byte_size::get(*c.mem, vm68k::SUPER_DATA, i));
+	    byte_size::put(*c.mem, memory::SUPER_DATA, j,
+			   byte_size::get(*c.mem, memory::SUPER_DATA, i));
 	    i += i_inc;
 	    j += j_inc;
 	  }

@@ -1,3 +1,17 @@
+2000-08-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Reorder files.
+	(SUFFIXES): New macro.
+	(.cc.gdb): New rule.
+	(libvm68k.gdb): Removed.
+
+	* include/vm68k/memory.h: Remove C-style casts.  Change PAGE_SHIFT
+	and ADDRESS_BIT to unsigned.  Change PAGE_MASK and NPAGES to
+	uint32_type.
+	(enum function_code): Moved into class memory.  Also change all
+	users.
+	(class uint16_iterator): New class.
+
 2000-08-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* include/vm68k/mutex.h (class mutex_lock): New class replacing

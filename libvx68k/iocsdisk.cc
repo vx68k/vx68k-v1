@@ -108,7 +108,7 @@ image_file_floppy_disk::read(uint_type mode, uint32_type pos,
       if (res != 1024)
 	return long_word_size::svalue(0x40202000);
 
-      a.write(SUPER_DATA, buf, data, 1024);
+      a.write(memory::SUPER_DATA, buf, data, 1024);
 
       buf += 1024;
       nbytes -= 1024;

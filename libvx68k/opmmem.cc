@@ -173,7 +173,7 @@ opm_memory::put_8(int fc, uint32_type address, unsigned int value)
     fc, address + 0UL, value);
 #endif
 
-  if (fc != vm68k::SUPER_DATA)
+  if (fc != memory::SUPER_DATA)
     throw bus_error_exception(false, fc, address);
 
   address &= 0x1fffu;

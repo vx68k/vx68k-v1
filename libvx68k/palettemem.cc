@@ -34,7 +34,6 @@
 
 using vx68k::palettes_memory;
 using vm68k::bus_error_exception;
-using vm68k::SUPER_DATA;
 using vm68k::mutex_lock;
 using namespace vm68k::types;
 using namespace std;

@@ -68,6 +68,7 @@ namespace vm68k
   {
     unlock(_mutex);
     _mutex = x.release();
+    return *this;
   }
 
   inline

@@ -21,6 +21,7 @@
 
 #include <vm68k/except.h>
 #include <vm68k/types.h>
+
 #include <iterator>
 #include <string>
 
@@ -28,21 +29,120 @@ namespace vm68k
 {
   using namespace std;
 
-  /* Bus function code.  */
-  enum function_code
-  {
-    USER_DATA = 1,
-    USER_PROGRAM = 2,
-    SUPER_DATA = 5,
-    SUPER_PROGRAM = 6
-  };
-
-  const int PAGE_SHIFT = 12;
-  const size_t PAGE_SIZE = (size_t) 1 << PAGE_SHIFT;
+  const unsigned int PAGE_SHIFT = 12;
+  const uint32_type PAGE_SIZE = uint32_type(1) << PAGE_SHIFT;
 
   // External mc68000 address is 24-bit size.
-  const int ADDRESS_BIT = 24;
-  const size_t NPAGES = (size_t) 1 << ADDRESS_BIT - PAGE_SHIFT;
+  const unsigned int ADDRESS_BIT = 24;
+  const uint32_type NPAGES = uint32_type(1) << ADDRESS_BIT - PAGE_SHIFT;
+
+  /* Helper iterator for 16-bit value.  */
+  class uint16_iterator: random_access_iterator<uint_type, ptrdiff_t>
+  {
+  protected:
+    class ref
+    {
+      friend class uint16_iterator;
+
+    private:
+      unsigned char *bp;
+
+    protected:
+      ref(unsigned char *ptr): bp(ptr) {}
+
+    public:
+      ref &operator=(uint_type);
+      operator uint_type() const;
+    };
+
+  private:
+    unsigned char *bp;
+
+  public:
+    uint16_iterator(unsigned char *ptr): bp(ptr) {}
+
+  public:
+    uint_type operator*() const {return ref(bp);}
+    ref operator*() {return ref(bp);}
+
+    uint16_iterator &operator++();
+    uint16_iterator operator++(int);
+
+    uint16_iterator &operator--();
+    uint16_iterator operator--(int);
+
+    uint16_iterator &operator+=(ptrdiff_t n);
+    uint16_iterator operator+(ptrdiff_t n) const
+    {return uint16_iterator(*this) += n;}
+
+    uint16_iterator &operator-=(ptrdiff_t n);
+    uint16_iterator operator-(ptrdiff_t n) const
+    {return uint16_iterator(*this) -= n;}
+
+    uint_type operator[](ptrdiff_t n) const {return *(*this + n);}
+    ref operator[](ptrdiff_t n) {return *(*this + n);}
+
+  public:
+    operator unsigned char *() const {return bp;}
+  };
+
+  inline uint16_iterator::ref &
+  uint16_iterator::ref::operator=(uint_type value)
+  {
+    bp[0] = value >> 8 & 0xff;
+    bp[1] = value & 0xff;
+    return *this;
+  }
+
+  inline
+  uint16_iterator::ref::operator uint_type() const
+  {
+    return bp[0] << 8 | bp[1];
+  }
+
+  inline uint16_iterator &
+  uint16_iterator::operator++()
+  {
+    bp += 2;
+    return *this;
+  }
+
+  inline uint16_iterator
+  uint16_iterator::operator++(int)
+  {
+    uint16_iterator old = *this;
+    ++(*this);
+    return old;
+  }
+
+  inline uint16_iterator &
+  uint16_iterator::operator--()
+  {
+    bp -= 2;
+    return *this;
+  }
+
+  inline uint16_iterator
+  uint16_iterator::operator--(int)
+  {
+    uint16_iterator old = *this;
+    --(*this);
+    return old;
+  }
+
+  inline uint16_iterator &
+  uint16_iterator::operator+=(ptrdiff_t n)
+  {
+    bp += n * 2;
+    return *this;
+  }
+
+  inline uint16_iterator &
+  uint16_iterator::operator-=(ptrdiff_t n)
+  {
+    bp -= n * 2;
+    return *this;
+  }
 
   uint_type getw(const void *);
   uint32_type getl(const void *);
@@ -52,6 +152,16 @@ namespace vm68k
   /* Abstract memory class.  */
   class memory
   {
+  public:
+    /* Function code, which identifies an access type.  */
+    enum function_code
+    {
+      USER_DATA = 1,
+      USER_PROGRAM = 2,
+      SUPER_DATA = 5,
+      SUPER_PROGRAM = 6
+    };
+
   public:
     virtual ~memory() {}
 

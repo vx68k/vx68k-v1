@@ -115,7 +115,7 @@ main_memory::put_16(int fc, uint32_type address, uint_type value)
   value &= 0xffff;
 
   if (address >= end
-      || fc != vm68k::SUPER_DATA && address < super_area)
+      || fc != memory::SUPER_DATA && address < super_area)
     throw bus_error_exception(false, fc, address);
 
   uint32_type i = address / 2;
@@ -129,7 +129,7 @@ main_memory::put_8(int fc, uint32_type address, unsigned int value)
   value &= 0xff;
 
   if (address >= end
-      || fc != vm68k::SUPER_DATA && address < super_area)
+      || fc != memory::SUPER_DATA && address < super_area)
     throw bus_error_exception(false, fc, address);
 
   uint32_type i = address / 2;
@@ -150,7 +150,7 @@ main_memory::put_32(int fc, uint32_type address, uint32_type value)
   value &= 0xffffffffU;
 
   if (address >= end
-      || fc != vm68k::SUPER_DATA && address < super_area)
+      || fc != memory::SUPER_DATA && address < super_area)
     throw bus_error_exception(false, fc, address);
 
   uint32_type i = address / 2;

@@ -97,7 +97,7 @@ exec_unit::set_instruction(int code, int mask, const instruction_type &in)
 
 namespace
 {
-  using vm68k::SUPER_DATA;
+  using vm68k::memory;
   using namespace vm68k::condition;
   using namespace vm68k::addressing;
 
@@ -2657,8 +2657,8 @@ namespace
     if (!c.supervisor_state())
       throw privilege_violation_exception();
 
-    uint_type status = c.mem->getw(SUPER_DATA, c.regs.a[7] + 0);
-    uint32_type value = c.mem->getl(SUPER_DATA, c.regs.a[7] + 2);
+    uint_type status = c.mem->getw(memory::SUPER_DATA, c.regs.a[7] + 0);
+    uint32_type value = c.mem->getl(memory::SUPER_DATA, c.regs.a[7] + 2);
     c.regs.a[7] += 6;
     c.set_sr(status);
     c.regs.pc = value;
