@@ -65,13 +65,11 @@ scc_memory::set_mouse_state(unsigned int button, bool state)
 }
 
 scc_memory::point
-scc_memory::mouse_motion() const
+scc_memory::mouse_position() const
 {
   mutex_lock lock(&mutex);
 
-  point p = {_mouse_position.x - old_mouse_position.x,
-	     _mouse_position.y - old_mouse_position.y};
-  return p;
+  return _mouse_position;
 }
 
 void
@@ -90,6 +88,16 @@ scc_memory::set_mouse_position(int x, int y)
 
   _mouse_position.x = x;
   _mouse_position.y = y;
+}
+
+scc_memory::point
+scc_memory::mouse_motion() const
+{
+  mutex_lock lock(&mutex);
+
+  point p = {_mouse_position.x - old_mouse_position.x,
+	     _mouse_position.y - old_mouse_position.y};
+  return p;
 }
 
 void
@@ -164,14 +172,16 @@ namespace
   iocs_ms_curgt(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    LG(nana_iocs_call_trace,
-       "IOCS _MS_CURGT\n");
+    LG(nana_iocs_call_trace, "IOCS _MS_CURGT\n");
 #endif
+    scc_memory *m = reinterpret_cast<scc_memory *>(data);
 
-    static bool once;
-    if (!once++)
-      fprintf(stderr, "iocs_ms_curgt: FIXME: not implemented\n");
-    long_word_size::put(c.regs.d[0], 0);
+    scc_memory::point position = m->mouse_position();
+
+    uint32_type value = (uint32_type(position.x & 0xffff) << 16
+			 | uint32_type(position.y & 0xffff));
+
+    long_word_size::put(c.regs.d[0], value);
   }
 
   /* Handles a _MS_CURST IOCS call.  */

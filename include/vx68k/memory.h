@@ -468,11 +468,11 @@ namespace vx68k
   public:
     /* Reads data from this object.  */
     uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    unsigned int get_8(int, uint32_type) const;
 
     /* Writes data to this object.  */
     void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, unsigned int);
 
   public:
     /* Returns the state of a mouse button.  */
@@ -481,11 +481,14 @@ namespace vx68k
     /* Sets the state of a mouse button.  */
     void set_mouse_state(unsigned int button, bool state);
 
-    /* Returns the mouse motion.  */
-    point mouse_motion() const;
+    /* Return the mouse position.  */
+    point mouse_position() const;
 
     /* Sets the mouse position.  */
     void set_mouse_position(int x, int y);
+
+    /* Returns the mouse motion.  */
+    point mouse_motion() const;
 
     /* Tracks the mouse motion.  */
     void track_mouse();

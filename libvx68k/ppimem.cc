@@ -1,4 +1,4 @@
-/* vx68k - Virtual X68000
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
@@ -23,9 +23,10 @@
 
 #include <vx68k/memory.h>
 
+#include <cstdio>
+
 #ifdef HAVE_NANA_H
 # include <nana.h>
-# include <cstdio>
 #else
 # include <cassert>
 # define I assert
@@ -45,17 +46,21 @@ ppi_memory::get_16(int fc, uint32_type address) const
   return get_8(fc, address | 1u);
 }
 
-uint_type
+unsigned int
 ppi_memory::get_8(int fc, uint32_type address) const
 {
+  address &= 0xffffffffU;
+
 #ifdef HAVE_NANA_H
   DL("class ppi_memory: get_8: fc=%d address=0x%08lx\n", fc, address + 0UL);
 #endif
+  unsigned int i = address % 0x2000;
 
-  address &= 0x1fff;
-  switch (address) {
-  default:
+  switch (i) {
+  case 0x5:
     return 0;
+  default:
+    return 0xff;
   }
 }
 

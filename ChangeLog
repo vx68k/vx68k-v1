@@ -1,3 +1,16 @@
+2000-08-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/sccmem.cc (mouse_position): New function.
+	(mouse_motion): Moved after set_mouse_position.
+	(iocs_ms_curgt): Implemented.
+
+	* libvx68k/ppimem.cc: Change header comments.  Include <cstdio>
+	always.
+	(get_8, put_8): Change the value type.
+
+	* include/vx68k/memory.h (class scc_memory): Add members
+	mouse_position.  Change the value type for 8-bit data.
+
 2000-08-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68kgtk/gtkconsole.cc (handle_motion_event,
