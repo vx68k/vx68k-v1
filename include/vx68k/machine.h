@@ -22,8 +22,11 @@
 #include <vx68k/memory.h>
 #include <vx68k/iocs.h>
 #include <vm68k/cpu.h>
+
 #include <pthread.h>
+
 #include <queue>
+#include <memory>
 
 namespace vx68k
 {
@@ -165,7 +168,11 @@ namespace vx68k
     sram _sram;
     font_rom font;
     system_rom rom;
+
     class exec_unit eu;
+
+    auto_ptr<address_space> master_as;
+    auto_ptr<context> _master_context;
 
   private:
     /* Last time when timers were checked.  */
@@ -202,9 +209,13 @@ namespace vx68k
     class exec_unit *exec_unit()
       {return &eu;}
 
+    context *master_context() const {return _master_context.get();}
+
   public:
-    void set_opm_reg(unsigned int r, unsigned int v) {opm.set_reg(r, v);}
     unsigned int opm_status() const {return opm.status();}
+    void set_opm_reg(unsigned int r, unsigned int v) {opm.set_reg(r, v);}
+    bool opm_interrupt_enabled() const {return opm.interrupt_enabled();}
+    void set_opm_interrupt_enabled(bool b) {opm.set_interrupt_enabled(b);}
 
   public:
     void connect(console *con)

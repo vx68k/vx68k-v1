@@ -39,7 +39,6 @@ using namespace std;
 void
 opm_memory::set_reg(unsigned int regno, unsigned int value)
 {
-  // FIXME
   regno &= 0xffu;
   value &= 0xffu;
   _regs[regno] = value;
@@ -80,28 +79,31 @@ opm_memory::set_reg(unsigned int regno, unsigned int value)
 void
 opm_memory::check_timeout(context &c)
 {
+  if (_console == NULL)
+    return;
+
+  unsigned int old_status = status();
+  unsigned int tcr = _regs[0x14];
+
+  console::time_type t = _console->current_time();
+  if ((tcr & 0x1) == 0x1 && (t - timer_a_reset_time) >= timer_a_interval)
+    {
+      _status |= 0x2;
+      timer_a_reset_time += timer_a_interval;
+    }
+  if ((tcr & 0x2) == 0x2 && (t - timer_b_reset_time) >= timer_b_interval)
+    {
+      _status |= 0x1;
+      timer_a_reset_time += timer_b_interval;
+    }
+
   if (_interrupt_enabled)
     {
-      // FIXME
-      console::time_type t = _console->current_time();
-      unsigned int old_status = status();
-      unsigned int tcr = _regs[0x14];
-      if ((tcr & 0x1) == 0x1 && (t - timer_a_reset_time) >= timer_a_interval)
-	{
-	  _status |= 0x2;
-	  timer_a_reset_time += timer_a_interval;
-	}
-      if ((tcr & 0x2) == 0x2 && (t - timer_b_reset_time) >= timer_b_interval)
-	{
-	  _status |= 0x1;
-	  timer_a_reset_time += timer_b_interval;
-	}
-
       unsigned int set_status = status() - ~old_status;
       if ((tcr & 0x4) == 0x4 && (set_status & 0x2) == 0x2
 	  || (tcr & 0x8) == 0x8 && (set_status & 0x1) == 0x1)
 	{
-	  // interrupt!
+	  c.interrupt(6, 0x43);
 	}
     }
 }
@@ -203,8 +205,8 @@ opm_memory::~opm_memory()
 
 opm_memory::opm_memory()
   : _console(NULL),
-    _regs(0x100, 0),
     _status(0),
+    _regs(0x100, 0),
     _interrupt_enabled(false)
 {
   reg_index = 0;
@@ -212,8 +214,8 @@ opm_memory::opm_memory()
 
 opm_memory::opm_memory(console *c)
   : _console(c),
-    _regs(0x100, 0),
     _status(0),
+    _regs(0x100, 0),
     _interrupt_enabled(false)
 {
   reg_index = 0;

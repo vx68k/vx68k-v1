@@ -245,9 +245,7 @@ machine::boot(context &c)
 void
 machine::boot()
 {
-  x68k_address_space as(this);
-  context c(&as);
-  boot(c);
+  boot(*master_context());
 }
 
 void
@@ -355,6 +353,7 @@ machine::get_image(int x, int y, int width, int height,
 void
 machine::check_timers(uint32_type t)
 {
+  opm.check_timeout(*master_context());
   last_check_time = t;
 }
 
@@ -395,6 +394,8 @@ machine::machine(size_t memory_size)
   : _memory_size(memory_size),
     mem(memory_size),
     _area_set(&mem),
+    master_as(new x68k_address_space(this)),
+    _master_context(new context(master_as.get())),
     _key_modifiers(0),
     curx(0), cury(0),
     saved_byte1(0)

@@ -186,8 +186,8 @@ namespace vx68k
   {
   private:
     console *_console;
-    vector<unsigned char> _regs;
     unsigned int _status;
+    vector<unsigned char> _regs;
     bool _interrupt_enabled;
 
     unsigned int reg_index;
@@ -214,11 +214,12 @@ namespace vx68k
 
   public:
     void add_console(console *);
-    void set_interrupt_enabled(bool);
 
   public:
     unsigned int status() const {return _status;}
     void set_reg(unsigned int, unsigned int);
+    bool interrupt_enabled() const {return _interrupt_enabled;}
+    void set_interrupt_enabled(bool);
 
     void check_timeout(context &c);
   };

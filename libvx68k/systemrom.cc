@@ -722,10 +722,29 @@ namespace
   iocs_opmintst(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    L("IOCS _OPMINTST: %%a1=%#010lx\n", (unsigned long) c.regs.a[1]);
+    L("IOCS _OPMINTST: %%a1=%#010lx\n",
+      (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
-    fprintf(stderr, "iocs_opmintst: FIXME: not implemented\n");
-    long_word_size::put(c.regs.d[0], 1);
+    uint32_type address = long_word_size::get(c.regs.a[1]);
+
+    x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
+
+    if (address == 0)
+      {
+	as->machine()->set_opm_interrupt_enabled(false);
+	long_word_size::put(c.regs.d[0], 0);
+      }
+    else
+      {
+	if (as->machine()->opm_interrupt_enabled())
+	    long_word_size::put(c.regs.d[0], 1);
+	else
+	  {
+	    as->putl(SUPER_DATA, 0x43 * 4, address);
+	    as->machine()->set_opm_interrupt_enabled(true);
+	    long_word_size::put(c.regs.d[0], 0);
+	  }
+      }
   }
 
   /* Handles a _OPMSET call.  */
@@ -736,7 +755,12 @@ namespace
     L("IOCS _OPMSET: %%d1:b=%#04x %%d2:b=%#04x\n",
       byte_size::get(c.regs.d[1]), byte_size::get(c.regs.d[2]));
 #endif
-    fprintf(stderr, "iocs_opmset: FIXME: not implemented\n");
+    unsigned int regno = byte_size::get(c.regs.d[1]);
+    unsigned int value = byte_size::get(c.regs.d[2]);
+
+    x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
+
+    as->machine()->set_opm_reg(regno, value);
   }
 
   /* Handles a _OS_CUROF call.  */

@@ -21,6 +21,7 @@
 
 #include <vm68k/memory.h>
 
+#include <queue>
 #include <vector>
 #include <utility>
 #include <cassert>
@@ -323,6 +324,8 @@ namespace vm68k
     /* True if the thread in this context is interrupted.  */
     bool a_interrupted;
 
+    vector<queue<unsigned int> > interrupt_queues;
+
   public:
     explicit context(address_space *);
 
@@ -358,6 +361,9 @@ namespace vm68k
     /* Returns true if the thread in this context is interrupted.  */
     bool interrupted() const
     {return a_interrupted;}
+
+    /* Interrupts.  */
+    void interrupt(int prio, unsigned int vecno);
 
     /* Handles interrupts.  */
     void handle_interrupts();

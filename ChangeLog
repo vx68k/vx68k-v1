@@ -1,4 +1,31 @@
+2000-08-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/opmmem.cc (set_reg): Remove comments.
+	(check_timeout): Handle timers even if interrupts are not enabled.
+	(opm_memory): Reorder initializations.
+
+	* libvx68k/systemrom.cc (iocs_opmintst, iocs_opmset): Implemented.
+
+	* libvx68k/machine.cc (boot): Use master_context.
+	(check_timers): Call opm.check_timeout.
+	(machine): Initialize master_as and _master_context.
+
+	* libvm68k/context.cc (handle_interrupts): Add code.
+	(context): Initialize interrupt_queues.
+
 2000-08-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/context.cc (interrupt): New function.
+
+	* include/vx68k/memory.h (class opm_memory): Change members'
+	order.  Add interrupt_enabled.
+
+	* include/vx68k/machine.h (class machine): Add member master_as,
+	_master_context, master_context, opm_interrupt_enabled, and
+	set_opm_interrupt_enabled.
+
+	* include/vm68k/cpu.h (class context): Add member interrupt_queues
+	and interrupt.
 
 	* libvx68kgtk/gtkconsole.cc (current_time): New function.
 
