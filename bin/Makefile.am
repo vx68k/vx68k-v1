@@ -3,10 +3,13 @@
 INCLUDES = -I${top_srcdir}/include \
 ${GTK_CFLAGS}
 
+noinst_LIBRARIES = libmisc.a
 bin_PROGRAMS = vx68k
 
-vx68k_SOURCES = getopt.c getopt1.c main.cc
-vx68k_LDADD = ../libvx68kgtk/libvx68kgtk.a \
+libmisc_a_SOURCES = getopt.c getopt1.c
+
+vx68k_SOURCES = main.cc
+vx68k_LDADD = libmisc.a ../libvx68kgtk/libvx68kgtk.a \
 ../libvx68k/libvx68k.a ../libvm68k/libvm68k.la \
 ${GTK_LIBS}
 

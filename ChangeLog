@@ -1,6 +1,9 @@
 1999-11-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* bin/Makefile.am (bin_PROGRAMS): Modify locations.
+	(noinst_LIBRARIES): Make libmisc.a.
+	(libmisc_a_SOURCES): Add getopt.c and getopt1.c.
+	(libmisc_a_SOURCES): Use libmisc.a.
 
 	* Makefile.am (SUBDIRS): Modify the list.
 
