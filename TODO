@@ -1,8 +1,6 @@
 To-Do List for Virtual X68000
 
-$Date: Wed, 09 Aug 2000 22:55:19 +0900 $
-
-* Modify console image updates without region.
+$Date: Wed, 09 Aug 2000 23:08:29 +0900 $
 
 * Pass current times to interrupt sources.
 

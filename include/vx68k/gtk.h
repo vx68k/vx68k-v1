@@ -44,7 +44,6 @@ namespace vx68k
     private:
       guint machine_timeout;
 
-      GdkRegion *update_region;
       guint timeout;
       vector<GtkWidget *> widgets;
 
@@ -58,10 +57,6 @@ namespace vx68k
     public:
       /* Returns the current time in milliseconds.  */
       time_type current_time() const;
-
-      /* Updates the displayed image in an rectangular area specified
-         by X, Y, WIDTH, and HEIGHT.  */
-      void update_area(int x, int y, int width, int height);
 
       void get_b16_image(unsigned int, unsigned char *, size_t) const;
       void get_k16_image(unsigned int, unsigned char *, size_t) const;

@@ -39,7 +39,7 @@ namespace vx68k
   {
     typedef uint32_type time_type;
     virtual time_type current_time() const = 0;
-    virtual void update_area(int x, int y, int width, int height) = 0;
+
     virtual void get_b16_image(unsigned int, unsigned char *, size_t) const = 0;
     virtual void get_k16_image(unsigned int, unsigned char *, size_t) const = 0;
   };

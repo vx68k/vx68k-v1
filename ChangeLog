@@ -1,5 +1,16 @@
 2000-08-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* TODO: Modified.
+
+	* libvx68kgtk/gtkconsole.cc (update_area): Removed.
+	(~gtk_console, gtk_console): Remove use of update_area.
+
+	* include/vx68k/gtk.h (class gtk_console): Remove member
+	update_region, and update_area.
+
+	* include/vx68k/memory.h (struct console): Remove member
+	update_area.
+
 	* libvx68kgtk/gtkconsole.cc (class gdk_threads_monitor): New
 	class.
 	(handle_timeout): Rewrite the code using machine::update_image.

@@ -219,22 +219,6 @@ gtk_console::current_time() const
   return t;
 }
 
-void
-gtk_console::update_area(int x, int y, int width, int height)
-{
-  GdkRectangle area;
-  area.x = x;
-  area.y = y;
-  area.width = width;
-  area.height = height;
-
-  gdk_threads_enter();
-  GdkRegion *new_region = gdk_region_union_with_rect(update_region, &area);
-  gdk_region_destroy(update_region);
-  update_region = new_region;
-  gdk_threads_leave();
-}
-
 namespace
 {
   unsigned char *
@@ -431,7 +415,6 @@ gtk_console::~gtk_console()
 
   gtk_timeout_remove(timeout);
   gtk_timeout_remove(machine_timeout);
-  gdk_region_destroy(update_region);
 
   gdk_threads_leave();
 
@@ -443,7 +426,6 @@ gtk_console::gtk_console(machine *m)
     width(768), height(512),
     row_size(768 * 3),
     rgb_buf(NULL),
-    update_region(NULL),
     timeout(0),
     primary_font(NULL),
     kanji16_font(NULL)
@@ -456,7 +438,6 @@ gtk_console::gtk_console(machine *m)
   _m->check_timers(t);
   machine_timeout = gtk_timeout_add(10, &handle_machine_timeout, this);
 
-  update_region = gdk_region_new();
   timeout = gtk_timeout_add(TIMEOUT_INTERVAL, &::handle_timeout, this);
 
   gdk_threads_leave();
