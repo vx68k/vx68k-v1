@@ -41,7 +41,6 @@ namespace vx68k
       int32 write(int, uint32, uint32);
       uint32 load_executable(const char *);
       uint16 start(uint32, const char *const *);
-      uint16 execute(const char *, const char *const *);
     };
 
     class dos
@@ -52,8 +51,6 @@ namespace vx68k
     public:
       dos (address_space *, size_t);
     public:
-      uint32 load_executable (const char *);
-      uint16 start (uint32, const char *const *);
       uint16 execute (const char *, const char *const *);
     };
   } // human

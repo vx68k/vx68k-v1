@@ -1,7 +1,14 @@
 1999-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/human.h (class dos): Remove members
+	load_executable and start.
+
+	* lib/vx68k/dos.cc (load_executable, start): Moved from class dos.
+	(execute): Use methods of main_ec.
+
 	* include/vx68k/human.h (class dos_exec_context): Add member
 	functions: load_executable, start, and execute.
+	(class dos_exec_context): Remove member execute.
 
 1999-03-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 

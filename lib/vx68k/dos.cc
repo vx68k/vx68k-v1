@@ -79,7 +79,7 @@ dos_exec_context::open(const char *name, unsigned int flag)
 }
 
 uint32
-dos::load_executable (const char *name)
+dos_exec_context::load_executable(const char *name)
 {
   ifstream is (name, ios::in | ios::binary);
   if (!is)
@@ -112,8 +112,8 @@ dos::load_executable (const char *name)
       is.read (buf, text_size + data_size);
       if (!is)
 	abort ();		// FIXME
-      main_ec.mem->write (SUPER_DATA, load_address,
-			  buf, text_size + data_size);
+      mem->write(SUPER_DATA, load_address,
+		 buf, text_size + data_size);
     }
   catch (...)
     {
@@ -147,8 +147,8 @@ dos::load_executable (const char *name)
 	      abort();		// FIXME.
 	    }
 	  address += d;
-	  uint32 value = main_ec.mem->getl(SUPER_DATA, address);
-	  main_ec.mem->putl(SUPER_DATA, address, value + load_address - base);
+	  uint32 value = mem->getl(SUPER_DATA, address);
+	  mem->putl(SUPER_DATA, address, value + load_address - base);
 	  VL(("Fixup at 0x%lx (0x%lx -> 0x%lx)\n",
 	      (unsigned long) address, (unsigned long) value,
 	      (unsigned long) value + load_address - base));
@@ -162,9 +162,9 @@ dos::load_executable (const char *name)
   free(fixup_buf);
 
   // PSP setup.
-  main_ec.mem->write(SUPER_DATA, load_address - 128,
-		     name, strlen(name) + 1);
-  main_ec.regs.a[0] = load_address - 0x100; // FIXME.
+  mem->write(SUPER_DATA, load_address - 128,
+	     name, strlen(name) + 1);
+  regs.a[0] = load_address - 0x100; // FIXME.
 
   return load_address + start_offset;
 }
@@ -179,15 +179,15 @@ namespace
 }
 
 uint16
-dos::start (uint32 address, const char *const *argv)
+dos_exec_context::start(uint32 address, const char *const *argv)
 {
-  main_ec.regs.pc = address;
-  main_ec.regs.a[7] = 0x8000;	// FIXME.
+  regs.pc = address;
+  regs.a[7] = 0x8000;		// FIXME.
   uint16 status = 0;
  restart:
   try
     {
-      main_ec.run();
+      run();
       abort ();
     }
   catch (quit_loop &x)
@@ -196,7 +196,7 @@ dos::start (uint32 address, const char *const *argv)
     }
   catch (illegal_instruction &e)
     {
-      uint16 op = main_ec.mem->getw (SUPER_DATA, main_ec.regs.pc);
+      uint16 op = mem->getw(SUPER_DATA, regs.pc);
       fprintf(stderr, "vm68k illegal instruction (op = 0x%x)\n", op);
       status = 0xff;
     }
@@ -207,7 +207,7 @@ dos::start (uint32 address, const char *const *argv)
 uint16
 dos::execute (const char *name, const char *const *argv)
 {
-  return start (load_executable (name), argv);
+  return main_ec.start(main_ec.load_executable(name), argv);
 }
 
 namespace
