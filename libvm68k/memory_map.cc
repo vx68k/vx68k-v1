@@ -24,13 +24,14 @@
 #include <vm68k/memory.h>
 
 #include <algorithm>
+#include <cstdio>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
-# include <cstdio>
+# undef assert
+# define assert I
 #else
 # include <cassert>
-# define I assert
 #endif
 
 using vm68k::memory_map;
@@ -38,15 +39,10 @@ using vm68k::default_memory;
 using namespace vm68k::types;
 using namespace std;
 
-namespace
-{
-  default_memory null_memory;
-}
-
 uint16_type
 memory_map::get_16(uint32_type address, function_code fc) const
 {
-  if (address & 0x1)
+  if ((address & 1) != 0)
     throw address_error_exception(true, fc, address);
 
   return this->get_16_unchecked(address, fc);
@@ -55,22 +51,22 @@ memory_map::get_16(uint32_type address, function_code fc) const
 uint32_type
 memory_map::get_32(uint32_type address, function_code fc) const
 {
-  if (address % 2 != 0)
+  if ((address & 1) != 0)
     throw address_error_exception(true, fc, address);
 
-  if (address / 2 % 2 != 0)
+  uint32_type value;
+  if ((address >> 1 & 1) != 0)
     {
-      uint32_type value
-	= (uint32_type(this->get_16_unchecked(address, fc)) << 16
-	   | uint32_type(this->get_16_unchecked(address + 2, fc)));
-      return value;
+      value = uint32_type(this->get_16_unchecked(address, fc)) << 16;
+      value |= this->get_16_unchecked(address + 2, fc) & 0xffff;
     }
   else
     {
       const memory *p = *this->find_memory(address);
-      uint32_type value = p->get_32(address, fc);
-      return value;
+      value = p->get_32(address, fc);
     }
+
+  return value;
 }
 
 string
@@ -103,7 +99,7 @@ memory_map::read(uint32_type address, void *data, size_t size,
 void
 memory_map::put_16(uint32_type address, uint16_type value, function_code fc)
 {
-  if (address & 0x1)
+  if ((address & 1) != 0)
     throw address_error_exception(false, fc, address);
 
   this->put_16_unchecked(address, value, fc);
@@ -112,13 +108,13 @@ memory_map::put_16(uint32_type address, uint16_type value, function_code fc)
 void
 memory_map::put_32(uint32_type address, uint32_type value, function_code fc)
 {
-  if (address % 2 != 0)
+  if ((address & 1) != 0)
     throw address_error_exception(false, fc, address);
 
-  if (address / 2 % 2 != 0)
+  if ((address >> 1 & 1) != 0)
     {
-      this->put_16_unchecked(address, value >> 16, fc);
-      this->put_16_unchecked(address + 2, value, fc);
+      this->put_16_unchecked(address,     value >> 16, fc);
+      this->put_16_unchecked(address + 2, value,       fc);
     }
   else
     {
@@ -159,6 +155,11 @@ memory_map::fill(uint32_type first, uint32_type last, memory *p)
   ::fill(this->find_memory(first), i, p);
 }
 
+namespace
+{
+  default_memory null_memory;
+}
+
 memory_map::memory_map()
   : page_table(NPAGES, &null_memory)
 {

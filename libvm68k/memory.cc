@@ -42,7 +42,9 @@ uint32_type
 memory::get_32(uint32_type address, function_code fc) const
 {
   assert((address & 3) == 0);
-  return uint32_type(get_16(address, fc)) << 16 | get_16(address + 2, fc);
+  uint32_type value = uint32_type(get_16(address, fc)) << 16;
+  value |= get_16(address + 2, fc) & 0xffff;
+  return value;
 }
 
 void

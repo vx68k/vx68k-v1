@@ -2,4 +2,4 @@
 
 EXTRA_DIST = VERSION-ID
 
-SUBDIRS = include libvm68k libvx68k libvx68kgtk intl bin po doc testsuite
+SUBDIRS = include libvm68k libvx68k vx68kui intl bin po doc testsuite

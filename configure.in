@@ -32,6 +32,6 @@ ALL_LINGUAS=""
 AM_GNU_GETTEXT
 AC_OUTPUT(Makefile \
 include/Makefile include/vm68k/Makefile include/vx68k/Makefile \
-libvm68k/Makefile libvx68k/Makefile libvx68kgtk/Makefile \
+libvm68k/Makefile libvx68k/Makefile vx68kui/Makefile \
 intl/Makefile bin/Makefile po/Makefile.in \
 doc/Makefile testsuite/Makefile)

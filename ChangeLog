@@ -1,5 +1,20 @@
 2000-12-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/memory_map.cc: Move null_memory.
+	(get_16, get_32, put_16, put_32): Modify test for an address
+	error.
+	(get_32, put_32): Modify the alignment test.
+	(get_32): Return in one place.
+
+	* libvm68k/memory.cc (get_32): Rewrite using an intermediate
+	variable.
+
+	* Makefile.am (SUBDIRS): Replace libvx68kgtk with vx68kui.
+	* bin/Makefile.am (vx68k_LDADD): Likewise.
+	* configure.in (AC_OUTPUT): Likewise.
+
+	* vx68kui: Renamed from libvx68kgtk.
+
 	* bin/Makefile.am (vx68k_LDADD): Replace libvx68kgtk.a with
 	libvx68kui_gtk.a.
 
