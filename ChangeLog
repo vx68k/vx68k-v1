@@ -1,5 +1,15 @@
 2000-12-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Remove
+	defaultmem.cc.
+
+	* libvm68k/defaultmem.cc: Removed.
+
+	* libvm68k/memory_map.cc (class default_memory): New class.
+
+	* include/vm68k/memory.h: Modify comments.
+	(class default_memory): Removed.
+
 	* libvm68k/execunit.cc: Remove includes of <vm68k/addressiong.h>
 	and <vm68k/conditional.h>.
 

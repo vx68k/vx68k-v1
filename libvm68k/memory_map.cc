@@ -35,7 +35,6 @@
 #endif
 
 using vm68k::memory_map;
-using vm68k::default_memory;
 using namespace vm68k::types;
 using namespace std;
 
@@ -157,6 +156,47 @@ memory_map::fill(uint32_type first, uint32_type last, memory *p)
 
 namespace
 {
+  using vm68k::memory;
+  using vm68k::bus_error_exception;
+
+  /* Default memory that always raises a bus error.  */
+  class default_memory: public memory
+  {
+  public:
+    int get_8(uint32_type address, function_code) const;
+    uint16_type get_16(uint32_type address, function_code) const;
+
+    void put_8(uint32_type address, int, function_code);
+    void put_16(uint32_type address, uint16_type, function_code);
+  };
+
+  int
+  default_memory::get_8(uint32_type address, function_code fc) const
+  {
+    throw bus_error_exception(true, fc, address);
+  }
+
+  uint16_type
+  default_memory::get_16(uint32_type address, function_code fc) const
+  {
+    assert((address & 1) == 0);
+    throw bus_error_exception(true, fc, address);
+  }
+
+  void
+  default_memory::put_8(uint32_type address, int value, function_code fc)
+  {
+    throw bus_error_exception(false, fc, address);
+  }
+
+  void
+  default_memory::put_16(uint32_type address, uint16_type value,
+			 function_code fc)
+  {
+    assert((address & 1) == 0);
+    throw bus_error_exception(false, fc, address);
+  }
+
   default_memory null_memory;
 }
 

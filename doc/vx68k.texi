@@ -5,9 +5,9 @@
 @synindex vr fn
 @set VERSION 1.1
 @c $Format: "@set REVISION $Revision$" $
-@set REVISION 1.22
+@set REVISION 1.23
 @c $Format: "@set DATE $Date$" $
-@set DATE Tue, 19 Dec 2000 23:46:30 +0900
+@set DATE Sat, 23 Dec 2000 22:49:30 +0900
 @c %**end of header
 
 @dircategory Miscellaneous packages
@@ -343,27 +343,6 @@ the data references.
 This method is just implemented using two @code{put_16} calls for
 convenience, but can be overridden by a derived class for a slightly
 better performance.
-@end deftypemethod
-
-@deftp Class default_memory
-Memory component used for non-existent region.  Any reference to this
-memory causes a bus error exception.
-@end deftp
-
-@deftypemethod default_memory int get_8 (uint32_type @var{address}, function_code @var{fc}) const
-Throws a @var{bus_error_exception}.
-@end deftypemethod
-
-@deftypemethod default_memory uint16_type get_16 (uint32_type @var{address}, function_code @var{fc}) const
-Throws a @var{bus_error_exception}.
-@end deftypemethod
-
-@deftypemethod default_memory void put_8 (uint32_type @var{address}, int @var{value}, function_code @var{fc})
-Throws a @var{bus_error_exception}.
-@end deftypemethod
-
-@deftypemethod default_memory void put_16 (uint32_type @var{address}, uint16_type @var{value}, function_code @var{fc})
-Throws a @var{bus_error_exception}.
 @end deftypemethod
 
 @node Class memory_map,  , Memory, Memory and I/O

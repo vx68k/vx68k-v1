@@ -289,7 +289,7 @@ namespace vm68k
   {
     *uint32_iterator(p) = v;
   }
-
+
   /* Abstract memory class.  */
   class memory
   {
@@ -316,17 +316,6 @@ namespace vm68k
     virtual void put_32(uint32_type address, uint32_type, function_code);
   };
 
-  /* Default memory that always raises a bus error.  */
-  class default_memory: public memory
-  {
-  public:
-    int get_8(uint32_type address, function_code) const;
-    uint16_type get_16(uint32_type address, function_code) const;
-
-    void put_8(uint32_type address, int, function_code);
-    void put_16(uint32_type address, uint16_type, function_code);
-  };
-
   /* Maps an address space to memories.  An address space is a
      software view of a target machine.  */
   class memory_map
@@ -431,6 +420,6 @@ namespace vm68k
     memory *p = *this->find_memory(address);
     p->put_16(address, value, fc);
   }
-} // vm68k
+}
 
 #endif /* not _VM68K_MEMORY_H */
