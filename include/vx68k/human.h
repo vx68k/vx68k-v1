@@ -34,6 +34,7 @@ namespace vx68k
     public:
       dos_exec_context(address_space *, exec_unit *);
     public:
+      void exit(unsigned int);
       int open(const char *, unsigned int);
       int close(int);
       int32 read(int, uint32, uint32);

@@ -1,5 +1,15 @@
 1999-03-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/human.h (class dos_exec_context): Add member exit.
+
+	* lib/vx68k/dos.cc: Remove methods of class dos_exec_context.
+	(dos_exit2): Use dos_exec_context::exit instead of throw.
+
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add doscontext.cc.
+
+	* lib/vx68k/doscontext.cc: New file.
+	(exit): New function.
+
 	* NEWS: Modified.
 
 	* lib/vm68k/execunit.cc (cmpib_postinc, moveb_postinc_d,
