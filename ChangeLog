@@ -1,5 +1,7 @@
 1999-11-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/Makefile.am (lib_LTLIBRARIES): Update version info.
+
 	* libvx68k/machine.cc (machine): Initialize key_queue_mutex.
 	(~machine): Destroy key_queue_mutex.
 	(queue_key): New function.
