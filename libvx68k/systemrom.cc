@@ -45,7 +45,7 @@ bool nana_iocs_call_trace = false;
 #endif
 
 uint_type
-system_rom::get_16(int fc, uint32_type address) const
+system_rom::get_16(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   DL("class system_rom: get_16: fc=%d address=0x%08lx\n",
@@ -68,7 +68,7 @@ system_rom::get_16(int fc, uint32_type address) const
 }
 
 uint_type
-system_rom::get_8(int fc, uint32_type address) const
+system_rom::get_8(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   DL("class system_rom: get_8: fc=%d address=0x%08lx\n",
@@ -86,7 +86,7 @@ system_rom::get_8(int fc, uint32_type address) const
 }
 
 void
-system_rom::put_16(int fc, uint32_type address, uint_type value)
+system_rom::put_16(function_code fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class system_rom: put_16: fc=%d address=0x%08lx value=0x%04x\n",
@@ -101,7 +101,7 @@ system_rom::put_16(int fc, uint32_type address, uint_type value)
 }
 
 void
-system_rom::put_8(int fc, uint32_type address, uint_type value)
+system_rom::put_8(function_code fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class system_rom: put_8: fc=%d address=0x%08lx value=0x%02x\n",
@@ -147,7 +147,7 @@ namespace
     pthread_testcancel();
 
     uint32_type vecaddr = (15u + 32u) * 4u;
-    uint32_type addr = c.mem->getl(memory::SUPER_DATA, vecaddr);
+    uint32_type addr = c.mem->get_32(memory::SUPER_DATA, vecaddr);
     if (addr != vecaddr + 0xfe0000)
       {
 #ifdef HAVE_NANA_H
@@ -156,8 +156,8 @@ namespace
 	uint_type oldsr = c.sr();
 	c.set_supervisor_state(true);
 	c.regs.a[7] -= 6;
-	c.mem->putl(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
-	c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+	c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
 	c.regs.pc = addr;
       }
     else
@@ -165,7 +165,7 @@ namespace
 	unsigned int callno = byte_size::get(c.regs.d[0]);
 
 	uint32_type call_address = (callno + 0x100U) * 4U;
-	uint32_type call_handler = c.mem->getl(memory::SUPER_DATA, call_address);
+	uint32_type call_handler = c.mem->get_32(memory::SUPER_DATA, call_address);
 	if (call_handler != call_address + 0xfe0000)
 	  {
 #ifdef HAVE_NANA_H
@@ -174,8 +174,8 @@ namespace
 	    uint_type oldsr = c.sr();
 	    c.set_supervisor_state(true);
 	    c.regs.a[7] -= 6;
-	    c.mem->putl(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc + 2);
-	    c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	    c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc + 2);
+	    c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
 
 	    c.regs.pc = call_handler;
 	  }
@@ -242,12 +242,12 @@ system_rom::initialize(memory_address_space &as)
   uint32_type f = 0xfe0000;
   for (uint32_type i = 0u; i != 0x800u; i += 4)
     {
-      as.putl(memory::SUPER_DATA, i, f);
+      as.put_32(memory::SUPER_DATA, i, f);
       f += 4;
     }
 
   for (uint32_type i = 0x800u; i != 0x1000u; i += 4)
-    as.putl(memory::SUPER_DATA, i, 0);
+    as.put_32(memory::SUPER_DATA, i, 0);
 }
 
 namespace
@@ -366,8 +366,8 @@ namespace
       }
 
     uint32_type vecaddr = vecno * 4u;
-    uint32_type oaddr = c.mem->getl(memory::SUPER_DATA, vecaddr);
-    c.mem->putl(memory::SUPER_DATA, vecaddr, addr);
+    uint32_type oaddr = c.mem->get_32(memory::SUPER_DATA, vecaddr);
+    c.mem->put_32(memory::SUPER_DATA, vecaddr, addr);
 
     long_word_size::put(c.regs.d[0], oaddr);
   }
@@ -426,7 +426,7 @@ namespace
 #endif
     uint32_type address = c.regs.a[1];
 
-    c.regs.d[0] = c.mem->getl(memory::SUPER_DATA, address);
+    c.regs.d[0] = c.mem->get_32(memory::SUPER_DATA, address);
     c.regs.a[1] = address + 4;
   }
 
@@ -665,11 +665,11 @@ namespace
     char *p = str + 0;
     while (*p != '\0')
       {
-	c.mem->putb(memory::SUPER_DATA, address, *p++);
+	c.mem->put_8(memory::SUPER_DATA, address, *p++);
 	address = long_word_size::get(address + 1);
       }
 
-    c.mem->putb(memory::SUPER_DATA, address, *p);
+    c.mem->put_8(memory::SUPER_DATA, address, *p);
 
     long_word_size::put(c.regs.a[1], address);
   }
@@ -997,7 +997,7 @@ namespace
 	    long_word_size::put(c.regs.d[0], 1);
 	else
 	  {
-	    as->putl(memory::SUPER_DATA, 0x43 * 4, address);
+	    as->put_32(memory::SUPER_DATA, 0x43 * 4, address);
 	    as->machine()->set_opm_interrupt_enabled(true);
 	    long_word_size::put(c.regs.d[0], 0);
 	  }
@@ -1158,11 +1158,11 @@ namespace
     char *p = str + 0;
     while (*p != '\0')
       {
-	c.mem->putb(memory::SUPER_DATA, address, *p++);
+	c.mem->put_8(memory::SUPER_DATA, address, *p++);
 	address = long_word_size::get(address + 1);
       }
 
-    c.mem->putb(memory::SUPER_DATA, address, *p);
+    c.mem->put_8(memory::SUPER_DATA, address, *p);
 
     long_word_size::put(c.regs.a[1], address);
   }
@@ -1259,7 +1259,7 @@ namespace
 	    if (count == 0)
 	      count = 0x100;
 
-	    as->putl(memory::SUPER_DATA, 0x4d * 4, address);
+	    as->put_32(memory::SUPER_DATA, 0x4d * 4, address);
 	    as->machine()->set_vdisp_counter_data(count);
 	    long_word_size::put(c.regs.d[0], 0);
 	  }

@@ -68,12 +68,12 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    uint_type get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  These methods shall always fail.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, uint_type);
 
   public:
     /* Attaches or detaches an execution unit.  */
@@ -111,14 +111,14 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    unsigned int get_8(int, uint32_type) const;
-    uint32_type get_32(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    unsigned int get_8(function_code, uint32_type) const;
+    uint32_type get_32(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, unsigned int);
-    void put_32(int, uint32_type, uint32_type);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, unsigned int);
+    void put_32(function_code, uint32_type, uint32_type);
 
   public:
     void set_super_area(size_t n);
@@ -130,12 +130,12 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    unsigned int get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    unsigned int get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, unsigned int);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, unsigned int);
   };
 
   /* Raster iterator for the text VRAM.  This class is used by the
@@ -202,11 +202,11 @@ namespace vx68k
     ~text_video_memory();
 
   public:
-    uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    uint_type get_8(function_code, uint32_type) const;
 
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, uint_type);
 
   public:
     /* Draw a character CODE at [X Y].  */
@@ -266,12 +266,12 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    uint_type get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, uint_type);
 
   public:
     /* Returns true if VDISP interrupts are enabled.  */
@@ -305,12 +305,12 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    unsigned int get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    unsigned int get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, unsigned int);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, unsigned int);
 
   public:
     /* Checks if text colors are modified.  This function may be
@@ -332,12 +332,12 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    unsigned int get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    unsigned int get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, unsigned int);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, unsigned int);
   };
 
   /* Area set register.  This object is mapped from 0xe86000 to
@@ -354,12 +354,12 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    uint_type get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, uint_type);
   };
 
   /* MFP input/output port memory.  This memory is mapped to the
@@ -368,12 +368,12 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    unsigned int get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    unsigned int get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, unsigned int);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, unsigned int);
   };
 
   /* System ports memory.  This memory is mapped to the address range
@@ -382,12 +382,12 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    uint_type get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, uint_type);
   };
 
   /* OPM input/output port memory.  */
@@ -416,12 +416,12 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    uint_type get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, uint_type);
 
   public:
     unsigned int status() const {return _status;}
@@ -467,12 +467,12 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    unsigned int get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    unsigned int get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, unsigned int);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, unsigned int);
 
   public:
     /* Returns the state of a mouse button.  */
@@ -500,12 +500,12 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    uint_type get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, uint_type);
   };
 
   /* Sprite controller memory.  */
@@ -513,12 +513,12 @@ namespace vx68k
   {
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    uint_type get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, uint_type);
   };
 
   /* SRAM.  */
@@ -533,12 +533,12 @@ namespace vx68k
 
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    uint_type get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, uint_type);
   };
 
   /* Font ROM.  */
@@ -570,12 +570,12 @@ namespace vx68k
     
   public:
     /* Reads data from this object.  */
-    uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    uint_type get_8(function_code, uint32_type) const;
 
     /* Writes data to this object.  */
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, uint_type);
 
   public:
     void copy_data(const console *);

@@ -1,4 +1,4 @@
-/* Virtual X68000 - Sharp X68000 emulator
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998, 2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ using namespace vm68k::types;
 using namespace std;
 
 uint_type
-sram::get_16(int fc, uint32_type address) const
+sram::get_16(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   L("class sram: get_16 fc=%d address=%#010x\n", fc, address);
@@ -60,7 +60,7 @@ sram::get_16(int fc, uint32_type address) const
 }
 
 uint_type
-sram::get_8(int fc, uint32_type address) const
+sram::get_8(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   L("class sram: get_8 fc=%d address=%#010x\n", fc, address);
@@ -71,7 +71,7 @@ sram::get_8(int fc, uint32_type address) const
 }
 
 void
-sram::put_16(int, uint32_type, uint_type)
+sram::put_16(function_code, uint32_type, uint_type)
 {
 #ifdef HAVE_NANA_H
   L("class sram: FIXME: `put_16' not implemented\n");
@@ -79,7 +79,7 @@ sram::put_16(int, uint32_type, uint_type)
 }
 
 void
-sram::put_8(int, uint32_type, uint_type)
+sram::put_8(function_code, uint32_type, uint_type)
 {
 #ifdef HAVE_NANA_H
   L("class sram: FIXME: `put_8' not implemented\n");

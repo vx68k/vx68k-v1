@@ -113,7 +113,7 @@ regular_file::fputc(sint_type code)
 sint32_type
 regular_file::fputs(const memory_address_space *as, uint32_type mesptr)
 {
-  string mes = as->gets(memory::SUPER_DATA, mesptr);
+  string mes = as->get_string(memory::SUPER_DATA, mesptr);
 
   ssize_t written_size = ::write(fd, mes.data(), mes.size());
   if (written_size == -1)
@@ -362,7 +362,7 @@ file_system::open(file *&ret, const memory_address_space *as,
 		  uint32_type nameptr,
 		  sint_type mode)
 {
-  string name = as->gets(memory::SUPER_DATA, nameptr);
+  string name = as->get_string(memory::SUPER_DATA, nameptr);
 
   return open(ret, name, mode);
 }
@@ -371,7 +371,7 @@ sint_type
 file_system::create(file *&ret, const memory_address_space *as,
 		    uint32_type nameptr, sint_type atr)
 {
-  string name = export_file_name(as->gets(memory::SUPER_DATA, nameptr));
+  string name = export_file_name(as->get_string(memory::SUPER_DATA, nameptr));
 
   // FIXME.
   int fd = ::open(name.c_str(), O_RDWR | O_CREAT | O_TRUNC, 0666);
@@ -394,7 +394,7 @@ sint_type
 file_system::chmod(const memory_address_space *as,
 		   uint32_type nameptr, sint_type atr)
 {
-  string name = export_file_name(as->gets(memory::SUPER_DATA, nameptr));
+  string name = export_file_name(as->get_string(memory::SUPER_DATA, nameptr));
 
   struct stat stbuf;
   if (stat(name.c_str(), &stbuf) == -1)

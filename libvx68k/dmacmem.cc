@@ -41,7 +41,7 @@ extern bool nana_iocs_call_trace;
 #endif
 
 uint_type
-dmac_memory::get_16(int fc, uint32_type address) const
+dmac_memory::get_16(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   DL("class dmac_memory: get_16: fc=%d address=0x%08x\n", fc, address + 0UL);
@@ -53,7 +53,7 @@ dmac_memory::get_16(int fc, uint32_type address) const
 }
 
 unsigned int
-dmac_memory::get_8(int fc, uint32_type address) const
+dmac_memory::get_8(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   DL("class dmac_memory: get_8: fc=%d address=0x%08x\n", fc, address + 0UL);
@@ -65,7 +65,7 @@ dmac_memory::get_8(int fc, uint32_type address) const
 }
 
 void
-dmac_memory::put_16(int fc, uint32_type address, uint_type value)
+dmac_memory::put_16(function_code fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class dmac_memory: put_16: fc=%d address=0x%08x value=0x%04x\n",
@@ -77,7 +77,7 @@ dmac_memory::put_16(int fc, uint32_type address, uint_type value)
 }
 
 void
-dmac_memory::put_8(int fc, uint32_type address, unsigned int value)
+dmac_memory::put_8(function_code fc, uint32_type address, unsigned int value)
 {
 #ifdef HAVE_NANA_H
   DL("class dmac_memory: put_8: fc=%d address=0x%08x value=0x%02x\n",

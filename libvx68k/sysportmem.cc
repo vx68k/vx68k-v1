@@ -37,7 +37,7 @@ using namespace vm68k::types;
 using namespace std;
 
 uint_type
-system_ports_memory::get_16(int fc, uint32_type address) const
+system_ports_memory::get_16(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   DL("class system_ports_memory: get_16: fc=%d address=0x%08lx\n",
@@ -52,7 +52,7 @@ system_ports_memory::get_16(int fc, uint32_type address) const
 }
 
 uint_type
-system_ports_memory::get_8(int fc, uint32_type address) const
+system_ports_memory::get_8(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   DL("class system_ports_memory: get_8: fc=%d address=0x%08lx\n",
@@ -67,7 +67,7 @@ system_ports_memory::get_8(int fc, uint32_type address) const
 }
 
 void
-system_ports_memory::put_16(int fc, uint32_type address, uint_type value)
+system_ports_memory::put_16(function_code fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class opm_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
@@ -81,7 +81,7 @@ system_ports_memory::put_16(int fc, uint32_type address, uint_type value)
 }
 
 void
-system_ports_memory::put_8(int fc, uint32_type address, uint_type value)
+system_ports_memory::put_8(function_code fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class opm_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",

@@ -113,7 +113,7 @@ machine::b_putc(uint_type code)
 void
 machine::b_print(const memory_address_space *as, uint32_type strptr)
 {
-  const string str = as->gets(memory::SUPER_DATA, strptr);
+  const string str = as->get_string(memory::SUPER_DATA, strptr);
 
   for (string::const_iterator i = str.begin();
        i != str.end();
@@ -187,16 +187,16 @@ machine::boot(context &c)
     }
   catch (illegal_instruction_exception &e)
     {
-      uint_type op = c.mem->getw(memory::SUPER_DATA, c.regs.pc);
+      uint_type op = c.mem->get_16(memory::SUPER_DATA, c.regs.pc);
 
       if ((op & 0xf000u) == 0xf000u)
 	{
 	  uint_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 6;
-	  c.mem->putl(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
-	  c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
-	  c.regs.pc = c.mem->getl(memory::SUPER_DATA, 11u * 4u);
+	  c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+	  c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	  c.regs.pc = c.mem->get_32(memory::SUPER_DATA, 11u * 4u);
 	  goto rerun;
 	}
       else if ((op & 0xfff0u) == 0x4e40)
@@ -206,9 +206,9 @@ machine::boot(context &c)
 	  uint_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 6;
-	  c.mem->putl(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
-	  c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
-	  c.regs.pc = c.mem->getl(memory::SUPER_DATA, ((op & 0xfu) + 32) * 4u);
+	  c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+	  c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	  c.regs.pc = c.mem->get_32(memory::SUPER_DATA, ((op & 0xfu) + 32) * 4u);
 	  goto rerun;
 	}
 
@@ -217,7 +217,7 @@ machine::boot(context &c)
   catch (special_exception &e)
     {
       uint32_type vecaddr = e.vecno * 4u;
-      uint32_type addr = c.mem->getl(memory::SUPER_DATA, vecaddr);
+      uint32_type addr = c.mem->get_32(memory::SUPER_DATA, vecaddr);
       if (addr != vecaddr + 0xfe0000)
 	{
 #ifdef HAVE_NANA_H
@@ -226,12 +226,12 @@ machine::boot(context &c)
 	  uint_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 14;
-	  c.mem->putl(memory::SUPER_DATA, c.regs.a[7] + 10, c.regs.pc);
-	  c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 8, oldsr);
-	  c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 6,
-		      c.mem->getw(memory::SUPER_DATA, c.regs.pc));
-	  c.mem->putl(memory::SUPER_DATA, c.regs.a[7] + 2, e.address);
-	  c.mem->putw(memory::SUPER_DATA, c.regs.a[7] + 0, e.status);
+	  c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 10, c.regs.pc);
+	  c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 8, oldsr);
+	  c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 6,
+		      c.mem->get_16(memory::SUPER_DATA, c.regs.pc));
+	  c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 2, e.address);
+	  c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 0, e.status);
 	  c.regs.pc = addr;
 	  goto rerun;
 	}
@@ -402,22 +402,22 @@ machine::connect(console *c)
 void
 machine::configure(memory_address_space &as)
 {
-  as.set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &mem);
-  as.set_pages(0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &gv);
-  as.set_pages(0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &tvram);
-  as.set_pages(0xe80000 >> PAGE_SHIFT, 0xe82000 >> PAGE_SHIFT, &crtc);
-  as.set_pages(0xe82000 >> PAGE_SHIFT, 0xe84000 >> PAGE_SHIFT, &palettes);
-  as.set_pages(0xe84000 >> PAGE_SHIFT, 0xe86000 >> PAGE_SHIFT, &dmac);
-  as.set_pages(0xe86000 >> PAGE_SHIFT, 0xe88000 >> PAGE_SHIFT, &_area_set);
-  as.set_pages(0xe88000 >> PAGE_SHIFT, 0xe8a000 >> PAGE_SHIFT, &mfp);
-  as.set_pages(0xe8e000 >> PAGE_SHIFT, 0xe90000 >> PAGE_SHIFT, &system_ports);
-  as.set_pages(0xe90000 >> PAGE_SHIFT, 0xe92000 >> PAGE_SHIFT, &opm);
-  as.set_pages(0xe98000 >> PAGE_SHIFT, 0xe9a000 >> PAGE_SHIFT, &scc);
-  as.set_pages(0xe9a000 >> PAGE_SHIFT, 0xe9c000 >> PAGE_SHIFT, &ppi);
-  as.set_pages(0xeb0000 >> PAGE_SHIFT, 0xeb8000 >> PAGE_SHIFT, &sprites);
-  as.set_pages(0xed0000 >> PAGE_SHIFT, 0xed4000 >> PAGE_SHIFT, &_sram);
-  as.set_pages(0xf00000 >> PAGE_SHIFT, 0xfc0000 >> PAGE_SHIFT, &font);
-  as.set_pages(0xfc0000 >> PAGE_SHIFT, 0x1000000 >> PAGE_SHIFT, &rom);
+  as.fill(0, _memory_size, &mem);
+  as.fill(0xc00000, 0xe00000, &gv);
+  as.fill(0xe00000, 0xe80000, &tvram);
+  as.fill(0xe80000, 0xe82000, &crtc);
+  as.fill(0xe82000, 0xe84000, &palettes);
+  as.fill(0xe84000, 0xe86000, &dmac);
+  as.fill(0xe86000, 0xe88000, &_area_set);
+  as.fill(0xe88000, 0xe8a000, &mfp);
+  as.fill(0xe8e000, 0xe90000, &system_ports);
+  as.fill(0xe90000, 0xe92000, &opm);
+  as.fill(0xe98000, 0xe9a000, &scc);
+  as.fill(0xe9a000, 0xe9c000, &ppi);
+  as.fill(0xeb0000, 0xeb8000, &sprites);
+  as.fill(0xed0000, 0xed4000, &_sram);
+  as.fill(0xf00000, 0xfc0000, &font);
+  as.fill(0xfc0000, 0x1000000, &rom);
 
   rom.initialize(as);
 }

@@ -1,5 +1,5 @@
-/* -*-C++-*- */
-/* vx68k - Virtual X68000
+/* -*- C++ -*- */
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify

@@ -51,7 +51,7 @@ shell::create_env(const char *const *envp)
 
   env_size = (env_size + 0x200u + 0x1ffu) & ~0x1ffu;
   uint32_type env = _context->malloc(env_size);
-  _context->mem->putl(memory::SUPER_DATA, env, env_size);
+  _context->mem->put_32(memory::SUPER_DATA, env, env_size);
 
   uint32_type address = env + 4;
   p = envp;
@@ -86,7 +86,7 @@ shell::exec(const char *name, const char *const *argv,
 
   // Argument string
   uint32_type pdb_base = pdb - 0x10;
-  _context->mem->putb(memory::SUPER_DATA, pdb_base + 0x100, arg.size());
+  _context->mem->put_8(memory::SUPER_DATA, pdb_base + 0x100, arg.size());
   _context->mem->write(memory::SUPER_DATA, pdb_base + 0x101, arg.c_str(), arg.size() + 1);
 
   _context->regs.a[7] = pdb + 0x2000;
@@ -100,7 +100,7 @@ shell::exec(const char *name, const char *const *argv,
 shell::~shell()
 {
   uint32_type pdb_base = pdb - 0x10;
-  uint32_type parent = _context->mem->getl(memory::SUPER_DATA, pdb_base + 4) + 0x10;
+  uint32_type parent = _context->mem->get_32(memory::SUPER_DATA, pdb_base + 4) + 0x10;
   _context->setpdb(parent);
   _context->mfree(pdb);
 }
@@ -112,7 +112,7 @@ shell::shell(dos_exec_context *c)
   pdb = _context->malloc(0x2000);
 
   uint32_type pdb_base = pdb - 0x10;
-  _context->mem->putl(memory::SUPER_DATA, pdb_base + 0x10, 0);
+  _context->mem->put_32(memory::SUPER_DATA, pdb_base + 0x10, 0);
 
   _context->setpdb(pdb);
 }

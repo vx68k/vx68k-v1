@@ -227,7 +227,7 @@ text_video_memory::raster(unsigned int x, unsigned int y)
 }
 
 uint_type
-text_video_memory::get_16(int fc, uint32_type address) const
+text_video_memory::get_16(function_code fc, uint32_type address) const
 {
   if (fc != SUPER_DATA)
     throw bus_error_exception(true, fc, address);
@@ -238,7 +238,7 @@ text_video_memory::get_16(int fc, uint32_type address) const
 }
 
 uint_type
-text_video_memory::get_8(int fc, uint32_type address) const
+text_video_memory::get_8(function_code fc, uint32_type address) const
 {
   if (fc != SUPER_DATA)
     throw bus_error_exception(true, fc, address);
@@ -249,7 +249,7 @@ text_video_memory::get_8(int fc, uint32_type address) const
 }
 
 void
-text_video_memory::put_16(int fc, uint32_type address, uint_type value)
+text_video_memory::put_16(function_code fc, uint32_type address, uint_type value)
 {
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);
@@ -263,7 +263,7 @@ text_video_memory::put_16(int fc, uint32_type address, uint_type value)
 }
 
 void
-text_video_memory::put_8(int fc, uint32_type address, uint_type value)
+text_video_memory::put_8(function_code fc, uint32_type address, uint_type value)
 {
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);

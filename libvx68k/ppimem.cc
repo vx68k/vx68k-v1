@@ -37,7 +37,7 @@ using namespace vm68k::types;
 using namespace std;
 
 uint_type
-ppi_memory::get_16(int fc, uint32_type address) const
+ppi_memory::get_16(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   DL("class ppi_memory: get_16: fc=%d address=0x%08lx\n", fc, address + 0UL);
@@ -47,7 +47,7 @@ ppi_memory::get_16(int fc, uint32_type address) const
 }
 
 unsigned int
-ppi_memory::get_8(int fc, uint32_type address) const
+ppi_memory::get_8(function_code fc, uint32_type address) const
 {
   address &= 0xffffffffU;
 
@@ -65,7 +65,7 @@ ppi_memory::get_8(int fc, uint32_type address) const
 }
 
 void
-ppi_memory::put_16(int fc, uint32_type address, uint_type value)
+ppi_memory::put_16(function_code fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class ppi_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
@@ -78,7 +78,7 @@ ppi_memory::put_16(int fc, uint32_type address, uint_type value)
 }
 
 void
-ppi_memory::put_8(int fc, uint32_type address, uint_type value)
+ppi_memory::put_8(function_code fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class ppi_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",

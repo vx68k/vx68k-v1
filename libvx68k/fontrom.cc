@@ -91,7 +91,7 @@ font_rom::copy_data(const console *c)
 }
 
 uint_type
-font_rom::get_16(int fc, uint32_type address) const
+font_rom::get_16(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   DL("class font_rom: get_16: fc=%d address=0x%08lx\n", fc, address + 0UL);
@@ -108,7 +108,7 @@ font_rom::get_16(int fc, uint32_type address) const
 }
 
 unsigned int
-font_rom::get_8(int fc, uint32_type address) const
+font_rom::get_8(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   DL("class font_rom: get_8: fc=%d address=0x%08lx\n", fc, address + 0UL);
@@ -124,7 +124,7 @@ font_rom::get_8(int fc, uint32_type address) const
 }
 
 void
-font_rom::put_16(int fc, uint32_type address, uint_type value)
+font_rom::put_16(function_code fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class font_rom: put_16: fc=%d address=0x%08lx value=0x%04x\n",
@@ -136,7 +136,7 @@ font_rom::put_16(int fc, uint32_type address, uint_type value)
 }
 
 void
-font_rom::put_8(int fc, uint32_type address, unsigned int value)
+font_rom::put_8(function_code fc, uint32_type address, unsigned int value)
 {
 #ifdef HAVE_NANA_H
   DL("class font_rom: put_8: fc=%d address=0x%08lx value=0x%02x\n",
