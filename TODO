@@ -1,6 +1,6 @@
 To-Do List for Virtual X68000
 
-$Date: Thu, 18 Nov 1999 21:10:40 +0900 $
+$Date: Thu, 18 Nov 1999 21:11:40 +0900 $
 
 * Add comments about version information of libvm68k.la.
 
@@ -30,6 +30,8 @@ $Date: Thu, 18 Nov 1999 21:10:40 +0900 $
 
 * Implement DOS drives.  This will require some run-time
 configuration.
+
+* Write vx68k.xml.
 
 Maybe version 1.1 or later
 
