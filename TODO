@@ -1,8 +1,6 @@
 To-Do List for Virtual X68000
 
-$Date: Thu, 10 Aug 2000 21:05:18 +0900 $
-
-* Move class main_memory to <vx68k/memory.h>.
+$Date: Thu, 10 Aug 2000 21:07:03 +0900 $
 
 * Use the text palette.
 
