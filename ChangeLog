@@ -1,5 +1,7 @@
 1999-11-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vx68k/textvram.cc (draw_char): Fix width for update_area.
+
 	* vm68k/execunit.cc (m68k_add_r): New function.
 	(addw_r, addl_r): Removed.
 	(install_instructions): Replace addw_r and addl_r using

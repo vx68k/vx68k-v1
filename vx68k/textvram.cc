@@ -113,7 +113,7 @@ text_vram::draw_char(int x, int y, unsigned int c)
 	    }
 	}
 
-      connected_console->update_area(x * 8, y * 16, 8, 16);
+      connected_console->update_area(x * 8, y * 16, 16, 16);
     }
   else
     {
@@ -149,7 +149,7 @@ text_vram::draw_char(int x, int y, unsigned int c)
 	    }
 	}
 
-      connected_console->update_area(x * 8, y * 16, 16, 16);
+      connected_console->update_area(x * 8, y * 16, 8, 16);
     }
 }
 
