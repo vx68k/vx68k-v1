@@ -1,9 +1,10 @@
 User-Visible Changes
 
 $Format: "Version $Version$ ($ProjectDate$ -r $ProjectVersion$)" $
-Version 0.31 (Sat, 20 Mar 1999 22:50:55 +0900 -r 0.120)
+Version 0.31 (Mon, 22 Mar 1999 18:04:36 +0900 -r 0.126)
 
-* DOS calls PRINT, OPEN, CLOSE, and EXIT2 are implemented partialy.
+* DOS calls PRINT, OPEN, CLOSE, READ, and EXIT2 are implemented
+partialy.
 
 * Several instructions are implemented.
 

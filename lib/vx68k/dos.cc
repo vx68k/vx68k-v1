@@ -41,6 +41,19 @@ using namespace vx68k::human;
 using namespace vm68k;
 using namespace std;
 
+/* Reads data from the file with a DOS file descriptor.  */
+int32
+dos::read(int fd, uint32 data, uint32 size)
+{
+  // FIXME.
+  uint8 *data_buf = static_cast<uint8 *>(malloc(size));
+  ssize_t done = ::read(fd, data_buf, size);
+  if (done == -1)
+    return -6;			// FIXME.
+  main_ec.mem->write(SUPER_DATA, data, data_buf, size);
+  return done;
+}
+
 /* Closes a DOS file descriptor.  */
 int
 dos::close(int fd)
@@ -256,6 +269,20 @@ namespace
       ec->regs.pc += 2;
     }
 
+  void dos_read(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      VL((" DOS _READ\n"));
+
+      // FIXME.
+      uint32 sp = ec->regs.a[7];
+      int fd = extsw(ec->mem->getw(SUPER_DATA, sp));
+      uint32 data = ec->mem->getl(SUPER_DATA, sp + 2);
+      uint32 size = ec->mem->getl(SUPER_DATA, sp + 6);
+      ec->regs.d[0] = dos::from(ec)->read(fd, data, size);
+
+      ec->regs.pc += 2;
+    }
 } // (unnamed namespace)
 
 dos::dos (address_space *as, size_t)
@@ -264,6 +291,7 @@ dos::dos (address_space *as, size_t)
   main_cpu.set_handlers(0xff09, 0, &dos_print);
   main_cpu.set_handlers(0xff3d, 0, &dos_open);
   main_cpu.set_handlers(0xff3e, 0, &dos_close);
+  main_cpu.set_handlers(0xff3f, 0, &dos_read);
   main_cpu.set_handlers(0xff4c, 0, &dos_exit2);
 }
 

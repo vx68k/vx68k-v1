@@ -51,6 +51,8 @@ namespace vx68k
     public:
       int open(const char *, unsigned int);
       int close(int);
+      int32 read(int, uint32, uint32);
+      int32 write(int, uint32, uint32);
       uint32 load_executable (const char *);
       uint16 start (uint32, const char *const *);
       uint16 execute (const char *, const char *const *);

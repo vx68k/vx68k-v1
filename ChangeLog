@@ -1,5 +1,12 @@
 1999-03-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Modified.
+
+	* lib/vx68k/dos.cc (read, dos_read): New functions.
+	(dos): Set an instruction.
+	* include/vx68k/human.h (class dos): Add member functions read and
+	write.
+
 	* lib/vm68k/execunit.cc (movew_absl_predec, movel_i_predec): New
 	functions.
 	(install_instructions): Set instructions.
