@@ -147,6 +147,7 @@ namespace vx68k
     crtc_memory crtc;
     palettes_memory palettes;
     area_set _area_set;
+    mfp_memory mfp;
     system_ports_memory system_ports;
     opm_memory opm;
     scc_memory scc;

@@ -251,6 +251,20 @@ namespace vx68k
     void put_8(int, uint32_type, uint_type);
   };
 
+  /* MFP input/output port memory.  This memory is mapped to the
+     address range from 0xe88000 to 0xe8a000 on X68000.  */
+  class mfp_memory: public memory
+  {
+  public:
+    /* Reads data from this object.  */
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
+
+    /* Writes data to this object.  */
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
+  };
+
   /* System ports memory.  This memory is mapped to the address range
      from 0xe8e000 to 0xe90000 on X68000.  */
   class system_ports_memory: public memory
