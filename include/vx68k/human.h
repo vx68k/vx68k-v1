@@ -186,7 +186,7 @@ namespace vx68k
     };
 
     class dos
-      : public virtual instruction_data
+      : public instruction_data
     {
     private:
       machine *vm;

@@ -139,9 +139,9 @@ struct exception_listener
   virtual void illegal (int, registers *, address_space *) = 0;
 };
 
+  /* Base object that can be passed to instructions.  */
   struct instruction_data
   {
-    virtual ~instruction_data() {}
   }; 
 
   class context;	// Forward declaration.

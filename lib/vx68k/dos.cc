@@ -52,7 +52,7 @@ namespace
     L(" DOS _CHMOD\n");
 #endif
 
-    dos *d = dynamic_cast<dos *>(data);
+    dos *d = static_cast<dos *>(data);
     I(d != NULL);
     c.regs.d[0] = d->fs()->chmod(c.mem, nameptr, atr);
 
@@ -121,7 +121,7 @@ namespace
     L(" DOS _FFLUSH\n");
 #endif
 
-    dos *d = dynamic_cast<dos *>(data);
+    dos *d = static_cast<dos *>(data);
     I(d != NULL);
     // FIXME
 
@@ -300,7 +300,7 @@ namespace
     L(" DOS _NAMECK\n");
 #endif
 
-    dos *d = dynamic_cast<dos *>(data);
+    dos *d = static_cast<dos *>(data);
     I(d != NULL);
 
     // FIXME
