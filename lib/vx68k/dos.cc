@@ -30,7 +30,6 @@
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
-#include <iostream>
 #include <fstream>
 #include <cstdlib>
 #include <cstdio>
@@ -98,12 +97,12 @@ dos::load_executable (const char *name)
   size_t data_size = getl (head + 16);
   size_t bss_size = getl (head + 20);
   size_t reloc_size = getl (head + 24);
-  cerr << hex << "Base : 0x" << base << "\n";
-  cerr << "Start: 0x" << start_offset << "\n" << dec;
-  cerr << "Text : " << text_size << "\n";
-  cerr << "Data : " << data_size << "\n";
-  cerr << "BSS  : " << bss_size << "\n";
-  cerr << "Reloc: " << reloc_size << "\n";
+  fprintf(stderr, "Base : 0x%lx\n", (unsigned long) base);
+  fprintf(stderr, "Start: 0x%lx\n", (unsigned long) start_offset);
+  fprintf(stderr, "Text : %lu\n", (unsigned long) text_size);
+  fprintf(stderr, "Data : %lu\n", (unsigned long) data_size);
+  fprintf(stderr, "BSS  : %lu\n", (unsigned long) bss_size);
+  fprintf(stderr, "Fixup: %lu\n", (unsigned long) reloc_size);
 
   uint32 load_address = 0x8100;	// FIXME.
 
@@ -144,15 +143,15 @@ dos::load_executable (const char *name)
 	    }
 	  if (d % 2 != 0)
 	    {
-	      cerr << "Illegal fixup at an odd address\n";
+	      fprintf(stderr, "Illegal fixup at an odd address\n");
 	      abort();		// FIXME.
 	    }
 	  address += d;
 	  uint32 value = main_ec.mem->getl(SUPER_DATA, address);
 	  main_ec.mem->putl(SUPER_DATA, address, value + load_address - base);
-	  cerr << "Fixup at 0x" << hex << address
-	       << " (0x" << value << " -> 0x" << value + load_address - base
-	       << dec << ")\n";
+	  VL(("Fixup at 0x%lx (0x%lx -> 0x%lx)\n",
+	      (unsigned long) address, (unsigned long) value,
+	      (unsigned long) value + load_address - base));
 	}
     }
   catch (...)
@@ -198,7 +197,7 @@ dos::start (uint32 address, const char *const *argv)
   catch (illegal_instruction &e)
     {
       uint16 op = main_ec.mem->getw (SUPER_DATA, main_ec.regs.pc);
-      cerr << hex << "vm68k illegal instruction (op = 0x" << op << ")\n" << dec;
+      fprintf(stderr, "vm68k illegal instruction (op = 0x%x)\n", op);
       status = 0xff;
     }
 
@@ -286,7 +285,7 @@ namespace
 } // (unnamed namespace)
 
 dos::dos (address_space *as, size_t)
-  : main_ec(&main_cpu, as, this)
+  : main_ec(&main_cpu, as)
 {
   main_cpu.set_instruction(0xff09, 0, &dos_print);
   main_cpu.set_instruction(0xff3d, 0, &dos_open);

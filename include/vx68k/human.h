@@ -28,16 +28,12 @@ namespace vx68k
 
   namespace human
   {
-    class dos;			// Forward declaration.
-
     class dos_exec_context
       : public execution_context
     {
-    private:
-      class dos *dos;
     public:
-      dos_exec_context(exec_unit *e, address_space *m, class dos *d)
-	: execution_context(e, m), dos(d) {}
+      dos_exec_context(exec_unit *e, address_space *m)
+	: execution_context(e, m) {}
     public:
       int open(const char *, unsigned int);
       int close(int);
