@@ -470,6 +470,40 @@ namespace
     long_word_size::put(c.regs.d[0], as->machine()->key_modifiers());
   }
 
+  /* Handles a _B_SUPER call.  */
+  void
+  iocs_b_super(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _B_SUPER: %%a1=%#010lx\n",
+      (unsigned long) long_word_size::get(c.regs.a[1]));
+#endif
+    uint32_type ssp = long_word_size::get(c.regs.a[1]);
+
+    if (ssp != 0)
+      {
+	if (c.supervisor_state())
+	  {
+	    long_word_size::put(c.regs.usp, long_word_size::get(c.regs.a[7]));
+	    long_word_size::put(c.regs.a[7], ssp);
+	    c.set_supervisor_state(false);
+	  }
+
+	long_word_size::put(c.regs.d[0], 0);
+      }
+    else
+      {
+	if (c.supervisor_state())
+	  long_word_size::put(c.regs.d[0], 1);
+	else
+	  {
+	    c.set_supervisor_state(true);
+	    long_word_size::put(c.regs.d[0], c.regs.a[7]);
+	    long_word_size::put(c.regs.a[7], long_word_size::get(c.regs.usp));
+	  }
+      }
+  }
+
   /* Handles a _B_WRITE call.  */
   void
   iocs_b_write(context &c, unsigned long data)
@@ -998,6 +1032,7 @@ namespace
     rom->set_iocs_function(0x7d, iocs_function_type(&iocs_skey_mod, 0));
     rom->set_iocs_function(0x7f, iocs_function_type(&iocs_ontime, 0));
     rom->set_iocs_function(0x80, iocs_function_type(&iocs_b_intvcs, 0));
+    rom->set_iocs_function(0x81, iocs_function_type(&iocs_b_super, 0));
     rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));
     rom->set_iocs_function(0x8e, iocs_function_type(&iocs_bootinf, 0));
     rom->set_iocs_function(0x8f, iocs_function_type(&iocs_romver, 0));
