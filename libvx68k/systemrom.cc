@@ -56,8 +56,13 @@ system_rom::get_16(int fc, uint32_type address) const
     throw bus_error_exception(true, fc, address);
 #endif
 
-  fprintf(stderr, "class system_rom: FIXME: `get_16' not implemented\n");
-  return 0x4e73;
+  if (address >= 0xfe0400 && address < 0xfe0800)
+    return 0xf84f;
+  else
+    {
+      fprintf(stderr, "class system_rom: FIXME: `get_16' not implemented\n");
+      return 0x4e73;
+    }
 }
 
 uint_type
@@ -112,37 +117,21 @@ system_rom::set_iocs_function(uint_type funcno, const iocs_function_type &f)
 }
 
 void
-system_rom::dispatch_iocs_function(context &c)
+system_rom::call_iocs(unsigned int funcno, context &c)
 {
-  unsigned int funcno = c.regs.d[0] & 0xffu;
+  funcno %= 0x100;
 
-  c.regs.pc += 2;
+  iocs_function_handler handler = iocs_functions[funcno].first;
+  I(handler != NULL);
 
-  uint32_type vecaddr = (funcno + 0x100u) * 4u;
-  uint32_type addr = c.mem->getl(SUPER_DATA, vecaddr);
-  if (addr != vecaddr + 0xfe0000)
-    {
-#ifdef HAVE_NANA_H
-      DL("system_rom: Installed IOCS function handler used\n");
-#endif
-      uint_type oldsr = c.sr();
-      c.set_supervisor_state(true);
-      c.regs.a[7] -= 6;
-      c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
-      c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, oldsr);
-      c.regs.pc = addr;
-    }
-  else
-    {
-      iocs_function_handler handler = iocs_functions[funcno].first;
-      I(handler != NULL);
-
-      (*handler)(c, iocs_functions[funcno].second);
-    }
+  (*handler)(c, iocs_functions[funcno].second);
 }
 
 namespace
 {
+  using vm68k::byte_size;
+  using vm68k::long_word_size;
+
   /* Handles an IOCS trap.  This function is an instruction handler.  */
   void
   iocs_trap(uint_type, context &c, unsigned long data)
@@ -163,11 +152,51 @@ namespace
       }
     else
       {
-	system_rom *rom = reinterpret_cast<system_rom *>(data);
-	I(rom != NULL);
+	unsigned int callno = byte_size::get(c.regs.d[0]);
 
-	rom->dispatch_iocs_function(c);
+	uint32_type call_address = (callno + 0x100U) * 4U;
+	uint32_type call_handler = c.mem->getl(SUPER_DATA, call_address);
+	if (call_handler != call_address + 0xfe0000)
+	  {
+#ifdef HAVE_NANA_H
+	    DL("iocs_trap: Installed IOCS call handler used\n");
+#endif
+	    uint_type oldsr = c.sr();
+	    c.set_supervisor_state(true);
+	    c.regs.a[7] -= 6;
+	    c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc + 2);
+	    c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, oldsr);
+
+	    c.regs.pc = call_handler;
+	  }
+	else
+	  {
+	    system_rom *rom = reinterpret_cast<system_rom *>(data);
+	    I(rom != NULL);
+
+	    rom->call_iocs(callno, c);
+	    c.regs.pc += 2;
+	  }
       }
+  }
+
+  /* Handles a special IOCS invocation.  This instruction calls a
+     internal IOCS handler and executes a return.  The IOCS call
+     number is derived from the current value of the PC.  */
+  void
+  x68k_iocs(uint_type, context &c, unsigned long data)
+  {
+    system_rom *rom = reinterpret_cast<system_rom *>(data);
+    I(rom != NULL);
+
+    uint_type callno = (c.regs.pc - 0xfe0400) / 4;
+    rom->call_iocs(callno, c);
+
+    c.regs.pc = long_word_size::get(*c.mem, SUPER_DATA,
+				    long_word_size::get(c.regs.a[7]));
+    long_word_size::put(c.regs.a[7],
+			long_word_size::get(c.regs.a[7]
+					    + long_word_size::value_size()));
   }
 } // namespace (unnamed)
 
@@ -181,6 +210,7 @@ system_rom::attach(exec_unit *eu)
 
   unsigned long data = reinterpret_cast<unsigned long>(this);
   attached_eu->set_instruction(0x4e4f, make_pair(&iocs_trap, data));
+  attached_eu->set_instruction(0xf84f, make_pair(&x68k_iocs, data));
 }
 
 void

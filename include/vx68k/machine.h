@@ -89,8 +89,8 @@ namespace vx68k
     /* Sets an IOCS function.  */
     void set_iocs_function(uint_type, const iocs_function_type &);
 
-    /* Dispatch to an IOCS function.  */
-    void dispatch_iocs_function(context &);
+    /* Dispatch to an IOCS call handler.  */
+    void call_iocs(unsigned int, context &);
 
   public:
     /* Reads data from this object.  */

@@ -1,5 +1,15 @@
 2000-08-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (get_16): Returns 0xf84f for IOCS area.
+	(call_iocs): New function.
+	(dispatch_iocs_function): Removed.
+	(iocs_trap): Handle program-supplied IOCS call handlers.
+	(x68k_iocs): New function.
+	(attach): Use x68k_iocs.
+
+	* include/vx68k/machine.h (class system_rom): Remove member
+	dispatch_iocs_function.  Add member call_iocs.
+
 	* libvm68k/execunit.cc (m68k_cmpm): New function template
 	replacing cmpmb.
 	(initialize_instructions): Install new handlers.
