@@ -87,7 +87,7 @@ namespace
 #endif
 
     // FIXME.
-    ec.regs.d[0] = open("/dev/null", O_RDWR);
+    ec.regs.d[0] = open("create.out", O_RDWR | O_CREAT | O_TRUNC, 0666);
 
     ec.regs.pc += 2;
   }
@@ -261,7 +261,7 @@ namespace
     int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
     uint32_type data = ec.mem->getl(SUPER_DATA, sp + 2);
     uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
-    ec.regs.d[0] = size;
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).write(fd, data, size);
 
     ec.regs.pc += 2;
   }

@@ -38,7 +38,7 @@ namespace vx68k
       int open(const char *, unsigned int);
       int close(int);
       int32 read(int, uint32, uint32);
-      int32 write(int, uint32, uint32);
+      sint32_type write(int, uint32_type, uint32_type);
       int32 seek(int, int32, unsigned int);
       int fgetc(int);
       uint32 load_executable(const char *);

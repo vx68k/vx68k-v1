@@ -58,8 +58,28 @@ dos_exec_context::read(int fd, uint32 data, uint32 size)
   unsigned char *data_buf = static_cast<unsigned char *>(malloc(size));
   ssize_t done = ::read(fd, data_buf, size);
   if (done == -1)
-    return -6;			// FIXME.
-  mem->write(SUPER_DATA, data, data_buf, size);
+    {
+      free(data_buf);
+      return -6;			// FIXME.
+    }
+  mem->write(SUPER_DATA, data, data_buf, done);
+  free(data_buf);
+  return done;
+}
+
+sint32_type
+dos_exec_context::write(int fd, uint32_type data, uint32_type size)
+{
+  // FIXME.
+  unsigned char *data_buf = static_cast<unsigned char *>(malloc(size));
+  mem->read(SUPER_DATA, data, data_buf, size);
+  ssize_t done = ::write(fd, data_buf, size);
+  if (done == -1)
+    {
+      free(data_buf);
+      return -6;			// FIXME.
+    }
+  free(data_buf);
   return done;
 }
 
