@@ -10,6 +10,10 @@
 	(clrw_predec, lea_offset_a, lea_absl_a, moveb_indir_d,
 	moveb_postinc_d, moveb_off_d, movew_off_d, movew_absl_d,
 	movel_d_d, movel_a_d, movel_postinc_d, movel_off_d): Removed.
+	(addil, addqb, addqw, addqw<address_register>, addql,
+	addql<address_register>, cmpib): Fix %pc increments.
+	(cmpib): Modify log message.
+	(cmpib_postinc): Removed.
 
 	* include/vm68k/addressing.h (class disp_indirect): New class.
 

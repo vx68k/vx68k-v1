@@ -124,7 +124,7 @@ namespace
       ea1.finishl(ec);
       ec->regs.sr.set_cc(value); // FIXME.
 
-      ec->regs.pc += 2 + 4;
+      ec->regs.pc += 2 + 4 + ea1.isize(4);
     }
 
   template <> void addil<address_register>(unsigned int, execution_context *);
@@ -162,7 +162,7 @@ namespace
       ea1.finishb(ec);
       ec->regs.sr.set_cc(value); // FIXME.
 
-      ec->regs.pc += 2;
+      ec->regs.pc += 2 + ea1.isize(2);
     }
 
 #if 0
@@ -200,7 +200,7 @@ namespace
       ea1.finishw(ec);
       ec->regs.sr.set_cc(value); // FIXME.
 
-      ec->regs.pc += 2;
+      ec->regs.pc += 2 + ea1.isize(2);
     }
 
   template <> void addqw<address_register>(unsigned int op, execution_context *ec)
@@ -219,7 +219,7 @@ namespace
       ea1.finishl(ec);
       // XXX: The condition codes are not affected.
 
-      ec->regs.pc += 2;
+      ec->regs.pc += 2 + ea1.isize(2);
     }
 
 #if 0
@@ -254,7 +254,7 @@ namespace
       ea1.finishl(ec);
       ec->regs.sr.set_cc(value); // FIXME.
 
-      ec->regs.pc += 2;
+      ec->regs.pc += 2 + ea1.isize(4);
     }
 
   template <> void addql<address_register>(unsigned int op, execution_context *ec)
@@ -272,7 +272,7 @@ namespace
       ea1.finishl(ec);
       // XXX: The condition codes are not affected.
 
-      ec->regs.pc += 2;
+      ec->regs.pc += 2 + ea1.isize(4);
     }
 
 #if 0
@@ -474,35 +474,16 @@ namespace
       int value2 = extsb(ec->fetchw(2));
       Destination ea1(op & 0x7, 2 + 2);
       VL((" cmpib #0x%x", (unsigned int) value2));
-      VL((",%s\n", ea1.textb(ec)));
+      VL((",%s", ea1.textb(ec)));
+      VL((" | %%pc = 0x%lx\n", (unsigned long) ec->regs.pc));
 
       int value1 = ea1.getb(ec);
       int value = extsb(value1 - value2);
       ea1.finishb(ec);
       ec->regs.sr.set_cc(value); // FIXME.
 
-      ec->regs.pc += 2 + 2;
+      ec->regs.pc += 2 + 2 + ea1.isize(2);
     }
-
-#if 0
-  void cmpib_postinc(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int reg1 = op & 0x7;
-      int val2 = extsb(ec->fetchw(2));
-      uint32 addr1 = ec->regs.a[reg1];
-      VL((" cmpib #%d,%%a%d@+ |*,0x%lx\n",
-	  val2, reg1, (unsigned long) addr1));
-
-      int fc = ec->data_fc();
-      int val1 = extsb(ec->mem->getb(fc, addr1));
-      int val = extsb(val1 - val2);
-      ec->regs.a[reg1] = addr1 + 1;
-      ec->regs.sr.set_cc(val);	// FIXME.
-
-      ec->regs.pc += 2 + 2;
-    }
-#endif /* 0 */
 
   void dbf_d(unsigned int op, execution_context *ec)
     {
