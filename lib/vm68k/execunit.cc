@@ -185,11 +185,12 @@ namespace
     {
       I(ec != NULL);
       int reg = op & 0x7;
-      VL((" clrw %%a%d@-\n", reg));
+      uint32 d_addr = ec->regs.a[reg] - 2;
+      VL((" clrw %%a%d@- | 0x%lx\n", reg, (unsigned long) d_addr));
 
       int fc = ec->data_fc();
-      ec->mem->putw(fc, ec->regs.a[reg] - 2, 0);
-      ec->regs.a[reg] -= 2;
+      ec->mem->putw(fc, d_addr, 0);
+      ec->regs.a[reg] = d_addr;
       ec->regs.sr.set_cc(0);
 
       ec->regs.pc += 2;
@@ -242,14 +243,17 @@ namespace
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
+      uint32 s_addr = ec->regs.a[s_reg];
       int d_reg = op >> 9 & 0x7;
-      VL((" moveb %%a%d@+,%%a%d@+\n", s_reg, d_reg));
+      uint32 d_addr = ec->regs.a[d_reg];
+      VL((" moveb %%a%d@+,%%a%d@+ | 0x%lx,0x%lx\n",
+	  s_reg, d_reg, (unsigned long) s_addr, (unsigned long) d_addr));
 
       int fc = ec->data_fc();
-      int value = extsb(ec->mem->getb(fc, ec->regs.a[s_reg]));
-      ec->mem->putb(fc, ec->regs.a[d_reg], value);
-      ec->regs.a[s_reg] += 1;
-      ec->regs.a[d_reg] += 1;
+      int value = extsb(ec->mem->getb(fc, s_addr));
+      ec->mem->putb(fc, d_addr, value);
+      ec->regs.a[s_reg] = s_addr + 1;
+      ec->regs.a[d_reg] = d_addr + 1;
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2;
@@ -275,12 +279,14 @@ namespace
       I(ec != NULL);
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
-      VL((" movew %%d%d,%%a%x@-\n", s_reg, d_reg));
+      uint32 d_addr = ec->regs.d[d_reg] - 2;
+      VL((" movew %%d%d,%%a%x@- | *,0x%lx\n",
+	  s_reg, d_reg, (unsigned long) d_addr));
 
       int fc = ec->data_fc();
       int value = extsw(ec->regs.d[s_reg]);
-      ec->mem->putw(fc, ec->regs.a[d_reg] - 2, value);
-      ec->regs.a[d_reg] -= 2;
+      ec->mem->putw(fc, d_addr, value);
+      ec->regs.a[d_reg] = d_addr;
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2;
@@ -307,7 +313,7 @@ namespace
       int d_reg = op >> 9 & 0x7;
       uint32 d_addr = ec->regs.a[d_reg] - 2;
       uint32 s_addr = ec->fetchl(2);
-      VL((" movew 0x%lx,%%a%x@- | to 0x%lx\n",
+      VL((" movew 0x%lx,%%a%x@- | *,0x%lx\n",
 	  (unsigned long) s_addr, d_reg, (unsigned long) d_addr));
 
       int fc = ec->data_fc();
@@ -324,12 +330,14 @@ namespace
       I(ec != NULL);
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
-      VL((" movel %%a%d,%%a%d@-\n", s_reg, d_reg));
+      uint32 d_addr = ec->regs.a[d_reg] - 4;
+      VL((" movel %%a%d,%%a%d@- | *,0x%lx\n",
+	  s_reg, d_reg, (unsigned long) d_addr));
 
       int fc = ec->data_fc();
       int32 value = ec->regs.a[s_reg];
-      ec->mem->putl(fc, ec->regs.a[d_reg] - 4, value);
-      ec->regs.a[d_reg] -= 4;
+      ec->mem->putl(fc, d_addr, value);
+      ec->regs.a[d_reg] = d_addr;
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2;
@@ -339,13 +347,15 @@ namespace
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
+      uint32 s_addr = ec->regs.a[s_reg];
       int d_reg = op >> 9 & 0x7;
-      VL((" movel %%a%d@+,%%a%d\n", s_reg, d_reg));
+      VL((" movel %%a%d@+,%%a%d | 0x%lx,*\n",
+	  s_reg, d_reg, (unsigned long) s_addr));
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
-      ec->regs.a[d_reg] = ec->mem->getl(fc, ec->regs.a[s_reg]);
-      ec->regs.a[s_reg] += 4;
+      ec->regs.a[d_reg] = ec->mem->getl(fc, s_addr);
+      ec->regs.a[s_reg] = s_addr + 4;
 
       ec->regs.pc += 2;
     }
@@ -356,7 +366,7 @@ namespace
       int d_reg = op >> 9 & 0x7;
       uint32 d_addr = ec->regs.a[d_reg] - 4;
       int32 value = extsl(ec->fetchl(2));
-      VL((" movel #%ld,%%a%d@- | to 0x%lx\n",
+      VL((" movel #%ld,%%a%d@- | *,0x%lx\n",
 	  (long) value, d_reg, (unsigned long) d_addr));
 
       int fc = ec->data_fc();

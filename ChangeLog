@@ -3,6 +3,9 @@
 	* lib/vm68k/execunit.cc (movew_absl_predec, movel_i_predec): New
 	functions.
 	(install_instructions): Set instructions.
+	(clrw_predec, moveb_postinc_postinc, movew_d_predec,
+	movel_a_predec, movel_postinc_a): Keep addresses in auto
+	variables.
 
 	* include/vm68k/cpu.h (extsl): New inline function.
 
