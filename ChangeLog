@@ -1,5 +1,11 @@
 1999-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* TODO: Modified.
+
+	* NEWS: Updated.
+
+	* configure.in: Change base version to 1.1.0.
+
 	* NEWS: Modified.
 
 	* lib/vx68k/textvram.cc (draw_char): Handle kanji.

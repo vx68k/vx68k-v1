@@ -1,26 +1,22 @@
 Virtual X68000 TO DO
 
-$Date: Tue, 13 Jul 1999 23:10:35 +0900 $
+$Date: Sun, 15 Aug 1999 12:00:10 +0900 $
 
-Version 0.36
+Version 1.1
 
-* Video hardware emulation.
+* Better text VRAM emulation.
 
-graphics_vram and text_vram.
-
-* Console device.
-
-Interface to GTK+ widget.
-
-Version 0.36 or later
-
-* IOCS function handlers.
+* Better console device behaviour, especially on input.
 
 * File name translation.
 
+Maybe version 1.1 or later
+
+* IOCS function handlers.
+
 * More DOS compatibility.
 
-* More instructions.
+* More machine instructions.
 
 * Instruction handlers must be changed into templates.
 
@@ -45,7 +41,9 @@ M68k instructions can be categorized into three classes:
 Split X68000-specific code from generic m68k code.  Also GTK-dependent
 code from platform-independent code.
 
-Version 1.1 or later
+Version 1.2 or later
+
+* Graphic VRAM emulation.
 
 * Common case optimization.
 

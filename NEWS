@@ -1,8 +1,8 @@
 Virtual X68000 User-Visible Changes
 
-$Date: Sun, 15 Aug 1999 11:44:56 +0900 $
+$Date: Sun, 15 Aug 1999 12:00:10 +0900 $
 
-Version 0.36
+Version 1.1.0 (snapshots only)
 
 * Changes in M68000 core
 
