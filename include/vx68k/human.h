@@ -1,6 +1,6 @@
 /* -*-C++-*- */
 /* vx68k - Virtual X68000
-   Copyright (C) 1998 Hypercore Software Design, Ltd.
+   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,25 +24,36 @@
 
 namespace vx68k
 {
+  using namespace vm68k;
 
-namespace human
-{
+  namespace human
+  {
 
-class dos
-{
-public:
-  dos (address_space *, size_t);
-  uint32 load_executable (const char *);
-  uint16 start (uint32, const char *const *);
-  uint16 execute (const char *, const char *const *);
-private:
-  vm68k::cpu main_cpu;
-  vm68k::execution_context main_ec;
-};
+    class dos;			// Forward declaration.
 
-};				// namespace human
+    struct dos_exec_context
+      : execution_context
+    {
+      class dos *dos;
+      dos_exec_context(address_space *m, class dos *d)
+	: execution_context(m), dos(d) {}
+    };
 
-using namespace human;
+    class dos
+    {
+    public:
+      dos (address_space *, size_t);
+      uint32 load_executable (const char *);
+      uint16 start (uint32, const char *const *);
+      uint16 execute (const char *, const char *const *);
+    private:
+      vm68k::cpu main_cpu;
+      dos_exec_context main_ec;
+    };
+
+  };				// namespace human
+
+  using namespace human;
 
 };				// namespace vx68k
 

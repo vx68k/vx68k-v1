@@ -1,3 +1,16 @@
+1999-03-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/except.h: Include <exception> and add `using
+	namespace std'.
+	(struct exception): Removed.
+
+	* include/vx68k/human.h (struct dos_exec_context): New struct.
+	(class dos): Change type of member main_ec.
+	* lib/vx68k/dos.cc (dos): Update member initialization.
+
+	* include/vx68k/memory.h (class x68k_address_space): Renamed from
+	address_space.  Update all referrers.
+
 1999-03-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/dos.cc: Include <fcntl.h> and <unistd.h> if available.

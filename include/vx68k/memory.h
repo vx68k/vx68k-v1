@@ -44,11 +44,11 @@ private:
   uint16 *array;
 };
 
-class address_space
+class x68k_address_space
   : public vm68k::address_space
 {
 public:
-  explicit address_space (size_t);
+  explicit x68k_address_space (size_t);
 private:
   main_memory_page main_memory;
 };

@@ -106,7 +106,7 @@ main_memory_page::main_memory_page (size_t n)
   array = static_cast <uint16 *> (malloc (n));
 }
 
-address_space::address_space (size_t n)
+x68k_address_space::x68k_address_space (size_t n)
   : main_memory (n)
 {
   using vm68k::PAGE_SHIFT;

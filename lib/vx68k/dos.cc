@@ -239,7 +239,7 @@ namespace
 } // (unnamed namespace)
 
 dos::dos (address_space *as, size_t)
-  : main_ec (as)
+  : main_ec(as, this)
 {
   main_cpu.set_handlers(0xff09, 0, &print);
   main_cpu.set_handlers(0xff3d, 0, &open);

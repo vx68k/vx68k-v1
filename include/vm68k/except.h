@@ -19,12 +19,11 @@
 #ifndef VM68K_EXCEPT_H
 #define VM68K_EXCEPT_H 1
 
+#include <exception>
+
 namespace vm68k
 {
-
-struct exception
-{
-};
+  using namespace std;
 
 struct bus_error
   : exception
