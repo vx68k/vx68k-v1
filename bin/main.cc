@@ -26,6 +26,7 @@
 #include "vx68k/memory.h"
 #include "getopt.h"
 #include <pthread.h>
+#include <unistd.h>
 #include <exception>
 #include <cstdlib>
 #include <cstdio>

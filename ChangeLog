@@ -1,8 +1,11 @@
 1999-07-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc: Include <unistd.h>.
+
 	* NEWS: Modified.
 
-	* lib/vm68k/execunit.cc (orb, subql): New functions.
+	* lib/vm68k/execunit.cc (orb, subql, addl_r, asll_i, bsetl_i): New
+	functions.
 	(subql_d, subql_a, movew_d_absl): #if out the entire functions.
 	(install_instructions): Add new handlers.
 
