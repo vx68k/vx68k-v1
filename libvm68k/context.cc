@@ -73,8 +73,8 @@ context::sr() const
 void
 context::set_sr(uint_type value)
 {
-  regs.sr = value;
   set_supervisor_state(value & 0x2000);
+  regs.sr = value;
 }
 
 void

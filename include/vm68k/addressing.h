@@ -481,7 +481,7 @@ namespace vm68k
 		    byte_size::svalue(byte_size::get(w)), r - 8,
 		    w & 0x800 ? ":l" : ":w");
 	  else
-	    sprintf(buf, "%%a%u@(%d,%%d%u%s)", reg,
+	    sprintf(buf, "%%pc@(%d,%%d%u%s)",
 		    byte_size::svalue(byte_size::get(w)), r,
 		    w & 0x800 ? ":l" : ":w");
 	  return buf;

@@ -193,12 +193,15 @@ machine::boot(context &c)
       switch (op >> 12)
 	{
 	case 0xf:
-	  c.set_supervisor_state(true);
-	  c.regs.a[7] -= 6;
-	  c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
-	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, c.regs.sr);
-	  c.regs.pc = c.mem->getl(SUPER_DATA, 0x02c);
-	  goto rerun;
+	  {
+	    uint_type status = c.regs.sr;
+	    c.set_supervisor_state(true);
+	    c.regs.a[7] -= 6;
+	    c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+	    c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, status);
+	    c.regs.pc = c.mem->getl(SUPER_DATA, 0x02c);
+	    goto rerun;
+	  }
 
 	default:
 	  throw;

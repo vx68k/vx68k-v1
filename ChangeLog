@@ -1,5 +1,18 @@
 2000-05-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (boot): Save the value of the status
+	register before entering the supervisor state.
+
+	* include/vm68k/addressing.h (class basic_index_pc_indirect): Fix
+	member function text.
+
+	* libvm68k/statusreg.cc (uint_type): Fix the bit mask.
+
+	* libvm68k/execunit.cc (m68k_add_r): Fix the trace output.
+
+	* libvm68k/context.cc (set_sr): Change the supervisor state before
+	assigning to sr.
+
 	* libvm68k/execunit.cc (add_instructions): Add
 	tstb<absolute_short>.
 

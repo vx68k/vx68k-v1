@@ -147,7 +147,7 @@ status_register::set_cc_lsl(sint32_type r, sint32_type d, uint_type s)
 
 status_register::operator uint_type() const
 {
-  uint_type v = value & 0xff;
+  uint_type v = value & 0xff00;
   if (cs())
     v |= 0x01;
   if (eq())

@@ -134,8 +134,8 @@ namespace
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef TRACE_INSTRUCTIONS
-    L(" add%s %%d%u", Size::suffix(), reg2);
-    L(",%s\n", ea1.textw(c));
+    L(" add%s %%d%u,", Size::suffix(), reg2);
+    L("%s\n", ea1.text(c));
 #endif
 
     svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
