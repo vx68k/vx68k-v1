@@ -26,39 +26,11 @@
 #include <algorithm>
 #include <cassert>
 
-using namespace vm68k;
+using vm68k::memory;
+using vm68k::bus_error_exception;
+using namespace vm68k::types;
 using namespace std;
 
-uint_type
-vm68k::getw(const void *address)
-{
-  const unsigned char *p = static_cast<const unsigned char *>(address);
-  return p[0] << 8 | p[1];
-}
-
-uint32_type
-vm68k::getl(const void *address)
-{
-  const unsigned char *p = static_cast<const unsigned char *>(address);
-  return uint32_type(getw(p + 0)) << 16 | uint32_type(getw(p + 2));
-}
-
-void
-vm68k::putw(void *address, uint_type value)
-{
-  unsigned char *p = static_cast<unsigned char *>(address);
-  p[0] = value >> 8;
-  p[1] = value;
-}
-
-void
-vm68k::putl(void *address, uint32_type value)
-{
-  unsigned char *p = static_cast<unsigned char *>(address);
-  putw(p + 0, value >> 16);
-  putw(p + 2, value);
-}
-
 void
 memory::generate_bus_error(bool read, int fc, uint32_type address) const
 {

@@ -1,5 +1,14 @@
 2000-08-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/memory.cc (getw, getl, putw, putl): Removed.
+
+	* include/vm68k/memory.h (class basic_uint16_iterator): New class
+	template replacing class uint16_iterator.  Typedef uint16_iterator
+	and const_uint16_iterator.
+	(class basic_uint32_iterator): New class template.  Typedef
+	uint32_iterator and const_uint32_iterator.
+	(getw, getl, putw, putl): Rewrote inline using new iterators.
+
 	* libvx68k/sccmem.cc (mouse_position): New function.
 	(mouse_motion): Moved after set_mouse_position.
 	(iocs_ms_curgt): Implemented.

@@ -35,20 +35,19 @@ namespace vm68k
   // External mc68000 address is 24-bit size.
   const unsigned int ADDRESS_BIT = 24;
   const uint32_type NPAGES = uint32_type(1) << ADDRESS_BIT - PAGE_SHIFT;
-
+
   /* Helper iterator for 16-bit value.  */
-  class uint16_iterator: random_access_iterator<uint_type, ptrdiff_t>
+  template <class T>
+  class basic_uint16_iterator: random_access_iterator<uint_type, ptrdiff_t>
   {
   protected:
     class ref
     {
-      friend class uint16_iterator;
-
     private:
-      unsigned char *bp;
+      T *bp;
 
-    protected:
-      ref(unsigned char *ptr): bp(ptr) {}
+    public:
+      ref(T *ptr): bp(ptr) {}
 
     public:
       ref &operator=(uint_type);
@@ -56,98 +55,237 @@ namespace vm68k
     };
 
   private:
-    unsigned char *bp;
+    T *bp;
 
   public:
-    uint16_iterator(unsigned char *ptr): bp(ptr) {}
+    basic_uint16_iterator(T *ptr): bp(ptr) {}
+    template <class U> explicit basic_uint16_iterator(U *ptr)
+      : bp(static_cast<T *>(ptr)) {}
 
   public:
     uint_type operator*() const {return ref(bp);}
     ref operator*() {return ref(bp);}
 
-    uint16_iterator &operator++();
-    uint16_iterator operator++(int);
+    basic_uint16_iterator &operator++();
+    basic_uint16_iterator operator++(int);
 
-    uint16_iterator &operator--();
-    uint16_iterator operator--(int);
+    basic_uint16_iterator &operator--();
+    basic_uint16_iterator operator--(int);
 
-    uint16_iterator &operator+=(ptrdiff_t n);
-    uint16_iterator operator+(ptrdiff_t n) const
-    {return uint16_iterator(*this) += n;}
+    basic_uint16_iterator &operator+=(ptrdiff_t n);
+    basic_uint16_iterator operator+(ptrdiff_t n) const
+    {return basic_uint16_iterator(*this) += n;}
 
-    uint16_iterator &operator-=(ptrdiff_t n);
-    uint16_iterator operator-(ptrdiff_t n) const
-    {return uint16_iterator(*this) -= n;}
+    basic_uint16_iterator &operator-=(ptrdiff_t n);
+    basic_uint16_iterator operator-(ptrdiff_t n) const
+    {return basic_uint16_iterator(*this) -= n;}
 
     uint_type operator[](ptrdiff_t n) const {return *(*this + n);}
     ref operator[](ptrdiff_t n) {return *(*this + n);}
 
   public:
-    operator unsigned char *() const {return bp;}
+    operator T *() const {return bp;}
   };
 
-  inline uint16_iterator::ref &
-  uint16_iterator::ref::operator=(uint_type value)
+  template <class T> inline basic_uint16_iterator<T>::ref &
+  basic_uint16_iterator<T>::ref::operator=(uint_type value)
   {
     bp[0] = value >> 8 & 0xff;
     bp[1] = value & 0xff;
     return *this;
   }
 
-  inline
-  uint16_iterator::ref::operator uint_type() const
+  template <class T> inline
+  basic_uint16_iterator<T>::ref::operator uint_type() const
   {
-    return bp[0] << 8 | bp[1];
+    return uint_type(bp[0]) << 8 | uint_type(bp[1]);
   }
 
-  inline uint16_iterator &
-  uint16_iterator::operator++()
+  template <class T> inline basic_uint16_iterator<T> &
+  basic_uint16_iterator<T>::operator++()
   {
     bp += 2;
     return *this;
   }
 
-  inline uint16_iterator
-  uint16_iterator::operator++(int)
+  template <class T> inline basic_uint16_iterator<T>
+  basic_uint16_iterator<T>::operator++(int)
   {
-    uint16_iterator old = *this;
+    basic_uint16_iterator<T> old = *this;
     ++(*this);
     return old;
   }
 
-  inline uint16_iterator &
-  uint16_iterator::operator--()
+  template <class T> inline basic_uint16_iterator<T> &
+  basic_uint16_iterator<T>::operator--()
   {
     bp -= 2;
     return *this;
   }
 
-  inline uint16_iterator
-  uint16_iterator::operator--(int)
+  template <class T> inline basic_uint16_iterator<T>
+  basic_uint16_iterator<T>::operator--(int)
   {
-    uint16_iterator old = *this;
+    basic_uint16_iterator<T> old = *this;
     --(*this);
     return old;
   }
 
-  inline uint16_iterator &
-  uint16_iterator::operator+=(ptrdiff_t n)
+  template <class T> inline basic_uint16_iterator<T> &
+  basic_uint16_iterator<T>::operator+=(ptrdiff_t n)
   {
     bp += n * 2;
     return *this;
   }
 
-  inline uint16_iterator &
-  uint16_iterator::operator-=(ptrdiff_t n)
+  template <class T> inline basic_uint16_iterator<T> &
+  basic_uint16_iterator<T>::operator-=(ptrdiff_t n)
   {
     bp -= n * 2;
     return *this;
   }
 
-  uint_type getw(const void *);
-  uint32_type getl(const void *);
-  void putw(void *, uint_type);
-  void putl(void *, uint32_type);
+  typedef basic_uint16_iterator<unsigned char> uint16_iterator;
+  typedef basic_uint16_iterator<const unsigned char> const_uint16_iterator;
+
+  /* Helper iterator for 32-bit value.  */
+  template <class T>
+  class basic_uint32_iterator: random_access_iterator<uint32_type, ptrdiff_t>
+  {
+  protected:
+    class ref
+    {
+    private:
+      T *bp;
+
+    public:
+      ref(T *ptr): bp(ptr) {}
+
+    public:
+      ref &operator=(uint32_type);
+      operator uint32_type() const;
+    };
+
+  private:
+    T *bp;
+
+  public:
+    basic_uint32_iterator(T *ptr): bp(ptr) {}
+    template <class U> explicit basic_uint32_iterator(U *ptr)
+      : bp(static_cast<T *>(ptr)) {}
+
+  public:
+    uint32_type operator*() const {return ref(bp);}
+    ref operator*() {return ref(bp);}
+
+    basic_uint32_iterator &operator++();
+    basic_uint32_iterator operator++(int);
+
+    basic_uint32_iterator &operator--();
+    basic_uint32_iterator operator--(int);
+
+    basic_uint32_iterator &operator+=(ptrdiff_t n);
+    basic_uint32_iterator operator+(ptrdiff_t n) const
+    {return basic_uint32_iterator(*this) += n;}
+
+    basic_uint32_iterator &operator-=(ptrdiff_t n);
+    basic_uint32_iterator operator-(ptrdiff_t n) const
+    {return basic_uint32_iterator(*this) -= n;}
+
+    uint32_type operator[](ptrdiff_t n) const {return *(*this + n);}
+    ref operator[](ptrdiff_t n) {return *(*this + n);}
+
+  public:
+    operator T *() const {return bp;}
+  };
+
+  template <class T> inline basic_uint32_iterator<T>::ref &
+  basic_uint32_iterator<T>::ref::operator=(uint32_type value)
+  {
+    bp[0] = value >> 24 & 0xff;
+    bp[1] = value >> 16 & 0xff;
+    bp[2] = value >>  8 & 0xff;
+    bp[3] = value       & 0xff;
+    return *this;
+  }
+
+  template <class T> inline
+  basic_uint32_iterator<T>::ref::operator uint32_type() const
+  {
+    return (uint32_type(bp[0]) << 24 | uint32_type(bp[1]) << 16
+	    | uint32_type(bp[2]) << 8 | uint32_type(bp[3]));
+  }
+
+  template <class T> inline basic_uint32_iterator<T> &
+  basic_uint32_iterator<T>::operator++()
+  {
+    bp += 4;
+    return *this;
+  }
+
+  template <class T> inline basic_uint32_iterator<T>
+  basic_uint32_iterator<T>::operator++(int)
+  {
+    basic_uint32_iterator<T> old = *this;
+    ++(*this);
+    return old;
+  }
+
+  template <class T> inline basic_uint32_iterator<T> &
+  basic_uint32_iterator<T>::operator--()
+  {
+    bp -= 4;
+    return *this;
+  }
+
+  template <class T> inline basic_uint32_iterator<T>
+  basic_uint32_iterator<T>::operator--(int)
+  {
+    basic_uint32_iterator<T> old = *this;
+    --(*this);
+    return old;
+  }
+
+  template <class T> inline basic_uint32_iterator<T> &
+  basic_uint32_iterator<T>::operator+=(ptrdiff_t n)
+  {
+    bp += n * 4;
+    return *this;
+  }
+
+  template <class T> inline basic_uint32_iterator<T> &
+  basic_uint32_iterator<T>::operator-=(ptrdiff_t n)
+  {
+    bp -= n * 4;
+    return *this;
+  }
+
+  typedef basic_uint32_iterator<unsigned char> uint32_iterator;
+  typedef basic_uint32_iterator<const unsigned char> const_uint32_iterator;
+
+  inline uint_type
+  getw(const void *p)
+  {
+    return *const_uint16_iterator(p);
+  }
+
+  inline uint32_type
+  getl(const void *p)
+  {
+    return *const_uint32_iterator(p);
+  }
+
+  inline void
+  putw(void *p, uint_type v)
+  {
+    *uint16_iterator(p) = v;
+  }
+
+  inline void
+  putl(void *p, uint32_type v)
+  {
+    *uint32_iterator(p) = v;
+  }
 
   /* Abstract memory class.  */
   class memory
