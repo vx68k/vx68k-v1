@@ -204,10 +204,16 @@ dos_exec_context::start(uint32 address, const char *const *argv)
   return status;
 }
 
+dos_exec_context::dos_exec_context(address_space *m, exec_unit *e)
+  : execution_context(m, e)
+{
+}
+
 uint16
 dos::execute (const char *name, const char *const *argv)
 {
-  return main_ec.start(main_ec.load_executable(name), argv);
+  dos_exec_context ec(mem, &main_cpu);
+  return ec.start(ec.load_executable(name), argv);
 }
 
 namespace
@@ -284,8 +290,8 @@ namespace
     }
 } // (unnamed namespace)
 
-dos::dos (address_space *as, size_t)
-  : main_ec(&main_cpu, as)
+dos::dos(address_space *m, size_t)
+  : mem(m)
 {
   main_cpu.set_instruction(0xff09, 0, &dos_print);
   main_cpu.set_instruction(0xff3d, 0, &dos_open);

@@ -1,5 +1,16 @@
 1999-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/human.h (dos): Add member mem, remove main_ec.
+	* lib/vx68k/dos.cc (execute): Use local dos_exec_context.
+	(dos): Modify member initialization.
+
+	* lib/vx68k/dos.cc (dos_exec_context): Reverse the order of
+	arguments.
+	(dos_exec_context): Made out-of-line.
+
+	* lib/vm68k/context.cc (execution_context): Reverse the order of
+	arguments.  Also update all users.
+
 	* lib/vm68k/context.cc: Renamed from cpu.cc.
 	* lib/vm68k/Makefile.am (libvm68k_a_SOURCES): Update the file
 	name.

@@ -32,8 +32,7 @@ namespace vx68k
       : public execution_context
     {
     public:
-      dos_exec_context(exec_unit *e, address_space *m)
-	: execution_context(e, m) {}
+      dos_exec_context(address_space *, exec_unit *);
     public:
       int open(const char *, unsigned int);
       int close(int);
@@ -46,8 +45,8 @@ namespace vx68k
     class dos
     {
     private:
+      address_space *mem;
       vm68k::exec_unit main_cpu;
-      dos_exec_context main_ec;
     public:
       dos (address_space *, size_t);
     public:

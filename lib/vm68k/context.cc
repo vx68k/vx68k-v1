@@ -42,7 +42,7 @@ execution_context::run()
     }
 }
 
-execution_context::execution_context(exec_unit *e, address_space *m)
+execution_context::execution_context(address_space *m, exec_unit *e)
   : mem(m),
     eu(e)
 {

@@ -109,7 +109,7 @@ struct exception_listener
   private:
     exec_unit *eu;
   public:
-    execution_context(exec_unit *, address_space *);
+    execution_context(address_space *, exec_unit *);
   public:
     int program_fc() const
       {return regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM;}
