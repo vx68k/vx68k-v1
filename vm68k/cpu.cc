@@ -78,7 +78,8 @@ cpu::run (execution_context *ec)
       catch (bus_error &e)
 	{
 	  // We should handle this in a callback function.
-	  cerr << hex << "vm68k bus error: status = 0x" << e.fc << ", address = 0x" << e.address << "\n" << dec;
+	  cerr << hex << "vm68k bus error: status = 0x" << e.status
+	       << ", address = 0x" << e.address << "\n" << dec;
 	  abort ();
 	}
     }

@@ -29,9 +29,15 @@ struct exception
 struct bus_error
   : exception
 {
-  int fc;
+  enum {WRITE = 0, READ = 0x10};
+  int status;
   uint32 address;
   bus_error (int, uint32);
+};
+
+struct address_error
+  : exception
+{
 };
 
 };				// namespace vm68k

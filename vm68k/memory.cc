@@ -31,11 +31,12 @@ using namespace std;
 namespace vm68k
 {
 #if 0
-}
+};
 #endif
 
-bus_error::bus_error (int f, uint32 a)
-  : fc (f), address (a)
+bus_error::bus_error (int s, uint32 a)
+  : status (s),
+    address (a)
 {
 }
 
@@ -55,49 +56,46 @@ memory_page::putl (int fc, uint32 address, uint32 value)
   putw (fc, address + 2, value);
 }
 
-const int READ = 0x10;
-const int WRITE = 0;
-
 void
 bus_error_page::read (int fc, uint32 address, void *, size_t) const
   throw (bus_error)
 {
-  throw bus_error (fc + READ, address);
+  throw bus_error (fc + bus_error::READ, address);
 }
 
 void
 bus_error_page::write (int fc, uint32 address, const void *, size_t)
   throw (bus_error)
 {
-  throw bus_error (fc + WRITE, address);
+  throw bus_error (fc + bus_error::WRITE, address);
 }
 
 uint8
 bus_error_page::getb (int fc, uint32 address) const
   throw (bus_error)
 {
-  throw bus_error (fc + READ, address);
+  throw bus_error (fc + bus_error::READ, address);
 }
 
 uint16
 bus_error_page::getw (int fc, uint32 address) const
   throw (bus_error)
 {
-  throw bus_error (fc + READ, address);
+  throw bus_error (fc + bus_error::READ, address);
 }
 
 void
 bus_error_page::putb (int fc, uint32 address, uint8)
   throw (bus_error)
 {
-  throw bus_error (fc + WRITE, address);
+  throw bus_error (fc + bus_error::WRITE, address);
 }
 
 void
 bus_error_page::putw (int fc, uint32 address, uint16)
   throw (bus_error)
 {
-  throw bus_error (fc + WRITE, address);
+  throw bus_error (fc + bus_error::WRITE, address);
 }
 
 /* Get a word from memory.  */

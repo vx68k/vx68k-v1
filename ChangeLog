@@ -1,5 +1,15 @@
 1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/except.h (exception): Rename member fc to status.
+	All refs changed.
+	(struct address_error): New class.
+
+	* vm68k/memory.cc (READ): Removed.  All uses replaced with
+	bus_error::READ.
+	(WRITE): Removed.  All uses replaced with bus_error::WRITE.
+
+	* include/vm68k/except.h (exception): Add WRITE and READ enum.
+
 	* vm68k/memory.cc (address_space::set_pages): Renamed from
 	set_memory_pages.  Change the first and the second arguments'
 	types.  All refs changed too.
