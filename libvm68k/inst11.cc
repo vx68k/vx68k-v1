@@ -73,65 +73,6 @@ namespace
     c.regs.pc += 2 + ea1.extension_size();
   }
 
-#if 0
-  template <class Source> void
-  cmpb(uint16_type op, context &ec, unsigned long data)
-  {
-    Source ea1(op & 0x7, 2);
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
-    L(" cmpb %s", ea1.textb(ec));
-    L(",%%d%u\n", reg2);
-#endif
-
-    sint_type value1 = ea1.getb(ec);
-    sint_type value2 = extsb(ec.regs.d[reg2]);
-    sint_type value = extsb(value2 - value1);
-    ec.regs.ccr.set_cc_cmp(value, value2, value1);
-    ea1.finishb(ec);
-
-    ec.regs.pc += 2 + ea1.isize(2);
-  }
-
-  template <class Source> void
-  cmpw(uint16_type op, context &ec, unsigned long data)
-  {
-    Source ea1(op & 0x7, 2);
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
-    L(" cmpw %s", ea1.textw(ec));
-    L(",%%d%u\n", reg2);
-#endif
-
-    sint_type value1 = ea1.getw(ec);
-    sint_type value2 = extsw(ec.regs.d[reg2]);
-    sint_type value = extsw(value2 - value1);
-    ec.regs.ccr.set_cc_cmp(value, value2, value1);
-    ea1.finishw(ec);
-
-    ec.regs.pc += 2 + ea1.isize(2);
-  }
-
-  template <class Source> void
-  cmpl(uint16_type op, context &ec, unsigned long data)
-  {
-    Source ea1(op & 0x7, 2);
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
-    L(" cmpl %s", ea1.textl(ec));
-    L(",%%d%u\n", reg2);
-#endif
-
-    sint32_type value1 = ea1.getl(ec);
-    sint32_type value2 = extsl(ec.regs.d[reg2]);
-    sint32_type value = extsl(value2 - value1);
-    ec.regs.ccr.set_cc_cmp(value, value2, value1);
-    ea1.finishl(ec);
-
-    ec.regs.pc += 2 + ea1.isize(4);
-  }
-#endif
-
   /* Handles a CMPA instruction.  */
   template <class Size, class Source> void
   m68k_cmpa(uint16_type op, context &c, unsigned long data)
@@ -151,46 +92,6 @@ namespace
     ea1.finish(c);
     long_word_size::put(c.regs.pc, c.regs.pc + 2 + Source::extension_size());
   }
-
-#if 0
-  template <class Source> void
-  cmpaw(uint16_type op, context &ec, unsigned long data)
-  {
-    Source ea1(op & 0x7, 2);
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
-    L(" cmpaw %s", ea1.textw(ec));
-    L(",%%a%u\n", reg2);
-#endif
-
-    sint32_type value1 = ea1.getw(ec);
-    sint32_type value2 = extsl(ec.regs.a[reg2]);
-    sint32_type value = extsl(value2 - value1);
-    ec.regs.ccr.set_cc_cmp(value, value2, value1);
-    ea1.finishw(ec);
-
-    ec.regs.pc += 2 + ea1.isize(2);
-  }
-
-  template <class Source> void
-  cmpal(uint16_type op, context &ec, unsigned long data)
-  {
-    Source ea1(op & 0x7, 2);
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
-    L(" cmpal %s", ea1.textl(ec));
-    L(",%%a%u\n", reg2);
-#endif
-
-    sint32_type value1 = ea1.getl(ec);
-    sint32_type value2 = extsl(ec.regs.a[reg2]);
-    sint32_type value = extsl(value2 - value1);
-    ec.regs.ccr.set_cc_cmp(value, value2, value1);
-    ea1.finishl(ec);
-
-    ec.regs.pc += 2 + ea1.isize(4);
-  }
-#endif
 
   /* Handles a CMPM instruction.  */
   template <class Size> void
@@ -234,69 +135,6 @@ namespace
     long_word_size::put(c.regs.pc,
 			c.regs.pc + 2 + Destination::extension_size());
   }
-
-#if 0
-  template <class Destination> void
-  eorb_r(uint16_type op, context &ec, unsigned long data)
-  {
-    Destination ea1(op & 0x7, 2);
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
-    L(" eorb %%d%u", reg2);
-    L(",%s\n", ea1.textb(ec));
-#endif
-
-    sint_type value1 = ea1.getb(ec);
-    sint_type value2 = extsb(ec.regs.d[reg2]);
-    sint_type value = extsb(uint16_type(value1) ^ uint16_type(value2));
-    ea1.putb(ec, value);
-    ec.regs.ccr.set_cc(value);
-    ea1.finishb(ec);
-
-    ec.regs.pc += 2 + ea1.isize(2);
-  }
-
-  template <class Destination> void
-  eorw_r(uint16_type op, context &ec, unsigned long data)
-  {
-    Destination ea1(op & 0x7, 2);
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
-    L(" eorw %%d%u", reg2);
-    L(",%s\n", ea1.textw(ec));
-#endif
-
-    sint_type value1 = ea1.getw(ec);
-    sint_type value2 = extsw(ec.regs.d[reg2]);
-    sint_type value = extsw(uint16_type(value1) ^ uint16_type(value2));
-    ea1.putw(ec, value);
-    ec.regs.ccr.set_cc(value);
-    ea1.finishw(ec);
-
-    ec.regs.pc += 2 + ea1.isize(2);
-  }
-
-  template <class Destination> void
-  eorl_r(uint16_type op, context &c, unsigned long data)
-  {
-    data_register ea2(op >> 9 & 0x7, 2);
-    Destination ea1(op & 0x7, 2 + ea2.isize(4));
-#ifdef HAVE_NANA_H
-    L(" eorl %s", ea2.textl(c));
-    L(",%s\n", ea1.textl(c));
-#endif
-
-    sint32_type value2 = ea2.getl(c);
-    sint32_type value1 = ea1.getw(c);
-    sint32_type value = extsw(uint16_type(value1) ^ uint16_type(value2));
-    ea1.putl(c, value);
-    c.regs.ccr.set_cc(value);
-    ea2.finishl(c);
-    ea1.finishl(c);
-
-    c.regs.pc += 2 + ea2.isize(4) + ea1.isize(4);
-  }
-#endif
 }
 
 void

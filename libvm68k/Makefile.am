@@ -1,6 +1,6 @@
 ## Process this file with automake to produce a Makefile.in.
 
-INCLUDES = -I${top_srcdir}/include -DVM68K_ENABLE_DEPRECATED
+INCLUDES = -I${top_srcdir}/include
 
 LIBS =
 

@@ -114,27 +114,6 @@ namespace
     c.regs.pc += 2;
   }
 
-#if 0
-  void
-  asrl_r(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
-    L(" asrl %%d%u", reg2);
-    L(",%%d%u\n", reg1);
-#endif
-
-    uint16_type count = ec.regs.d[reg2];
-    sint32_type value1 = extsl(ec.regs.d[reg1]);
-    sint32_type value = value1 >> count;
-    ec.regs.d[reg1] = value;
-    ec.regs.ccr.set_cc_asr(value, value1, count);
-
-    ec.regs.pc += 2;
-  }
-#endif
-
   /* Handles an ASR instruction with an immediate count.  */
   template <class Size> void
   m68k_asr_i(uint16_type op, context &c, unsigned long data)
@@ -177,47 +156,6 @@ namespace
     c.regs.advance_pc(2);
   }
 
-#if 0
-  void
-  lslw_r(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
-    L(" lslw %%d%u", reg2);
-    L(",%%d%u\n", reg1);
-#endif
-
-    uint16_type count = ec.regs.d[reg2];
-    sint_type value1 = extsw(ec.regs.d[reg1]);
-    sint_type value = extsw(uint16_type(value1) << count);
-    const uint32_type MASK = ((uint32_type) 1u << 16) - 1;
-    ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.ccr.set_cc_lsl(value, value1, count + (32 - 16));
-
-    ec.regs.pc += 2;
-  }
-
-  void
-  lsll_r(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
-    L(" lsll %%d%u", reg2);
-    L(",%%d%u\n", reg1);
-#endif
-
-    uint16_type count = ec.regs.d[reg2];
-    sint32_type value1 = extsl(ec.regs.d[reg1]);
-    sint32_type value = extsl(uint16_type(value1) << count);
-    ec.regs.d[reg1] = value;
-    ec.regs.ccr.set_cc_lsl(value, value1, count);
-
-    ec.regs.pc += 2;
-  }
-#endif
-
   /* Handles a LSL instruction (immediate).  */
   template <class Size> void
   m68k_lsl_i(uint16_type op, context &c, unsigned long data)
@@ -239,70 +177,6 @@ namespace
     c.regs.advance_pc(2);
   }
 
-#if 0
-  void
-  lslb_i(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-    unsigned int count = op >> 9 & 0x7;
-    if (count == 0)
-      count = 8;
-#ifdef HAVE_NANA_H
-    L(" lslb #%u", count);
-    L(",%%d%u\n", reg1);
-#endif
-
-    sint_type value1 = extsb(ec.regs.d[reg1]);
-    sint_type value = extsb(uint16_type(value1) << count);
-    const uint32_type MASK = ((uint32_type) 1u << 8) - 1;
-    ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.ccr.set_cc_lsl(value, value1, count + (32 - 8));
-
-    ec.regs.pc += 2;
-  }
-
-  void
-  lslw_i(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-    unsigned int count = op >> 9 & 0x7;
-    if (count == 0)
-      count = 8;
-#ifdef HAVE_NANA_H
-    L(" lslw #%u", count);
-    L(",%%d%u\n", reg1);
-#endif
-
-    sint_type value1 = extsw(ec.regs.d[reg1]);
-    sint_type value = extsw(uint16_type(value1) << count);
-    const uint32_type MASK = ((uint32_type) 1u << 16) - 1;
-    ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.ccr.set_cc_lsl(value, value1, count + (32 - 16));
-
-    ec.regs.pc += 2;
-  }
-
-  void
-  lsll_i(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-    unsigned int count = op >> 9 & 0x7;
-    if (count == 0)
-      count = 8;
-#ifdef HAVE_NANA_H
-    L(" lsll #%u", count);
-    L(",%%d%u\n", reg1);
-#endif
-
-    sint32_type value1 = extsl(ec.regs.d[reg1]);
-    sint32_type value = extsl(uint32_type(value1) << count);
-    ec.regs.d[reg1] = value;
-    ec.regs.ccr.set_cc_lsl(value, value1, count);
-
-    ec.regs.pc += 2;
-  }
-#endif
-
   /* Handles a LSR instruction (register).  */
   template <class Size> void
   m68k_lsr_r(uint16_type op, context &c, unsigned long data)
@@ -322,47 +196,6 @@ namespace
 
     c.regs.advance_pc(2);
   }
-
-#if 0
-  void
-  lsrw_r(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
-    L(" lsrw %%d%u", reg2);
-    L(",%%d%u\n", reg1);
-#endif
-
-    uint16_type count = ec.regs.d[reg2];
-    sint_type value1 = extsw(ec.regs.d[reg1]);
-    sint_type value = extsw((uint16_type(value1) & 0xffffu) >> count);
-    const uint32_type MASK = (uint32_type(1) << 16) - 1;
-    ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.ccr.set_cc_lsr(value, value1, count);
-
-    ec.regs.pc += 2;
-  }
-
-  void
-  lsrl_r(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
-    L(" lsrl %%d%u", reg2);
-    L(",%%d%u\n", reg1);
-#endif
-
-    uint16_type count = ec.regs.d[reg2];
-    sint32_type value1 = extsl(ec.regs.d[reg1]);
-    sint32_type value = extsl((uint32_type(value1) & 0xffffffffu) >> count);
-    ec.regs.d[reg1] = value;
-    ec.regs.ccr.set_cc_lsr(value, value1, count);
-
-    ec.regs.pc += 2;
-  }
-#endif
 
   /* Handles a LSR instruction (immediate).  */
   template <class Size> void
@@ -384,69 +217,6 @@ namespace
 
     c.regs.advance_pc(2);
   }
-
-#if 0
-  void
-  lsrb_i(uint16_type op, context &c, unsigned long data)
-  {
-    unsigned int count = op >> 9 & 0x7;
-    if (count == 0)
-      count = 8;
-    data_register ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
-    L(" lsrb #%u", count);
-    L(",%s\n", ea1.textb(c));
-#endif
-
-    sint_type value1 = ea1.getb(c);
-    sint_type value = extsb((uint16_type(value1) & 0xffu) >> count);
-    ea1.putb(c, value);
-    c.regs.ccr.set_cc_lsr(value, value1, count);
-
-    c.regs.pc += 2 + ea1.isize(2);
-  }
-
-  void
-  lsrw_i(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-    uint16_type count = op >> 9 & 0x7;
-    if (count == 0)
-      count = 8;
-#ifdef HAVE_NANA_H
-    L(" lsrw #%u", count);
-    L(",%%d%u\n", reg1);
-#endif
-
-    sint_type value1 = extsw(ec.regs.d[reg1]);
-    sint_type value = extsw((uint16_type(value1) & 0xffffu) >> count);
-    const uint32_type MASK = (uint32_type(1) << 16) - 1;
-    ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.ccr.set_cc_lsr(value, value1, count);
-
-    ec.regs.pc += 2;
-  }
-
-  void
-  lsrl_i(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-    uint16_type count = op >> 9 & 0x7;
-    if (count == 0)
-      count = 8;
-#ifdef HAVE_NANA_H
-    L(" lsrl #%u", count);
-    L(",%%d%u\n", reg1);
-#endif
-
-    sint32_type value1 = extsl(ec.regs.d[reg1]);
-    sint32_type value = extsl((uint32_type(value1) & 0xffffffffu) >> count);
-    ec.regs.d[reg1] = value;
-    ec.regs.ccr.set_cc_lsr(value, value1, count);
-
-    ec.regs.pc += 2;
-  }
-#endif
 
   /* Handles a LSR instruction (memory).  */
   template <class Destination> void
@@ -491,29 +261,6 @@ namespace
     c.regs.pc += 2;
   }
 
-#if 0
-  void
-  rolb_r(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
-    L(" rolb %%d%u", reg2);
-    L(",%%d%u\n", reg1);
-#endif
-
-    uint16_type count = ec.regs.d[reg2] & 0x7;
-    sint_type value1 = extsb(ec.regs.d[reg1]);
-    sint_type value = extsb(uint16_type(value1) << count
-			    | (uint16_type(value1) & 0xff) >> 8 - count);
-    const uint32_type MASK = 0xff;
-    ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.ccr.set_cc(value);	// FIXME.
-
-    ec.regs.pc += 2;
-  }
-#endif
-
   /* Handles a ROL instruction (immediate).  */
   template <class Size> void
   m68k_rol_i(uint16_type op, context &c, unsigned long data)
@@ -533,53 +280,6 @@ namespace
 
     c.regs.advance_pc(2);
   }
-
-#if 0
-  void
-  rolw_i(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-    unsigned int count = op >> 9 & 0x7;
-    if (count == 0)
-      count = 8;
-#ifdef HAVE_NANA_H
-    L(" rolw #%u", count);
-    L(",%%d%u\n", reg1);
-#endif
-
-    sint_type value1 = extsw(ec.regs.d[reg1]);
-    sint_type value = extsw(uint16_type(value1) << count
-			    | (uint16_type(value1) & 0xffffu) >> 16 - count);
-    const uint32_type MASK = 0xffffu;
-    ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.ccr.set_cc(value);	// FIXME.
-
-    ec.regs.pc += 2;
-  }
-
-  void
-  roll_i(uint16_type op, context &c, unsigned long data)
-  {
-    unsigned int count = op >> 9 & 0x7;
-    if (count == 0)
-      count = 8;
-    data_register ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
-    L(" roll #%u", count);
-    L(",%s\n", ea1.textl(c));
-#endif
-
-    sint32_type value1 = ea1.getl(c);
-    sint32_type value
-      = extsl(uint32_type(value1) << count
-	      | (uint32_type(value1) & 0xffffffffu) >> 32 - count);
-    ea1.putl(c, value);
-    c.regs.ccr.set_cc(value);	// FIXME.
-    ea1.finishl(c);
-
-    c.regs.pc += 2 + ea1.isize(4);
-  }
-#endif
 
   /* Handles a ROR instruction (immediate).  */
   template <class Size> void
@@ -644,54 +344,6 @@ namespace
 
     c.regs.advance_pc(2);
   }
-
-#if 0
-  void
-  roxrw_i(uint16_type op, context &c, unsigned long data)
-  {
-    unsigned int count = op >> 9 & 0x7;
-    if (count == 0)
-      count = 8;
-    data_register ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
-    L(" roxrw #%u", count);
-    L(",%s\n", ea1.textw(c));
-#endif
-
-    sint_type value1 = ea1.getw(c);
-    sint_type value = extsw((uint16_type(value1) & 0xffffu) >> count
-			    | c.regs.ccr.x() << 16 - count
-			    | uint16_type(value1) << 17 - count);
-    ea1.putw(c, value);
-    c.regs.ccr.set_cc(value);	// FIXME.
-    ea1.finishw(c);
-
-    c.regs.pc += 2 + ea1.isize(2);
-  }
-
-  void
-  roxrl_i(uint16_type op, context &c, unsigned long data)
-  {
-    unsigned int count = op >> 9 & 0x7;
-    if (count == 0)
-      count = 8;
-    data_register ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
-    L(" roxrl #%u", count);
-    L(",%s\n", ea1.textl(c));
-#endif
-
-    sint32_type value1 = ea1.getl(c);
-    sint32_type value = extsl((uint32_type(value1) & 0xffffffffu) >> count
-			      | uint32_type(c.regs.ccr.x()) << 32 - count
-			      | uint32_type(value1) << 33 - count);
-    ea1.putl(c, value);
-    c.regs.ccr.set_cc(value);	// FIXME.
-    ea1.finishl(c);
-
-    c.regs.pc += 2 + ea1.isize(4);
-  }
-#endif
 }
 
 void

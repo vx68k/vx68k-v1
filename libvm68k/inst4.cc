@@ -139,39 +139,6 @@ namespace
     c.regs.advance_pc(2);
   }
 
-#if 0
-  void
-  extw(uint16_type op, context &c, unsigned long data)
-  {
-    data_register ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
-    L(" extw %s\n", ea1.textw(c));
-#endif
-
-    sint_type value = ea1.getb(c);
-    ea1.putw(c, value);
-    c.regs.ccr.set_cc(value);
-    ea1.finishw(c);
-
-    c.regs.pc += 2 + ea1.isize(2);
-  }
-
-  void
-  extl(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-#ifdef HAVE_NANA_H
-    L(" extl %%d%u\n", reg1);
-#endif
-
-    sint32_type value = extsw(ec.regs.d[reg1]);
-    ec.regs.d[reg1] = value;
-    ec.regs.ccr.set_cc(value);
-
-    ec.regs.pc += 2;
-  }
-#endif
-
   /* Handles a JMP instruction.  */
   template <class Destination> void
   m68k_jmp(uint16_type op, context &c, unsigned long data)
@@ -530,59 +497,6 @@ namespace
     ea1.finish(c);
     c.regs.advance_pc(2 + Destination::extension_size());
   }
-
-#if 0
-  template <class Destination> void
-  negb(uint16_type op, context &c, unsigned long data)
-  {
-    Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
-    L(" negb %s\n", ea1.textb(c));
-#endif
-
-    sint_type value1 = ea1.getb(c);
-    sint_type value = extsb(-value1);
-    ea1.putb(c, value);
-    c.regs.ccr.set_cc_sub(value, 0, value1);
-    ea1.finishb(c);
-
-    c.regs.pc += 2 + ea1.isize(2);
-  }
-
-  template <class Destination> void
-  negw(uint16_type op, context &ec, unsigned long data)
-  {
-    Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
-    L(" negw %s\n", ea1.textw(ec));
-#endif
-
-    sint_type value1 = ea1.getw(ec);
-    sint_type value = extsw(-value1);
-    ea1.putw(ec, value);
-    ec.regs.ccr.set_cc_sub(value, 0, value1);
-    ea1.finishw(ec);
-
-    ec.regs.pc += 2 + ea1.isize(2);
-  }
-
-  template <class Destination> void
-  negl(uint16_type op, context &ec, unsigned long data)
-  {
-    Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
-    L(" negl %s\n", ea1.textl(ec));
-#endif
-
-    sint32_type value1 = ea1.getl(ec);
-    sint32_type value = extsl(-value1);
-    ea1.putl(ec, value);
-    ec.regs.ccr.set_cc_sub(value, 0, value1);
-    ea1.finishl(ec);
-
-    ec.regs.pc += 2 + ea1.isize(4);
-  }
-#endif
 
   /* Handles a NOP instruction.  */
   void

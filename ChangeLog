@@ -1,5 +1,29 @@
 2000-12-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/inst0.cc [0] (cmpib, cmpiw, cmpil, eoriw, orib, oriw,
+	oril): Removed.
+
+	* libvm68k/inst11.cc [0] (cmpb, cmpw, cmpl, cmpaw, cmpal, eorb_r,
+	eorw_r, eorl_r): Removed.
+
+	* libvm68k/inst14.cc [0] (asrl_r, lslw_r, lsll_r, lslb_i, lslw_i,
+	lsll_i, lsrw_r, lsrl_r, lsrb_i, lsrw_i, lsrl_i, rolb_r, rolw_i,
+	roll_i, roxrw_i, roxrl_i): Removed.
+
+	* libvm68k/inst4.cc [0] (extw, extl, negb, negw, negl): Removed.
+
+	* libvm68k/inst5.cc [0] (dbf): Removed.
+
+	* libvm68k/inst8.cc [0] (orb, orw, orl): Removed.
+
+	* libvm68k/inst9.cc [0] (subb, subw, subl): Removed.
+
+	* libvm68k/Makefile.am (INCLUDES): Remove
+	-DVM68K_ENABLE_DEPRECATED.
+
+	* include/vm68k/cpu.h [VM68K_ENABLE_DEPRECATED] (extsb, extsw,
+	extsl): Removed.
+
 	* libvm68k/defaultmem.cc (get_8, get_16, put_8, put_16): Remove
 	address masking.
 	(get_16, put_16): Add assertion checking.

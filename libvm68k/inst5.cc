@@ -122,25 +122,6 @@ namespace
       }
   }
 
-#if 0
-  void
-  dbf(uint16_type op, context &ec, unsigned long data)
-  {
-    unsigned int reg1 = op & 0x7;
-    int disp = extsw(ec.fetch(word_size(), 2));
-#ifdef HAVE_NANA_H
-    L(" dbf %%d%d", reg1);
-    L(",0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp));
-#endif
-
-    // The condition codes are not affected by this instruction.
-    sint_type value = extsw(ec.regs.d[reg1]) - 1;
-    const uint32_type MASK = 0xffffu;
-    ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.pc += 2 + (value != -1 ? disp : 2);
-  }
-#endif
-
   /* Handles a Scc instruction.  */
   template <class Condition, class Destination> void
   m68k_s(uint16_type op, context &c, unsigned long data)

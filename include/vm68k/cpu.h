@@ -328,43 +328,6 @@ namespace vm68k
     m.put_32(address, value, fc);
   }
 
-#ifdef VM68K_ENABLE_DEPRECATED
-
-  /* Returns the signed 8-bit value that is equivalent to unsigned
-     value VALUE.  */
-  inline int
-  extsb(unsigned int value)
-  {
-    const unsigned int N = 1u << 7;
-    const unsigned int M = (N << 1) - 1;
-    value &= M;
-    return value >= N ? -int(M - value) - 1 : int(value);
-  }
-
-  /* Returns the signed 16-bit value that is equivalent to unsigned
-     value VALUE.  */
-  inline sint16_type
-  extsw(uint16_type value)
-  {
-    const uint16_type N = uint16_type(1) << 15;
-    const uint16_type M = (N << 1) - 1;
-    value &= M;
-    return value >= N ? -sint16_type(M - value) - 1 : sint16_type(value);
-  }
-
-  /* Returns the signed 32-bit value that is equivalent to unsigned
-     value VALUE.  */
-  inline sint32_type
-  extsl(uint32_type value)
-  {
-    const uint32_type N = uint32_type(1) << 31;
-    const uint32_type M = (N << 1) - 1;
-    value &= M;
-    return value >= N ? -sint32_type(M - value) - 1 : sint32_type(value);
-  }
-
-#endif /* VM68K_ENABLE_DEPRECATED */
-
   /* Abstruct base class for condition testers.  */
   class condition_tester
   {

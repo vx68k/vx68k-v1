@@ -315,62 +315,6 @@ namespace
 		      + Destination::extension_size());
   }
 
-#if 0
-  template <class Destination> void
-  cmpib(uint16_type op, context &ec, unsigned long data)
-  {
-    sint_type value2 = extsb(ec.fetch(word_size(), 2));
-    Destination ea1(op & 0x7, 2 + 2);
-#ifdef HAVE_NANA_H
-    L(" cmpib #0x%x", uint16_type(value2));
-    L(",%s\n", ea1.textb(ec));
-#endif
-
-    sint_type value1 = ea1.getb(ec);
-    sint_type value = extsb(value1 - value2);
-    ec.regs.ccr.set_cc_cmp(value, value1, value2);
-    ea1.finishb(ec);
-
-    ec.regs.pc += 2 + 2 + ea1.isize(2);
-  }
-
-  template <class Destination> void
-  cmpiw(uint16_type op, context &ec, unsigned long data)
-  {
-    sint_type value2 = extsw(ec.fetch(word_size(), 2));
-    Destination ea1(op & 0x7, 2 + 2);
-#ifdef HAVE_NANA_H
-    L(" cmpiw #0x%x", uint16_type(value2));
-    L(",%s\n", ea1.textw(ec));
-#endif
-
-    sint_type value1 = ea1.getw(ec);
-    sint_type value = extsw(value1 - value2);
-    ec.regs.ccr.set_cc_cmp(value, value1, value2);
-    ea1.finishw(ec);
-
-    ec.regs.pc += 2 + 2 + ea1.isize(2);
-  }
-
-  template <class Destination> void
-  cmpil(uint16_type op, context &c, unsigned long data)
-  {
-    sint32_type value2 = extsl(c.fetch(long_word_size(), 2));
-    Destination ea1(op & 0x7, 2 + 4);
-#ifdef HAVE_NANA_H
-    L(" cmpil #%#lx", (unsigned long) value2);
-    L(",%s\n", ea1.textl(c));
-#endif
-
-    sint32_type value1 = ea1.getl(c);
-    sint32_type value = extsl(value1 - value2);
-    c.regs.ccr.set_cc_cmp(value, value1, value2);
-    ea1.finishl(c);
-
-    c.regs.pc += 2 + 4 + ea1.isize(4);
-  }
-#endif
-
   /* Handles an EORI instruction.  */
   template <class Size, class Destination> void
   m68k_eori(uint16_type op, context &c, unsigned long data)
@@ -391,27 +335,6 @@ namespace
     ea1.finish(c);
     c.regs.pc += 2 + Size::aligned_value_size() + ea1.extension_size();
   }
-
-#if 0
-  template <class Destination> void
-  eoriw(uint16_type op, context &ec, unsigned long data)
-  {
-    sint_type value2 = extsw(ec.fetch(word_size(), 2));
-    Destination ea1(op & 0x7, 2 + 2);
-#ifdef HAVE_NANA_H
-    L(" eoriw #0x%x", uint16_type(value2));
-    L(",%s\n", ea1.textw(ec));
-#endif
-
-    sint_type value1 = ea1.getw(ec);
-    sint_type value = extsw(uint16_type(value1) ^ uint16_type(value2));
-    ea1.putw(ec, value);
-    ec.regs.ccr.set_cc(value);
-    ea1.finishw(ec);
-
-    ec.regs.pc += 2 + 2 + ea1.isize(2);
-  }
-#endif
 
   /* Handles an ORI instruction.  */
   template <class Size, class Destination> void
@@ -434,65 +357,6 @@ namespace
     c.regs.advance_pc(2 + Size::aligned_value_size()
 		      + Destination::extension_size());
   }
-
-#if 0
-  template <class Destination> void
-  orib(uint16_type op, context &ec, unsigned long data)
-  {
-    sint_type value2 = extsb(ec.fetch(word_size(), 2));
-    Destination ea1(op & 0x7, 2 + 2);
-#ifdef HAVE_NANA_H
-    L(" orib #0x%x", uint16_type(value2) & 0xff);
-    L(",%s\n", ea1.textb(ec));
-#endif
-
-    sint_type value1 = ea1.getb(ec);
-    sint_type value = extsb(uint16_type(value1) | uint16_type(value2));
-    ea1.putb(ec, value);
-    ec.regs.ccr.set_cc(value);
-    ea1.finishb(ec);
-
-    ec.regs.pc += 2 + 2 + ea1.isize(2);
-  }
-
-  template <class Destination> void
-  oriw(uint16_type op, context &c, unsigned long data)
-  {
-    sint_type value2 = extsw(c.fetch(word_size(), 2));
-    Destination ea1(op & 0x7, 2 + 2);
-#ifdef HAVE_NANA_H
-    L(" oriw #0x%x", uint16_type(value2) & 0xffffu);
-    L(",%s\n", ea1.textw(c));
-#endif
-
-    sint_type value1 = ea1.getw(c);
-    sint_type value = extsw(uint16_type(value1) | uint16_type(value2));
-    ea1.putw(c, value);
-    c.regs.ccr.set_cc(value);
-    ea1.finishw(c);
-
-    c.regs.pc += 2 + 2 + ea1.isize(2);
-  }
-
-  template <class Destination> void
-  oril(uint16_type op, context &c, unsigned long data)
-  {
-    sint32_type value2 = extsl(c.fetch(long_word_size(), 2));
-    Destination ea1(op & 0x7, 2 + 4);
-#ifdef HAVE_NANA_H
-    L(" oril #0x%lx", (unsigned long) value2);
-    L(",%s\n", ea1.textl(c));
-#endif
-
-    sint32_type value1 = ea1.getl(c);
-    sint32_type value = extsl(uint32_type(value1) | uint32_type(value2));
-    ea1.putl(c, value);
-    c.regs.ccr.set_cc(value);
-    ea1.finishl(c);
-
-    c.regs.pc += 2 + 4 + ea1.isize(4);
-  }
-#endif
 
   /* Handles an ORI-to-CCR instruction.  */
   void
