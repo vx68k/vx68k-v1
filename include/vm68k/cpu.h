@@ -21,6 +21,7 @@
 
 #include <vm68k/memory.h>
 #include <utility>
+#include <cassert>
 
 namespace vm68k
 {
@@ -37,8 +38,8 @@ namespace vm68k
     static size_t aligned_value_size() {return 2;}
     static int svalue(unsigned int value)
       {
+	assert(value <= value_mask());
 	const unsigned int N = 1u << value_bit() - 1;
-	value &= value_mask();
 	if (value >= N)
 	  return -int(value_mask() - value) - 1;
 	else
@@ -53,7 +54,7 @@ namespace vm68k
       {dest = dest & ~value_mask() | value & value_mask();}
     static void put(address_space &a, int fc,
 		    uint32_type address, unsigned int value)
-      {a.putb(fc, address, value);}
+      {a.putb(fc, address, value & value_mask());}
 
     static const char *suffix() {return "b";}
   };
@@ -69,8 +70,8 @@ namespace vm68k
     static size_t aligned_value_size() {return value_size();}
     static sint_type svalue(uint_type value)
       {
+	assert(value <= value_mask());
 	const uint_type N = uint_type(1) << value_bit() - 1;
-	value &= value_mask();
 	if (value >= N)
 	  return -sint_type(value_mask() - value) - 1;
 	else
@@ -85,7 +86,7 @@ namespace vm68k
       {dest = dest & ~value_mask() | value & value_mask();}
     static void put(address_space &a, int fc,
 		    uint32_type address, uint_type value)
-      {a.putw(fc, address, value);}
+      {a.putw(fc, address, value & value_mask());}
 
     static const char *suffix() {return "w";}
   };
@@ -102,8 +103,8 @@ namespace vm68k
     static size_t aligned_value_size() {return value_size();}
     static sint32_type svalue(uint32_type value)
       {
+	assert(value <= value_mask());
 	const uint32_type N = uint32_type(1) << value_bit() - 1;
-	value &= value_mask();
 	if (value >= N)
 	  return -sint32_type(value_mask() - value) - 1;
 	else
@@ -118,7 +119,7 @@ namespace vm68k
       {dest = value & value_mask();}
     static void put(address_space &a, int fc,
 		    uint32_type address, uint32_type value)
-      {a.putl(fc, address, value);}
+      {a.putl(fc, address, value & value_mask());}
 
     static const char *suffix() {return "l";}
   };

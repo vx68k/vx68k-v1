@@ -1,5 +1,8 @@
 1999-11-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/cpu.h (struct byte_size, word_size,
+ 	long_word_size): Add asserts in svalue.  Mask values in put.
+
 	* NEWS: Updated.
 
 	* vm68k/execunit.cc (m68k_add, m68k_add_r): Add conversion to
