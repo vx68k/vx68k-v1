@@ -1423,6 +1423,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x42b9, 0x0000, &clrl<absolute_long>);
   eu.set_instruction(0x4850, 0x0007, &pea<indirect>);
   eu.set_instruction(0x4868, 0x0007, &pea<disp_indirect>);
+  eu.set_instruction(0x4878, 0x0000, &pea<absolute_short>);
   eu.set_instruction(0x4879, 0x0000, &pea<absolute_long>);
   eu.set_instruction(0x487a, 0x0000, &pea<disp_pc>);
   eu.set_instruction(0x48e0, 0x0007, &moveml_r_predec);

@@ -274,12 +274,51 @@ namespace vm68k
 	{return textw(ec);}
     };
 
-    class absolute_long
+    class absolute_short
     {
-    protected:
+    private:
       int offset;
     public:
-      absolute_long(int, int off)
+      absolute_short(unsigned int r, int off)
+	: offset(off) {}
+    public:
+      size_t isize(size_t) const
+	{return 2;}
+      uint32 address(const context &ec) const
+	{return ec.fetchw(offset);}
+      int getb(const context &ec) const
+	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
+      int getw(const context &ec) const
+	{return extsw(ec.mem->getw(ec.data_fc(), address(ec)));}
+      int32 getl(const context &ec) const
+	{return extsl(ec.mem->getl(ec.data_fc(), address(ec)));}
+      void putb(context &ec, int value) const
+	{ec.mem->putb(ec.data_fc(), address(ec), value);}
+      void putw(context &ec, int value) const
+	{ec.mem->putw(ec.data_fc(), address(ec), value);}
+      void putl(context &ec, int32 value) const
+	{ec.mem->putl(ec.data_fc(), address(ec), value);}
+      void finishb(context &) const {}
+      void finishw(context &) const {}
+      void finishl(context &) const {}
+      const char *textb(const context &ec) const
+	{return textw(ec);}
+      const char *textw(const context &ec) const
+	{
+	  static char buf[32];
+	  sprintf(buf, "0x%lx:s", (unsigned long) address(ec));
+	  return buf;
+	}
+      const char *textl(const context &ec) const
+	{return textw(ec);}
+    };
+
+    class absolute_long
+    {
+    private:
+      int offset;
+    public:
+      absolute_long(unsigned int r, int off)
 	: offset(off) {}
     public:
       size_t isize(size_t) const

@@ -1,5 +1,12 @@
 1999-06-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (install_instructions): Add new pea
+	handler.
+
+	* include/vm68k/addressing.h (class absolute_short): New class.
+	(class absolute_long): Make data member private.
+	(class absolute_long): Change constructor's 1st argument unsigned.
+
 	* lib/vx68k/dos.cc (dos_chmod): New function.
 	(dos): Add new handler.
 
