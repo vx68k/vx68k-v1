@@ -1,5 +1,7 @@
 2000-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_trap): Call pthread_testcancel.
+
 	* libvx68k/sccmem.cc (get_16, get_8, put_16, put_8): Use DL
 	instead of L.  Print a FIXME message only once.
 	(get_8, put_8): Change the value type.

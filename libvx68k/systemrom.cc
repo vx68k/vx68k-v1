@@ -136,6 +136,8 @@ namespace
   void
   iocs_trap(uint_type, context &c, unsigned long data)
   {
+    pthread_testcancel();
+
     uint32_type vecaddr = (15u + 32u) * 4u;
     uint32_type addr = c.mem->getl(SUPER_DATA, vecaddr);
     if (addr != vecaddr + 0xfe0000)
