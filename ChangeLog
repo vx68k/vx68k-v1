@@ -1,5 +1,8 @@
 1998-10-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/Makefile.am (noinst_HEADERS): Add types.h and
+	memory.h.
+
 	* include/Makefile.am (SUBDIRS): Add vx68k.
 
 	* configure.in (AC_OUTPUT): Add include/vx68k/Makefile.
