@@ -1,5 +1,7 @@
 1999-06-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/human.h (class file, class process): New classes.
+
 	* NEWS: Modified.
 
 	* lib/vx68k/dos.cc (dos_getpdb, dos_intvcs): New functions.

@@ -28,6 +28,30 @@ namespace vx68k
 
   namespace human
   {
+    class file
+    {
+    public:
+      virtual ~file() {}
+    };
+
+    class process
+    {
+    public:
+      void exit(sint_type);
+      sint32_type malloc(uint32_type);
+      sint_type mfree(sint32_type);
+      sint32_type setblock(sint32_type, uint32_type);
+    public:
+      sint_type create(const char *name, sint_type attr);
+      sint_type open(const char *name, sint_type mode);
+      sint_type close(sint_type);
+      sint32_type read(sint_type, uint32_type, uint32_type);
+      sint32_type write(sint_type, uint32_type, uint32_type);
+      sint32_type seek(sint_type, sint32_type, uint_type);
+      sint_type dup(sint_type);
+      sint_type dup2(sint_type, sint_type);
+    };
+
     class dos_exec_context
       : public context
     {
