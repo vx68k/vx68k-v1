@@ -70,8 +70,8 @@ address_space::getl(int fc, uint32_type address) const
 
   if (address / 2 % 2 != 0)
     {
-      uint32_type value =
-	getw_aligned(fc, address) << 16 | getw_aligned(fc, address + 2);
+      uint32_type value = (uint32_type(getw_aligned(fc, address)) << 16
+			   | getw_aligned(fc, address + 2));
       return value;
     }
   else
