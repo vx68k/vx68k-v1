@@ -275,7 +275,12 @@ vx68k_app::create_window()
 	= gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<Window>", NULL);
 #define ITEM_FACTORY_CALLBACK(f) (reinterpret_cast<GtkItemFactoryCallback>(f))
       GtkItemFactoryEntry entries[]
-	= {{_("/_File/E_xit"), NULL,
+	= {{_("/_File/FD _0/_Load..."), NULL, NULL, 0, "<Item>"},
+	   {_("/_File/FD _0/_Eject"), NULL, NULL, 0, "<Item>"},
+	   {_("/_File/FD _1/_Load..."), NULL, NULL, 1, "<Item>"},
+	   {_("/_File/FD _1/_Eject"), NULL, NULL, 1, "<Item>"},
+	   {_("/_File/"), NULL, NULL, 0, "<Separator>"},
+	   {_("/_File/E_xit"), NULL,
 	    ITEM_FACTORY_CALLBACK(&gtk_main_quit), 1, "<Item>"},
 	   {_("/_Help/_About..."), NULL,
 	    ITEM_FACTORY_CALLBACK(&handle_about_command), 0, "<Item>"}};
