@@ -1,3 +1,8 @@
+2000-05-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/memory.h (class address_space): Add a virtual
+	destructor.
+
 2000-05-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* bin/main.cc (run_boot): Catches bus errors.

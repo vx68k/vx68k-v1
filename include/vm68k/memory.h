@@ -102,8 +102,8 @@ namespace vm68k
     {
     };
 #endif
+    virtual ~address_space() {}
     address_space();
-    void set_pages(size_t begin, size_t end, memory *);
 
   protected:
     /* Finds a page that contains canonical address ADDRESS.  */
@@ -111,6 +111,8 @@ namespace vm68k
       {return page_table[address >> PAGE_SHIFT];}
 
   public:
+    void set_pages(size_t begin, size_t end, memory *);
+
     void read(int, uint32_type, void *, size_t) const;
 
     /* Returns one byte at address ADDRESS in this address space.  */
