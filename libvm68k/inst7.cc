@@ -56,7 +56,7 @@ namespace
 
   /* Handles a MOVEQ instruction.  */
   void
-  m68k_moveq(uint_type op, context &c, unsigned long data)
+  m68k_moveq(uint16_type op, context &c, unsigned long data)
   {
     long_word_size::svalue_type value = byte_size::svalue(op);
     unsigned int reg2 = op >> 9 & 0x7;

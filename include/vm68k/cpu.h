@@ -33,56 +33,56 @@ namespace vm68k
   /* Access methods for byte data.  */
   struct byte_size
   {
-    typedef unsigned int uvalue_type;
+    typedef int uvalue_type;
     typedef int value_type;
     typedef int svalue_type;
 
     static size_t value_bit() {return 8;}
-    static unsigned int value_mask() {return (1u << value_bit()) - 1;}
+    static int value_mask() {return (1 << value_bit()) - 1;}
     static size_t value_size() {return 1;}
     static size_t aligned_value_size() {return 2;}
 
-    static unsigned int uvalue(unsigned int value);
-    static int svalue(unsigned int value);
+    static int uvalue(int value);
+    static int svalue(int value);
 
-    static unsigned int uget(const uint32_type &reg);
-    static unsigned int uget(const memory_address_space &,
-			     memory::function_code, uint32_type address);
+    static int uget(const uint32_type &reg);
+    static int uget(const memory_address_space &,
+		    memory::function_code, uint32_type address);
     static int get(const uint32_type &reg);
     static int get(const memory_address_space &,
 		   memory::function_code, uint32_type address);
 
-    static void put(uint32_type &reg, unsigned int value);
+    static void put(uint32_type &reg, int value);
     static void put(memory_address_space &, memory::function_code,
-		    uint32_type address, unsigned int value);
+		    uint32_type address, int value);
 
     static const char *suffix() {return "b";}
   };
 
-  inline unsigned int
-  byte_size::uvalue(unsigned int value)
+  inline int
+  byte_size::uvalue(int value)
   {
     return value & value_mask();
   }
 
   inline int
-  byte_size::svalue(unsigned int value)
+  byte_size::svalue(int value)
   {
     value = uvalue(value);
-    const unsigned int N = 1u << value_bit() - 1;
+    const int N = 1 << value_bit() - 1;
     if (value >= N)
       return -int(value_mask() - value) - 1;
     else
       return value;
   }
 
-  inline unsigned int
+  inline int
   byte_size::uget(const uint32_type &reg)
   {
     return uvalue(reg);
   }
 
-  inline unsigned int
+  inline int
   byte_size::uget(const memory_address_space &m,
 		  memory::function_code fc, uint32_type address)
   {
@@ -103,14 +103,14 @@ namespace vm68k
   }
 
   inline void
-  byte_size::put(uint32_type &reg, unsigned int value)
+  byte_size::put(uint32_type &reg, int value)
   {
     reg = reg & ~uint32_type(value_mask()) | uvalue(value);
   }
 
   inline void
   byte_size::put(memory_address_space &m, memory::function_code fc,
-		 uint32_type address, unsigned int value)
+		 uint32_type address, int value)
   {
     m.put_8(fc, address, value);
   }
@@ -118,88 +118,90 @@ namespace vm68k
   /* Access methods for word data.  */
   struct word_size
   {
-    typedef uint_type uvalue_type;
-    typedef sint_type value_type;
-    typedef sint_type svalue_type;
+    typedef uint16_type uvalue_type;
+    typedef sint16_type value_type;
+    typedef sint16_type svalue_type;
 
     static size_t value_bit() {return 16;}
-    static uint_type value_mask() {return (uint_type(1) << value_bit()) - 1;}
+    static uint16_type value_mask()
+    {return (uint16_type(1) << value_bit()) - 1;}
     static size_t value_size() {return 2;}
     static size_t aligned_value_size() {return value_size();}
 
-    static uint_type uvalue(uint_type value);
-    static sint_type svalue(uint_type value);
+    static uint16_type uvalue(uint16_type value);
+    static sint16_type svalue(uint16_type value);
 
-    static uint_type uget(const uint32_type &reg);
-    static uint_type uget_unchecked(const memory_address_space &,
-				    memory::function_code,
-				    uint32_type address);
-    static uint_type uget(const memory_address_space &,
-			  memory::function_code, uint32_type address);
-    static sint_type get(const uint32_type &reg);
-    static sint_type get_unchecked(const memory_address_space &,
-				   memory::function_code, uint32_type address);
-    static sint_type get(const memory_address_space &,
-			 memory::function_code, uint32_type address);
+    static uint16_type uget(const uint32_type &reg);
+    static uint16_type uget_unchecked(const memory_address_space &,
+				      memory::function_code,
+				      uint32_type address);
+    static uint16_type uget(const memory_address_space &,
+			    memory::function_code, uint32_type address);
+    static sint16_type get(const uint32_type &reg);
+    static sint16_type get_unchecked(const memory_address_space &,
+				     memory::function_code,
+				     uint32_type address);
+    static sint16_type get(const memory_address_space &,
+			   memory::function_code, uint32_type address);
 
-    static void put(uint32_type &reg, uint_type value);
+    static void put(uint32_type &reg, uint16_type value);
     static void put(memory_address_space &, memory::function_code,
-		    uint32_type address, uint_type value);
+		    uint32_type address, uint16_type value);
 
     static const char *suffix() {return "w";}
   };
 
-  inline uint_type
-  word_size::uvalue(uint_type value)
+  inline uint16_type
+  word_size::uvalue(uint16_type value)
   {
     return value & value_mask();
   }
 
-  inline sint_type
-  word_size::svalue(uint_type value)
+  inline sint16_type
+  word_size::svalue(uint16_type value)
   {
     value = uvalue(value);
-    const uint_type N = uint_type(1) << value_bit() - 1;
+    const uint16_type N = uint16_type(1) << value_bit() - 1;
     if (value >= N)
-      return -sint_type(value_mask() - value) - 1;
+      return -sint16_type(value_mask() - value) - 1;
     else
       return value;
   }
 
-  inline uint_type
+  inline uint16_type
   word_size::uget(const uint32_type &reg)
   {
     return uvalue(reg);
   }
 
-  inline uint_type
+  inline uint16_type
   word_size::uget_unchecked(const memory_address_space &m,
 			    memory::function_code fc, uint32_type address)
   {
     return m.get_16_unchecked(fc, address);
   }
 
-  inline uint_type
+  inline uint16_type
   word_size::uget(const memory_address_space &m,
 		  memory::function_code fc, uint32_type address)
   {
     return m.get_16(fc, address);
   }
 
-  inline sint_type
+  inline sint16_type
   word_size::get(const uint32_type &reg)
   {
     return svalue(uget(reg));
   }
 
-  inline sint_type
+  inline sint16_type
   word_size::get_unchecked(const memory_address_space &m,
 			   memory::function_code fc, uint32_type address)
   {
     return svalue(uget_unchecked(m, fc, address));
   }
 
-  inline sint_type
+  inline sint16_type
   word_size::get(const memory_address_space &m,
 		 memory::function_code fc, uint32_type address)
   {
@@ -207,14 +209,14 @@ namespace vm68k
   }
 
   inline void
-  word_size::put(uint32_type &reg, uint_type value)
+  word_size::put(uint32_type &reg, uint16_type value)
   {
     reg = reg & ~uint32_type(value_mask()) | uvalue(value);
   }
 
   inline void
   word_size::put(memory_address_space &m, memory::function_code fc,
-		 uint32_type address, uint_type value)
+		 uint32_type address, uint16_type value)
   {
     m.put_16(fc, address, value);
   }
@@ -341,13 +343,13 @@ namespace vm68k
 
   /* Returns the signed 16-bit value that is equivalent to unsigned
      value VALUE.  */
-  inline sint_type
-  extsw(uint_type value)
+  inline sint16_type
+  extsw(uint16_type value)
   {
-    const uint_type N = uint_type(1) << 15;
-    const uint_type M = (N << 1) - 1;
+    const uint16_type N = uint16_type(1) << 15;
+    const uint16_type M = (N << 1) - 1;
     value &= M;
-    return value >= N ? -sint_type(M - value) - 1 : sint_type(value);
+    return value >= N ? -sint16_type(M - value) - 1 : sint16_type(value);
   }
 
   /* Returns the signed 32-bit value that is equivalent to unsigned
@@ -420,14 +422,14 @@ namespace vm68k
     sint32_type cc_values[3];
     const condition_tester *x_eval;
     sint32_type x_values[3];
-    uint_type value;
+    uint16_type value;
 
   public:
     condition_code();
 
   public:
-    operator uint_type() const;
-    condition_code &operator=(uint_type v)
+    operator uint16_type() const;
+    condition_code &operator=(uint16_type v)
     {
       value = v & 0xff00;
       x_eval = cc_eval = &bitset_tester;
@@ -450,8 +452,8 @@ namespace vm68k
     bool le() const {return  cc_eval->le(cc_values);}
 
   public:
-    uint_type x() const
-      {return x_eval->cs(x_values) ? 1 : 0;}
+    int x() const
+    {return x_eval->cs(x_values) ? 1 : 0;}
 
   public:
     /* Sets the condition codes by a result.  */
@@ -472,10 +474,10 @@ namespace vm68k
 
     void set_cc_cmp(sint32_type, sint32_type, sint32_type);
     void set_cc_sub(sint32_type, sint32_type, sint32_type);
-    void set_cc_asr(sint32_type, sint32_type, uint_type);
-    void set_cc_lsr(sint32_type r, sint32_type d, uint_type s)
+    void set_cc_asr(sint32_type, sint32_type, unsigned int);
+    void set_cc_lsr(sint32_type r, sint32_type d, unsigned int s)
       {set_cc_asr(r, d, s);}
-    void set_cc_lsl(sint32_type, sint32_type, uint_type);
+    void set_cc_lsl(sint32_type, sint32_type, unsigned int);
 
   public:
     /* Returns whether supervisor state.  */
@@ -541,10 +543,10 @@ namespace vm68k
     void set_supervisor_state(bool state);
 
     /* Returns the value of the status register.  */
-    uint_type sr() const;
+    uint16_type sr() const;
 
     /* Sets the status register.  */
-    void set_sr(uint_type value);
+    void set_sr(uint16_type value);
 
   public:
     /* Returns the FC for program in the current state.  */
@@ -601,13 +603,13 @@ namespace vm68k
   class exec_unit
   {
   public:
-    typedef void (*instruction_handler)(uint_type, context &, unsigned long);
+    typedef void (*instruction_handler)(uint16_type, context &, unsigned long);
 
     /* Type of an instruction.  */
     typedef pair<instruction_handler, unsigned long> instruction_type;
 
   public:
-    static void illegal(uint_type, context &, unsigned long);
+    static void illegal(uint16_type, context &, unsigned long);
 
   private:
     vector<instruction_type> instructions;
@@ -618,7 +620,7 @@ namespace vm68k
   public:
     /* Sets an instruction for an operation word.  The old value is
        returned.  */
-    instruction_type set_instruction(uint_type op, const instruction_type &i)
+    instruction_type set_instruction(uint16_type op, const instruction_type &i)
     {
       op &= 0xffffu;
       instruction_type old_value = instructions[op];
@@ -634,7 +636,7 @@ namespace vm68k
 
   protected:
     /* Dispatches for instruction handlers.  */
-    void dispatch(uint_type op, context &ec) const
+    void dispatch(uint16_type op, context &ec) const
       {
 	op &= 0xffffu;
 	instructions[op].first(op, ec, instructions[op].second);

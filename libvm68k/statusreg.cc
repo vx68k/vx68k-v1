@@ -154,9 +154,9 @@ condition_code::set_cc_lsl(sint32_type r, sint32_type d, uint_type s)
   x_values[2] = cc_values[2] = s;
 }
 
-condition_code::operator uint_type() const
+condition_code::operator uint16_type() const
 {
-  uint_type v = value & 0xff00;
+  uint16_type v = value & 0xff00;
   if (cs())
     v |= 0x01;
   if (eq())

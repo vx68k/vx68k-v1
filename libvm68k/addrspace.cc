@@ -43,7 +43,7 @@ namespace
   default_memory null_memory;
 }
 
-uint_type
+uint16_type
 memory_address_space::get_16(memory::function_code fc, uint32_type address)
   const
 {
@@ -82,7 +82,7 @@ memory_address_space::get_string(memory::function_code fc, uint32_type address)
   string s;
   for (;;)
     {
-      uint_type c = this->get_8(fc, address++);
+      int c = this->get_8(fc, address++);
       if (c == 0)
 	break;
       s += c;
@@ -105,7 +105,7 @@ memory_address_space::read(memory::function_code fc, uint32_type address,
 
 void
 memory_address_space::put_16(memory::function_code fc, uint32_type address,
-			     uint_type value)
+			     uint16_type value)
 {
   if (address & 0x1)
     throw address_error_exception(false, fc, address);

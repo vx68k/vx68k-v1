@@ -270,7 +270,7 @@ scc_memory::install_iocs_calls(system_rom &rom)
   // 0x7c: _MS_SEL2
 }
 
-uint_type
+uint16_type
 scc_memory::get_16(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
@@ -282,7 +282,7 @@ scc_memory::get_16(function_code fc, uint32_type address) const
   return 0;
 }
 
-unsigned int
+int
 scc_memory::get_8(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
@@ -299,7 +299,7 @@ scc_memory::get_8(function_code fc, uint32_type address) const
 }
 
 void
-scc_memory::put_16(function_code fc, uint32_type address, uint_type value)
+scc_memory::put_16(function_code fc, uint32_type address, uint16_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class scc_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
@@ -311,7 +311,7 @@ scc_memory::put_16(function_code fc, uint32_type address, uint_type value)
 }
 
 void
-scc_memory::put_8(function_code fc, uint32_type address, unsigned int value)
+scc_memory::put_8(function_code fc, uint32_type address, int value)
 {
 #ifdef HAVE_NANA_H
   DL("class scc_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",

@@ -56,7 +56,7 @@ namespace
 
   /* Handles a DIVU instruction.  */
   template <class Source> void
-  m68k_divu(uint_type op, context &c, unsigned long data)
+  m68k_divu(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -81,7 +81,7 @@ namespace
 
   /* Handles an OR instruction.  */
   template <class Size, class Source> void
-  m68k_or(uint_type op, context &c, unsigned long data)
+  m68k_or(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -102,7 +102,7 @@ namespace
 
 #if 0
   template <class Source> void
-  orb(uint_type op, context &ec, unsigned long data)
+  orb(uint16_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -113,7 +113,7 @@ namespace
 
     sint_type value1 = ea1.getb(ec);
     sint_type value2 = extsb(ec.regs.d[reg2]);
-    sint_type value = extsb(uint_type(value2) | uint_type(value1));
+    sint_type value = extsb(uint16_type(value2) | uint16_type(value1));
     ec.regs.d[reg2]
       = ec.regs.d[reg2] & ~0xff | uint32_type(value) & 0xff;
     ec.regs.ccr.set_cc(value);
@@ -123,7 +123,7 @@ namespace
   }
 
   template <class Source> void
-  orw(uint_type op, context &ec, unsigned long data)
+  orw(uint16_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     int reg2 = op >> 9 & 0x7;
@@ -132,9 +132,9 @@ namespace
     L(",%%d%d\n", reg2);
 #endif
 
-    uint_type value1 = ea1.getw(ec);
-    uint_type value2 = ec.regs.d[reg2];
-    uint_type value = value2 | value1;
+    uint16_type value1 = ea1.getw(ec);
+    uint16_type value2 = ec.regs.d[reg2];
+    uint16_type value = value2 | value1;
     ec.regs.d[reg2]
       = ec.regs.d[reg2] & ~0xffff | uint32_type(value) & 0xffff;
     ec.regs.ccr.set_cc(value);
@@ -144,7 +144,7 @@ namespace
   }
 
   template <class Source> void
-  orl(uint_type op, context &ec, unsigned long data)
+  orl(uint16_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -166,7 +166,7 @@ namespace
 
   /* Handles an OR instruction (memory destination).  */
   template <class Size, class Destination> void
-  m68k_or_m(uint_type op, context &c, unsigned long data)
+  m68k_or_m(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;

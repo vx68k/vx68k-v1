@@ -36,14 +36,14 @@ using vm68k::bus_error_exception;
 using namespace vm68k::types;
 using namespace std;
 
-uint_type
+uint16_type
 default_memory::get_16(function_code fc, uint32_type address) const
 {
   address &= 0xfffffffeU;
   throw bus_error_exception(true, fc, address);
 }
 
-unsigned int
+int
 default_memory::get_8(function_code fc, uint32_type address) const
 {
   address &= 0xffffffffU;
@@ -51,14 +51,14 @@ default_memory::get_8(function_code fc, uint32_type address) const
 }
 
 void
-default_memory::put_16(function_code fc, uint32_type address, uint_type)
+default_memory::put_16(function_code fc, uint32_type address, uint16_type)
 {
   address &= 0xfffffffeU;
   throw bus_error_exception(false, fc, address);
 }
 
 void
-default_memory::put_8(function_code fc, uint32_type address, uint_type)
+default_memory::put_8(function_code fc, uint32_type address, int)
 {
   address &= 0xffffffffU;
   throw bus_error_exception(false, fc, address);

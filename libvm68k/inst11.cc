@@ -56,7 +56,7 @@ namespace
 
   /* Handles a CMP instruction.  */
   template <class Size, class Source> void
-  m68k_cmp(uint_type op, context &c, unsigned long data)
+  m68k_cmp(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -75,7 +75,7 @@ namespace
 
 #if 0
   template <class Source> void
-  cmpb(uint_type op, context &ec, unsigned long data)
+  cmpb(uint16_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -94,7 +94,7 @@ namespace
   }
 
   template <class Source> void
-  cmpw(uint_type op, context &ec, unsigned long data)
+  cmpw(uint16_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -113,7 +113,7 @@ namespace
   }
 
   template <class Source> void
-  cmpl(uint_type op, context &ec, unsigned long data)
+  cmpl(uint16_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -134,7 +134,7 @@ namespace
 
   /* Handles a CMPA instruction.  */
   template <class Size, class Source> void
-  m68k_cmpa(uint_type op, context &c, unsigned long data)
+  m68k_cmpa(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -154,7 +154,7 @@ namespace
 
 #if 0
   template <class Source> void
-  cmpaw(uint_type op, context &ec, unsigned long data)
+  cmpaw(uint16_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -173,7 +173,7 @@ namespace
   }
 
   template <class Source> void
-  cmpal(uint_type op, context &ec, unsigned long data)
+  cmpal(uint16_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -194,7 +194,7 @@ namespace
 
   /* Handles a CMPM instruction.  */
   template <class Size> void
-  m68k_cmpm(uint_type op, context &c, unsigned long data)
+  m68k_cmpm(uint16_type op, context &c, unsigned long data)
   {
     basic_postinc_indirect<Size> ea1(op & 0x7, 2);
     basic_postinc_indirect<Size> ea2(op >> 9 & 0x7, 2 + ea1.extension_size());
@@ -215,7 +215,7 @@ namespace
 
   /* Handles an EOR instruction (memory destination).  */
   template <class Size, class Destination> void
-  m68k_eor_m(uint_type op, context &c, unsigned long data)
+  m68k_eor_m(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -237,7 +237,7 @@ namespace
 
 #if 0
   template <class Destination> void
-  eorb_r(uint_type op, context &ec, unsigned long data)
+  eorb_r(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -248,7 +248,7 @@ namespace
 
     sint_type value1 = ea1.getb(ec);
     sint_type value2 = extsb(ec.regs.d[reg2]);
-    sint_type value = extsb(uint_type(value1) ^ uint_type(value2));
+    sint_type value = extsb(uint16_type(value1) ^ uint16_type(value2));
     ea1.putb(ec, value);
     ec.regs.ccr.set_cc(value);
     ea1.finishb(ec);
@@ -257,7 +257,7 @@ namespace
   }
 
   template <class Destination> void
-  eorw_r(uint_type op, context &ec, unsigned long data)
+  eorw_r(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -268,7 +268,7 @@ namespace
 
     sint_type value1 = ea1.getw(ec);
     sint_type value2 = extsw(ec.regs.d[reg2]);
-    sint_type value = extsw(uint_type(value1) ^ uint_type(value2));
+    sint_type value = extsw(uint16_type(value1) ^ uint16_type(value2));
     ea1.putw(ec, value);
     ec.regs.ccr.set_cc(value);
     ea1.finishw(ec);
@@ -277,7 +277,7 @@ namespace
   }
 
   template <class Destination> void
-  eorl_r(uint_type op, context &c, unsigned long data)
+  eorl_r(uint16_type op, context &c, unsigned long data)
   {
     data_register ea2(op >> 9 & 0x7, 2);
     Destination ea1(op & 0x7, 2 + ea2.isize(4));
@@ -288,7 +288,7 @@ namespace
 
     sint32_type value2 = ea2.getl(c);
     sint32_type value1 = ea1.getw(c);
-    sint32_type value = extsw(uint_type(value1) ^ uint_type(value2));
+    sint32_type value = extsw(uint16_type(value1) ^ uint16_type(value2));
     ea1.putl(c, value);
     c.regs.ccr.set_cc(value);
     ea2.finishl(c);

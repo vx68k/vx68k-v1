@@ -1,4 +1,8 @@
 2000-09-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+	
+	* include/vm68k/types.h: Add new types uint16_type and
+	sint16_type.  Use int or long for uint32_type if possible.  Also
+	change types for 16-bit and smaller values.
 
 	* libvm68k/inst0.cc (m68k_andi_to_ccr, m68k_andi_to_sr,
 	m68k_bclr_i, m68k_bset_i, m68k_btst_i m68k_ori_to_ccr,

@@ -29,23 +29,35 @@ namespace vm68k
   {
     typedef unsigned int uint_type;
 
-#if UINT_MAX >= 0xffffffff
+#if INT_MAX >= 0xffff
+    typedef int uint16_type;
+#else
+    typedef unsigned int uint16_type;
+#endif
+
+#if INT_MAX >= 0xffffffff
+    typedef int uint32_type;
+#elif UINT_MAX >= 0xffffffff
     typedef unsigned int uint32_type;
+#elif LONG_MAX >= 0xffffffff
+    typedef long uint32_type;
 #else
     typedef unsigned long uint32_type;
 #endif
 
 #if INT_MIN >= -0x7fff
     typedef long sint_type;
+    typedef long sint16_type;
 #else
     typedef int sint_type;
+    typedef int sint16_type;
 #endif
 
 #if LONG_MIN >= -0x7fffffff
 # ifdef __GNUC__
     typedef long long sint32_type;
 # else
-#  error No type that can hold m68k signed 32-bit number.
+#  error No type that can hold a m68k signed 32-bit number.
 # endif
 #elsif INT_MIN >= -0x7fffffff
     typedef long sint32_type;

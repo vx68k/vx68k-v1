@@ -48,7 +48,7 @@ using vm68k::putl;
 using namespace vm68k::types;
 using namespace std;
 
-uint_type
+uint16_type
 sram::get_16(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
@@ -59,7 +59,7 @@ sram::get_16(function_code fc, uint32_type address) const
   return value;
 }
 
-uint_type
+int
 sram::get_8(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
@@ -71,7 +71,7 @@ sram::get_8(function_code fc, uint32_type address) const
 }
 
 void
-sram::put_16(function_code, uint32_type, uint_type)
+sram::put_16(function_code, uint32_type, uint16_type)
 {
 #ifdef HAVE_NANA_H
   L("class sram: FIXME: `put_16' not implemented\n");
@@ -79,7 +79,7 @@ sram::put_16(function_code, uint32_type, uint_type)
 }
 
 void
-sram::put_8(function_code, uint32_type, uint_type)
+sram::put_8(function_code, uint32_type, int)
 {
 #ifdef HAVE_NANA_H
   L("class sram: FIXME: `put_8' not implemented\n");

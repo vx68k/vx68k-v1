@@ -55,12 +55,12 @@ advance_row(unsigned char *&ptr)
   ptr += ROW_SIZE;
 }
 
-uint_type
+int
 text_video_raster_iterator::operator*() const
 {
   unsigned char mask = 0x80 >> (pos % 8u);
-  uint_type bit = 1u;
-  uint_type value = 0;
+  int bit = 1u;
+  int value = 0;
   for (const unsigned char *i = packs + 0; i != packs + 4; ++i)
     {
       if (*i & mask)
@@ -401,7 +401,7 @@ text_video_memory::install_iocs_calls(system_rom &rom)
   rom.set_iocs_function(0xd7, make_pair(&iocs_txfill, data));
 }
 
-uint_type
+uint16_type
 text_video_memory::get_16(function_code fc, uint32_type address) const
 {
   if (fc != SUPER_DATA)
@@ -412,7 +412,7 @@ text_video_memory::get_16(function_code fc, uint32_type address) const
   return value;
 }
 
-unsigned int
+int
 text_video_memory::get_8(function_code fc, uint32_type address) const
 {
   if (fc != SUPER_DATA)
@@ -425,7 +425,7 @@ text_video_memory::get_8(function_code fc, uint32_type address) const
 
 void
 text_video_memory::put_16(function_code fc, uint32_type address,
-			  uint_type value)
+			  uint16_type value)
 {
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);
@@ -443,7 +443,7 @@ text_video_memory::put_16(function_code fc, uint32_type address,
 
 void
 text_video_memory::put_8(function_code fc, uint32_type address,
-			 unsigned int value)
+			 int value)
 {
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);

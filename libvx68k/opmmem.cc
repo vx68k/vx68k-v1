@@ -77,7 +77,7 @@ opm_memory::check_timeouts(console::time_type t, context &c)
 }
 
 void
-opm_memory::set_reg(unsigned int regno, unsigned int value)
+opm_memory::set_reg(int regno, int value)
 {
   mutex_lock lock(&mutex);
 
@@ -126,7 +126,7 @@ opm_memory::set_interrupt_enabled(bool value)
   _interrupt_enabled = value;
 }
 
-unsigned int
+int
 opm_memory::get_8(function_code fc, uint32_type address) const
 {
   address &= 0xffffffffu;
@@ -152,7 +152,7 @@ opm_memory::get_8(function_code fc, uint32_type address) const
   }
 }
 
-uint_type
+uint16_type
 opm_memory::get_16(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
@@ -164,7 +164,7 @@ opm_memory::get_16(function_code fc, uint32_type address) const
 }
 
 void
-opm_memory::put_8(function_code fc, uint32_type address, unsigned int value)
+opm_memory::put_8(function_code fc, uint32_type address, int value)
 {
   address &= 0xffffffffu;
   value &= 0xffu;
@@ -194,7 +194,7 @@ opm_memory::put_8(function_code fc, uint32_type address, unsigned int value)
 }
 
 void
-opm_memory::put_16(function_code fc, uint32_type address, uint_type value)
+opm_memory::put_16(function_code fc, uint32_type address, uint16_type value)
 {
   address &= 0xffffffffu;
   value &= 0xffffu;

@@ -44,7 +44,7 @@ using namespace std;
 bool nana_iocs_call_trace = false;
 #endif
 
-uint_type
+uint16_type
 system_rom::get_16(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
@@ -67,7 +67,7 @@ system_rom::get_16(function_code fc, uint32_type address) const
     }
 }
 
-uint_type
+int
 system_rom::get_8(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
@@ -86,7 +86,7 @@ system_rom::get_8(function_code fc, uint32_type address) const
 }
 
 void
-system_rom::put_16(function_code fc, uint32_type address, uint_type value)
+system_rom::put_16(function_code fc, uint32_type address, uint16_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class system_rom: put_16: fc=%d address=0x%08lx value=0x%04x\n",
@@ -101,7 +101,7 @@ system_rom::put_16(function_code fc, uint32_type address, uint_type value)
 }
 
 void
-system_rom::put_8(function_code fc, uint32_type address, uint_type value)
+system_rom::put_8(function_code fc, uint32_type address, int value)
 {
 #ifdef HAVE_NANA_H
   DL("class system_rom: put_8: fc=%d address=0x%08lx value=0x%02x\n",
@@ -116,7 +116,7 @@ system_rom::put_8(function_code fc, uint32_type address, uint_type value)
 }
 
 void
-system_rom::set_iocs_function(uint_type funcno, const iocs_function_type &f)
+system_rom::set_iocs_function(int funcno, const iocs_function_type &f)
 {
   if (funcno < 0 || funcno >= iocs_functions.size())
     throw range_error("system_rom");
@@ -125,7 +125,7 @@ system_rom::set_iocs_function(uint_type funcno, const iocs_function_type &f)
 }
 
 void
-system_rom::call_iocs(unsigned int funcno, context &c)
+system_rom::call_iocs(int funcno, context &c)
 {
   funcno %= 0x100;
 
@@ -142,7 +142,7 @@ namespace
 
   /* Handles an IOCS trap.  This function is an instruction handler.  */
   void
-  iocs_trap(uint_type, context &c, unsigned long data)
+  iocs_trap(uint16_type, context &c, unsigned long data)
   {
     sched_yield();
     pthread_testcancel();
@@ -196,7 +196,7 @@ namespace
      internal IOCS handler and executes a return.  The IOCS call
      number is derived from the current value of the PC.  */
   void
-  x68k_iocs(uint_type, context &c, unsigned long data)
+  x68k_iocs(uint16_type, context &c, unsigned long data)
   {
     system_rom *rom = reinterpret_cast<system_rom *>(data);
     I(rom != NULL);

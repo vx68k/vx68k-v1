@@ -58,7 +58,7 @@ namespace
 
   /* Handles an ADDQ instruction.  */
   template <class Size, class Destination> void
-  m68k_addq(uint_type op, context &c, unsigned long data)
+  m68k_addq(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     int value2 = op >> 9 & 0x7;
@@ -79,7 +79,7 @@ namespace
 
   /* Handles an ADDQ instruction (address register).  */
   template <class Size> void
-  m68k_addq_a(uint_type op, context &c, unsigned long data)
+  m68k_addq_a(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     int value2 = op >> 9 & 0x7;
@@ -100,7 +100,7 @@ namespace
 
   /* Handles a DBcc instruction.  */
   template <class Condition> void
-  m68k_db(uint_type op, context &c, unsigned long data)
+  m68k_db(uint16_type op, context &c, unsigned long data)
   {
     Condition cond;
     unsigned int reg1 = op & 0x7;
@@ -124,7 +124,7 @@ namespace
 
 #if 0
   void
-  dbf(uint_type op, context &ec, unsigned long data)
+  dbf(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     int disp = extsw(ec.fetch(word_size(), 2));
@@ -143,7 +143,7 @@ namespace
 
   /* Handles a Scc instruction.  */
   template <class Condition, class Destination> void
-  m68k_s(uint_type op, context &c, unsigned long data)
+  m68k_s(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -161,7 +161,7 @@ namespace
 
   /* Handles a SUBQ instruction.  */
   template <class Size, class Destination> void
-  m68k_subq(uint_type op, context &c, unsigned long data)
+  m68k_subq(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     int value2 = op >> 9 & 0x7;
@@ -182,7 +182,7 @@ namespace
 
   /* Handles a SUBQ instruction (address register).  */
   template <class Size> void
-  m68k_subq_a(uint_type op, context &c, unsigned long data)
+  m68k_subq_a(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     int value2 = op >> 9 & 0x7;

@@ -36,7 +36,7 @@ using vx68k::graphics_video_memory;
 using namespace vm68k::types;
 using namespace std;
 
-uint_type
+uint16_type
 graphics_video_memory::get_16(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
@@ -50,7 +50,7 @@ graphics_video_memory::get_16(function_code fc, uint32_type address) const
   return 0;
 }
 
-uint_type
+int
 graphics_video_memory::get_8(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
@@ -65,7 +65,7 @@ graphics_video_memory::get_8(function_code fc, uint32_type address) const
 }
 
 void
-graphics_video_memory::put_16(function_code fc, uint32_type address, uint_type value)
+graphics_video_memory::put_16(function_code fc, uint32_type address, uint16_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class graphics_video_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
@@ -78,7 +78,7 @@ graphics_video_memory::put_16(function_code fc, uint32_type address, uint_type v
 }
 
 void
-graphics_video_memory::put_8(function_code fc, uint32_type address, uint_type value)
+graphics_video_memory::put_8(function_code fc, uint32_type address, int value)
 {
 #ifdef HAVE_NANA_H
   DL("class graphics_video_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",

@@ -64,7 +64,7 @@ context::handle_interrupts()
       unsigned int vecno = i->front();
       i->pop();
 
-      uint_type old_sr = this->sr();
+      uint16_type old_sr = this->sr();
       this->set_sr(old_sr & ~0x700 | prio << 8);
       this->set_supervisor_state(true);
       regs.a[7] -= 6;
@@ -114,14 +114,14 @@ context::set_supervisor_state(bool state)
     }
 }
 
-uint_type
+uint16_type
 context::sr() const
 {
   return regs.ccr;
 }
 
 void
-context::set_sr(uint_type value)
+context::set_sr(uint16_type value)
 {
   set_supervisor_state(value & 0x2000);
   regs.ccr = value;

@@ -57,7 +57,7 @@ namespace
 
   /* Handles an ADDI instruction.  */
   template <class Size, class Destination> void
-  m68k_addi(uint_type op, context &c, unsigned long data)
+  m68k_addi(uint16_type op, context &c, unsigned long data)
   {
     typename Size::svalue_type value2 = c.fetch(Size(), 2);
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
@@ -77,7 +77,7 @@ namespace
 
   /* Handles an ANDI instruction.  */
   template <class Size, class Destination> void
-  m68k_andi(uint_type op, context &c, unsigned long data)
+  m68k_andi(uint16_type op, context &c, unsigned long data)
   {
     typename Size::svalue_type value2 = c.fetch(Size(), 2);
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
@@ -98,7 +98,7 @@ namespace
 
   /* Handles an ANDI-to-CCR instruction.  */
   void
-  m68k_andi_to_ccr(uint_type op, context &c, unsigned long data)
+  m68k_andi_to_ccr(uint16_type op, context &c, unsigned long data)
   {
     byte_size::uvalue_type value2 = c.ufetch(byte_size(), 2);
 #ifdef HAVE_NANA_H
@@ -114,7 +114,7 @@ namespace
 
   /* Handles an ANDI-to-SR instruction.  */
   void
-  m68k_andi_to_sr(uint_type op, context &c, unsigned long data)
+  m68k_andi_to_sr(uint16_type op, context &c, unsigned long data)
   {
     word_size::uvalue_type value2 = c.ufetch(word_size(), 2);
 #ifdef HAVE_NANA_H
@@ -134,7 +134,7 @@ namespace
 
   /* Handles a BCLR instruction (register).  */
   template <class Size, class Destination> void
-  m68k_bclr_r(uint_type op, context &c, unsigned long data)
+  m68k_bclr_r(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -156,7 +156,7 @@ namespace
 
   /* Handles a BCLR instruction (immediate).  */
   template <class Size, class Destination> void
-  m68k_bclr_i(uint_type op, context &c, unsigned long data)
+  m68k_bclr_i(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2 + 2);
     unsigned int value2 = c.ufetch(word_size(), 2) % Size::value_bit();
@@ -177,7 +177,7 @@ namespace
 
   /* Handles a BSET instruction (register).  */
   template <class Size, class Destination> void
-  m68k_bset_r(uint_type op, context &c, unsigned long data)
+  m68k_bset_r(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -197,7 +197,7 @@ namespace
 
   /* Handles a BSET instruction (immediate).  */
   template <class Size, class Destination> void
-  m68k_bset_i(uint_type op, context &c, unsigned long data)
+  m68k_bset_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int value2 = c.ufetch(word_size(), 2) % Size::value_bit();
     Destination ea1(op & 0x7, 2 + word_size::aligned_value_size());
@@ -219,7 +219,7 @@ namespace
 
   /* Handles a BTST instruction (register).  */
   template <class Size, class Destination> void
-  m68k_btst_r(uint_type op, context &c, unsigned long data)
+  m68k_btst_r(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -240,7 +240,7 @@ namespace
 
   /* Handles a BTST instruction (immediate).  */
   template <class Size, class Destination> void
-  m68k_btst_i(uint_type op, context &c, unsigned long data)
+  m68k_btst_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int value2 = c.ufetch(word_size(), 2) % Size::value_bit();
     Destination ea1(op & 0x7, 2 + word_size::aligned_value_size());
@@ -262,7 +262,7 @@ namespace
 
 #if 0
   template <class Destination> void
-  btstb_i(uint_type op, context &c, unsigned long data)
+  btstb_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int bit = c.fetch(word_size(), 2) & 0x7;
     Destination ea1(op & 0x7, 2 + 2);
@@ -272,14 +272,14 @@ namespace
 #endif
 
     // This instruction affects only the Z bit of condition codes.
-    bool value = uint_type(ea1.getb(c)) & 1u << bit;
+    bool value = uint16_type(ea1.getb(c)) & 1u << bit;
     c.regs.ccr.set_cc(value);	// FIXME.
 
     c.regs.pc += 2 + 2 + ea1.isize(2);
   }
 
   void
-  btstl_i(uint_type op, context &ec, unsigned long data)
+  btstl_i(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int bit = ec.fetch(word_size(), 2) & 0x1f;
@@ -297,7 +297,7 @@ namespace
 #endif
 
   template <class Size, class Destination> void
-  m68k_cmpi(uint_type op, context &c, unsigned long data)
+  m68k_cmpi(uint16_type op, context &c, unsigned long data)
   {
     typename Size::svalue_type value2 = c.fetch(Size(), 2);
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
@@ -317,12 +317,12 @@ namespace
 
 #if 0
   template <class Destination> void
-  cmpib(uint_type op, context &ec, unsigned long data)
+  cmpib(uint16_type op, context &ec, unsigned long data)
   {
     sint_type value2 = extsb(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef HAVE_NANA_H
-    L(" cmpib #0x%x", uint_type(value2));
+    L(" cmpib #0x%x", uint16_type(value2));
     L(",%s\n", ea1.textb(ec));
 #endif
 
@@ -335,12 +335,12 @@ namespace
   }
 
   template <class Destination> void
-  cmpiw(uint_type op, context &ec, unsigned long data)
+  cmpiw(uint16_type op, context &ec, unsigned long data)
   {
     sint_type value2 = extsw(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef HAVE_NANA_H
-    L(" cmpiw #0x%x", uint_type(value2));
+    L(" cmpiw #0x%x", uint16_type(value2));
     L(",%s\n", ea1.textw(ec));
 #endif
 
@@ -353,7 +353,7 @@ namespace
   }
 
   template <class Destination> void
-  cmpil(uint_type op, context &c, unsigned long data)
+  cmpil(uint16_type op, context &c, unsigned long data)
   {
     sint32_type value2 = extsl(c.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
@@ -373,7 +373,7 @@ namespace
 
   /* Handles an EORI instruction.  */
   template <class Size, class Destination> void
-  m68k_eori(uint_type op, context &c, unsigned long data)
+  m68k_eori(uint16_type op, context &c, unsigned long data)
   {
     typename Size::svalue_type value2 = c.fetch(Size(), 2);
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
@@ -394,17 +394,17 @@ namespace
 
 #if 0
   template <class Destination> void
-  eoriw(uint_type op, context &ec, unsigned long data)
+  eoriw(uint16_type op, context &ec, unsigned long data)
   {
     sint_type value2 = extsw(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef HAVE_NANA_H
-    L(" eoriw #0x%x", uint_type(value2));
+    L(" eoriw #0x%x", uint16_type(value2));
     L(",%s\n", ea1.textw(ec));
 #endif
 
     sint_type value1 = ea1.getw(ec);
-    sint_type value = extsw(uint_type(value1) ^ uint_type(value2));
+    sint_type value = extsw(uint16_type(value1) ^ uint16_type(value2));
     ea1.putw(ec, value);
     ec.regs.ccr.set_cc(value);
     ea1.finishw(ec);
@@ -415,7 +415,7 @@ namespace
 
   /* Handles an ORI instruction.  */
   template <class Size, class Destination> void
-  m68k_ori(uint_type op, context &c, unsigned long data)
+  m68k_ori(uint16_type op, context &c, unsigned long data)
   {
     typename Size::svalue_type value2 = c.fetch(Size(), 2);
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
@@ -437,17 +437,17 @@ namespace
 
 #if 0
   template <class Destination> void
-  orib(uint_type op, context &ec, unsigned long data)
+  orib(uint16_type op, context &ec, unsigned long data)
   {
     sint_type value2 = extsb(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef HAVE_NANA_H
-    L(" orib #0x%x", uint_type(value2) & 0xff);
+    L(" orib #0x%x", uint16_type(value2) & 0xff);
     L(",%s\n", ea1.textb(ec));
 #endif
 
     sint_type value1 = ea1.getb(ec);
-    sint_type value = extsb(uint_type(value1) | uint_type(value2));
+    sint_type value = extsb(uint16_type(value1) | uint16_type(value2));
     ea1.putb(ec, value);
     ec.regs.ccr.set_cc(value);
     ea1.finishb(ec);
@@ -456,17 +456,17 @@ namespace
   }
 
   template <class Destination> void
-  oriw(uint_type op, context &c, unsigned long data)
+  oriw(uint16_type op, context &c, unsigned long data)
   {
     sint_type value2 = extsw(c.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef HAVE_NANA_H
-    L(" oriw #0x%x", uint_type(value2) & 0xffffu);
+    L(" oriw #0x%x", uint16_type(value2) & 0xffffu);
     L(",%s\n", ea1.textw(c));
 #endif
 
     sint_type value1 = ea1.getw(c);
-    sint_type value = extsw(uint_type(value1) | uint_type(value2));
+    sint_type value = extsw(uint16_type(value1) | uint16_type(value2));
     ea1.putw(c, value);
     c.regs.ccr.set_cc(value);
     ea1.finishw(c);
@@ -475,7 +475,7 @@ namespace
   }
 
   template <class Destination> void
-  oril(uint_type op, context &c, unsigned long data)
+  oril(uint16_type op, context &c, unsigned long data)
   {
     sint32_type value2 = extsl(c.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
@@ -496,7 +496,7 @@ namespace
 
   /* Handles an ORI-to-CCR instruction.  */
   void
-  m68k_ori_to_ccr(uint_type op, context &c, unsigned long data)
+  m68k_ori_to_ccr(uint16_type op, context &c, unsigned long data)
   {
     byte_size::uvalue_type value2 = c.ufetch(byte_size(), 2);
 #ifdef HAVE_NANA_H
@@ -512,7 +512,7 @@ namespace
 
   /* Handles an ORI-to-SR instruction.  */
   void
-  m68k_ori_to_sr(uint_type op, context &c, unsigned long data)
+  m68k_ori_to_sr(uint16_type op, context &c, unsigned long data)
   {
     word_size::uvalue_type value2 = c.ufetch(word_size(), 2);
 #ifdef HAVE_NANA_H
@@ -532,7 +532,7 @@ namespace
 
   /* Handles a SUBI instruction.  */
   template <class Size, class Destination> void
-  m68k_subi(uint_type op, context &c, unsigned long data)
+  m68k_subi(uint16_type op, context &c, unsigned long data)
   {
     typename Size::svalue_type value2 = c.fetch(word_size(), 2);
     Destination ea1(op & 0x7, 2 + word_size::aligned_value_size());

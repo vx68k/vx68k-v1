@@ -90,7 +90,7 @@ palettes_memory::get_text_colors(unsigned int first, unsigned int last,
     }
 }
 
-uint_type
+uint16_type
 palettes_memory::get_16(function_code fc, uint32_type address) const
 {
   address &= 0xfffffffeu;
@@ -132,7 +132,7 @@ palettes_memory::get_16(function_code fc, uint32_type address) const
     }
 }
 
-unsigned int
+int
 palettes_memory::get_8(function_code fc, uint32_type address) const
 {
   address &= 0xffffffffU;
@@ -149,7 +149,8 @@ palettes_memory::get_8(function_code fc, uint32_type address) const
 }
 
 void
-palettes_memory::put_16(function_code fc, uint32_type address, uint_type value)
+palettes_memory::put_16(function_code fc, uint32_type address,
+			uint16_type value)
 {
   address &= 0xfffffffeu;
   value &= 0xffffu;
@@ -196,7 +197,7 @@ palettes_memory::put_16(function_code fc, uint32_type address, uint_type value)
 }
 
 void
-palettes_memory::put_8(function_code fc, uint32_type address, unsigned int value)
+palettes_memory::put_8(function_code fc, uint32_type address, int value)
 {
   address &= 0xffffffffU;
   value &= 0xff;

@@ -56,7 +56,7 @@ namespace
 
   /* Handles a SUB instruction.  */
   template <class Size, class Source> void
-  m68k_sub(uint_type op, context &c, unsigned long data)
+  m68k_sub(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -76,7 +76,7 @@ namespace
 
 #if 0
   template <class Source> void
-  subb(uint_type op, context &ec, unsigned long data)
+  subb(uint16_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -97,7 +97,7 @@ namespace
   }
 
   template <class Source> void
-  subw(uint_type op, context &ec, unsigned long data)
+  subw(uint16_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -118,7 +118,7 @@ namespace
   }
 
   template <class Destination> void
-  subl(uint_type op, context &ec, unsigned long data)
+  subl(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     int reg2 = op >> 9 & 0x7;
@@ -140,7 +140,7 @@ namespace
 
   /* Handles a SUB instruction (memory destination).  */
   template <class Size, class Destination> void
-  m68k_sub_m(uint_type op, context &c, unsigned long data)
+  m68k_sub_m(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -160,7 +160,7 @@ namespace
 
   /* Handles a SUBA instruction.  */
   template <class Size, class Source> void
-  m68k_suba(uint_type op, context &c, unsigned long data)
+  m68k_suba(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;

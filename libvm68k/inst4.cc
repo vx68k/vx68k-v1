@@ -58,7 +58,7 @@ namespace
 
   /* Handles a CLR instruction.  */
   template <class Size, class Destination> void
-  m68k_clr(uint_type op, context &c, unsigned long data)
+  m68k_clr(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -75,7 +75,7 @@ namespace
 
 #if 0
   template <class Destination> void
-  clrb(uint_type op, context &ec, unsigned long data)
+  clrb(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -90,7 +90,7 @@ namespace
   }
 
   template <class Destination> void
-  clrw(uint_type op, context &ec, unsigned long data)
+  clrw(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -108,7 +108,7 @@ namespace
   // XXX: Address register cannot be the destination.
 
   template <class Destination> void
-  clrl(uint_type op, context &ec, unsigned long data)
+  clrl(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -125,7 +125,7 @@ namespace
 
   /* Handles an EXT instruction.  */
   template <class Size1, class Size2> void
-  m68k_ext(uint_type op, context &c, unsigned long data)
+  m68k_ext(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
 #ifdef HAVE_NANA_H
@@ -141,7 +141,7 @@ namespace
 
 #if 0
   void
-  extw(uint_type op, context &c, unsigned long data)
+  extw(uint16_type op, context &c, unsigned long data)
   {
     data_register ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -157,7 +157,7 @@ namespace
   }
 
   void
-  extl(uint_type op, context &ec, unsigned long data)
+  extl(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
 #ifdef HAVE_NANA_H
@@ -174,7 +174,7 @@ namespace
 
   /* Handles a JMP instruction.  */
   template <class Destination> void
-  m68k_jmp(uint_type op, context &c, unsigned long data)
+  m68k_jmp(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -189,7 +189,7 @@ namespace
 
   /* Handles a JSR instruction.  */
   template <class Destination> void
-  m68k_jsr(uint_type op, context &c, unsigned long data)
+  m68k_jsr(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -209,7 +209,7 @@ namespace
 
   /* Handles a LEA instruction.  */
   template <class Destination> void
-  m68k_lea(uint_type op, context &c, unsigned long data)
+  m68k_lea(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -228,7 +228,7 @@ namespace
 
   /* Handles a LINK instruction.  */
   void
-  m68k_link(uint_type op, context &c, unsigned long data)
+  m68k_link(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     word_size::svalue_type disp = c.fetch(word_size(), 2);
@@ -249,7 +249,7 @@ namespace
 
   /* Handles a MOVE-from-SR instruction.  */
   template <class Destination> void
-  m68k_move_from_sr(uint_type op, context &c, unsigned long data)
+  m68k_move_from_sr(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -267,7 +267,7 @@ namespace
 
   /* Handles a MOVE-to-SR instruction.  */
   template <class Source> void
-  m68k_move_to_sr(uint_type op, context &c, unsigned long data)
+  m68k_move_to_sr(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -288,7 +288,7 @@ namespace
 
   /* Handles a MOVE-from-USP instruction.  */
   void
-  m68k_move_from_usp(uint_type op, context &c, unsigned long data)
+  m68k_move_from_usp(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
 #ifdef HAVE_NANA_H
@@ -307,7 +307,7 @@ namespace
 
   /* Handles a MOVE-to-USP instruction.  */
   void
-  m68k_move_to_usp(uint_type op, context &c, unsigned long data)
+  m68k_move_to_usp(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
 #ifdef HAVE_NANA_H
@@ -328,7 +328,7 @@ namespace
 
   /* Handles a MOVEM instruction (register to memory) */
   template <class Size, class Destination> void
-  m68k_movem_r_m(uint_type op, context &c, unsigned long data)
+  m68k_movem_r_m(uint16_type op, context &c, unsigned long data)
   {
     word_size::uvalue_type mask = c.ufetch(word_size(), 2);
     Destination ea1(op & 0x7, 2 + 2);
@@ -337,7 +337,7 @@ namespace
 #endif
 
     // This instruction does not affect the condition codes.
-    uint_type m = 1;
+    uint16_type m = 1;
     memory::function_code fc = c.data_fc();
     uint32_type address = ea1.address(c);
     for (uint32_type *i = c.regs.d + 0; i != c.regs.d + 8; ++i)
@@ -364,7 +364,7 @@ namespace
 
   /* Handles a MOVEM instruction (register to predec memory).  */
   template <class Size> void
-  m68k_movem_r_predec(uint_type op, context &c, unsigned long data)
+  m68k_movem_r_predec(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     word_size::uvalue_type mask = c.ufetch(word_size(), 2);
@@ -373,7 +373,7 @@ namespace
 #endif
 
     // This instruction does not affect the condition codes.
-    uint_type m = 1;
+    uint16_type m = 1;
     memory::function_code fc = c.data_fc();
     sint32_type address = long_word_size::get(c.regs.a[reg1]);
     // This instruction iterates registers in reverse.
@@ -402,7 +402,7 @@ namespace
 
   /* Handles a MOVEM instruction (memory to register).  */
   template <class Size, class Source> void
-  m68k_movem_m_r(uint_type op, context &c, unsigned long data)
+  m68k_movem_m_r(uint16_type op, context &c, unsigned long data)
   {
     word_size::uvalue_type mask = c.ufetch(word_size(), 2);
     Source ea1(op & 0x7, 2 + word_size::aligned_value_size());
@@ -411,7 +411,7 @@ namespace
 #endif
 
     // XXX: The condition codes are not affected.
-    uint_type m = 1;
+    uint16_type m = 1;
     memory::function_code fc = c.data_fc();
     uint32_type address = ea1.address(c);
     for (uint32_type *i = c.regs.d + 0; i != c.regs.d + 8; ++i)
@@ -440,7 +440,7 @@ namespace
 #if 0
   /* moveml instruction (memory to register) */
   template <class Source> void
-  moveml_mr(uint_type op, context &ec, unsigned long data)
+  moveml_mr(uint16_type op, context &ec, unsigned long data)
   {
     Source ea1(op & 0x7, 4);
     unsigned int bitmap = ec.fetch(word_size(), 2);
@@ -477,7 +477,7 @@ namespace
 
   /* Handles a MOVEM instruction (postinc memory to register).  */
   template <class Size> void
-  m68k_movem_postinc_r(uint_type op, context &c, unsigned long data)
+  m68k_movem_postinc_r(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     word_size::uvalue_type mask = c.ufetch(word_size(), 2);
@@ -486,7 +486,7 @@ namespace
 #endif
 
     // This instruction does not affect the condition codes.
-    uint_type m = 1;
+    uint16_type m = 1;
     memory::function_code fc = c.data_fc();
     sint32_type address = long_word_size::get(c.regs.a[reg1]);
     // This instruction sign-extends words to long words.
@@ -515,7 +515,7 @@ namespace
 
   /* Handles a NEG instruction.  */
   template <class Size, class Destination> void
-  m68k_neg(uint_type op, context &c, unsigned long data)
+  m68k_neg(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -533,7 +533,7 @@ namespace
 
 #if 0
   template <class Destination> void
-  negb(uint_type op, context &c, unsigned long data)
+  negb(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -550,7 +550,7 @@ namespace
   }
 
   template <class Destination> void
-  negw(uint_type op, context &ec, unsigned long data)
+  negw(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -567,7 +567,7 @@ namespace
   }
 
   template <class Destination> void
-  negl(uint_type op, context &ec, unsigned long data)
+  negl(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -586,7 +586,7 @@ namespace
 
   /* Handles a NOP instruction.  */
   void
-  m68k_nop(uint_type op, context &c, unsigned long data)
+  m68k_nop(uint16_type op, context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
     L("\tnop\n");
@@ -597,7 +597,7 @@ namespace
 
   /* Handles a NOT instruction.  */
   template <class Size, class Destination> void
-  m68k_not(uint_type op, context &c, unsigned long data)
+  m68k_not(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -615,7 +615,7 @@ namespace
 
   /* Handles a PEA instruction.  */
   template <class Destination> void
-  m68k_pea(uint_type op, context &c, unsigned long data)
+  m68k_pea(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -634,7 +634,7 @@ namespace
 
   /* Handles a RTE instruction.  */
   void
-  m68k_rte(uint_type op, context &c, unsigned long data)
+  m68k_rte(uint16_type op, context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
     L("\trte\n");
@@ -644,7 +644,7 @@ namespace
     if (!c.supervisor_state())
       throw privilege_violation_exception();
 
-    uint_type status = c.mem->get_16(memory::SUPER_DATA, c.regs.a[7] + 0);
+    uint16_type status = c.mem->get_16(memory::SUPER_DATA, c.regs.a[7] + 0);
     uint32_type value = c.mem->get_32(memory::SUPER_DATA, c.regs.a[7] + 2);
     c.regs.a[7] += 6;
     c.set_sr(status);
@@ -652,7 +652,7 @@ namespace
   }
 
   void
-  m68k_rts(uint_type op, context &c, unsigned long data)
+  m68k_rts(uint16_type op, context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
     L("\trts\n");
@@ -668,7 +668,7 @@ namespace
 
   /* Handles a SWAP instruction.  */
   void
-  m68k_swap(uint_type op, context &c, unsigned long data)
+  m68k_swap(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
 #ifdef HAVE_NANA_H
@@ -688,7 +688,7 @@ namespace
 
   /* Handles a TST instruction.  */
   template <class Size, class Destination> void
-  m68k_tst(uint_type op, context &c, unsigned long data)
+  m68k_tst(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -705,7 +705,7 @@ namespace
 
 #if 0
   template <class Destination> void
-  tstb(uint_type op, context &ec, unsigned long data)
+  tstb(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -720,7 +720,7 @@ namespace
   }
 
   template <class Destination> void
-  tstw(uint_type op, context &ec, unsigned long data)
+  tstw(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -735,7 +735,7 @@ namespace
   }
 
   template <class Destination> void
-  tstl(uint_type op, context &ec, unsigned long data)
+  tstl(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
@@ -751,7 +751,7 @@ namespace
 #endif
 
   void
-  m68k_unlk(uint_type op, context &c, unsigned long data)
+  m68k_unlk(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
 #ifdef HAVE_NANA_H

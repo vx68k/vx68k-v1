@@ -56,7 +56,7 @@ namespace
 
   /* Handles an AND instruction.  */
   template <class Size, class Source> void
-  m68k_and(uint_type op, context &c, unsigned long data)
+  m68k_and(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -77,7 +77,7 @@ namespace
 
   /* Handles an AND instruction (memory destination).  */
   template <class Size, class Destination> void
-  m68k_and_m(uint_type op, context &c, unsigned long data)
+  m68k_and_m(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -98,7 +98,7 @@ namespace
 
   /* Handles an EXG instruction (data registers).  */
   void
-  m68k_exg_d_d(uint_type op, context &c, unsigned long data)
+  m68k_exg_d_d(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -117,7 +117,7 @@ namespace
 
   /* Handles an EXG instruction (address registers).  */
   void
-  m68k_exg_a_a(uint_type op, context &c, unsigned long data)
+  m68k_exg_a_a(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -136,7 +136,7 @@ namespace
 
   /* Handles an EXG instruction (data register and address register).  */
   void
-  m68k_exg_d_a(uint_type op, context &c, unsigned long data)
+  m68k_exg_d_a(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -155,7 +155,7 @@ namespace
 
 #if 0
   template <class Register2, class Register1> void
-  exgl(uint_type op, context &c, unsigned long data)
+  exgl(uint16_type op, context &c, unsigned long data)
   {
     Register1 ea1(op & 0x7, 2);
     Register2 ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
@@ -178,7 +178,7 @@ namespace
 
   /* Handles a MULS instruction.  */
   template <class Source> void
-  m68k_muls(uint_type op, context &c, unsigned long data)
+  m68k_muls(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -200,7 +200,7 @@ namespace
 
   /* Handles a MULU instruction.  */
   template <class Source> void
-  m68k_mulu(uint_type op, context &c, unsigned long data)
+  m68k_mulu(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;

@@ -53,7 +53,7 @@ main_memory::set_super_area(size_t n)
   super_area = n;
 }
 
-uint_type
+uint16_type
 main_memory::get_16(function_code fc, uint32_type address) const
 {
   address &= 0xfffffffeU;
@@ -68,7 +68,7 @@ main_memory::get_16(function_code fc, uint32_type address) const
   return value;
 }
 
-unsigned int
+int
 main_memory::get_8(function_code fc, uint32_type address) const
 {
   address &= 0xffffffffU;
@@ -109,7 +109,7 @@ main_memory::get_32(function_code fc, uint32_type address) const
 }
 
 void
-main_memory::put_16(function_code fc, uint32_type address, uint_type value)
+main_memory::put_16(function_code fc, uint32_type address, uint16_type value)
 {
   address &= 0xfffffffeU;
   value &= 0xffff;
@@ -123,7 +123,7 @@ main_memory::put_16(function_code fc, uint32_type address, uint_type value)
 }
 
 void
-main_memory::put_8(function_code fc, uint32_type address, unsigned int value)
+main_memory::put_8(function_code fc, uint32_type address, int value)
 {
   address &= 0xffffffffU;
   value &= 0xff;

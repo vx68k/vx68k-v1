@@ -36,7 +36,7 @@ using vm68k::bus_error_exception;
 using namespace vm68k::types;
 using namespace std;
 
-uint_type
+uint16_type
 area_set::get_16(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
@@ -45,7 +45,7 @@ area_set::get_16(function_code fc, uint32_type address) const
   return 0;
 }
 
-uint_type
+int
 area_set::get_8(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
@@ -55,7 +55,7 @@ area_set::get_8(function_code fc, uint32_type address) const
 }
 
 void
-area_set::put_8(function_code fc, uint32_type address, unsigned int value)
+area_set::put_8(function_code fc, uint32_type address, int value)
 {
   address &= 0xffffffffu;
   value &= 0xffu;
@@ -84,7 +84,7 @@ area_set::put_8(function_code fc, uint32_type address, unsigned int value)
 }
 
 void
-area_set::put_16(function_code fc, uint32_type address, uint_type value)
+area_set::put_16(function_code fc, uint32_type address, uint16_type value)
 {
   this->put_8(fc, address / 2 * 2 + 1, value);
 }

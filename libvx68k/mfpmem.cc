@@ -36,7 +36,7 @@ using vx68k::mfp_memory;
 using namespace vm68k::types;
 using namespace std;
 
-uint_type
+uint16_type
 mfp_memory::get_16(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
@@ -50,7 +50,7 @@ mfp_memory::get_16(function_code fc, uint32_type address) const
   return 0x7b;
 }
 
-unsigned int
+int
 mfp_memory::get_8(function_code fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
@@ -67,7 +67,7 @@ mfp_memory::get_8(function_code fc, uint32_type address) const
 }
 
 void
-mfp_memory::put_16(function_code fc, uint32_type address, uint_type value)
+mfp_memory::put_16(function_code fc, uint32_type address, uint16_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class opm_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
@@ -80,7 +80,7 @@ mfp_memory::put_16(function_code fc, uint32_type address, uint_type value)
 }
 
 void
-mfp_memory::put_8(function_code fc, uint32_type address, unsigned int value)
+mfp_memory::put_8(function_code fc, uint32_type address, int value)
 {
 #ifdef HAVE_NANA_H
   DL("class opm_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",

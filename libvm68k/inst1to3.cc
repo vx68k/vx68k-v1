@@ -56,7 +56,7 @@ namespace
 
   /* Handles a MOVE instruction.  */
   template <class Size, class Source, class Destination> void
-  m68k_move(uint_type op, context &c, unsigned long data)
+  m68k_move(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     Destination ea2(op >> 9 & 0x7, 2 + ea1.extension_size());
@@ -76,7 +76,7 @@ namespace
 
   /* Handles a MOVEA instruction.  */
   template <class Size, class Source> void
-  m68k_movea(uint_type op, context &c, unsigned long data)
+  m68k_movea(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;

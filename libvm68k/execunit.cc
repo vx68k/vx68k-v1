@@ -119,7 +119,7 @@ exec_unit::exec_unit()
 
 /* Executes an illegal instruction.  */
 void
-exec_unit::illegal(uint_type op, context &c, unsigned long data)
+exec_unit::illegal(uint16_type op, context &c, unsigned long data)
 {
   throw illegal_instruction_exception();
 }

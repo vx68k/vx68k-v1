@@ -29,10 +29,10 @@ namespace vm68k
   /* Bus error or address error.  */
   struct special_exception: runtime_error
   {
-    uint_type vecno;
-    uint_type status;
+    int vecno;
+    uint16_type status;
     uint32_type address;
-    special_exception(uint_type v, bool read, int fc, uint32_type a)
+    special_exception(int v, bool read, int fc, uint32_type a)
       : vecno(v), status(read ? fc | 0x10 : fc), address(a) {}
   };
 

@@ -56,7 +56,7 @@ namespace
 
   /* Handles an ASL instruction with a register count.  */
   template <class Size> void
-  m68k_asl_r(uint_type op, context &c, unsigned long data)
+  m68k_asl_r(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -77,7 +77,7 @@ namespace
 
   /* Handles an ASL instruction with an immediate count.  */
   template <class Size> void
-  m68k_asl_i(uint_type op, context &c, unsigned long data)
+  m68k_asl_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int value2 = op >> 9 & 0x7;
@@ -97,7 +97,7 @@ namespace
 
   /* Handles an ASR instruction (register).  */
   template <class Size> void
-  m68k_asr_r(uint_type op, context &c, unsigned long data)
+  m68k_asr_r(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -116,7 +116,7 @@ namespace
 
 #if 0
   void
-  asrl_r(uint_type op, context &ec, unsigned long data)
+  asrl_r(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -125,7 +125,7 @@ namespace
     L(",%%d%u\n", reg1);
 #endif
 
-    uint_type count = ec.regs.d[reg2];
+    uint16_type count = ec.regs.d[reg2];
     sint32_type value1 = extsl(ec.regs.d[reg1]);
     sint32_type value = value1 >> count;
     ec.regs.d[reg1] = value;
@@ -137,7 +137,7 @@ namespace
 
   /* Handles an ASR instruction with an immediate count.  */
   template <class Size> void
-  m68k_asr_i(uint_type op, context &c, unsigned long data)
+  m68k_asr_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int value2 = op >> 9 & 0x7;
@@ -159,7 +159,7 @@ namespace
 
   /* Handles a LSL instruction (register).  */
   template <class Size> void
-  m68k_lsl_r(uint_type op, context &c, unsigned long data)
+  m68k_lsl_r(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -179,7 +179,7 @@ namespace
 
 #if 0
   void
-  lslw_r(uint_type op, context &ec, unsigned long data)
+  lslw_r(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -188,9 +188,9 @@ namespace
     L(",%%d%u\n", reg1);
 #endif
 
-    uint_type count = ec.regs.d[reg2];
+    uint16_type count = ec.regs.d[reg2];
     sint_type value1 = extsw(ec.regs.d[reg1]);
-    sint_type value = extsw(uint_type(value1) << count);
+    sint_type value = extsw(uint16_type(value1) << count);
     const uint32_type MASK = ((uint32_type) 1u << 16) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
     ec.regs.ccr.set_cc_lsl(value, value1, count + (32 - 16));
@@ -199,7 +199,7 @@ namespace
   }
 
   void
-  lsll_r(uint_type op, context &ec, unsigned long data)
+  lsll_r(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -208,9 +208,9 @@ namespace
     L(",%%d%u\n", reg1);
 #endif
 
-    uint_type count = ec.regs.d[reg2];
+    uint16_type count = ec.regs.d[reg2];
     sint32_type value1 = extsl(ec.regs.d[reg1]);
-    sint32_type value = extsl(uint_type(value1) << count);
+    sint32_type value = extsl(uint16_type(value1) << count);
     ec.regs.d[reg1] = value;
     ec.regs.ccr.set_cc_lsl(value, value1, count);
 
@@ -220,7 +220,7 @@ namespace
 
   /* Handles a LSL instruction (immediate).  */
   template <class Size> void
-  m68k_lsl_i(uint_type op, context &c, unsigned long data)
+  m68k_lsl_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int value2 = op >> 9 & 0x7;
@@ -241,7 +241,7 @@ namespace
 
 #if 0
   void
-  lslb_i(uint_type op, context &ec, unsigned long data)
+  lslb_i(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
@@ -253,7 +253,7 @@ namespace
 #endif
 
     sint_type value1 = extsb(ec.regs.d[reg1]);
-    sint_type value = extsb(uint_type(value1) << count);
+    sint_type value = extsb(uint16_type(value1) << count);
     const uint32_type MASK = ((uint32_type) 1u << 8) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
     ec.regs.ccr.set_cc_lsl(value, value1, count + (32 - 8));
@@ -262,7 +262,7 @@ namespace
   }
 
   void
-  lslw_i(uint_type op, context &ec, unsigned long data)
+  lslw_i(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
@@ -274,7 +274,7 @@ namespace
 #endif
 
     sint_type value1 = extsw(ec.regs.d[reg1]);
-    sint_type value = extsw(uint_type(value1) << count);
+    sint_type value = extsw(uint16_type(value1) << count);
     const uint32_type MASK = ((uint32_type) 1u << 16) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
     ec.regs.ccr.set_cc_lsl(value, value1, count + (32 - 16));
@@ -283,7 +283,7 @@ namespace
   }
 
   void
-  lsll_i(uint_type op, context &ec, unsigned long data)
+  lsll_i(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
@@ -305,7 +305,7 @@ namespace
 
   /* Handles a LSR instruction (register).  */
   template <class Size> void
-  m68k_lsr_r(uint_type op, context &c, unsigned long data)
+  m68k_lsr_r(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -325,7 +325,7 @@ namespace
 
 #if 0
   void
-  lsrw_r(uint_type op, context &ec, unsigned long data)
+  lsrw_r(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -334,9 +334,9 @@ namespace
     L(",%%d%u\n", reg1);
 #endif
 
-    uint_type count = ec.regs.d[reg2];
+    uint16_type count = ec.regs.d[reg2];
     sint_type value1 = extsw(ec.regs.d[reg1]);
-    sint_type value = extsw((uint_type(value1) & 0xffffu) >> count);
+    sint_type value = extsw((uint16_type(value1) & 0xffffu) >> count);
     const uint32_type MASK = (uint32_type(1) << 16) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
     ec.regs.ccr.set_cc_lsr(value, value1, count);
@@ -345,7 +345,7 @@ namespace
   }
 
   void
-  lsrl_r(uint_type op, context &ec, unsigned long data)
+  lsrl_r(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -354,7 +354,7 @@ namespace
     L(",%%d%u\n", reg1);
 #endif
 
-    uint_type count = ec.regs.d[reg2];
+    uint16_type count = ec.regs.d[reg2];
     sint32_type value1 = extsl(ec.regs.d[reg1]);
     sint32_type value = extsl((uint32_type(value1) & 0xffffffffu) >> count);
     ec.regs.d[reg1] = value;
@@ -366,7 +366,7 @@ namespace
 
   /* Handles a LSR instruction (immediate).  */
   template <class Size> void
-  m68k_lsr_i(uint_type op, context &c, unsigned long data)
+  m68k_lsr_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int value2 = op >> 9 & 0x7;
@@ -387,7 +387,7 @@ namespace
 
 #if 0
   void
-  lsrb_i(uint_type op, context &c, unsigned long data)
+  lsrb_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
@@ -399,7 +399,7 @@ namespace
 #endif
 
     sint_type value1 = ea1.getb(c);
-    sint_type value = extsb((uint_type(value1) & 0xffu) >> count);
+    sint_type value = extsb((uint16_type(value1) & 0xffu) >> count);
     ea1.putb(c, value);
     c.regs.ccr.set_cc_lsr(value, value1, count);
 
@@ -407,10 +407,10 @@ namespace
   }
 
   void
-  lsrw_i(uint_type op, context &ec, unsigned long data)
+  lsrw_i(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
-    uint_type count = op >> 9 & 0x7;
+    uint16_type count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
 #ifdef HAVE_NANA_H
@@ -419,7 +419,7 @@ namespace
 #endif
 
     sint_type value1 = extsw(ec.regs.d[reg1]);
-    sint_type value = extsw((uint_type(value1) & 0xffffu) >> count);
+    sint_type value = extsw((uint16_type(value1) & 0xffffu) >> count);
     const uint32_type MASK = (uint32_type(1) << 16) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
     ec.regs.ccr.set_cc_lsr(value, value1, count);
@@ -428,10 +428,10 @@ namespace
   }
 
   void
-  lsrl_i(uint_type op, context &ec, unsigned long data)
+  lsrl_i(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
-    uint_type count = op >> 9 & 0x7;
+    uint16_type count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
 #ifdef HAVE_NANA_H
@@ -450,7 +450,7 @@ namespace
 
   /* Handles a LSR instruction (memory).  */
   template <class Destination> void
-  m68k_lsr_m(uint_type op, context &c, unsigned long data)
+  m68k_lsr_m(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 7, 2);
 #ifdef HAVE_NANA_H
@@ -469,7 +469,7 @@ namespace
 
   /* Handles a ROL instruction (register).  */
   template <class Size> void
-  m68k_rol_r(uint_type op, context &c, unsigned long data)
+  m68k_rol_r(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -493,7 +493,7 @@ namespace
 
 #if 0
   void
-  rolb_r(uint_type op, context &ec, unsigned long data)
+  rolb_r(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
@@ -502,10 +502,10 @@ namespace
     L(",%%d%u\n", reg1);
 #endif
 
-    uint_type count = ec.regs.d[reg2] & 0x7;
+    uint16_type count = ec.regs.d[reg2] & 0x7;
     sint_type value1 = extsb(ec.regs.d[reg1]);
-    sint_type value = extsb(uint_type(value1) << count
-			    | (uint_type(value1) & 0xff) >> 8 - count);
+    sint_type value = extsb(uint16_type(value1) << count
+			    | (uint16_type(value1) & 0xff) >> 8 - count);
     const uint32_type MASK = 0xff;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
     ec.regs.ccr.set_cc(value);	// FIXME.
@@ -516,7 +516,7 @@ namespace
 
   /* Handles a ROL instruction (immediate).  */
   template <class Size> void
-  m68k_rol_i(uint_type op, context &c, unsigned long data)
+  m68k_rol_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int value2 = ((op >> 9) - 1 & 0x7) + 1;
@@ -536,7 +536,7 @@ namespace
 
 #if 0
   void
-  rolw_i(uint_type op, context &ec, unsigned long data)
+  rolw_i(uint16_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
@@ -548,8 +548,8 @@ namespace
 #endif
 
     sint_type value1 = extsw(ec.regs.d[reg1]);
-    sint_type value = extsw(uint_type(value1) << count
-			    | (uint_type(value1) & 0xffffu) >> 16 - count);
+    sint_type value = extsw(uint16_type(value1) << count
+			    | (uint16_type(value1) & 0xffffu) >> 16 - count);
     const uint32_type MASK = 0xffffu;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
     ec.regs.ccr.set_cc(value);	// FIXME.
@@ -558,7 +558,7 @@ namespace
   }
 
   void
-  roll_i(uint_type op, context &c, unsigned long data)
+  roll_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
@@ -583,7 +583,7 @@ namespace
 
   /* Handles a ROR instruction (immediate).  */
   template <class Size> void
-  m68k_ror_i(uint_type op, context &c, unsigned long data)
+  m68k_ror_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int count = op >> 9 & 0x7;
@@ -605,7 +605,7 @@ namespace
 
   /* Handles a ROXR instruction (immediate).  */
   template <class Size> void
-  m68k_roxr_i(uint_type op, context &c, unsigned long data)
+  m68k_roxr_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int value2 = ((op >> 9) - 1 & 0x7) + 1;
@@ -626,7 +626,7 @@ namespace
 
 #if 0
   void
-  roxrw_i(uint_type op, context &c, unsigned long data)
+  roxrw_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
@@ -638,9 +638,9 @@ namespace
 #endif
 
     sint_type value1 = ea1.getw(c);
-    sint_type value = extsw((uint_type(value1) & 0xffffu) >> count
+    sint_type value = extsw((uint16_type(value1) & 0xffffu) >> count
 			    | c.regs.ccr.x() << 16 - count
-			    | uint_type(value1) << 17 - count);
+			    | uint16_type(value1) << 17 - count);
     ea1.putw(c, value);
     c.regs.ccr.set_cc(value);	// FIXME.
     ea1.finishw(c);
@@ -649,7 +649,7 @@ namespace
   }
 
   void
-  roxrl_i(uint_type op, context &c, unsigned long data)
+  roxrl_i(uint16_type op, context &c, unsigned long data)
   {
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)

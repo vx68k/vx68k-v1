@@ -56,7 +56,7 @@ namespace
 
   /* Handles an ADD instruction.  */
   template <class Size, class Source> void
-  m68k_add(uint_type op, context &c, unsigned long data)
+  m68k_add(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -76,7 +76,7 @@ namespace
 
   /* Handles an ADD instruction (memory destination).  */
   template <class Size, class Destination> void
-  m68k_add_m(uint_type op, context &c, unsigned long data)
+  m68k_add_m(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -96,7 +96,7 @@ namespace
 
   /* Handles an ADDA instruction.  */
   template <class Size, class Source> void
-  m68k_adda(uint_type op, context &c, unsigned long data)
+  m68k_adda(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
@@ -117,7 +117,7 @@ namespace
 
   /* Handles an ADDX instruction (register).  */
   template <class Size> void
-  m68k_addx_r(uint_type op, context &c, unsigned long data)
+  m68k_addx_r(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;

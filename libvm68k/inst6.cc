@@ -59,7 +59,7 @@ namespace
 
   /* Handles a Bcc instruction.  */
   template <class Condition> void 
-  m68k_b(uint_type op, context &c, unsigned long data)
+  m68k_b(uint16_type op, context &c, unsigned long data)
   {
     word_size::svalue_type disp = op & 0xff;
     size_t extsize;
@@ -85,7 +85,7 @@ namespace
 
   /* Handles a BRA instruction.  */
   void
-  m68k_bra(uint_type op, context &c, unsigned long data)
+  m68k_bra(uint16_type op, context &c, unsigned long data)
   {
     word_size::svalue_type disp = op & 0xff;
     size_t len = 0;
@@ -106,7 +106,7 @@ namespace
 
   /* Handles a BSR instruction.  */
   void
-  m68k_bsr(uint_type op, context &c, unsigned long data)
+  m68k_bsr(uint16_type op, context &c, unsigned long data)
   {
     word_size::svalue_type disp = op & 0xff;
     size_t len = 0;

@@ -40,7 +40,7 @@ namespace vm68k
   /* Helper iterator for 16-bit values.  This iterator accesses two
      bytes once to handle a 16-bit value.  */
   template <class T>
-  class basic_uint16_iterator: random_access_iterator<uint_type, ptrdiff_t>
+  class basic_uint16_iterator: random_access_iterator<uint16_type, ptrdiff_t>
   {
   protected:
     class ref
@@ -52,8 +52,8 @@ namespace vm68k
       ref(T ptr): bp(ptr) {}
 
     public:
-      ref &operator=(uint_type);
-      operator uint_type() const;
+      ref &operator=(uint16_type);
+      operator uint16_type() const;
     };
 
   private:
@@ -65,7 +65,7 @@ namespace vm68k
       : bp(static_cast<T>(ptr)) {}
 
   public:
-    uint_type operator*() const {return ref(bp);}
+    uint16_type operator*() const {return ref(bp);}
     ref operator*() {return ref(bp);}
 
     basic_uint16_iterator &operator++();
@@ -82,7 +82,7 @@ namespace vm68k
     basic_uint16_iterator operator-(ptrdiff_t n) const
     {return basic_uint16_iterator(*this) -= n;}
 
-    uint_type operator[](ptrdiff_t n) const {return *(*this + n);}
+    uint16_type operator[](ptrdiff_t n) const {return *(*this + n);}
     ref operator[](ptrdiff_t n) {return *(*this + n);}
 
   public:
@@ -90,7 +90,7 @@ namespace vm68k
   };
 
   template <class T> inline basic_uint16_iterator<T>::ref &
-  basic_uint16_iterator<T>::ref::operator=(uint_type value)
+  basic_uint16_iterator<T>::ref::operator=(uint16_type value)
   {
     bp[0] = value >> 8;
     bp[1] = value;
@@ -98,9 +98,9 @@ namespace vm68k
   }
 
   template <class T> inline
-  basic_uint16_iterator<T>::ref::operator uint_type() const
+  basic_uint16_iterator<T>::ref::operator uint16_type() const
   {
-    return uint_type(bp[0] & 0xff) << 8 | uint_type(bp[1] & 0xff);
+    return uint16_type(bp[0] & 0xff) << 8 | bp[1] & 0xff;
   }
 
   template <class T> inline basic_uint16_iterator<T> &
@@ -266,7 +266,7 @@ namespace vm68k
   typedef basic_uint32_iterator<unsigned char *> uint32_iterator;
   typedef basic_uint32_iterator<const unsigned char *> const_uint32_iterator;
 
-  inline uint_type
+  inline uint16_type
   getw(const void *p)
   {
     return *const_uint16_iterator(p);
@@ -279,7 +279,7 @@ namespace vm68k
   }
 
   inline void
-  putw(void *p, uint_type v)
+  putw(void *p, uint16_type v)
   {
     *uint16_iterator(p) = v;
   }
@@ -307,12 +307,12 @@ namespace vm68k
     virtual ~memory() {}
 
   public:
-    virtual uint_type get_16(function_code, uint32_type) const = 0;
-    virtual uint_type get_8(function_code, uint32_type) const = 0;
+    virtual uint16_type get_16(function_code, uint32_type) const = 0;
+    virtual int get_8(function_code, uint32_type) const = 0;
     virtual uint32_type get_32(function_code, uint32_type) const;
 
-    virtual void put_16(function_code, uint32_type, uint_type) = 0;
-    virtual void put_8(function_code, uint32_type, uint_type) = 0;
+    virtual void put_16(function_code, uint32_type, uint16_type) = 0;
+    virtual void put_8(function_code, uint32_type, int) = 0;
     virtual void put_32(function_code, uint32_type, uint32_type);
   };
 
@@ -320,11 +320,11 @@ namespace vm68k
   class default_memory: public memory
   {
   public:
-    uint_type get_16(function_code, uint32_type) const;
-    uint_type get_8(function_code, uint32_type) const;
+    uint16_type get_16(function_code, uint32_type) const;
+    int get_8(function_code, uint32_type) const;
 
-    void put_16(function_code, uint32_type, uint_type);
-    void put_8(function_code, uint32_type, uint_type);
+    void put_16(function_code, uint32_type, uint16_type);
+    void put_8(function_code, uint32_type, int);
   };
 
   /* Address space for memories.  An address space is a software view
@@ -350,15 +350,15 @@ namespace vm68k
   public:
     /* Returns one word at address ADDRESS in this address space.
        The address must be word-aligned.  */
-    uint_type get_16_unchecked(memory::function_code, uint32_type address)
+    uint16_type get_16_unchecked(memory::function_code, uint32_type address)
       const;
 
     /* Returns one word at address ADDRESS in this address space.  Any
        unaligned address will be handled.  */
-    uint_type get_16(memory::function_code, uint32_type address) const;
+    uint16_type get_16(memory::function_code, uint32_type address) const;
 
     /* Returns one byte at address ADDRESS in this address space.  */
-    unsigned int get_8(memory::function_code, uint32_type address) const;
+    int get_8(memory::function_code, uint32_type address) const;
 
     /* Returns one long word at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
@@ -371,14 +371,14 @@ namespace vm68k
     /* Stores word VALUE at address ADDRESS in this address space.
        The address must be word-aligned.  */
     void put_16_unchecked(memory::function_code, uint32_type address,
-			  uint_type value);
+			  uint16_type value);
 
     /* Stores word VALUE at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
-    void put_16(memory::function_code, uint32_type address, uint_type value);
+    void put_16(memory::function_code, uint32_type address, uint16_type value);
 
     /* Stores byte VALUE at address ADDRESS in this address space.  */
-    void put_8(memory::function_code, uint32_type address, unsigned int value);
+    void put_8(memory::function_code, uint32_type address, int value);
 
     /* Stores long word VALUE at address ADDRESS in this address
        space.  Any unaligned address will be handled.  */
@@ -402,7 +402,7 @@ namespace vm68k
     return page_table.begin() + (address >> PAGE_SHIFT) % NPAGES;
   }
 
-  inline uint_type
+  inline uint16_type
   memory_address_space::get_16_unchecked(memory::function_code fc,
 					 uint32_type address) const
   {
@@ -410,7 +410,7 @@ namespace vm68k
     return p->get_16(fc, address);
   }
 
-  inline unsigned int
+  inline int
   memory_address_space::get_8(memory::function_code fc, uint32_type address)
     const
   {
@@ -420,7 +420,8 @@ namespace vm68k
 
   inline void
   memory_address_space::put_16_unchecked(memory::function_code fc,
-					 uint32_type address, uint_type value)
+					 uint32_type address,
+					 uint16_type value)
   {
     memory *p = *this->find_memory(address);
     p->put_16(fc, address, value);
@@ -428,7 +429,7 @@ namespace vm68k
 
   inline void
   memory_address_space::put_8(memory::function_code fc,
-			      uint32_type address, unsigned int value)
+			      uint32_type address, int value)
   {
     memory *p = *this->find_memory(address);
     p->put_8(fc, address, value);
