@@ -3,5 +3,5 @@
 SUBDIRS = include vm68k vx68k
 
 dist-snapshot:
-	${MAKE} VERSION=${VERSION}.`date +%Y%m%d` dist
+	${MAKE} VERSION=${VERSION}x.`date +%Y%m%d` dist
 

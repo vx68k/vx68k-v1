@@ -1,3 +1,7 @@
+1999-03-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Makefile.am (dist-snapshot): Add `x' to the version number.
+
 1999-02-05  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* vx68k/main.cc (main): Add check for argc.
