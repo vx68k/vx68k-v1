@@ -46,17 +46,24 @@ exec_unit::run(context &c) const
 {
   for (;;)
     {
+      if (c.interrupted())
+	c.handle_interrupts();
+      else
+	{
 #ifdef TRACE_INSTRUCTIONS
 # ifdef DUMP_REGISTERS
-      for (unsigned int i = 0; i != 8; ++i)
-	{
-	  L("| %%d%u = 0x%08lx, %%a%u = 0x%08lx\n",
-	    i, (unsigned long) c.regs.d[i], i, (unsigned long) c.regs.a[i]);
-	}
+	  for (unsigned int i = 0; i != 8; ++i)
+	    {
+	      L("| %%d%u = 0x%08lx, %%a%u = 0x%08lx\n",
+		i, (unsigned long) c.regs.d[i],
+		i, (unsigned long) c.regs.a[i]);
+	    }
 # endif
-      L("| %#lx: %#06x\n", (unsigned long) c.regs.pc, c.fetch(word_size(), 0));
+	  L("| %#lx: %#06x\n", (unsigned long) c.regs.pc,
+	    c.fetch(word_size(), 0));
 #endif
-      step(c);
+	  step(c);
+	}
     }
 }
 

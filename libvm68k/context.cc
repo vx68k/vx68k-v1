@@ -64,10 +64,16 @@ context::set_supervisor_state(bool state)
     }
 }
 
+void
+context::handle_interrupts()
+{
+  // FIXME: Add interrupt handling code.
+}
+
 context::context(address_space *m)
   : mem(m),
     pfc_cache(regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM),
-    dfc_cache(regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA)
+    dfc_cache(regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA),
+    a_interrupted(false)
 {
 }
-

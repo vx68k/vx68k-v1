@@ -268,14 +268,8 @@ namespace vm68k
   };
 #endif
 
-  /* Base object that can be passed to instructions.  */
-  struct instruction_data
-  {
-  }; 
-
-  class exec_unit;		// Forward declaration.
-
-  /* Context of execution.  */
+  /* Context of execution.  A context represents all the state of
+     execution.  See also `class exec_unit'.  */
   class context
   {
   public:
@@ -284,7 +278,12 @@ namespace vm68k
     //exception_listener *exception;
 
   private:
+    /* Cache values for program and data FC's.  */
     int pfc_cache, dfc_cache;
+
+  private:			// interrupt
+    /* True if the thread in this context is interrupted.  */
+    bool a_interrupted;
 
   public:
     explicit context(address_space *);
@@ -292,23 +291,31 @@ namespace vm68k
   public:
     /* Returns true if supervisor state.  */
     bool supervisor_state() const
-      {return regs.sr.supervisor_state();}
+    {return regs.sr.supervisor_state();}
 
     /* Sets the supervisor state to STATE.  */
     void set_supervisor_state(bool state);
 
     /* Returns the FC for program in the current state.  */
     int program_fc() const
-      {return pfc_cache;}
+    {return pfc_cache;}
 
     /* Returns the FC for data in the current state.  */
     int data_fc() const
-      {return dfc_cache;}
+    {return dfc_cache;}
 
   public:
     template <class Size>
-      typename Size::uvalue_type fetch(Size, size_t offset) const
-      {return Size::get(*mem, program_fc(), regs.pc + offset);}
+    typename Size::uvalue_type fetch(Size, size_t offset) const
+    {return Size::get(*mem, program_fc(), regs.pc + offset);}
+
+  public:			// interrupt
+    /* Returns true if the thread in this context is interrupted.  */
+    bool interrupted() const
+    {return a_interrupted;}
+
+    /* Handles interrupts.  */
+    void handle_interrupts();
   };
 
   template <> inline byte_size::uvalue_type
@@ -317,6 +324,11 @@ namespace vm68k
     return byte_size::get(word_size::get(*mem, program_fc(),
 					 regs.pc + offset));
   }
+
+  /* Base object that can be passed to instructions.  */
+  struct instruction_data
+  {
+  }; 
 
   /* Execution unit.  */
   class exec_unit
