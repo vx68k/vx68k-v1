@@ -1,5 +1,8 @@
 1999-11-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/cpu.h (struct byte_size, word_size,
+ 	long_word_size): Add static member suffix.
+
 	* include/vm68k/addressing.h (class basic_postinc_indirect,
  	basic_predec_indirect, basic_disp_indirect, basic_index_indirect,
  	basic_abs_short, basic_abs_long, basic_disp_pc_indirect,

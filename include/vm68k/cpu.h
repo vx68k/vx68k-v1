@@ -54,6 +54,8 @@ namespace vm68k
     static void put(address_space &a, int fc,
 		    uint32_type address, unsigned int value)
       {a.putb(fc, address, value);}
+
+    static const char *suffix() {return "b";}
   };
 
   struct word_size
@@ -84,6 +86,8 @@ namespace vm68k
     static void put(address_space &a, int fc,
 		    uint32_type address, uint_type value)
       {a.putw(fc, address, value);}
+
+    static const char *suffix() {return "w";}
   };
 
   struct long_word_size
@@ -115,6 +119,8 @@ namespace vm68k
     static void put(address_space &a, int fc,
 		    uint32_type address, uint32_type value)
       {a.putl(fc, address, value);}
+
+    static const char *suffix() {return "l";}
   };
 
   /* Returns the signed 8-bit value that is equivalent to unsigned
