@@ -502,5 +502,12 @@ dos::dos(machine *m)
   eu->set_instruction(0xff81, 0, &dos_getpdb, this);
   eu->set_instruction(0xff83, 0, &dos_getenv, this);
   eu->set_instruction(0xff87, 0, &dos_filedate, this);
+
+  // Dummy NUL device.  LHA scans this for TwentyOne?
+  vm->address_space()->putl(SUPER_DATA, 0x6900 +  0, 0x6a00);
+  vm->address_space()->putl(SUPER_DATA, 0x6900 + 14, 0x4e554c20);
+  vm->address_space()->putl(SUPER_DATA, 0x6900 + 18, 0x20202020);
+
+  vm->address_space()->putl(SUPER_DATA, 0x6a00 +  0, 0xffffffff);
 }
 
