@@ -1,5 +1,9 @@
 1999-03-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (movew_absl_d, tstw_d, beq,
+	movew_d_predec): New functions.
+	(install_instructions): Set operation words to the new functions.
+
 	* lib/vm68k/execunit.cc (moveb_postinc_postinc): Renamed from
 	moveb_postint_postinc.  Update all referrers.
 	(moveb_postinc_postinc, movel_a_predec): Update the condition

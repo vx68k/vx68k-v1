@@ -90,6 +90,26 @@ namespace
       ec->regs.pc += 2;
     }
 
+  void beq(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int len = 2;
+      int disp = op & 0xff;
+      if (disp == 0)
+	{
+	  len = 4;
+	  disp = extsw(ec->fetchw(2));
+	}
+      else
+	disp = extsb(disp);
+#ifdef TRACE_STEPS
+      fprintf(stderr, " beq 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
+#endif
+
+      // XXX: The condition codes are not affected.
+      ec->regs.pc += ec->regs.sr.eq() ? 2 + disp : len;
+    }
+
   void bge(int op, execution_context *ec)
     {
       assert(ec != NULL);
@@ -257,6 +277,41 @@ namespace
       ec->regs.pc += 2;
     }
 
+  void movew_absl_d(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int reg = op >> 9 & 0x7;
+      uint32 address = ec->fetchl(2);
+#ifdef TRACE_STEPS
+      fprintf(stderr, " movew 0x%x,%%d%d\n", address, reg);
+#endif
+
+      int fc = ec->data_fc();
+      int value = extsw(ec->mem->getw(fc, address));
+      (&ec->regs.d0)[reg] = value;
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2 + 4;
+    }
+
+  void movew_d_predec(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+#ifdef TRACE_STEPS
+      fprintf(stderr, " movew %%d%d,%%a%x@-\n", s_reg, d_reg);
+#endif
+
+      int fc = ec->data_fc();
+      int value = extsw((&ec->regs.d0)[s_reg]);
+      ec->mem->putw(fc, (&ec->regs.a0)[d_reg] - 2, value);
+      (&ec->regs.a0)[d_reg] -= 2;
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2;
+    }
+
   void movew_d_absl(int op, execution_context *ec)
     {
       assert(ec != NULL);
@@ -396,6 +451,20 @@ namespace
 
       ec->regs.pc += 2;
     }
+
+  void tstw_d(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int reg = op & 0x7;
+#ifdef TRACE_STEPS
+      fprintf(stderr, " tstw %%d%d\n", reg);
+#endif
+
+      int value = extsw((&ec->regs.d0)[reg]);
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2;
+    }
 } // (unnamed namespace)
 
 /* Installs instructions into the execution unit.  */
@@ -407,12 +476,15 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x10d8, 0x0e07, &moveb_postinc_postinc);
   eu->set_instruction(0x2058, 0x0e07, &movel_postinc_a);
   eu->set_instruction(0x2108, 0x0e07, &movel_a_predec);
+  eu->set_instruction(0x3039, 0x0e00, &movew_absl_d);
+  eu->set_instruction(0x3100, 0x0e07, &movew_d_predec);
   eu->set_instruction(0x33c0, 0x0007, &movew_d_absl);
   eu->set_instruction(0x41e8, 0x0e07, &lea_offset_a);
   eu->set_instruction(0x41f9, 0x0e00, &lea_absl_a);
   eu->set_instruction(0x4260, 0x0007, &clrw_predec);
   eu->set_instruction(0x4879, 0x0000, &pea_absl);
   eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
+  eu->set_instruction(0x4a40, 0x0007, &tstw_d);
   eu->set_instruction(0x4e50, 0x0007, &link_a);
   eu->set_instruction(0x4e75, 0x0000, &rts);
   eu->set_instruction(0x5048, 0x0e07, &addqw_a);
@@ -420,6 +492,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x6000, 0x00ff, &bra);
   eu->set_instruction(0x6100, 0x00ff, &bsr);
   eu->set_instruction(0x6600, 0x00ff, &bne);
+  eu->set_instruction(0x6700, 0x00ff, &beq);
   eu->set_instruction(0x6c00, 0x00ff, &bge);
   eu->set_instruction(0x7000, 0x0eff, &moveql_d);
 }
