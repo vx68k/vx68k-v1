@@ -21,19 +21,48 @@
 #undef const
 #undef inline
 
-#include "vx68k/memory.h"
 #include "vx68k/human.h"
 
-using namespace vx68k;
+using namespace vm68k;
 
-/* vx68k main.  */
-int
-main (int argc, char **argv)
+namespace vx68k
 {
-  const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
-  address_space mem (MEMSIZE);
+#if 0
+};
+#endif
 
-  dos env (&mem, MEMSIZE);
-  return env.execute (argv[1]);	// FIXME
+namespace human
+{
+#if 0
+};
+#endif
+
+uint32
+dos::load_executable (const char *)
+{
+  main_ec.mem->putw (SUPER_DATA, 0x8100, 0xff00);
+  return 0x8100;		// FIXME
 }
 
+uint16
+dos::start (uint32 address)
+{
+  main_ec.regs.pc = address;
+  main_cpu.run (&main_ec);
+  return 0;
+}
+
+uint16
+dos::execute (const char *name)
+{
+  return start (load_executable (name));
+}
+
+dos::dos (address_space *as, size_t)
+  : main_ec (as)
+{
+}
+
+};				// namespace human
+
+};				// namespace vx68k

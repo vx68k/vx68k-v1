@@ -1,3 +1,4 @@
+/* -*-C++-*- */
 /* vx68k - Virtual X68000
    Copyright (C) 1998 Hypercore Software Design, Ltd.
 
@@ -15,25 +16,34 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-#undef const
-#undef inline
+#ifndef VX68K_HUMAN_H
+#define VX68K_HUMAN_H 1
 
+#include "vm68k/cpu.h"
 #include "vx68k/memory.h"
-#include "vx68k/human.h"
 
-using namespace vx68k;
-
-/* vx68k main.  */
-int
-main (int argc, char **argv)
+namespace vx68k
 {
-  const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
-  address_space mem (MEMSIZE);
 
-  dos env (&mem, MEMSIZE);
-  return env.execute (argv[1]);	// FIXME
-}
+namespace human
+{
 
+class dos
+{
+public:
+  dos (address_space *, size_t);
+  uint32 load_executable (const char *);
+  uint16 start (uint32);
+  uint16 execute (const char *);
+private:
+  vm68k::cpu main_cpu;
+  vm68k::execution_context main_ec;
+};
+
+};				// namespace human
+
+using namespace human;
+
+};				// namespace vx68k
+
+#endif

@@ -59,7 +59,7 @@ main_memory_page::getw (int fc, uint32 address) const
   throw (bus_error)
 {
   // Address error?
-  if (address > end)
+  if (address >= end)
     abort ();			// FIXME
   return array[address >> 1];
 }
@@ -72,10 +72,13 @@ main_memory_page::putb (int fc, uint32 address, uint8)
 }
 
 void
-main_memory_page::putw (int fc, uint32 address, uint16)
+main_memory_page::putw (int fc, uint32 address, uint16 value)
   throw (bus_error)
 {
-  abort ();			// FIXME
+  // Address error?
+  if (address >= end)
+    abort ();			// FIXME
+  array[address >> 1] = value;
 }
 
 main_memory_page::~main_memory_page ()

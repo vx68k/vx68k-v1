@@ -110,6 +110,14 @@ address_space::getw (int fc, uint32 address) const
 }
 
 void
+address_space::putw (int fc, uint32 address, uint16 value)
+  throw (bus_error)
+{
+  uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
+  page_table[p]->putw (fc, address, value);
+}
+
+void
 address_space::set_memory_pages (int first, int last, memory_page *p)
 {
   assert (first >= 0);

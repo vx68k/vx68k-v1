@@ -1,3 +1,4 @@
+## -*-Makefile-*-
 
-noinst_HEADERS = memory.h
+noinst_HEADERS = memory.h human.h
 

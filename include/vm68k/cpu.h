@@ -17,7 +17,7 @@
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #ifndef VM68K_CPU_H
-#define VM68k_CPU_H
+#define VM68K_CPU_H 1
 
 #include <iterator>
 #include "vm68k/types.h"
@@ -68,7 +68,6 @@ class cpu
 {
 public:
   cpu ();
-  void set_pc (uint32);
   void run (execution_context *);
   void set_exception_listener (exception_listener *);
   typedef void (*insn_handler) (int, execution_context *);

@@ -37,11 +37,11 @@ execution_context::execution_context (address_space *m)
 {
 }
 
+#if 0
 /* Set PC.  */
 void
 cpu::set_pc (uint32 addr)
 {
-#if 0
   if (addr & 1 != 0)
     {
       if (context.exception != NULL)
@@ -51,8 +51,8 @@ cpu::set_pc (uint32 addr)
     }
 
   context.regs.pc = addr;
-#endif
 }
+#endif
 
 void
 cpu::set_exception_listener (exception_listener *l)

@@ -1,5 +1,24 @@
 1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/cpu.cc (set_pc): #if'd out.
+
+	* include/vm68k/cpu.h (class cpu): Remove member function set_pc.
+
+	* vm68k/memory.cc (address_space::putw): Defined.
+
+	* vx68k/memory.cc (main_memory_page::getw): Fix test condition.
+	(main_memory_page::putw): Store value into array.
+
+	* vx68k/main.cc (main): Rewritten with class vx68k::human::dos.
+
+	* vx68k/Makefile.am (libvx68k_a_SOURCES): Add dos.cc.
+	* vx68k/dos.cc: New file.
+
+	* include/vm68k/cpu.h (VM68K_CPU_H): Fix typo.
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Add human.h.
+	* include/vx68k/human.h (human): New file.
+
 	* vm68k/cpu.cc (illegal_insn): Output message.
 
 	* vx68k/memory.cc (main_memory_page): Allocate array.
