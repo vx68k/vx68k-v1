@@ -1,5 +1,8 @@
 1999-11-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (vx68k_app): Set the default visual.
+	(main): Remove the gdk_rgb_init call.
+
 	* TODO: Modified.
 
 	* vm68k/Makefile.am (LIBS): Set to emtpy.

@@ -281,6 +281,7 @@ vx68k_app::vx68k_app(const char *const *a)
     vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE),
     con(&vm)
 {
+  gtk_widget_set_default_visual(gdk_rgb_get_visual());
   vm.connect(&con);
 }
 
@@ -291,7 +292,6 @@ main(int argc, char **argv)
   g_thread_init(NULL);
   gtk_set_locale();
   gtk_init(&argc, &argv);
-  gdk_rgb_init();
 
   if (!parse_options(argc, argv))
     {

@@ -1,12 +1,10 @@
 To-Do List for Virtual X68000
 
-$Date: Fri, 26 Nov 1999 19:52:22 +0900 $
+$Date: Fri, 26 Nov 1999 20:02:04 +0900 $
 
 * Implement the handler for instruction DBNE to make HAS work.
 
 * Rename directories for libraries as libXXX?
-
-* Use the GdkRgb visual.  This will initialize GdkRgb automagically.
 
 * Implement key event handling to the GTK+ console.
 
