@@ -8,6 +8,8 @@ AC_PROG_CC
 AC_PROG_CXX
 dnl AC_PROG_CPP
 AM_PROG_LIBTOOL
+LTLIBRELEASE="-release 1.1"
+AC_SUBST(LTLIBRELEASE)dnl
 AC_ISC_POSIX
 dnl AC_SEARCH_LIBS(pthread_create, pthread)
 AM_PATH_GTK(1.2.0,,, gthread)

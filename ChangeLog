@@ -1,5 +1,10 @@
 2001-06-20  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* libvx68k/Makefile.am (libvx68k_la_LDFLAGS): Use LTLIBRELEASE.
+	(libvx68kdos_la_LDFLAGS): Likewise.
+
+	* configure.in (LTLIBRELEASE): New substitution.
+
 	* libvx68k/sccmem.cc: Add #include <stdexcept>.
 
 	* libvx68k/Makefile.am (INCLUDES): Add -I$(prefix)/include.

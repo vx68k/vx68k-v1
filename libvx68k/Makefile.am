@@ -6,8 +6,7 @@ LIBS =
 
 lib_LTLIBRARIES = libvx68k.la libvx68kdos.la
 
-# XXX remove the flag `-release' for stable releases.
-libvx68k_la_LDFLAGS = -version-info 0:0:0 -release ${VERSION}
+libvx68k_la_LDFLAGS = $(LTLIBRELEASE) -version-info 0:0:0
 libvx68k_la_SOURCES = version.cc x68kaddr.cc machine.cc \
 mainmem.cc gvideomem.cc textvram.cc \
 crtcmem.cc palettemem.cc dmacmem.cc areaset.cc mfpmem.cc sysportmem.cc \
@@ -15,8 +14,7 @@ opmmem.cc msm6258vmem.cc fdcmem.cc sccmem.cc ppimem.cc \
 spritemem.cc sram.cc fontrom.cc \
 iocsdisk.cc systemrom.cc
 
-# XXX remove the flag `-release' for stable releases.
-libvx68kdos_la_LDFLAGS = -version-info 0:0:0 -release ${VERSION}
+libvx68kdos_la_LDFLAGS = $(LTLIBRELEASE) -version-info 0:0:0
 libvx68kdos_la_SOURCES = dos.cc shell.cc doscontext.cc \
 filesystem.cc allocator.cc
 
