@@ -86,9 +86,8 @@ namespace
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
-    L(" addb %s", ea1.textl(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" addb %s", ea1.textb(ec));
+    L(",%%d%u\n", reg2);
 #endif
 
     sint_type value1 = ea1.getb(ec);
@@ -108,9 +107,8 @@ namespace
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
-    L(" addw %s", ea1.textl(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" addw %s", ea1.textw(ec));
+    L(",%%d%u\n", reg2);
 #endif
 
     sint_type value1 = ea1.getw(ec);
@@ -124,28 +122,6 @@ namespace
     ec.regs.pc += 2 + ea1.isize(2);
   }
 
-#if 0
-  void addw_off_d(unsigned int op, context &ec, instruction_data *data)
-    {
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      int s_off = extsw(ec.fetchw(2));
-      uint32 s_addr = ec.regs.a[s_reg] + s_off;
-      VL((" addw %%a%d@(%d),%%d%d |0x%lx,*\n",
-	  s_reg, s_off, d_reg, (unsigned long) s_addr));
-
-      int fc = ec.data_fc();
-      int value1 = extsw(ec.regs.d[d_reg]);
-      int value2 = extsw(ec.mem->getw(fc, s_addr));
-      int value = extsw(value1 + value2);
-      const uint32 MASK = ((uint32) 1u << 16) - 1;
-      ec.regs.d[d_reg] = ec.regs.d[d_reg] & ~MASK | (uint32) value & MASK;
-      ec.regs.sr.set_cc(value); // FIXME.
-
-      ec.regs.pc += 2 + 2;
-    }
-#endif
-
   template <class Destination> void
   addw_r(unsigned int op, context &ec, instruction_data *data)
   {
@@ -153,8 +129,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" addw %%d%u", reg2);
-    L(",%s", ea1.textw(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea1.textw(ec));
 #endif
 
     sint_type value2 = extsw(ec.regs.d[reg2]);
@@ -174,8 +149,7 @@ namespace
       int reg2 = op >> 9 & 0x7;
 #ifdef L
       L(" addl %s", ea1.textl(ec));
-      L(",%%d%d", reg2);
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(",%%d%d\n", reg2);
 #endif
 
       int32 value1 = ea1.getl(ec);
@@ -195,8 +169,7 @@ namespace
       int reg2 = op >> 9 & 0x7;
 #ifdef L
       L(" addal %s", ea1.textl(ec));
-      L(",%%a%d", reg2);
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(",%%a%d\n", reg2);
 #endif
 
       int32 value1 = ea1.getl(ec);
@@ -216,8 +189,7 @@ namespace
       Destination ea1(op & 0x7, 2 + 4);
 #ifdef L
       L(" addil #%ld", (long) value2);
-      L(",%s", ea1.textl(ec));
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(",%s\n", ea1.textl(ec));
 #endif
 
       int32 value1 = ea1.getl(ec);
@@ -229,25 +201,6 @@ namespace
       ec.regs.pc += 2 + 4 + ea1.isize(4);
     }
 
-#if 0
-  template <> void addil<address_register>(unsigned int, context &);
-  // XXX: Address register cannot be the destination.
-
-  void addil_d(unsigned int op, context &ec, instruction_data *data)
-    {
-      int d_reg = op & 0x7;
-      int32 value2 = extsl(ec.fetchl(2));
-      VL((" addil #%ld,%%d%d\n", (long) value2, d_reg));
-
-      int32 value1 = extsl(ec.regs.d[d_reg]);
-      int32 value = extsl(value1 + value2);
-      ec.regs.d[d_reg] = value;
-      ec.regs.sr.set_cc(value); // FIXME.
-
-      ec.regs.pc += 2 + 4;
-    }
-#endif /* 0 */
-
   template <class Destination> void
   addqb(unsigned int op, context &ec, instruction_data *data)
     {
@@ -257,8 +210,7 @@ namespace
 	value2 = 8;
 #ifdef L
       L(" addqb #%d", value2);
-      L(",%s", ea1.textb(ec));
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(",%s\n", ea1.textb(ec));
 #endif
 
       int value1 = ea1.getb(ec);
@@ -270,25 +222,6 @@ namespace
       ec.regs.pc += 2 + ea1.isize(2);
     }
 
-#if 0
-  void addqb_d(unsigned int op, context &ec, instruction_data *data)
-    {
-      int reg1 = op & 0x7;
-      int val2 = op >> 9 & 0x7;
-      if (val2 == 0)
-	val2 = 8;
-      VL((" addqb #%d,%%d%d\n", val2, reg1));
-
-      int val1 = extsb(ec.regs.d[reg1]);
-      int val = extsb(val1 + val2);
-      const uint32 MASK = ((uint32) 1u << 8) - 1;
-      ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | (uint32) val & MASK;
-      ec.regs.sr.set_cc(val); // FIXME.
-
-      ec.regs.pc += 2;
-    }
-#endif /* 0 */
-
   template <class Destination> void
   addqw(unsigned int op, context &ec, instruction_data *data)
     {
@@ -298,8 +231,7 @@ namespace
 	value2 = 8;
 #ifdef L
       L(" addqw #%d", value2);
-      L(",%s", ea1.textw(ec));
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(",%s\n", ea1.textw(ec));
 #endif
 
       int value1 = ea1.getw(ec);
@@ -320,8 +252,7 @@ namespace
 	value2 = 8;
 #ifdef L
       L(" addqw #%d", value2);
-      L(",%s", ea1.textw(ec));
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(",%s\n", ea1.textw(ec));
 #endif
 
       // XXX: The entire register is used.
@@ -334,22 +265,6 @@ namespace
       ec.regs.pc += 2 + ea1.isize(2);
     }
 
-#if 0
-  void addqw_a(unsigned int op, context &ec, instruction_data *data)
-    {
-      int value = op >> 9 & 0x7;
-      int reg = op & 0x7;
-      if (value == 0)
-	value = 8;
-      VL((" addqw #%d,%%a%d\n", value, reg));
-
-      // XXX: The condition codes are not affected.
-      ec.regs.a[reg] += value;
-
-      ec.regs.pc += 2;
-    }
-#endif /* 0 */
-
   template <class Destination> void
   addql(unsigned int op, context &ec, instruction_data *data)
     {
@@ -359,8 +274,7 @@ namespace
 	value2 = 8;
 #ifdef L
       L(" addql #%d", value2);
-      L(",%s", ea1.textl(ec));
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(",%s\n", ea1.textl(ec));
 #endif
 
       int32 value1 = ea1.getl(ec);
@@ -381,8 +295,7 @@ namespace
 	value2 = 8;
 #ifdef L
       L(" addql #%d", value2);
-      L(",%s", ea1.textw(ec));
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(",%s\n", ea1.textl(ec));
 #endif
 
       int32 value1 = ea1.getl(ec);
@@ -394,33 +307,14 @@ namespace
       ec.regs.pc += 2 + ea1.isize(4);
     }
 
-#if 0
-  void addql_d(unsigned int op, context &ec, instruction_data *data)
-    {
-      int reg1 = op & 0x7;
-      int val2 = op >> 9 & 0x7;
-      if (val2 == 0)
-	val2 = 8;
-      VL((" addql #%d,%%d%d\n", val2, reg1));
-
-      int32 val1 = extsl(ec.regs.d[reg1]);
-      int32 val = extsl(val1 + val2);
-      ec.regs.d[reg1] = val;
-      ec.regs.sr.set_cc(val); // FIXME.
-
-      ec.regs.pc += 2;
-    }
-#endif /* 0 */
-
   template <class Source> void
   andw(uint_type op, context &ec, instruction_data *data)
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
-    L(" andw %s", ea1.textl(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" andw %s", ea1.textw(ec));
+    L(",%%d%u\n", reg2);
 #endif
 
     sint_type value1 = ea1.getw(ec);
@@ -441,8 +335,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" andl %s", ea1.textl(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg2);
 #endif
 
     sint32_type value1 = ea1.getl(ec);
@@ -477,8 +370,7 @@ namespace
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef L
     L(" andiw #0x%x", uint_type(value2));
-    L(",%s", ea1.textw(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea1.textw(ec));
 #endif
 
     sint_type value1 = ea1.getw(ec);
@@ -497,8 +389,7 @@ namespace
     Destination ea1(op & 0x7, 2 + 4);
 #ifdef L
     L(" andil #0x%lx", (unsigned long) value2);
-    L(",%s", ea1.textl(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea1.textl(ec));
 #endif
 
     sint32_type value1 = ea1.getl(ec);
@@ -517,8 +408,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" asll %%d%u", reg2);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     uint_type count = ec.regs.d[reg2];
@@ -537,8 +427,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" asrl %%d%u", reg2);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     uint_type count = ec.regs.d[reg2];
@@ -567,8 +456,7 @@ namespace
 	len = 0;
       }
 #ifdef L
-    L(" b%s 0x%lx", cond.text(), (unsigned long) (ec.regs.pc + 2 + disp));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" b%s 0x%lx\n", cond.text(), (unsigned long) (ec.regs.pc + 2 + disp));
 #endif
 
     // XXX: The condition codes are not affected by this instruction.
@@ -642,8 +530,7 @@ namespace
       else
 	disp = extsb(disp);
 #ifdef L
-      L(" bmi 0x%lx", (unsigned long) (ec.regs.pc + 2 + disp));
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(" bmi 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp));
 #endif
 
       // XXX: The condition codes are not affected.
@@ -675,8 +562,7 @@ namespace
     unsigned int bit = ec.fetchw(2) & 0x1f;
 #ifdef L
     L(" bclrl #%u", bit);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     // This instruction affects only the Z bit of condition codes.
@@ -735,8 +621,7 @@ namespace
     unsigned int bit = ec.fetchw(2) & 0x1f;
 #ifdef L
     L(" btstl #%u", bit);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     // This instruction affects only the Z bit of condition codes.
@@ -750,8 +635,7 @@ namespace
   clrb(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
-      VL((" clrb %s", ea1.textb(ec)));
-      VL((" | %%pc = 0x%lx\n", (unsigned long) ec.regs.pc));
+      VL((" clrb %s\n", ea1.textb(ec)));
 
       ea1.putb(ec, 0);
       ea1.finishb(ec);
@@ -764,8 +648,7 @@ namespace
   clrw(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
-      VL((" clrw %s", ea1.textw(ec)));
-      VL((" | %%pc = 0x%lx\n", (unsigned long) ec.regs.pc));
+      VL((" clrw %s\n", ea1.textw(ec)));
 
       ea1.putw(ec, 0);
       ea1.finishw(ec);
@@ -783,8 +666,7 @@ namespace
   clrl(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
-      VL((" clrl %s", ea1.textw(ec)));
-      VL(("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc));
+      VL((" clrl %s\n", ea1.textl(ec)));
 
       ea1.putl(ec, 0);
       ea1.finishl(ec);
@@ -800,8 +682,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" cmpb %s", ea1.textb(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg2);
 #endif
 
     sint_type value1 = ea1.getb(ec);
@@ -820,8 +701,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" cmpw %s", ea1.textw(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg2);
 #endif
 
     sint_type value1 = ea1.getw(ec);
@@ -840,8 +720,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" cmpl %s", ea1.textl(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg2);
 #endif
 
     sint32_type value1 = ea1.getl(ec);
@@ -860,8 +739,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" cmpaw %s", ea1.textw(ec));
-    L(",%%a%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%a%u\n", reg2);
 #endif
 
     sint32_type value1 = ea1.getw(ec);
@@ -880,8 +758,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" cmpal %s", ea1.textl(ec));
-    L(",%%a%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%a%u\n", reg2);
 #endif
 
     sint32_type value1 = ea1.getl(ec);
@@ -900,8 +777,7 @@ namespace
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef L
     L(" cmpib #0x%x", uint_type(value2));
-    L(",%s", ea1.textb(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea1.textb(ec));
 #endif
 
     sint_type value1 = ea1.getb(ec);
@@ -919,8 +795,7 @@ namespace
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef L
     L(" cmpiw #0x%x", uint_type(value2));
-    L(",%s", ea1.textw(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea1.textw(ec));
 #endif
 
     sint_type value1 = ea1.getw(ec);
@@ -938,8 +813,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" divuw %s", ea1.textw(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg2);
 #endif
 
     sint_type value1 = ea1.getw(ec);
@@ -960,8 +834,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" eorb %%d%u", reg2);
-    L(",%s", ea1.textb(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea1.textb(ec));
 #endif
 
     sint_type value1 = ea1.getb(ec);
@@ -981,8 +854,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" eorw %%d%u", reg2);
-    L(",%s", ea1.textw(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea1.textw(ec));
 #endif
 
     sint_type value1 = ea1.getw(ec);
@@ -1002,8 +874,7 @@ namespace
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef L
     L(" eoriw #0x%x", uint_type(value2));
-    L(",%s", ea1.textw(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea1.textw(ec));
 #endif
 
     sint_type value1 = ea1.getw(ec);
@@ -1022,8 +893,7 @@ namespace
     int disp = extsw(ec.fetchw(2));
 #ifdef L
     L(" dbf %%d%d", reg1);
-    L(",0x%lx", (unsigned long) (ec.regs.pc + 2 + disp));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp));
 #endif
 
     // The condition codes are not affected by this instruction.
@@ -1038,8 +908,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
 #ifdef L
-    L(" extl %%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" extl %%d%u\n", reg1);
 #endif
 
     sint32_type value = extsw(ec.regs.d[reg1]);
@@ -1054,8 +923,7 @@ namespace
     {
       Destination ea1(op & 0x7, 2);
 #ifdef L
-      L(" jsr %s", ea1.textw(ec));
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(" jsr %s\n", ea1.textw(ec));
 #endif
 
       // XXX: The condition codes are not affected.
@@ -1073,8 +941,7 @@ namespace
       int reg2 = op >> 9 & 0x7;
 #ifdef L
       L(" lea %s", ea1.textw(ec));
-      L(",%%a%d", reg2);
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(",%%a%d\n", reg2);
 #endif
 
       // XXX: The condition codes are not affected.
@@ -1110,8 +977,7 @@ namespace
       count = 8;
 #ifdef L
     L(" lslb #%u", count);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     sint_type value1 = extsb(ec.regs.d[reg1]);
@@ -1132,8 +998,7 @@ namespace
       count = 8;
 #ifdef L
     L(" lslw #%u", count);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     sint_type value1 = extsw(ec.regs.d[reg1]);
@@ -1152,8 +1017,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" lslw %%d%u", reg2);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     uint_type count = ec.regs.d[reg2];
@@ -1175,8 +1039,7 @@ namespace
       count = 8;
 #ifdef L
     L(" lsll #%u", count);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     sint32_type value1 = extsl(ec.regs.d[reg1]);
@@ -1194,8 +1057,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" lsll %%d%u", reg2);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     uint_type count = ec.regs.d[reg2];
@@ -1216,8 +1078,7 @@ namespace
       count = 8;
 #ifdef L
     L(" lsrw #%u", count);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     sint_type value1 = extsw(ec.regs.d[reg1]);
@@ -1236,8 +1097,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" lsrw %%d%u", reg2);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     uint_type count = ec.regs.d[reg2];
@@ -1260,7 +1120,6 @@ namespace
 #ifdef L
     L(" lsrl #%u", count);
     L(",%%d%u\n", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
     sint32_type value1 = extsl(ec.regs.d[reg1]);
@@ -1278,8 +1137,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" lsrl %%d%u", reg2);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     uint_type count = ec.regs.d[reg2];
@@ -1298,8 +1156,7 @@ namespace
     Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
 #ifdef L
     L(" moveb %s", ea1.textb(ec));
-    L(",%s", ea2.textb(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea2.textb(ec));
 #endif
 
     sint_type value = ea1.getb(ec);
@@ -1356,8 +1213,7 @@ namespace
     Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
 #ifdef L
     L(" movew %s", ea1.textw(ec));
-    L(",%s", ea2.textw(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea2.textw(ec));
 #endif
 
     sint_type value = ea1.getw(ec);
@@ -1425,8 +1281,7 @@ namespace
       Source ea1(op & 0x7, 2);
       Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
       VL((" movel %s", ea1.textl(ec)));
-      VL((",%s", ea2.textl(ec)));
-      VL(("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc));
+      VL((",%s\n", ea2.textl(ec)));
 
       int32 value = ea1.getl(ec);
       ea2.putl(ec, value);
@@ -1443,8 +1298,7 @@ namespace
       Source ea1(op & 0x7, 2);
       address_register ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
       VL((" moveal %s", ea1.textl(ec)));
-      VL((",%s", ea2.textl(ec)));
-      VL(("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc));
+      VL((",%s\n", ea2.textl(ec)));
 
       // XXX: The condition codes are not affected by this
       // instruction.
@@ -1498,8 +1352,7 @@ namespace
       unsigned int bitmap = ec.fetchw(2);
 #ifdef L
       L(" moveml %s", ea1.textl(ec));
-      L(",#0x%04x", bitmap);
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(",#0x%04x\n", bitmap);
 #endif
 
       // XXX: The condition codes are not affected.
@@ -1536,8 +1389,7 @@ namespace
       unsigned int bitmap = ec.fetchw(2);
 #ifdef L
       L(" moveml %%a%d@+", reg1);
-      L(",#0x%04x", bitmap);
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(",#0x%04x\n", bitmap);
 #endif
 
       // XXX: The condition codes are not affected.
@@ -1586,8 +1438,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" mulsw %s", ea1.textw(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg2);
 #endif
 
     sint_type value1 = ea1.getw(ec);
@@ -1607,8 +1458,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" muluw %s", ea1.textw(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg2);
 #endif
 
     sint_type value1 = ea1.getw(ec);
@@ -1627,8 +1477,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
 #ifdef L
-    L(" negw %s", ea1.textl(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" negw %s\n", ea1.textw(ec));
 #endif
 
     sint_type value1 = ea1.getw(ec);
@@ -1645,8 +1494,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
 #ifdef L
-    L(" negl %s", ea1.textl(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" negl %s\n", ea1.textl(ec));
 #endif
 
     sint32_type value1 = ea1.getl(ec);
@@ -1665,8 +1513,7 @@ namespace
     int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" orw %s", ea1.textw(ec));
-    L(",%%d%d", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%d\n", reg2);
 #endif
 
     uint_type value1 = ea1.getw(ec);
@@ -1687,8 +1534,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" orl %s", ea1.textl(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg2);
 #endif
 
     sint32_type value1 = ea1.getl(ec);
@@ -1708,8 +1554,7 @@ namespace
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef L
     L(" orib #0x%x", uint_type(value2) & 0xff);
-    L(",%s", ea1.textb(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea1.textb(ec));
 #endif
 
     sint_type value1 = ea1.getb(ec);
@@ -1726,8 +1571,7 @@ namespace
     {
       Destination ea1(op & 0x7, 2);
 #ifdef L
-      L(" pea %s", ea1.textw(ec));
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(" pea %s\n", ea1.textw(ec));
 #endif
 
       // XXX: The condition codes are not affected.
@@ -1746,8 +1590,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" rolb %%d%u", reg2);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     uint_type count = ec.regs.d[reg2] & 0x7;
@@ -1768,8 +1611,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
 #ifdef L
     L(" rolw #%u", count);
-    L(",%%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg1);
 #endif
 
     sint_type value1 = extsw(ec.regs.d[reg1]);
@@ -1800,8 +1642,7 @@ namespace
     Condition cond;
     Destination ea1(op & 0x7, 2);
 #ifdef L
-    L(" s%sb %s", cond.text(), ea1.textb(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" s%sb %s\n", cond.text(), ea1.textb(ec));
 #endif
 
     // The condition codes are not affected by this instruction.
@@ -1818,8 +1659,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" subb %s", ea1.textb(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg2);
 #endif
 
     sint_type value1 = ea1.getb(ec);
@@ -1862,8 +1702,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" subw %s", ea1.textw(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg2);
 #endif
 
     sint_type value1 = ea1.getw(ec);
@@ -1883,8 +1722,7 @@ namespace
       Destination ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
       VL((" subl %s", ea1.textl(ec)));
-      VL((",%%d%d", reg2));
-      VL((" | %%pc = 0x%lx\n", (unsigned long) ec.regs.pc));
+      VL((",%%d%d\n", reg2));
 
       int32 value1 = ea1.getl(ec);
       int32 value2 = extsl(ec.regs.d[reg2]);
@@ -1903,8 +1741,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" subl %%d%u", reg2);
-    L(",%s", ea1.textl(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea1.textl(ec));
 #endif
 
     sint32_type value2 = extsl(ec.regs.d[reg2]);
@@ -1924,8 +1761,7 @@ namespace
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef L
     L(" subal %s", ea1.textl(ec));
-    L(",%%d%u", reg2);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%%d%u\n", reg2);
 #endif
 
     // The condition codes are not affected by this instruction.
@@ -1945,8 +1781,7 @@ namespace
       Destination ea1(op & 0x7, 2 + 2);
 #ifdef L
       L(" subib #%d", value2);
-      L(",%s", ea1.textb(ec));
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+      L(",%s\n", ea1.textb(ec));
 #endif
 
       int value1 = ea1.getb(ec);
@@ -1965,8 +1800,7 @@ namespace
     Destination ea1(op & 0x7, 2 + 4);
 #ifdef L
     L(" subil #%ld", (long) value2);
-    L(",%s", ea1.textl(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea1.textl(ec));
 #endif
 
     sint32_type value1 = ea1.getl(ec);
@@ -1987,8 +1821,7 @@ namespace
       value2 = 8;
 #ifdef L
     L(" subqw #%d", value2);
-    L(",%s", ea1.textw(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea1.textw(ec));
 #endif
 
     sint_type value1 = ea1.getw(ec);
@@ -2009,8 +1842,7 @@ namespace
       value2 = 8;
 #ifdef L
     L(" subqw #%d", value2);
-    L(",%s", ea1.textw(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(",%s\n", ea1.textw(ec));
 #endif
 
     // Condition codes are not affected by this instruction.
@@ -2059,8 +1891,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
 #ifdef L
-    L(" swapw %%d%u", reg1);
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" swapw %%d%u\n", reg1);
 #endif
 
     sint32_type value1 = extsl(ec.regs.d[reg1]);
@@ -2076,8 +1907,7 @@ namespace
   tstb(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
-      VL((" tstb %s", ea1.textb(ec)));
-      VL(("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc));
+      VL((" tstb %s\n", ea1.textb(ec)));
 
       int value = ea1.getb(ec);
       ec.regs.sr.set_cc(value);
@@ -2091,8 +1921,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
 #ifdef L
-    L(" tstw %s", ea1.textw(ec));
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" tstw %s\n", ea1.textw(ec));
 #endif
 
     sint_type value = ea1.getw(ec);
@@ -2119,8 +1948,7 @@ namespace
   tstl(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
-      VL((" tstl %s", ea1.textl(ec)));
-      VL(("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc));
+      VL((" tstl %s\n", ea1.textl(ec)));
 
       int32 value = ea1.getl(ec);
       ec.regs.sr.set_cc(value);
