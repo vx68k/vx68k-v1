@@ -64,11 +64,12 @@ struct execution_context
   class exec_unit
   {
   public:
+    typedef void (*insn_handler)(int, execution_context *);
+  public:
     static void illegal(int, execution_context *);
   protected:
     static void install_instructions(exec_unit *);
   private:
-    typedef void (*insn_handler)(int, execution_context *);
     insn_handler instruction[0x10000];
   public:
     exec_unit();
@@ -77,24 +78,22 @@ struct execution_context
     void execute(execution_context *) const;
   };
 
-/* A CPU.
+  /* A CPU.
 
-   This CPU will emulate non-exceptional operations of a m68k
-   processor.  Exceptional operations must be handled by callbacks.  */
-class cpu
-{
-public:
-  cpu ();
-  void run (execution_context *);
-  void set_exception_listener (exception_listener *);
-  typedef void (*insn_handler) (int, execution_context *);
-  void set_handlers (int begin, int end, insn_handler);
-  static void illegal_insn (int, execution_context *);
-private:
-  insn_handler insn[0x10000];
-};
+     This CPU will emulate non-exceptional operations of a m68k
+     processor.  Exceptional operations must be handled by callbacks.  */
+  class cpu
+  {
+  private:
+    exec_unit eu;
+  public:
+    cpu ();
+    void run (execution_context *);
+    void set_exception_listener (exception_listener *);
+    void set_handlers (int begin, int end, exec_unit::insn_handler);
+  };
 
-};				// namespace vm68k
+} // namespace vm68k
 
 #endif
 

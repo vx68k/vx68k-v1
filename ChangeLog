@@ -1,5 +1,15 @@
 1999-03-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/cpu.h: Make insn_instruction public.
+
+	* vm68k/execunit.cc (exec_unit): Call install_instructions.
+
+	* include/vm68v/cpu.h (class cpu): Replace the instruction table
+	with an exec_unit.  Remove all references.
+	* vm68k/cpu.cc: Remove namespace block.
+	(run): Use exec_unit::execute.
+	(set_handlers): Use exec_unit::set_instruction.
+
 	* vm68k/execunit.cc: New file.
 	* include/vm68k/cpu.h (class exec_unit): New class.
 	* vm68k/Makefile.am (libvm68k_a_SOURCES): Add execunit.cc.

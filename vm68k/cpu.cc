@@ -27,10 +27,8 @@
 #include <algorithm>
 #include <cassert>
 
+using namespace vm68k;
 using namespace std;
-
-namespace vm68k
-{
 
 execution_context::execution_context (address_space *m)
   : mem (m)
@@ -66,49 +64,28 @@ void
 cpu::run (execution_context *ec)
 {
   assert (ec != NULL);
-  for (;;)
+  try
     {
-      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM;
-      try
-	{
-	  unsigned int op = ec->mem->getw (fc, ec->regs.pc);
-	  assert (op < 0x10000);
-	  insn[op] (op, ec);
-	}
-      catch (bus_error &e)
-	{
-	  // We should handle this in a callback function.
-	  cerr << hex << "vm68k bus error: status = 0x" << e.status
-	       << ", address = 0x" << e.address << "\n" << dec;
-	  abort ();
-	}
+      eu.execute(ec);
+    }
+  catch (bus_error &e)
+    {
+      // We should handle this in a callback function.
+      cerr << hex << "vm68k bus error: status = 0x" << e.status
+	   << ", address = 0x" << e.address << "\n" << dec;
+      abort ();
     }
 }
 
 void
-cpu::set_handlers (int code, int mask, insn_handler h)
+cpu::set_handlers (int code, int mask, exec_unit::insn_handler h)
 {
   assert (code >= 0);
   assert (code < 0x10000);
-  code &= ~mask;
-  for (int i = code; i <= (code | mask); ++i)
-    {
-      if ((i & ~mask) == code)
-	insn[i] = h;
-    }
-}
-
-/* Execute an illegal instruction.  */
-void
-cpu::illegal_insn (int op, execution_context *)
-{
-  throw illegal_instruction ();
+  eu.set_instruction(code, mask, h);
 }
 
 cpu::cpu ()
 {
-  std::fill (insn + 0, insn + 0x10000, &illegal_insn);
 }
-
-};				// namespace vm68k
 

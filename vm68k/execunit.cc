@@ -61,6 +61,7 @@ exec_unit::set_instruction(int code, int mask, insn_handler h)
 exec_unit::exec_unit()
 {
   fill(instruction + 0, instruction + 0x10000, &illegal);
+  install_instructions(this);
 }
 
 /* Executes an illegal instruction.  */
