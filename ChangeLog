@@ -1,5 +1,8 @@
 1999-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (andib): New function.
+	(install_instructions): Add new handlers.
+
 	* lib/vx68k/dos.cc (dos_getc): New function.
 	(dos): Add new handler.
 

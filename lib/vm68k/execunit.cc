@@ -425,6 +425,26 @@ namespace
     }
 #endif
 
+  /* Handles ANDI instruction for byte.  */
+  template <class Destination> void
+  andib(uint_type op, context &c, instruction_data *data)
+  {
+    sint_type value2 = extsb(c.fetchw(2));
+    Destination ea1(op & 0x7, 2 + 2);
+#ifdef L
+    L(" andib #0x%x", uint_type(value2) & 0xffu);
+    L(",%s\n", ea1.textb(c));
+#endif
+
+    sint_type value1 = ea1.getb(c);
+    sint_type value = extsb(uint_type(value1) & uint_type(value2));
+    ea1.putb(c, value);
+    c.regs.sr.set_cc(value);
+    ea1.finishb(c);
+
+    c.regs.pc += 2 + 2 + ea1.isize(2);
+  }
+
   template <class Destination> void
   andiw(unsigned int op, context &ec, instruction_data *data)
   {
@@ -2400,6 +2420,13 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x0068, 0x0007, &oriw<disp_indirect>);
   eu.set_instruction(0x0070, 0x0007, &oriw<indexed_indirect>);
   eu.set_instruction(0x0079, 0x0000, &oriw<absolute_long>);
+  eu.set_instruction(0x0200, 0x0007, &andib<data_register>);
+  eu.set_instruction(0x0210, 0x0007, &andib<indirect>);
+  eu.set_instruction(0x0218, 0x0007, &andib<postinc_indirect>);
+  eu.set_instruction(0x0220, 0x0007, &andib<predec_indirect>);
+  eu.set_instruction(0x0228, 0x0007, &andib<disp_indirect>);
+  eu.set_instruction(0x0230, 0x0007, &andib<indexed_indirect>);
+  eu.set_instruction(0x0239, 0x0000, &andib<absolute_long>);
   eu.set_instruction(0x0240, 0x0007, &andiw<data_register>);
   eu.set_instruction(0x0250, 0x0007, &andiw<indirect>);
   eu.set_instruction(0x0258, 0x0007, &andiw<postinc_indirect>);
