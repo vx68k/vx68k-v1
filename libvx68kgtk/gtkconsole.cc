@@ -46,7 +46,7 @@ const char *const BASE16_FONT_NAME
 const char *const KANJI16_FONT_NAME
   = "-*-fixed-medium-r-normal--16-*-*-*-c-*-jisx0208.1983-0";
 
-const unsigned int TIMEOUT_INTERVAL = 200;
+const unsigned int TIMEOUT_INTERVAL = 100;
 
 namespace
 {
@@ -677,11 +677,7 @@ gtk_console::~gtk_console()
       gtk_signal_disconnect_by_data(GTK_OBJECT(*i), this);
     }
 
-#ifdef TIMEOUT
   gtk_timeout_remove(timeout);
-#else
-  gtk_idle_remove(timeout);
-#endif
   gtk_timeout_remove(machine_timeout);
 
   gdk_threads_leave();
@@ -725,11 +721,7 @@ gtk_console::gtk_console(machine *m)
   _m->check_timers(t);
   machine_timeout = gtk_timeout_add(10, &handle_machine_timeout, this);
 
-#ifdef TIMEOUT
   timeout = gtk_timeout_add(TIMEOUT_INTERVAL, &::handle_timeout, this);
-#else
-  timeout = gtk_idle_add_priority(GTK_PRIORITY_LOW, &::handle_timeout, this);
-#endif
 
   gdk_threads_leave();
 
