@@ -5,6 +5,11 @@
 	(clrb): New function.
 	(clrw): Modify log message and fix %pc increment.
 	(install_instructions): Add new functions.
+	(addal, clrb, clrw, cmpl, lea, moveb, movew, movel, subl): Print
+	%pc to log output.
+	(clrw_predec, lea_offset_a, lea_absl_a, moveb_indir_d,
+	moveb_postinc_d, moveb_off_d, movew_off_d, movew_absl_d,
+	movel_d_d, movel_a_d, movel_postinc_d, movel_off_d): Removed.
 
 	* include/vm68k/addressing.h (class disp_indirect): New class.
 

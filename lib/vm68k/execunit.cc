@@ -98,7 +98,8 @@ namespace
       Destination ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
       VL((" addal %s", ea1.textl(ec)));
-      VL((",%%a%d\n", reg2));
+      VL((",%%a%d", reg2));
+      VL((" | %%pc = 0x%lx\n", (unsigned long) ec->regs.pc));
 
       int32 value1 = ea1.getl(ec);
       int32 value2 = extsl(ec->regs.a[reg2]);
@@ -422,7 +423,8 @@ namespace
     {
       I(ec != NULL);
       Destination ea1(op & 0x7, 2);
-      VL((" clrb %s\n", ea1.textb(ec)));
+      VL((" clrb %s", ea1.textb(ec)));
+      VL((" | %%pc = 0x%lx\n", (unsigned long) ec->regs.pc));
 
       ea1.putb(ec, 0);
       ea1.finishb(ec);
@@ -435,7 +437,8 @@ namespace
     {
       I(ec != NULL);
       Destination ea1(op & 0x7, 2);
-      VL((" clrw %s\n", ea1.textw(ec)));
+      VL((" clrw %s", ea1.textw(ec)));
+      VL((" | %%pc = 0x%lx\n", (unsigned long) ec->regs.pc));
 
       ea1.putw(ec, 0);
       ea1.finishw(ec);
@@ -447,30 +450,14 @@ namespace
   template <> void clrw<address_register>(unsigned int, execution_context *);
   // XXX: Address register cannot be the destination.
 
-#if 0
-  void clrw_predec(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int reg = op & 0x7;
-      uint32 d_addr = ec->regs.a[reg] - 2;
-      VL((" clrw %%a%d@- |0x%lx\n", reg, (unsigned long) d_addr));
-
-      int fc = ec->data_fc();
-      ec->mem->putw(fc, d_addr, 0);
-      ec->regs.a[reg] = d_addr;
-      ec->regs.sr.set_cc(0);
-
-      ec->regs.pc += 2;
-    }
-#endif /* 0 */
-
   template <class Destination> void cmpl(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       Destination ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
       VL((" cmpl %s", ea1.textl(ec)));
-      VL((",%%d%d\n", reg2));
+      VL((",%%d%d", reg2));
+      VL((" | %%pc = 0x%lx\n", (unsigned long) ec->regs.pc));
 
       int32 value1 = ea1.getl(ec);
       int32 value2 = extsl(ec->regs.d[reg2]);
@@ -537,7 +524,8 @@ namespace
       Source ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
       VL((" lea %s", ea1.textw(ec)));
-      VL((",%%a%d\n", reg2));
+      VL((",%%a%d", reg2));
+      VL((" | %%pc = 0x%lx\n", (unsigned long) ec->regs.pc));
 
       // XXX: The condition codes are not affected.
       uint32 address = ea1.address(ec);
@@ -545,35 +533,6 @@ namespace
 
       ec->regs.pc += 2 + ea1.isize(2);
     }
-
-  void lea_offset_a(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      int offset = extsw(ec->fetchw(2));
-      VL((" lea %%a%d@(%ld),%%a%d\n", s_reg, (long) offset, d_reg));
-
-      // XXX: The condition codes are not affected.
-      ec->regs.a[d_reg] = ec->regs.a[s_reg] + offset;
-
-      ec->regs.pc += 4;
-    }
-
-#if 0
-  void lea_absl_a(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int reg = op >> 9 & 0x7;
-      uint32 address = ec->fetchl(2);
-      VL((" lea 0x%lx:l,%%a%d\n", (unsigned long) address, reg));
-
-      // XXX: The condition codes are not affected.
-      ec->regs.a[reg] = address;
-
-      ec->regs.pc += 6;
-    }
-#endif /* 0 */
 
   void link_a(unsigned int op, execution_context *ec)
     {
@@ -666,7 +625,8 @@ namespace
       Source ea1(op & 0x7, 2);
       Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
       VL((" moveb %s", ea1.textb(ec)));
-      VL((",%s\n", ea2.textb(ec)));
+      VL((",%s", ea2.textb(ec)));
+      VL((" | %%pc = 0x%lx\n", (unsigned long) ec->regs.pc));
 
       int value = ea1.getb(ec);
       ea2.putb(ec, value);
@@ -675,62 +635,6 @@ namespace
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
-    }
-
-  void moveb_indir_d(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      uint32 s_addr = ec->regs.a[s_reg];
-      VL((" moveb %%a%d@,%%d%d |0x%lx,*\n",
-	  s_reg, d_reg, (unsigned long) s_addr));
-
-      int fc = ec->data_fc();
-      int val = extsb(ec->mem->getb(fc, s_addr));
-      const uint32 MASK = ((uint32) 1u << 8) - 1;
-      ec->regs.d[d_reg] = ec->regs.d[d_reg] & ~MASK | (uint32) val & MASK;
-      ec->regs.sr.set_cc(val);
-
-      ec->regs.pc += 2;
-    }
-
-  void moveb_postinc_d(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      uint32 s_addr = ec->regs.a[s_reg];
-      VL((" moveb %%a%d@+,%%d%d |0x%lx,*\n",
-	  s_reg, d_reg, (unsigned long) s_addr));
-
-      int fc = ec->data_fc();
-      int val = extsb(ec->mem->getb(fc, s_addr));
-      const uint32 MASK = ((uint32) 1u << 8) - 1;
-      ec->regs.d[d_reg] = ec->regs.d[d_reg] & ~MASK | (uint32) val & MASK;
-      ec->regs.a[s_reg] = s_addr + 1;
-      ec->regs.sr.set_cc(val);
-
-      ec->regs.pc += 2;
-    }
-
-  void moveb_off_d(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      int s_off = extsw(ec->fetchw(2));
-      uint32 s_addr = ec->regs.a[s_reg] + s_off;
-      VL((" moveb %%a%d@(%d),%%d%d |0x%lx,*\n",
-	  s_reg, s_off, d_reg, (unsigned long) s_addr));
-
-      int fc = ec->data_fc();
-      int val = extsb(ec->mem->getb(fc, s_addr));
-      const uint32 MASK = ((uint32) 1u << 8) - 1;
-      ec->regs.d[d_reg] = ec->regs.d[d_reg] & ~MASK | (uint32) val & MASK;
-      ec->regs.sr.set_cc(val);
-
-      ec->regs.pc += 2 + 2;
     }
 
   void moveb_d_postinc(unsigned int op, execution_context *ec)
@@ -778,7 +682,8 @@ namespace
       Source ea1(op & 0x7, 2);
       Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
       VL((" movew %s", ea1.textw(ec)));
-      VL((",%s\n", ea2.textw(ec)));
+      VL((",%s", ea2.textw(ec)));
+      VL((" | %%pc = 0x%lx\n", (unsigned long) ec->regs.pc));
 
       int value = ea1.getw(ec);
       ea2.putw(ec, value);
@@ -788,43 +693,6 @@ namespace
 
       ec->regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
     }
-
-#if 0
-  void movew_off_d(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      int s_off = extsw(ec->fetchw(2));
-      uint32 s_addr = ec->regs.a[s_reg] + s_off;
-      VL((" movew %%a%d@(%d),%%d%d |0x%lx,*\n",
-	  s_reg, s_off, d_reg, (unsigned long) s_addr));
-
-      int fc = ec->data_fc();
-      int value = extsw(ec->mem->getw(fc, s_addr));
-      const uint32 MASK = ((uint32) 1u << 16) - 1;
-      ec->regs.d[d_reg] = ec->regs.d[d_reg] & ~MASK | (uint32) value & MASK;
-      ec->regs.sr.set_cc(value);
-
-      ec->regs.pc += 2 + 2;
-    }
-
-  void movew_absl_d(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int d_reg = op >> 9 & 0x7;
-      uint32 address = ec->fetchl(2);
-      VL((" movew 0x%lx,%%d%d\n", (unsigned long) address, d_reg));
-
-      int fc = ec->data_fc();
-      int value = extsw(ec->mem->getw(fc, address));
-      const uint32 MASK = ((uint32) 1u << 16) - 1;
-      ec->regs.d[d_reg] = ec->regs.d[d_reg] & ~MASK | (uint32) value & MASK;
-      ec->regs.sr.set_cc(value);
-
-      ec->regs.pc += 2 + 4;
-    }
-#endif /* 0 */
 
   void movew_d_postinc(unsigned int op, execution_context *ec)
     {
@@ -902,7 +770,8 @@ namespace
       Source ea1(op & 0x7, 2);
       Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
       VL((" movel %s", ea1.textl(ec)));
-      VL((",%s\n", ea2.textl(ec)));
+      VL((",%s", ea2.textl(ec)));
+      VL((" | %%pc = 0x%lx\n", (unsigned long) ec->regs.pc));
 
       int32 value = ea1.getl(ec);
       ea2.putl(ec, value);
@@ -918,72 +787,6 @@ namespace
   template <class Source>
     void movel<Source, address_register>(unsigned int op, execution_context *ec);
 #endif
-
-#if 0
-  void movel_d_d(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      VL((" movel %%d%d,%%d%d\n", s_reg, d_reg));
-
-      int32 value = extsl(ec->regs.d[s_reg]);
-      ec->regs.d[d_reg] = value;
-      ec->regs.sr.set_cc(value);
-
-      ec->regs.pc += 2;
-    }
-
-  void movel_a_d(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      VL((" movel %%a%d,%%d%d\n", s_reg, d_reg));
-
-      int32 value = extsl(ec->regs.a[s_reg]);
-      ec->regs.d[d_reg] = value;
-      ec->regs.sr.set_cc(value);
-
-      ec->regs.pc += 2;
-    }
-
-  void movel_postinc_d(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int reg1 = op & 0x7;
-      int reg2 = op >> 9 & 0x7;
-      uint32 addr1 = ec->regs.a[reg1];
-      VL((" movel %%a%d@+,%%d%d |0x%lx,*\n",
-	  reg1, reg2, (unsigned long) addr1));
-
-      int fc = ec->data_fc();
-      int32 val = extsl(ec->mem->getl(fc, addr1));
-      ec->regs.d[reg2] = val;
-      ec->regs.a[reg1] = addr1 + 4;
-      ec->regs.sr.set_cc(val);
-
-      ec->regs.pc += 2;
-    }
-
-  void movel_off_d(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      int s_off = extsw(ec->fetchw(2));
-      uint32 s_addr = ec->regs.a[s_reg] + s_off;
-      VL((" movel %%a%d@(%d),%%d%d |0x%lx,*\n",
-	  s_reg, s_off, d_reg, (unsigned long) s_addr));
-
-      int fc = ec->data_fc();
-      int32 value = extsl(ec->mem->getl(fc, s_addr));
-      ec->regs.d[d_reg] = value;
-      ec->regs.sr.set_cc(value);
-
-      ec->regs.pc += 2 + 2;
-    }
-#endif /* 0 */
 
   void movel_d_postinc(unsigned int op, execution_context *ec)
     {
@@ -1234,7 +1037,8 @@ namespace
       Destination ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
       VL((" subl %s", ea1.textl(ec)));
-      VL((",%%d%d\n", reg2));
+      VL((",%%d%d", reg2));
+      VL((" | %%pc = 0x%lx\n", (unsigned long) ec->regs.pc));
 
       int32 value1 = ea1.getl(ec);
       int32 value2 = extsl(ec->regs.d[reg2]);
@@ -1357,9 +1161,13 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x0c10, 0x0007, &cmpib<indirect>);
   eu->set_instruction(0x0c18, 0x0007, &cmpib<postincrement_indirect>);
   eu->set_instruction(0x0c20, 0x0007, &cmpib<predecrement_indirect>);
-  eu->set_instruction(0x1010, 0x0e07, &moveb_indir_d);
-  eu->set_instruction(0x1018, 0x0e07, &moveb_postinc_d);
-  eu->set_instruction(0x1028, 0x0e07, &moveb_off_d);
+  eu->set_instruction(0x1000, 0x0e07, &moveb<data_register, data_register>);
+  eu->set_instruction(0x1010, 0x0e07, &moveb<indirect, data_register>);
+  eu->set_instruction(0x1018, 0x0e07, &moveb<postincrement_indirect, data_register>);
+  eu->set_instruction(0x1020, 0x0e07, &moveb<predecrement_indirect, data_register>);
+  eu->set_instruction(0x1028, 0x0e07, &moveb<disp_indirect, data_register>);
+  eu->set_instruction(0x1039, 0x0e07, &moveb<absolute_long, data_register>);
+  eu->set_instruction(0x103c, 0x0e07, &moveb<immediate, data_register>);
   eu->set_instruction(0x10c0, 0x0e07, &moveb_d_postinc);
   eu->set_instruction(0x10d8, 0x0e07, &moveb_postinc_postinc);
   eu->set_instruction(0x13c0, 0x0007, &moveb<data_register, absolute_long>);
@@ -1392,7 +1200,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x3139, 0x0e00, &movew_absl_predec);
   eu->set_instruction(0x33c0, 0x0007, &movew_d_absl);
   eu->set_instruction(0x4190, 0x0e07, &lea<indirect>);
-  eu->set_instruction(0x41e8, 0x0e07, &lea_offset_a);
+  eu->set_instruction(0x41e8, 0x0e07, &lea<disp_indirect>);
   eu->set_instruction(0x41f9, 0x0e00, &lea<absolute_long>);
   eu->set_instruction(0x4200, 0x0007, &clrb<data_register>);
   eu->set_instruction(0x4210, 0x0007, &clrb<indirect>);
