@@ -43,6 +43,52 @@ namespace vx68k
     virtual void get_k16_image(unsigned int, unsigned char *, size_t) const = 0;
   };
 
+  /* System ROM.  This object handles the IOCS calls.  */
+  class system_rom: public memory
+  {
+  public:
+    typedef void (*iocs_function_handler)(context &, unsigned long);
+    typedef pair<iocs_function_handler, unsigned long> iocs_function_type;
+
+  protected:
+    static void invalid_iocs_function(context &, unsigned long);
+
+  private:
+    /* Table of the IOCS functions.  */
+    vector<iocs_function_type> iocs_functions;
+
+    /* Attached execution unit.  */
+    exec_unit *attached_eu;
+
+  public:
+    system_rom();
+    ~system_rom();
+
+  public:
+    /* Reads data from this object.  */
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
+
+    /* Writes data to this object.  These methods shall always fail.  */
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
+
+  public:
+    /* Attaches or detaches an execution unit.  */
+    void attach(exec_unit *);
+    void detach(exec_unit *);
+
+    /* Initializes memory in an address space.  */
+    void initialize(memory_address_space &);
+
+  public:
+    /* Sets an IOCS function.  */
+    void set_iocs_function(uint_type, const iocs_function_type &);
+
+    /* Dispatch to an IOCS call handler.  */
+    void call_iocs(unsigned int, context &);
+  };
+
   /* Main memory.  This memory is mapped to the address range from 0
      to 0xc00000.  */
   class main_memory: public memory
@@ -402,6 +448,26 @@ namespace vx68k
   /* Sprite controller memory.  */
   class sprites_memory: public memory
   {
+  public:
+    /* Reads data from this object.  */
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
+
+    /* Writes data to this object.  */
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
+  };
+
+  /* SRAM.  */
+  class sram: public memory
+  {
+  private:
+    unsigned char *buf;
+
+  public:
+    ~sram();
+    sram();
+
   public:
     /* Reads data from this object.  */
     uint_type get_16(int, uint32_type) const;
