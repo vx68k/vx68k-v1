@@ -1,5 +1,7 @@
 1999-03-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* configure.in: Change the AC_INIT test file.
+
 	* main.cc: Moved from vx68v/main.cc.
 	* Makefile.am (INCLUDES, bin_PROGRAMS, x68k_SOURCES,
 	x68v_LDADD): Added.
