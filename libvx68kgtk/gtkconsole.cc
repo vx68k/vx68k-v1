@@ -48,6 +48,17 @@ const char *const KANJI16_FONT_NAME
 
 const unsigned int TIMEOUT_INTERVAL = 200;
 
+namespace
+{
+  /* Helper object to synchronize GDK access.  */
+  class gdk_threads_monitor
+  {
+  public:
+    gdk_threads_monitor() {gdk_threads_enter();}
+    ~gdk_threads_monitor() {gdk_threads_leave();}
+  };
+}
+
 bool
 gtk_console::handle_key_press_event(GtkWidget *drawing_area,
 				    GdkEventKey *e)
@@ -357,37 +368,21 @@ gtk_console::get_k16_image(unsigned int c,
 bool
 gtk_console::handle_timeout()
 {
-  gdk_threads_enter();
-  if (gdk_region_empty(update_region))
-    gdk_threads_leave();
-  else
+  machine::rectangle area;
+  _m->update_image(rgb_buf, row_size, 768, 512, area);
+  if (area.left_x != area.right_x && area.top_y != area.bottom_y)
     {
-      GdkRectangle bounds;
+      gdk_threads_monitor mon;
 
-      gdk_region_get_clipbox(update_region, &bounds);
-      gdk_region_destroy(update_region);
-      update_region = gdk_region_new();
-      gdk_threads_leave();
-
-      if (bounds.width + bounds.x > 768)
-	bounds.width = 768 - bounds.x;
-      if (bounds.height + bounds.y > 512)
-	bounds.height = 512 - bounds.y;
-
-      if (bounds.x < 768 && bounds.y < 512)
-	_m->get_image(bounds.x, bounds.y, bounds.width, bounds.height,
-		      rgb_buf + bounds.y * row_size + bounds.x * 3, row_size);
-
-      gdk_threads_enter();
       for (vector<GtkWidget *>::const_iterator i = widgets.begin();
 	   i != widgets.end();
 	   ++i)
 	{
 	  I(*i != NULL);
-	  gtk_widget_queue_draw_area(*i, bounds.x, bounds.y,
-				     bounds.width, bounds.height);
+	  gtk_widget_queue_draw_area(*i, area.left_x, area.top_y,
+				     area.right_x - area.left_x,
+				     area.bottom_y - area.top_y);
 	}
-      gdk_threads_leave();
     }
 
   return true;

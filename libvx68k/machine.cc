@@ -321,33 +321,64 @@ machine::unload_fd(unsigned int u)
 }
 
 void
-machine::get_image(int x, int y, int width, int height,
-		   unsigned char *rgb_buf, size_t row_size)
+machine::update_image(unsigned char *rgb_buf, size_t row_size,
+		      unsigned int width, unsigned int height,
+		      rectangle &update_area)
 {
-  for (int i = 0; i != height; ++i)
+  vector<bool> update = tvram.poll_update();
+  vector<bool>::iterator u = update.begin();
+
+  unsigned char *image_end = rgb_buf + height * row_size;
+  unsigned char *update_begin = image_end;
+  unsigned char *update_end = image_end;
+
+  for (unsigned char *i = rgb_buf; i != image_end;)
     {
-      for (int j = 0; j != width; ++j)
+      if (*u++)
 	{
-	  unsigned char *p = rgb_buf + i * row_size + j * 3;
-	  p[0] = 0;
-	  p[1] = 0;
-	  p[2] = 0;
+	  unsigned char *row_end = i + width * 3;
+
+	  for (unsigned char *j = i; j != row_end;)
+	    {
+	      *j++ = 0;
+	      *j++ = 0;
+	      *j++ = 0;
+	    }
+
+	  text_video_memory::raster_iterator r
+	    = tvram.raster(0, (i - rgb_buf) / row_size);
+	  for (unsigned char *j = i; j != row_end;)
+	    {
+	      static const unsigned char p[16 * 4] = {0, 0, 0, 0,
+						       0, 255, 255, 255,
+						       255, 255, 0, 255,
+						       255, 255, 255, 255};
+	      const unsigned char *k = p + *r++ * 4;
+	      if (k[3] == 0)
+		j += 3;
+	      else
+		{
+		  *j++ = *k++;
+		  *j++ = *k++;
+		  *j++ = *k++;
+		}
+	    }
+
+	  if (update_begin > i)
+	    update_begin = i;
+	  update_end = i + row_size;
 	}
 
-      text_video_memory::raster_iterator q = tvram.raster(x, y + i);
-      for (int j = 0; j != width; ++j)
-	{
-	  static const unsigned char vv[16 * 3] = {0, 0, 0,
-						   0, 255, 255,
-						   255, 255, 0,
-						   255, 255, 255};
-	  uint_type v = 3 * *q++;
-	  unsigned char *p = rgb_buf + i * row_size + j * 3;
-	  p[0] = vv[v];
-	  p[1] = vv[v + 1];
-	  p[2] = vv[v + 2];
-	}
+      I((i - rgb_buf) % row_size == 0);
+      i += row_size;
     }
+
+  I((update_begin - rgb_buf) % row_size == 0);
+  I((update_end - rgb_buf) % row_size == 0);
+  update_area.left_x = 0;
+  update_area.top_y = (update_begin - rgb_buf) / row_size;
+  update_area.right_x = width;
+  update_area.bottom_y = (update_end - rgb_buf) / row_size;
 }
 
 void

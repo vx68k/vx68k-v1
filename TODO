@@ -1,6 +1,17 @@
 To-Do List for Virtual X68000
 
-$Date: Fri, 21 Jul 2000 23:28:52 +0900 $
+$Date: Wed, 09 Aug 2000 22:55:19 +0900 $
+
+* Modify console image updates without region.
+
+* Pass current times to interrupt sources.
+
+* Rename class address_space to memory_address_space.
+
+* Make class machine a subclass of memory_address_space.
+
+* Move class main_memory to <vx68k/memory.h>.
+
 
 * Implement text cursor.
 

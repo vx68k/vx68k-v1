@@ -154,6 +154,12 @@ namespace vx68k
   /* Machine of X68000.  */
   class machine
   {
+  public:
+    struct rectangle
+    {
+      int left_x, top_y, right_x, bottom_y;
+    };
+
   private:
     size_t _memory_size;
     main_memory mem;
@@ -228,8 +234,10 @@ namespace vx68k
     /* Checks timers.  */
     void check_timers(uint32_type t);
 
-    void get_image(int x, int y, int width, int height,
-		   unsigned char *rgb_buf, size_t row_size);
+    /* Updates an image in a RGB buffer.  */
+    void update_image(unsigned char *rgb_buf, size_t row_size,
+		      unsigned int width, unsigned int height,
+		      rectangle &update_area);
 
     /* Configures address space AS.  */
     void configure(address_space &as);

@@ -98,6 +98,9 @@ namespace vx68k
     unsigned char *buf;
     console *connected_console;
 
+    /* True if any update on a raster is pending.  */
+    vector<bool> raster_update_marks;
+
   public:
     text_video_memory();
     ~text_video_memory();
@@ -119,6 +122,9 @@ namespace vx68k
   public:
     void connect(console *);
 
+    /* Returns truth vector once if any update is pending.  */
+    vector<bool> poll_update();
+
     /* Get the visual image of this text VRAM.  Image is of size
        [WIDTH HEIGHT] at position [X Y].  RGB_BUF is an array of
        bytes.  ROW_SIZE is the row size of RGB_BUF.  */
@@ -126,6 +132,11 @@ namespace vx68k
 		   unsigned char *rgb_buf, size_t row_size);
 
     raster_iterator raster(unsigned int, unsigned int);
+
+  protected:
+    /* Marks an update area.  */
+    void mark_update_area(unsigned int left_x, unsigned int top_y,
+			  unsigned int right_x, unsigned int bottom_y);
   };
 
   /* CRTC input/output port memory.  This object also generates VDISP

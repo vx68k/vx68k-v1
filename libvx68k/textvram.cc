@@ -96,12 +96,30 @@ text_video_raster_iterator::text_video_raster_iterator(unsigned char *base,
 }
 
 void
+text_video_memory::mark_update_area(unsigned int left_x,
+				    unsigned int top_y,
+				    unsigned int right_x,
+				    unsigned int bottom_y)
+{
+  fill(raster_update_marks.begin() + top_y,
+       raster_update_marks.begin() + bottom_y, true);
+}
+
+vector<bool>
+text_video_memory::poll_update()
+{
+  vector<bool> tmp(1024, false);
+  tmp.swap(raster_update_marks);
+  return tmp;
+}
+
+void
 text_video_memory::scroll()
 {
   fill(copy(buf + 1 * 16 * ROW_SIZE, buf + 31 * 16 * ROW_SIZE, buf),
        buf + 31 * 16 * ROW_SIZE, 0);
 
-  connected_console->update_area(0, 0, ROW_SIZE * 8, 31 * 16);
+  mark_update_area(0, 0, ROW_SIZE * 8, 31 * 16);
 }
 
 void
@@ -148,8 +166,7 @@ text_video_memory::draw_char(int x, int y, unsigned int c)
 	    }
 	}
 
-      if (connected_console != NULL)
-	connected_console->update_area(x * 8, y * 16, 16, 16);
+      mark_update_area(x * 8, y * 16, x * 8 + 16, y * 16 + 16);
     }
   else
     {
@@ -168,8 +185,7 @@ text_video_memory::draw_char(int x, int y, unsigned int c)
 	    }
 	}
 
-      if (connected_console != NULL)
-	connected_console->update_area(x * 8, y * 16, 8, 16);
+      mark_update_area(x * 8, y * 16, x * 8 + 8, y * 16 + 16);
     }
 }
 
@@ -233,12 +249,9 @@ text_video_memory::put_16(int fc, uint32_type address, uint_type value)
   address &= PLANE_MAX * PLANE_SIZE - 1u;
   vm68k::putw(buf + address, value & 0xffffu);
 
-  if (connected_console != NULL)
-    {
-      unsigned int x = address % ROW_SIZE;
-      unsigned int y = address / ROW_SIZE % 1024u;
-      connected_console->update_area(x * 8, y, 16, 1);
-    }
+  unsigned int x = address % ROW_SIZE * 8;
+  unsigned int y = address / ROW_SIZE % 1024u;
+  mark_update_area(x, y, x + 16, y + 1);
 }
 
 void
@@ -250,19 +263,16 @@ text_video_memory::put_8(int fc, uint32_type address, uint_type value)
   address &= PLANE_MAX * PLANE_SIZE - 1u;
   *(buf + address) = value & 0xffu;
 
-  if (connected_console != NULL)
-    {
-      unsigned int x = address % ROW_SIZE;
-      unsigned int y = address / ROW_SIZE % 1024u;
-      connected_console->update_area(x * 8, y, 8, 1);
-    }
+  unsigned int x = address % ROW_SIZE * 8;
+  unsigned int y = address / ROW_SIZE % 1024u;
+  mark_update_area(x, y, x + 8, y + 1);
 }
 
 void
 text_video_memory::connect(console *con)
 {
   connected_console = con;
-  connected_console->update_area(0, 0, ROW_SIZE * 8, 512);
+  mark_update_area(0, 0, ROW_SIZE * 8, 512);
 }
 
 text_video_memory::~text_video_memory()
@@ -272,7 +282,8 @@ text_video_memory::~text_video_memory()
 
 text_video_memory::text_video_memory()
   : buf(NULL),
-    connected_console(NULL)
+    connected_console(NULL),
+    raster_update_marks(1024, false)
 {
   buf = new unsigned char [PLANE_MAX * PLANE_SIZE];
   fill(buf + 0, buf + PLANE_MAX * PLANE_SIZE, 0);
