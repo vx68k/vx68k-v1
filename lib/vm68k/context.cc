@@ -42,7 +42,7 @@ context::run()
     step();
 }
 
-context::context(address_space *m, exec_unit *e)
+context::context(address_space *m, const exec_unit *e)
   : mem(m),
     eu(e)
 {

@@ -133,7 +133,7 @@ struct exception_listener
   public:
     static void illegal(unsigned int, context &);
   protected:
-    static void install_instructions(exec_unit *);
+    static void install_instructions(exec_unit &);
   private:
     instruction_handler instruction[0x10000];
   public:
@@ -150,9 +150,9 @@ struct exception_listener
     address_space *mem;
     exception_listener *exception;
   private:
-    exec_unit *eu;
+    const exec_unit *eu;
   public:
-    context(address_space *, exec_unit *);
+    context(address_space *, const exec_unit *);
   public:
     int program_fc() const
       {return regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM;}

@@ -1,5 +1,14 @@
 1999-06-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (install_instructions): Change the type of
+	argument to reference.  Also change all users.
+
+	* lib/vm68k/context.cc (context): Change the type of second
+	argument to const pointer.
+
+	* include/vm68k/cpu.h (class context): Change type of eu const
+	pointer.
+
 	* include/vm68k/condition.h: Change interface to pass context by
 	reference instead of pointer.  Also change all users.
 
