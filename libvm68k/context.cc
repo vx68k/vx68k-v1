@@ -68,11 +68,11 @@ context::handle_interrupts()
       this->set_sr(old_sr & ~0x700 | prio << 8);
       this->set_supervisor_state(true);
       regs.a[7] -= 6;
-      mem->putl(memory::SUPER_DATA, regs.a[7] + 2, regs.pc);
-      mem->putw(memory::SUPER_DATA, regs.a[7] + 0, old_sr);
+      mem->put_32(memory::SUPER_DATA, regs.a[7] + 2, regs.pc);
+      mem->put_16(memory::SUPER_DATA, regs.a[7] + 0, old_sr);
 
       uint32_type address = vecno * 4u;
-      regs.pc = mem->getl(memory::SUPER_DATA, address);
+      regs.pc = mem->get_32(memory::SUPER_DATA, address);
 
       a_interrupted = false;
       vector<queue<unsigned int> >::iterator j = i;

@@ -31,21 +31,15 @@ using vm68k::bus_error_exception;
 using namespace vm68k::types;
 using namespace std;
 
-void
-memory::generate_bus_error(bool read, int fc, uint32_type address) const
-{
-  throw bus_error_exception(read, fc, address);
-}
-
 uint32_type
-memory::get_32(int fc, uint32_type address) const
+memory::get_32(function_code fc, uint32_type address) const
 {
   return (uint32_type(get_16(fc, address + 0)) << 16
 	  | uint32_type(get_16(fc, address + 2)));
 }
 
 void
-memory::put_32(int fc, uint32_type address, uint32_type value)
+memory::put_32(function_code fc, uint32_type address, uint32_type value)
 {
   put_16(fc, address + 0, value >> 16);
   put_16(fc, address + 2, value);

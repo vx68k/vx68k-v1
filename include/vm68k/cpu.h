@@ -40,28 +40,56 @@ namespace vm68k
     static unsigned int value_mask() {return (1u << value_bit()) - 1;}
     static size_t value_size() {return 1;}
     static size_t aligned_value_size() {return 2;}
-    static int svalue(unsigned int value)
-      {
-	assert(value <= value_mask());
-	const unsigned int N = 1u << value_bit() - 1;
-	if (value >= N)
-	  return -int(value_mask() - value) - 1;
-	else
-	  return value;
-      }
 
-    static unsigned int get(uint32_type value) {return value & value_mask();}
-    static unsigned int get(const memory_address_space &a, int fc,
-			    uint32_type address)
-      {return a.getb(fc, address);}
-    static void put(uint32_type &dest, unsigned int value)
-      {dest = dest & ~uint32_type(value_mask()) | value & value_mask();}
-    static void put(memory_address_space &a, int fc,
-		    uint32_type address, unsigned int value)
-      {a.putb(fc, address, value & value_mask());}
+    static int svalue(unsigned int value);
+
+    static int get(uint32_type value);
+    static int get(const memory_address_space &, memory::function_code,
+		   uint32_type address);
+
+    static void put(uint32_type &dest, unsigned int value);
+    static void put(memory_address_space &, memory::function_code,
+		    uint32_type address, unsigned int value);
 
     static const char *suffix() {return "b";}
   };
+
+  inline int
+  byte_size::svalue(unsigned int value)
+  {
+    value &= value_mask();
+    const unsigned int N = 1u << value_bit() - 1;
+    if (value >= N)
+      return -int(value_mask() - value) - 1;
+    else
+      return value;
+  }
+
+  inline int
+  byte_size::get(uint32_type value)
+  {
+    return svalue(value & value_mask());
+  }
+
+  inline int
+  byte_size::get(const memory_address_space &m, memory::function_code fc,
+		 uint32_type address)
+  {
+    return svalue(m.get_8(fc, address));
+  }
+
+  inline void
+  byte_size::put(uint32_type &dest, unsigned int value)
+  {
+    dest = dest & ~uint32_type(value_mask()) | value & value_mask();
+  }
+
+  inline void
+  byte_size::put(memory_address_space &m, memory::function_code fc,
+		 uint32_type address, unsigned int value)
+  {
+    m.put_8(fc, address, value);
+  }
 
   /* Access methods for word data.  */
   struct word_size
@@ -73,28 +101,56 @@ namespace vm68k
     static uint_type value_mask() {return (uint_type(1) << value_bit()) - 1;}
     static size_t value_size() {return 2;}
     static size_t aligned_value_size() {return value_size();}
-    static sint_type svalue(uint_type value)
-      {
-	assert(value <= value_mask());
-	const uint_type N = uint_type(1) << value_bit() - 1;
-	if (value >= N)
-	  return -sint_type(value_mask() - value) - 1;
-	else
-	  return value;
-      }
 
-    static uint_type get(uint32_type value) {return value & value_mask();}
-    static uint_type get(const memory_address_space &a,
-			 int fc, uint32_type address)
-      {return a.getw(fc, address);}
-    static void put(uint32_type &dest, uint_type value)
-      {dest = dest & ~uint32_type(value_mask()) | value & value_mask();}
-    static void put(memory_address_space &a, int fc,
-		    uint32_type address, uint_type value)
-      {a.putw(fc, address, value & value_mask());}
+    static sint_type svalue(uint_type value);
+
+    static sint_type get(uint32_type value);
+    static sint_type get(const memory_address_space &, memory::function_code,
+			 uint32_type address);
+
+    static void put(uint32_type &dest, uint_type value);
+    static void put(memory_address_space &, memory::function_code,
+		    uint32_type address, uint_type value);
 
     static const char *suffix() {return "w";}
   };
+
+  inline sint_type
+  word_size::svalue(uint_type value)
+  {
+    value &= value_mask();
+    const uint_type N = uint_type(1) << value_bit() - 1;
+    if (value >= N)
+      return -sint_type(value_mask() - value) - 1;
+    else
+      return value;
+  }
+
+  inline sint_type
+  word_size::get(uint32_type value)
+  {
+    return svalue(value & value_mask());
+  }
+
+  inline sint_type
+  word_size::get(const memory_address_space &m, memory::function_code fc,
+		 uint32_type address)
+  {
+    return svalue(m.get_16(fc, address));
+  }
+
+  inline void
+  word_size::put(uint32_type &dest, uint_type value)
+  {
+    dest = dest & ~uint32_type(value_mask()) | value & value_mask();
+  }
+
+  inline void
+  word_size::put(memory_address_space &m, memory::function_code fc,
+		 uint32_type address, uint_type value)
+  {
+    m.put_16(fc, address, value);
+  }
 
   /* Access methods for long word data.  */
   struct long_word_size
@@ -108,29 +164,57 @@ namespace vm68k
       {return 0xffffffffu;}
     static size_t value_size() {return 4;}
     static size_t aligned_value_size() {return value_size();}
-    static sint32_type svalue(uint32_type value)
-      {
-	assert(value <= value_mask());
-	const uint32_type N = uint32_type(1) << value_bit() - 1;
-	if (value >= N)
-	  return -sint32_type(value_mask() - value) - 1;
-	else
-	  return value;
-      }
 
-    static uint32_type get(uint32_type value) {return value;}
-    static uint32_type get(const memory_address_space &a, int fc,
-			   uint32_type address)
-      {return a.getl(fc, address);}
-    static void put(uint32_type &dest, uint32_type value)
-      {dest = value & value_mask();}
-    static void put(memory_address_space &a, int fc,
-		    uint32_type address, uint32_type value)
-      {a.putl(fc, address, value & value_mask());}
+    static sint32_type svalue(uint32_type value);
+
+    static sint32_type get(uint32_type value);
+    static sint32_type get(const memory_address_space &, memory::function_code,
+			   uint32_type address);
+
+    static void put(uint32_type &dest, uint32_type value);
+    static void put(memory_address_space &, memory::function_code,
+		    uint32_type address, uint32_type value);
 
     static const char *suffix() {return "l";}
   };
 
+  inline sint32_type
+  long_word_size::svalue(uint32_type value)
+  {
+    value &= value_mask();
+    const uint32_type N = uint32_type(1) << value_bit() - 1;
+    if (value >= N)
+      return -sint32_type(value_mask() - value) - 1;
+    else
+      return value;
+  }
+
+  inline sint32_type
+  long_word_size::get(uint32_type value)
+  {
+    return svalue(value & value_mask());
+  }
+
+  inline sint32_type
+  long_word_size::get(const memory_address_space &m,
+		      memory::function_code fc, uint32_type address)
+  {
+    return svalue(m.get_32(fc, address));
+  }
+
+  inline void
+  long_word_size::put(uint32_type &dest, uint32_type value)
+  {
+    dest = dest & ~uint32_type(value_mask()) | value & value_mask();
+  }
+
+  inline void
+  long_word_size::put(memory_address_space &m, memory::function_code fc,
+		      uint32_type address, uint32_type value)
+  {
+    m.put_32(fc, address, value);
+  }
+
 #ifdef VM68K_ENABLE_DEPRECATED
 
   /* Returns the signed 8-bit value that is equivalent to unsigned
@@ -320,7 +404,7 @@ namespace vm68k
 
   private:
     /* Cache values for program and data FC's.  */
-    int pfc_cache, dfc_cache;
+    memory::function_code pfc_cache, dfc_cache;
 
   private:			// interrupt
     /* True if the thread in this context is interrupted.  */
@@ -347,17 +431,14 @@ namespace vm68k
 
   public:
     /* Returns the FC for program in the current state.  */
-    int program_fc() const
-    {return pfc_cache;}
+    memory::function_code program_fc() const {return pfc_cache;}
 
     /* Returns the FC for data in the current state.  */
-    int data_fc() const
-    {return dfc_cache;}
+    memory::function_code data_fc() const {return dfc_cache;}
 
   public:
-    template <class Size>
-    typename Size::uvalue_type fetch(Size, size_t offset) const
-    {return Size::get(*mem, program_fc(), regs.pc + offset);}
+    template <class Size> typename Size::svalue_type fetch(Size, size_t offset)
+      const;
 
   public:			// interrupt
     /* Returns true if the thread in this context is interrupted.  */
@@ -371,7 +452,13 @@ namespace vm68k
     void handle_interrupts();
   };
 
-  template <> inline byte_size::uvalue_type
+  template <class Size> typename Size::svalue_type
+  context::fetch(Size, size_t offset) const
+  {
+    return Size::get(*mem, program_fc(), regs.pc + offset);
+  }
+
+  template <> inline byte_size::svalue_type
   context::fetch(byte_size, size_t offset) const
   {
     return byte_size::get(word_size::get(*mem, program_fc(),

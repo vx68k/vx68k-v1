@@ -885,26 +885,26 @@ namespace
 
   void
   bsr(uint_type op, context &ec, unsigned long data)
-    {
-      int len = 2;
-      int disp = op & 0xff;
-      if (disp == 0)
-	{
-	  len = 4;
-	  disp = extsw(ec.fetch(word_size(), 2));
-	}
-      else
-	disp = extsb(disp);
+  {
+    int len = 2;
+    int disp = op & 0xff;
+    if (disp == 0)
+      {
+	len = 4;
+	disp = extsw(ec.fetch(word_size(), 2));
+      }
+    else
+      disp = extsb(disp);
 #ifdef HAVE_NANA_H
-      VL((" bsr 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp)));
+    VL((" bsr 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp)));
 #endif
 
-      // XXX: The condition codes are not affected.
-      int fc = ec.data_fc();
-      ec.mem->putl(fc, ec.regs.a[7] - 4, ec.regs.pc + len);
-      ec.regs.a[7] -= 4;
-      ec.regs.pc += 2 + disp;
-    }
+    // XXX: The condition codes are not affected.
+    memory::function_code fc = ec.data_fc();
+    ec.mem->put_32(fc, ec.regs.a[7] - 4, ec.regs.pc + len);
+    ec.regs.a[7] -= 4;
+    ec.regs.pc += 2 + disp;
+  }
 
   /* Handles a BTST instruction (register).  */
   template <class Size, class Destination> void
@@ -1454,19 +1454,19 @@ namespace
 
   template <class Destination> void
   jsr(uint_type op, context &ec, unsigned long data)
-    {
-      Destination ea1(op & 0x7, 2);
+  {
+    Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
-      L(" jsr %s\n", ea1.textw(ec));
+    L(" jsr %s\n", ea1.textw(ec));
 #endif
 
-      // XXX: The condition codes are not affected.
-      uint32_type address = ea1.address(ec);
-      int fc = ec.data_fc();
-      ec.mem->putl(fc, ec.regs.a[7] - 4, ec.regs.pc + 2 + ea1.isize(0));
-      ec.regs.a[7] -= 4;
-      ec.regs.pc = address;
-    }
+    // XXX: The condition codes are not affected.
+    uint32_type address = ea1.address(ec);
+    memory::function_code fc = ec.data_fc();
+    ec.mem->put_32(fc, ec.regs.a[7] - 4, ec.regs.pc + 2 + ea1.isize(0));
+    ec.regs.a[7] -= 4;
+    ec.regs.pc = address;
+  }
 
   template <class Destination> void
   lea(uint_type op, context &ec, unsigned long data)
@@ -1487,22 +1487,22 @@ namespace
 
   void
   link_a(uint_type op, context &ec, unsigned long data)
-    {
-      int reg = op & 0x0007;
-      int disp = extsw(ec.fetch(word_size(), 2));
+  {
+    int reg = op & 0x0007;
+    int disp = extsw(ec.fetch(word_size(), 2));
 #ifdef HAVE_NANA_H
-      VL((" link %%a%d,#%d\n", reg, disp));
+    VL((" link %%a%d,#%d\n", reg, disp));
 #endif
 
-      // XXX: The condition codes are not affected.
-      int fc = ec.data_fc();
-      ec.mem->putl(fc, ec.regs.a[7] - 4, ec.regs.a[reg]);
-      ec.regs.a[7] -= 4;
-      ec.regs.a[reg] = ec.regs.a[7];
-      ec.regs.a[7] += disp;
+    // XXX: The condition codes are not affected.
+    memory::function_code fc = ec.data_fc();
+    ec.mem->put_32(fc, ec.regs.a[7] - 4, ec.regs.a[reg]);
+    ec.regs.a[7] -= 4;
+    ec.regs.a[reg] = ec.regs.a[7];
+    ec.regs.a[7] += disp;
 
-      ec.regs.pc += 4;
-    }
+    ec.regs.pc += 4;
+  }
 
   void
   lslb_i(uint_type op, context &ec, unsigned long data)
@@ -1953,7 +1953,7 @@ namespace
 
     // This instruction does not affect the condition codes.
     uint_type m = 1;
-    int fc = c.data_fc();
+    memory::function_code fc = c.data_fc();
     uint32_type address = ea1.address(c);
     for (uint32_type *i = c.regs.d + 0; i != c.regs.d + 8; ++i)
       {
@@ -1994,7 +1994,7 @@ namespace
 
     // This instruction does not affect the condition codes.
     uint_type m = 1;
-    int fc = c.data_fc();
+    memory::function_code fc = c.data_fc();
     sint32_type address
       = long_word_size::svalue(long_word_size::get(c.regs.a[reg1]));
     // This instruction iterates registers in reverse.
@@ -2026,38 +2026,38 @@ namespace
   /* moveml instruction (memory to register) */
   template <class Source> void
   moveml_mr(uint_type op, context &ec, unsigned long data)
-    {
-      Source ea1(op & 0x7, 4);
-      unsigned int bitmap = ec.fetch(word_size(), 2);
+  {
+    Source ea1(op & 0x7, 4);
+    unsigned int bitmap = ec.fetch(word_size(), 2);
 #ifdef HAVE_NANA_H
-      L(" moveml %s", ea1.textl(ec));
-      L(",#0x%04x\n", bitmap);
+    L(" moveml %s", ea1.textl(ec));
+    L(",#0x%04x\n", bitmap);
 #endif
 
-      // XXX: The condition codes are not affected.
-      uint32_type address = ea1.address(ec);
-      int fc = ec.data_fc();
-      for (uint32_type *i = ec.regs.d + 0; i != ec.regs.d + 8; ++i)
-	{
-	  if ((bitmap & 1) != 0)
-	    {
-	      *i = ec.mem->getl(fc, address);
-	      address += 4;
-	    }
-	  bitmap >>= 1;
-	}
-      for (uint32_type *i = ec.regs.a + 0; i != ec.regs.a + 8; ++i)
-	{
-	  if ((bitmap & 1) != 0)
-	    {
-	      *i = ec.mem->getl(fc, address);
-	      address += 4;
-	    }
-	  bitmap >>= 1;
-	}
+    // XXX: The condition codes are not affected.
+    uint32_type address = ea1.address(ec);
+    memory::function_code fc = ec.data_fc();
+    for (uint32_type *i = ec.regs.d + 0; i != ec.regs.d + 8; ++i)
+      {
+	if ((bitmap & 1) != 0)
+	  {
+	    *i = ec.mem->get_32(fc, address);
+	    address += 4;
+	  }
+	bitmap >>= 1;
+      }
+    for (uint32_type *i = ec.regs.a + 0; i != ec.regs.a + 8; ++i)
+      {
+	if ((bitmap & 1) != 0)
+	  {
+	    *i = ec.mem->get_32(fc, address);
+	    address += 4;
+	  }
+	bitmap >>= 1;
+      }
 
-      ec.regs.pc += 4 + ea1.isize(4);
-    }
+    ec.regs.pc += 4 + ea1.isize(4);
+  }
 
   /* Handles a MOVEM instruction (postinc memory to register).  */
   template <class Size> void
@@ -2076,7 +2076,7 @@ namespace
 
     // This instruction does not affect the condition codes.
     uint_type m = 1;
-    int fc = c.data_fc();
+    memory::function_code fc = c.data_fc();
     sint32_type address
       = long_word_size::svalue(long_word_size::get(c.regs.a[reg1]));
     // This instruction sign-extends words to long words.
@@ -2437,20 +2437,20 @@ namespace
 
   template <class Destination> void
   pea(uint_type op, context &ec, unsigned long data)
-    {
-      Destination ea1(op & 0x7, 2);
+  {
+    Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
-      L(" pea %s\n", ea1.textw(ec));
+    L(" pea %s\n", ea1.textw(ec));
 #endif
 
-      // XXX: The condition codes are not affected.
-      uint32_type address = ea1.address(ec);
-      int fc = ec.data_fc();
-      ec.mem->putl(fc, ec.regs.a[7] - 4, address);
-      ec.regs.a[7] -= 4;
+    // XXX: The condition codes are not affected.
+    uint32_type address = ea1.address(ec);
+    memory::function_code fc = ec.data_fc();
+    ec.mem->put_32(fc, ec.regs.a[7] - 4, address);
+    ec.regs.a[7] -= 4;
 
-      ec.regs.pc += 2 + ea1.isize(0);
-    }
+    ec.regs.pc += 2 + ea1.isize(0);
+  }
 
   /* Handles a ROL instruction (register).  */
   template <class Size> void
@@ -2657,8 +2657,8 @@ namespace
     if (!c.supervisor_state())
       throw privilege_violation_exception();
 
-    uint_type status = c.mem->getw(memory::SUPER_DATA, c.regs.a[7] + 0);
-    uint32_type value = c.mem->getl(memory::SUPER_DATA, c.regs.a[7] + 2);
+    uint_type status = c.mem->get_16(memory::SUPER_DATA, c.regs.a[7] + 0);
+    uint32_type value = c.mem->get_32(memory::SUPER_DATA, c.regs.a[7] + 2);
     c.regs.a[7] += 6;
     c.set_sr(status);
     c.regs.pc = value;
@@ -2666,17 +2666,17 @@ namespace
 
   void
   rts(uint_type op, context &ec, unsigned long data)
-    {
+  {
 #ifdef HAVE_NANA_H
-      VL((" rts\n"));
+    VL((" rts\n"));
 #endif
 
-      // XXX: The condition codes are not affected.
-      int fc = ec.data_fc();
-      uint32_type value = ec.mem->getl(fc, ec.regs.a[7]);
-      ec.regs.a[7] += 4;
-      ec.regs.pc = value;
-    }
+    // XXX: The condition codes are not affected.
+    memory::function_code fc = ec.data_fc();
+    uint32_type value = ec.mem->get_32(fc, ec.regs.a[7]);
+    ec.regs.a[7] += 4;
+    ec.regs.pc = value;
+  }
 
   template <class Condition, class Destination> void
   s_b(uint_type op, context &ec, unsigned long data)
@@ -3090,20 +3090,20 @@ namespace
 
   void
   unlk_a(uint_type op, context &ec, unsigned long data)
-    {
-      int reg = op & 0x0007;
+  {
+    int reg = op & 0x0007;
 #ifdef HAVE_NANA_H
-      VL((" unlk %%a%d\n", reg));
+    VL((" unlk %%a%d\n", reg));
 #endif
 
-      // XXX: The condition codes are not affected.
-      int fc = ec.data_fc();
-      uint32_type address = ec.mem->getl(fc, ec.regs.a[reg]);
-      ec.regs.a[7] = ec.regs.a[reg] + 4;
-      ec.regs.a[reg] = address;
+    // XXX: The condition codes are not affected.
+    memory::function_code fc = ec.data_fc();
+    uint32_type address = ec.mem->get_32(fc, ec.regs.a[reg]);
+    ec.regs.a[7] = ec.regs.a[reg] + 4;
+    ec.regs.a[reg] = address;
 
-      ec.regs.pc += 2;
-    }
+    ec.regs.pc += 2;
+  }
 
 #ifdef HAVE_NANA_H
 # undef L_DEFAULT_GUARD

@@ -1,3 +1,52 @@
+2000-08-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/addrspace.cc: Move functions.
+	(fill): New functions.
+	(memory_address_space): Change initialization.
+
+	* libvm68k/defaultmem.cc (get_16, get_8, put_16, put_8): Mask the
+	address value.
+
+	* libvm68k/memory.cc (generate_bus_error): Removed.
+
+	* include/vm68k/addressing.h: Add comment output to text.  Remove
+	C-style casts.  Move some functions out of the class definitions.
+	Make extension_size static.
+
+	* include/vm68k/cpu.h (class byte_size): Make svalue to accept a
+	signed value.  Make return values of get signed.  Move some inline
+	functions out of the class definition.
+	(class word_size): Likewise.
+	(class long_word_size): Likewise.
+	(class context): Change types of pfc_cache and dfc_cache.  Change
+	return types of program_fc and data_fc.
+	(class context): Change return type of member fetch to signed.
+
+	* include/vm68k/memory.h (class basic_uint16_iterator): Change
+	parameter T for pointer type.  Also change all users.
+	(class basic_uint32_iterator): Change parameter T for pointer
+	type.  Also change all users.
+	[basic_uint16_iterator::ref, basic_uint32_iterator::ref]
+	(operator=): Remove bit masking.
+	[basic_uint16_iterator::ref] (operator uint_type): Add bit
+	masking.
+	[basic_uint32_iterator::ref] (operator uint32_type): Likewise.
+	(class memory): Remove member generate_bus_error.
+	(class memory): Change types for function codes.  Also change all
+	derived classes and all function definitions.
+	(class memory_address_space): Remove member canonical_address.
+	Change page_table to a vector.  Remove unused struct iterator.
+	Move some inline functions out of the class definition.
+	(class memory_address_space): Change return type of find_memory.
+	Also change all users.
+	(class memory_address_space): Add new member fill replacing
+	set_pages.  Also change all users.
+	(class memory_address_space): Rename member getw_aligned and
+	putw_aligned to get_16_unchecked and put_16_unchecked.  Rename
+	getb, getw, getl, gets, putb, putw, putl, and puts to get_8,
+	get_16, get_32, get_string, put_8, put_16, put_32, and put_string.
+	Also change all users.
+
 2000-08-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvm68k/memory.cc (getw, getl, putw, putl): Removed.

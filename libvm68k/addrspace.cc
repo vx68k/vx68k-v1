@@ -41,58 +41,48 @@ using namespace std;
 namespace
 {
   default_memory null_memory;
-} // namespace (unnamed)
-
-/* Read a block of data from memory.  */
-void
-memory_address_space::read(int fc, uint32_type address,
-			   void *data, size_t size) const
-{
-  unsigned char *i = static_cast<unsigned char *>(data);
-  unsigned char *last = i + size;
-
-  while (i != last)
-    *i++ = getb(fc, address++);
 }
 
 uint_type
-memory_address_space::getw(int fc, uint32_type address) const
+memory_address_space::get_16(memory::function_code fc, uint32_type address)
+  const
 {
   if (address & 0x1)
     throw address_error_exception(true, fc, address);
 
-  return getw_aligned(fc, address);
+  return this->get_16_unchecked(fc, address);
 }
 
 uint32_type
-memory_address_space::getl(int fc, uint32_type address) const
+memory_address_space::get_32(memory::function_code fc, uint32_type address)
+  const
 {
   if (address % 2 != 0)
     throw address_error_exception(true, fc, address);
 
   if (address / 2 % 2 != 0)
     {
-      uint32_type value = (uint32_type(getw_aligned(fc, address)) << 16
-			   | getw_aligned(fc, address + 2));
+      uint32_type value
+	= (uint32_type(this->get_16_unchecked(fc, address)) << 16
+	   | uint32_type(this->get_16_unchecked(fc, address + 2)));
       return value;
     }
   else
     {
-      address = canonical_address(address);
-      const memory *p = find_page(address);
+      const memory *p = *this->find_memory(address);
       uint32_type value = p->get_32(fc, address);
       return value;
     }
 }
 
 string
-memory_address_space::gets(int fc, uint32_type address) const
+memory_address_space::get_string(memory::function_code fc, uint32_type address)
+  const
 {
-  address = canonical_address(address);
   string s;
   for (;;)
     {
-      uint_type c = getb(fc, address++);
+      uint_type c = this->get_8(fc, address++);
       if (c == 0)
 	break;
       s += c;
@@ -101,66 +91,81 @@ memory_address_space::gets(int fc, uint32_type address) const
   return s;
 }
 
-/* Write a block of data to memory.  */
+/* Read a block of data from memory.  */
 void
-memory_address_space::write(int fc, uint32_type address,
-			    const void *data, size_t size)
+memory_address_space::read(memory::function_code fc, uint32_type address,
+			   void *data, size_t size) const
 {
   unsigned char *i = static_cast<unsigned char *>(data);
   unsigned char *last = i + size;
 
   while (i != last)
-    putb(fc, address++, *i++);
+    *i++ = this->get_8(fc, address++);
 }
 
 void
-memory_address_space::putw(int fc, uint32_type address, uint_type value)
+memory_address_space::put_16(memory::function_code fc, uint32_type address,
+			     uint_type value)
 {
   if (address & 0x1)
     throw address_error_exception(false, fc, address);
 
-  putw_aligned(fc, address, value);
+  this->put_16_unchecked(fc, address, value);
 }
 
 void
-memory_address_space::putl(int fc, uint32_type address, uint32_type value)
+memory_address_space::put_32(memory::function_code fc, uint32_type address,
+			     uint32_type value)
 {
   if (address % 2 != 0)
     throw address_error_exception(false, fc, address);
 
   if (address / 2 % 2 != 0)
     {
-      putw_aligned(fc, address, value >> 16);
-      putw_aligned(fc, address + 2, value);
+      this->put_16_unchecked(fc, address, value >> 16);
+      this->put_16_unchecked(fc, address + 2, value);
     }
   else
     {
-      address = canonical_address(address);
-      memory *p = find_page(address);
+      memory *p = *this->find_memory(address);
       p->put_32(fc, address, value);
     }
 }
 
 void
-memory_address_space::puts(int fc, uint32_type address, const string &s)
+memory_address_space::put_string(memory::function_code fc, uint32_type address,
+				 const string &s)
 {
   for (string::const_iterator i = s.begin();
        i != s.end();
        ++i)
-    putb(fc, address++, *i);
+    this->put_8(fc, address++, *i);
 
-  putb(fc, address++, 0);
+  this->put_8(fc, address++, 0);
 }
 
+/* Write a block of data to memory.  */
 void
-memory_address_space::set_pages(size_t first, size_t last, memory *p)
+memory_address_space::write(memory::function_code fc, uint32_type address,
+			    const void *data, size_t size)
 {
-  I(first <= last);
-  I(last <= NPAGES);
-  fill(page_table + first, page_table + last, p);
-}
+  unsigned char *i = static_cast<unsigned char *>(data);
+  unsigned char *last = i + size;
 
-memory_address_space::memory_address_space()
+  while (i != last)
+    this->put_8(fc, address++, *i++);
+}
+
+void
+memory_address_space::fill(uint32_type first, uint32_type last, memory *p)
 {
-  fill(page_table + 0, page_table + NPAGES, &null_memory);
+  vector<memory *>::iterator i = this->find_memory(last + PAGE_SIZE - 1);
+  if (i == page_table.begin())
+    i = page_table.end();
+  ::fill(this->find_memory(first), i, p);
+}
+
+memory_address_space::memory_address_space()
+  : page_table(NPAGES, &null_memory)
+{
 }

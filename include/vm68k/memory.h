@@ -22,6 +22,7 @@
 #include <vm68k/except.h>
 #include <vm68k/types.h>
 
+#include <vector>
 #include <iterator>
 #include <string>
 
@@ -36,7 +37,8 @@ namespace vm68k
   const unsigned int ADDRESS_BIT = 24;
   const uint32_type NPAGES = uint32_type(1) << ADDRESS_BIT - PAGE_SHIFT;
 
-  /* Helper iterator for 16-bit value.  */
+  /* Helper iterator for 16-bit values.  This iterator accesses two
+     bytes once to handle a 16-bit value.  */
   template <class T>
   class basic_uint16_iterator: random_access_iterator<uint_type, ptrdiff_t>
   {
@@ -44,10 +46,10 @@ namespace vm68k
     class ref
     {
     private:
-      T *bp;
+      T bp;
 
     public:
-      ref(T *ptr): bp(ptr) {}
+      ref(T ptr): bp(ptr) {}
 
     public:
       ref &operator=(uint_type);
@@ -55,12 +57,12 @@ namespace vm68k
     };
 
   private:
-    T *bp;
+    T bp;
 
   public:
-    basic_uint16_iterator(T *ptr): bp(ptr) {}
-    template <class U> explicit basic_uint16_iterator(U *ptr)
-      : bp(static_cast<T *>(ptr)) {}
+    basic_uint16_iterator(T ptr): bp(ptr) {}
+    template <class U> explicit basic_uint16_iterator(U ptr)
+      : bp(static_cast<T>(ptr)) {}
 
   public:
     uint_type operator*() const {return ref(bp);}
@@ -84,21 +86,21 @@ namespace vm68k
     ref operator[](ptrdiff_t n) {return *(*this + n);}
 
   public:
-    operator T *() const {return bp;}
+    operator T() const {return bp;}
   };
 
   template <class T> inline basic_uint16_iterator<T>::ref &
   basic_uint16_iterator<T>::ref::operator=(uint_type value)
   {
-    bp[0] = value >> 8 & 0xff;
-    bp[1] = value & 0xff;
+    bp[0] = value >> 8;
+    bp[1] = value;
     return *this;
   }
 
   template <class T> inline
   basic_uint16_iterator<T>::ref::operator uint_type() const
   {
-    return uint_type(bp[0]) << 8 | uint_type(bp[1]);
+    return uint_type(bp[0] & 0xff) << 8 | uint_type(bp[1] & 0xff);
   }
 
   template <class T> inline basic_uint16_iterator<T> &
@@ -145,10 +147,11 @@ namespace vm68k
     return *this;
   }
 
-  typedef basic_uint16_iterator<unsigned char> uint16_iterator;
-  typedef basic_uint16_iterator<const unsigned char> const_uint16_iterator;
+  typedef basic_uint16_iterator<unsigned char *> uint16_iterator;
+  typedef basic_uint16_iterator<const unsigned char *> const_uint16_iterator;
 
-  /* Helper iterator for 32-bit value.  */
+  /* Helper iterator for 32-bit value.  This iterator accesses four
+     bytes once to handle a 32-bit value.  */
   template <class T>
   class basic_uint32_iterator: random_access_iterator<uint32_type, ptrdiff_t>
   {
@@ -156,10 +159,10 @@ namespace vm68k
     class ref
     {
     private:
-      T *bp;
+      T bp;
 
     public:
-      ref(T *ptr): bp(ptr) {}
+      ref(T ptr): bp(ptr) {}
 
     public:
       ref &operator=(uint32_type);
@@ -167,12 +170,12 @@ namespace vm68k
     };
 
   private:
-    T *bp;
+    T bp;
 
   public:
-    basic_uint32_iterator(T *ptr): bp(ptr) {}
-    template <class U> explicit basic_uint32_iterator(U *ptr)
-      : bp(static_cast<T *>(ptr)) {}
+    basic_uint32_iterator(T ptr): bp(ptr) {}
+    template <class U> explicit basic_uint32_iterator(U ptr)
+      : bp(static_cast<T >(ptr)) {}
 
   public:
     uint32_type operator*() const {return ref(bp);}
@@ -196,24 +199,24 @@ namespace vm68k
     ref operator[](ptrdiff_t n) {return *(*this + n);}
 
   public:
-    operator T *() const {return bp;}
+    operator T() const {return bp;}
   };
 
   template <class T> inline basic_uint32_iterator<T>::ref &
   basic_uint32_iterator<T>::ref::operator=(uint32_type value)
   {
-    bp[0] = value >> 24 & 0xff;
-    bp[1] = value >> 16 & 0xff;
-    bp[2] = value >>  8 & 0xff;
-    bp[3] = value       & 0xff;
+    bp[0] = value >> 24;
+    bp[1] = value >> 16;
+    bp[2] = value >>  8;
+    bp[3] = value;
     return *this;
   }
 
   template <class T> inline
   basic_uint32_iterator<T>::ref::operator uint32_type() const
   {
-    return (uint32_type(bp[0]) << 24 | uint32_type(bp[1]) << 16
-	    | uint32_type(bp[2]) << 8 | uint32_type(bp[3]));
+    return (uint32_type(bp[0] & 0xff) << 24 | uint32_type(bp[1] & 0xff) << 16
+	    | uint32_type(bp[2] & 0xff) << 8 | uint32_type(bp[3] & 0xff));
   }
 
   template <class T> inline basic_uint32_iterator<T> &
@@ -260,8 +263,8 @@ namespace vm68k
     return *this;
   }
 
-  typedef basic_uint32_iterator<unsigned char> uint32_iterator;
-  typedef basic_uint32_iterator<const unsigned char> const_uint32_iterator;
+  typedef basic_uint32_iterator<unsigned char *> uint32_iterator;
+  typedef basic_uint32_iterator<const unsigned char *> const_uint32_iterator;
 
   inline uint_type
   getw(const void *p)
@@ -303,118 +306,133 @@ namespace vm68k
   public:
     virtual ~memory() {}
 
-  protected:
-    void generate_bus_error(bool, int, uint32_type) const;
-
   public:
-    virtual uint_type get_16(int, uint32_type) const = 0;
-    virtual uint_type get_8(int, uint32_type) const = 0;
-    virtual uint32_type get_32(int, uint32_type) const;
+    virtual uint_type get_16(function_code, uint32_type) const = 0;
+    virtual uint_type get_8(function_code, uint32_type) const = 0;
+    virtual uint32_type get_32(function_code, uint32_type) const;
 
-    virtual void put_16(int, uint32_type, uint_type) = 0;
-    virtual void put_8(int, uint32_type, uint_type) = 0;
-    virtual void put_32(int, uint32_type, uint32_type);
+    virtual void put_16(function_code, uint32_type, uint_type) = 0;
+    virtual void put_8(function_code, uint32_type, uint_type) = 0;
+    virtual void put_32(function_code, uint32_type, uint32_type);
   };
 
   /* Default memory that always raises a bus error.  */
   class default_memory: public memory
   {
   public:
-    uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    uint_type get_16(function_code, uint32_type) const;
+    uint_type get_8(function_code, uint32_type) const;
 
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_16(function_code, uint32_type, uint_type);
+    void put_8(function_code, uint32_type, uint_type);
   };
 
   /* Address space for memories.  An address space is a software view
      of a target machine.  */
   class memory_address_space
   {
-  protected:
-    /* Returns the canonical address for ADDRESS.  */
-    static uint32_type canonical_address(uint32_type address)
-      {return address & (uint32_type(1) << ADDRESS_BIT) - 1;}
-
   private:
-    memory *page_table[NPAGES];
+    vector<memory *> page_table;
 
   public:
-#if 0
-    struct iterator: bidirectional_iterator <uint16, int32>
-    {
-    };
-#endif
-    virtual ~memory_address_space() {}
     memory_address_space();
+    virtual ~memory_address_space() {}
 
   protected:
-    /* Finds a page that contains canonical address ADDRESS.  */
-    memory *find_page(uint32_type address) const
-      {return page_table[address >> PAGE_SHIFT];}
+    /* Finds a page that contains address ADDRESS.  */
+    vector<memory *>::const_iterator find_memory(uint32_type address) const;
+    vector<memory *>::iterator find_memory(uint32_type address);
 
   public:
-    void set_pages(size_t begin, size_t end, memory *);
+    /* Fills an address range with memory.  */
+    void fill(uint32_type, uint32_type, memory *);
 
-    void read(int, uint32_type, void *, size_t) const;
-
-    /* Returns one byte at address ADDRESS in this address space.  */
-    uint_type getb(int fc, uint32_type address) const
-    {
-      address = canonical_address(address);
-      const memory *p = find_page(address);
-      return p->get_8(fc, address);
-    }
-
+  public:
     /* Returns one word at address ADDRESS in this address space.
        The address must be word-aligned.  */
-    uint_type getw_aligned(int fc, uint32_type address) const
-    {
-      address = canonical_address(address);
-      const memory *p = find_page(address);
-      return p->get_16(fc, address);
-    }
+    uint_type get_16_unchecked(memory::function_code, uint32_type address)
+      const;
 
     /* Returns one word at address ADDRESS in this address space.  Any
        unaligned address will be handled.  */
-    uint_type getw(int fc, uint32_type address) const;
+    uint_type get_16(memory::function_code, uint32_type address) const;
+
+    /* Returns one byte at address ADDRESS in this address space.  */
+    unsigned int get_8(memory::function_code, uint32_type address) const;
 
     /* Returns one long word at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
-    uint32_type getl(int fc, uint32_type address) const;
+    uint32_type get_32(memory::function_code, uint32_type address) const;
 
-    string gets(int, uint32_type) const;
+    string get_string(memory::function_code, uint32_type address) const;
 
-  public:
-    void write(int, uint32_type, const void *, size_t);
-
-    /* Stores byte VALUE at address ADDRESS in this address space.  */
-    void putb(int fc, uint32_type address, uint_type value)
-    {
-      address = canonical_address(address);
-      memory *p = find_page(address);
-      p->put_8(fc, address, value);
-    }
+    void read(memory::function_code, uint32_type, void *, size_t) const;
 
     /* Stores word VALUE at address ADDRESS in this address space.
        The address must be word-aligned.  */
-    void putw_aligned(int fc, uint32_type address, uint_type value)
-    {
-      address = canonical_address(address);
-      memory *p = find_page(address);
-      p->put_16(fc, address, value);
-    }
+    void put_16_unchecked(memory::function_code, uint32_type address,
+			  uint_type value);
 
     /* Stores word VALUE at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
-    void putw(int fc, uint32_type address, uint_type value);
+    void put_16(memory::function_code, uint32_type address, uint_type value);
+
+    /* Stores byte VALUE at address ADDRESS in this address space.  */
+    void put_8(memory::function_code, uint32_type address, unsigned int value);
 
     /* Stores long word VALUE at address ADDRESS in this address
        space.  Any unaligned address will be handled.  */
-    void putl(int fc, uint32_type address, uint32_type value);
+    void put_32(memory::function_code, uint32_type address, uint32_type value);
 
-    void puts(int, uint32_type, const string &);
+    void put_string(memory::function_code, uint32_type address,
+		    const string &);
+
+    void write(memory::function_code, uint32_type, const void *, size_t);
   };
+
+  inline vector<memory *>::const_iterator
+  memory_address_space::find_memory(uint32_type address) const
+  {
+    return page_table.begin() + (address >> PAGE_SHIFT) % NPAGES;
+  }
+
+  inline vector<memory *>::iterator
+  memory_address_space::find_memory(uint32_type address)
+  {
+    return page_table.begin() + (address >> PAGE_SHIFT) % NPAGES;
+  }
+
+  inline uint_type
+  memory_address_space::get_16_unchecked(memory::function_code fc,
+					 uint32_type address) const
+  {
+    const memory *p = *this->find_memory(address);
+    return p->get_16(fc, address);
+  }
+
+  inline unsigned int
+  memory_address_space::get_8(memory::function_code fc, uint32_type address)
+    const
+  {
+    const memory *p = *this->find_memory(address);
+    return p->get_8(fc, address);
+  }
+
+  inline void
+  memory_address_space::put_16_unchecked(memory::function_code fc,
+					 uint32_type address, uint_type value)
+  {
+    memory *p = *this->find_memory(address);
+    p->put_16(fc, address, value);
+  }
+
+  inline void
+  memory_address_space::put_8(memory::function_code fc,
+			      uint32_type address, unsigned int value)
+  {
+    memory *p = *this->find_memory(address);
+    p->put_8(fc, address, value);
+  }
 } // vm68k
 
 #endif /* not _VM68K_MEMORY_H */
