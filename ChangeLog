@@ -1,5 +1,11 @@
 1999-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (addq_off_d, addil_d, movew_off_d,
+	movel_off_d, movel_d_predec, movel_d_absl, movel_a_absl): New
+	functions.
+	(movew_absl_d): Fix to modify only the low word of register.
+	(install_instructions): Set new instructions.
+
 	* include/vx68k/human.h (dos): Add member mem, remove main_ec.
 	* lib/vx68k/dos.cc (execute): Use local dos_exec_context.
 	(dos): Modify member initialization.

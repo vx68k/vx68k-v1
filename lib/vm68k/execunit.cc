@@ -68,6 +68,43 @@ exec_unit::illegal(int op, execution_context *)
 
 namespace
 {
+  void addw_off_d(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+      int s_off = extsw(ec->fetchw(2));
+      uint32 s_addr = ec->regs.a[s_reg] + s_off;
+      VL((" addw %%a%d@(%d),%%d%d |0x%lx,*\n",
+	  s_reg, s_off, d_reg, (unsigned long) s_addr));
+
+      int fc = ec->data_fc();
+      int value1 = extsw(ec->regs.d[d_reg]);
+      int value2 = extsw(ec->mem->getw(fc, s_addr));
+      int value = extsw(value1 + value2);
+      const uint32 MASK = ((uint32) 1u << 16) - 1;
+      ec->regs.d[d_reg] = ec->regs.d[d_reg] & ~MASK | (uint32) value & MASK;
+      ec->regs.sr.set_cc(value); // FIXME.
+
+      ec->regs.pc += 2 + 2;
+    }
+
+  void addil_d(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int d_reg = op & 0x7;
+      int32 value2 = extsl(ec->fetchl(2));
+      VL((" addil #%ld,%%d%d\n", (long) value2, d_reg));
+
+      int fc = ec->data_fc();
+      int32 value1 = extsl(ec->regs.d[d_reg]);
+      int32 value = extsw(value1 + value2);
+      ec->regs.d[d_reg] = value;
+      ec->regs.sr.set_cc(value); // FIXME.
+
+      ec->regs.pc += 2 + 4;
+    }
+
   void addqw_a(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -254,16 +291,36 @@ namespace
       ec->regs.pc += 2;
     }
 
+  void movew_off_d(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+      int s_off = extsw(ec->fetchw(2));
+      uint32 s_addr = ec->regs.a[s_reg] + s_off;
+      VL((" movew %%a%d@(%d),%%d%d |0x%lx,*\n",
+	  s_reg, s_off, d_reg, (unsigned long) s_addr));
+
+      int fc = ec->data_fc();
+      int value = extsw(ec->mem->getw(fc, s_addr));
+      const uint32 MASK = ((uint32) 1u << 16) - 1;
+      ec->regs.d[d_reg] = ec->regs.d[d_reg] & ~MASK | (uint32) value & MASK;
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2 + 2;
+    }
+
   void movew_absl_d(int op, execution_context *ec)
     {
       I(ec != NULL);
-      int reg = op >> 9 & 0x7;
+      int d_reg = op >> 9 & 0x7;
       uint32 address = ec->fetchl(2);
-      VL((" movew 0x%x,%%d%d\n", address, reg));
+      VL((" movew 0x%lx,%%d%d\n", (unsigned long) address, d_reg));
 
       int fc = ec->data_fc();
       int value = extsw(ec->mem->getw(fc, address));
-      ec->regs.d[reg] = value;
+      const uint32 MASK = ((uint32) 1u << 16) - 1;
+      ec->regs.d[d_reg] = ec->regs.d[d_reg] & ~MASK | (uint32) value & MASK;
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2 + 4;
@@ -287,21 +344,6 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void movew_d_absl(int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int reg = op & 0x7;
-      uint32 address = ec->fetchl(2);
-      VL((" movew %%d%d,0x%x\n", reg, address));
-
-      int fc = ec->data_fc();
-      int value = extsw(ec->regs.d[reg]);
-      ec->mem->putw(fc, address, value);
-      ec->regs.sr.set_cc(value);
-
-      ec->regs.pc += 2 + 4;
-    }
-
   void movew_absl_predec(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -318,6 +360,57 @@ namespace
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2 + 4;
+    }
+
+  void movew_d_absl(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int reg = op & 0x7;
+      uint32 address = ec->fetchl(2);
+      VL((" movew %%d%d,0x%x\n", reg, address));
+
+      int fc = ec->data_fc();
+      int value = extsw(ec->regs.d[reg]);
+      ec->mem->putw(fc, address, value);
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2 + 4;
+    }
+
+  void movel_off_d(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+      int s_off = extsw(ec->fetchw(2));
+      uint32 s_addr = ec->regs.a[s_reg] + s_off;
+      VL((" movel %%a%d@(%d),%%d%d |0x%lx,*\n",
+	  s_reg, s_off, d_reg, (unsigned long) s_addr));
+
+      int fc = ec->data_fc();
+      int32 value = extsl(ec->mem->getl(fc, s_addr));
+      ec->regs.d[d_reg] = value;
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2 + 2;
+    }
+
+  void movel_d_predec(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+      uint32 d_addr = ec->regs.a[d_reg] - 4;
+      VL((" movel %%d%d,%%a%d@- |*,0x%lx\n",
+	  s_reg, d_reg, (unsigned long) d_addr));
+
+      int fc = ec->data_fc();
+      int32 value = extsl(ec->regs.d[s_reg]);
+      ec->mem->putl(fc, d_addr, value);
+      ec->regs.a[d_reg] = d_addr;
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2;
     }
 
   void movel_a_predec(int op, execution_context *ec)
@@ -367,6 +460,36 @@ namespace
       int fc = ec->data_fc();
       ec->mem->putl(fc, d_addr, value);
       ec->regs.a[d_reg] = d_addr;
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2 + 4;
+    }
+
+  void movel_d_absl(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int s_reg = op & 0x7;
+      uint32 d_addr = ec->fetchl(2);
+      VL((" movel %%d%d,0x%x\n", s_reg, d_addr));
+
+      int fc = ec->data_fc();
+      int32 value = extsl(ec->regs.d[s_reg]);
+      ec->mem->putw(fc, d_addr, value);
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2 + 4;
+    }
+
+  void movel_a_absl(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int s_reg = op & 0x7;
+      uint32 d_addr = ec->fetchl(2);
+      VL((" movel %%a%d,0x%x\n", s_reg, d_addr));
+
+      int fc = ec->data_fc();
+      int32 value = extsl(ec->regs.a[s_reg]);
+      ec->mem->putw(fc, d_addr, value);
       ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2 + 4;
@@ -524,10 +647,16 @@ exec_unit::install_instructions(exec_unit *eu)
 {
   I(eu != NULL);
 
+  eu->set_instruction(0x0680, 0x0007, &addil_d);
   eu->set_instruction(0x10d8, 0x0e07, &moveb_postinc_postinc);
+  eu->set_instruction(0x2028, 0x0e07, &movel_off_d);
   eu->set_instruction(0x2058, 0x0e07, &movel_postinc_a);
+  eu->set_instruction(0x2100, 0x0e07, &movel_d_predec);
   eu->set_instruction(0x2108, 0x0e07, &movel_a_predec);
   eu->set_instruction(0x213c, 0x0e00, &movel_i_predec);
+  eu->set_instruction(0x23c0, 0x0007, &movel_d_absl);
+  eu->set_instruction(0x23c8, 0x0007, &movel_a_absl);
+  eu->set_instruction(0x3028, 0x0e07, &movew_off_d);
   eu->set_instruction(0x3039, 0x0e00, &movew_absl_d);
   eu->set_instruction(0x3100, 0x0e07, &movew_d_predec);
   eu->set_instruction(0x3139, 0x0e00, &movew_absl_predec);
@@ -550,5 +679,6 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x6700, 0x00ff, &beq);
   eu->set_instruction(0x6c00, 0x00ff, &bge);
   eu->set_instruction(0x7000, 0x0eff, &moveql_d);
+  eu->set_instruction(0xd068, 0x0e07, &addw_off_d);
 }
 
