@@ -1,78 +1,83 @@
 List of user-visible changes in Virtual X68000.
 
-Version 1.1.5
+* Version 1.1.6
 
-* Libvm68k was separated into a new package.
+** The shared library is now disabled by default.  This was done to
+avoid incompatible shared library updates with Libvm68k.
 
-* Unused code was removed.
+* Version 1.1.5
 
-* Library interface was modified.
+** Libvm68k was separated into a new package.
 
-Version 1.1.4
+** Unused code was removed.
 
-* Bug fixes.
+** Library interface was modified.
 
-* New components: FDC and ACPDM codec.
+* Version 1.1.4
 
-* Minor internal clean-ups.
+** Bug fixes.
 
-* Documentation updates.
-
-Version 1.1.3
+** New components: FDC and ACPDM codec.
 
-* New instruction handlers have been added.
+** Minor internal clean-ups.
 
-* New IOCS call handlers have been added.
+** Documentation updates.
 
-* Mouse now works.
+* Version 1.1.3
 
-* VDISP counter has been implemented.
+** New instruction handlers have been added.
 
-* Many bugs have been fixed.
-
-Version 1.1.2
+** New IOCS call handlers have been added.
 
-* New instruction handlers.
+** Mouse now works.
 
-* New memory components.
+** VDISP counter has been implemented.
 
-* New IOCS call handlers.
+** Many bugs have been fixed.
 
-* Preliminary interrupt support.  Currently, VDISP and OPM interrupts
+* Version 1.1.2
+
+** New instruction handlers.
+
+** New memory components.
+
+** New IOCS call handlers.
+
+** Preliminary interrupt support.  Currently, VDISP and OPM interrupts
 are implemented.
 
-* Text palette support.
+** Text palette support.
 
-* Improved key input handling.
+** Improved key input handling.
 
-* Reimplemented GUI.
+** Reimplemented GUI.
 
-* NLS by GNU gettext.
-
-Version 1.1.1
+** NLS by GNU gettext.
 
-* First release.
+* Version 1.1.1
 
-* Limitations.
+** First release.
 
-** Processor.
+** Limitations.
 
-*** Some minor instructions are not implemented.
+*** Processor.
 
-*** Conditions VC and VS are not implemented.
+**** Some minor instructions are not implemented.
 
-*** Some instructions do not change condition codes correctly.
+**** Conditions VC and VS are not implemented.
 
-** X68000 virtual machine.
+**** Some instructions do not change condition codes correctly.
 
-*** Many components including graphic VRAM are not implemented.
+*** X68000 virtual machine.
 
-*** Text VRAM only works in monochrome.
+**** Many components including graphic VRAM are not implemented.
 
-*** Many IOCS calls are either not implemented or just stubs.
+**** Text VRAM only works in monochrome.
 
-** Virtual DOS.
+**** Many IOCS calls are either not implemented or just stubs.
 
-*** Many DOS calls are either not implemented or just stubs.
+*** Virtual DOS.
 
-*** Loader only loads HU (*.x) executables.
+**** Many DOS calls are either not implemented or just stubs.
+
+**** Loader only loads HU (*.x) executables.
