@@ -1,11 +1,20 @@
 #include "cpu.h"
 
 #include <algorithm>
+#include <cassert>
 
 /* Set PC.  */
 void
 cpu::set_pc (uint32 addr)
 {
+  if (addr & 1 != 0)
+    {
+      if (interrupt != NULL)
+	interrupt->address_error (&regs, mem);
+      /* Fail to trap address error.  */
+      abort ();
+    }
+
   regs.pc = addr;
 }
 
@@ -21,8 +30,18 @@ cpu::run ()
   for (;;)
     {
       int w = mem->read16 (regs.pc);
+      assert (w >= 0 && w < 0x10000);
       insn[w] (w, &regs, mem);
     }
+}
+
+void
+cpu::set_handlers (int begin, int end, insn_handler h)
+{
+  assert (begin >= 0);
+  assert (begin <= end);
+  assert (end <= 0x10000);
+  fill (insn + begin, insn + end, h);
 }
 
 void
