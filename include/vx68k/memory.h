@@ -27,22 +27,22 @@ namespace vx68k
 using namespace vm68k::types;
 using vm68k::bus_error;
 
-class main_memory_page
-  : public vm68k::memory_page
-{
-public:
-  explicit main_memory_page (size_t);
-  ~main_memory_page ();
-  void read (int, uint32, void *, size_t) const throw (bus_error);
-  void write (int, uint32, const void *, size_t) throw (bus_error);
-  uint8 getb (int, uint32) const throw (bus_error);
-  uint16 getw (int, uint32) const throw (bus_error);
-  void putb (int, uint32, uint8) throw (bus_error);
-  void putw (int, uint32, uint16) throw (bus_error);
-private:
-  size_t end;
-  uint16 *array;
-};
+  class main_memory_page
+    : public vm68k::memory_page
+  {
+  public:
+    explicit main_memory_page (size_t);
+    ~main_memory_page ();
+    size_t read(int, uint32, void *, size_t) const;
+    size_t write(int, uint32, const void *, size_t);
+    uint8 getb (int, uint32) const throw (bus_error);
+    uint16 getw (int, uint32) const throw (bus_error);
+    void putb (int, uint32, uint8) throw (bus_error);
+    void putw (int, uint32, uint16) throw (bus_error);
+  private:
+    size_t end;
+    uint16 *array;
+  };
 
 class x68k_address_space
   : public vm68k::address_space

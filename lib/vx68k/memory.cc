@@ -33,16 +33,14 @@ namespace vx68k
 };
 #endif
 
-void
+size_t
 main_memory_page::read (int fc, uint32 address, void *, size_t) const
-  throw (bus_error)
 {
   abort ();			// FIXME
 }
 
-void
+size_t
 main_memory_page::write (int fc, uint32 address, const void *, size_t)
-  throw (bus_error)
 {
   abort ();			// FIXME
 }

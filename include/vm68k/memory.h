@@ -46,31 +46,31 @@ uint32 getl (const void *);
 void putw (void *, uint16);
 void putl (void *, uint32);
 
-struct memory_page
-{
-  virtual ~memory_page () {}
-  virtual void read (int, uint32, void *, size_t) const throw (bus_error) = 0;
-  virtual void write (int, uint32, const void *, size_t) throw (bus_error) = 0;
-  virtual uint8 getb (int, uint32) const throw (bus_error) = 0;
-  virtual uint16 getw (int, uint32) const throw (bus_error) = 0;
-  virtual uint32 getl (int, uint32) const throw (bus_error);
-  virtual void putb (int, uint32, uint8) throw (bus_error) = 0;
-  virtual void putw (int, uint32, uint16) throw (bus_error) = 0;
-  virtual void putl (int, uint32, uint32) throw (bus_error);
-};
+  struct memory_page
+  {
+    virtual ~memory_page () {}
+    virtual size_t read(int, uint32, void *, size_t) const = 0;
+    virtual size_t write(int, uint32, const void *, size_t) = 0;
+    virtual uint8 getb (int, uint32) const throw (bus_error) = 0;
+    virtual uint16 getw (int, uint32) const throw (bus_error) = 0;
+    virtual uint32 getl (int, uint32) const throw (bus_error);
+    virtual void putb (int, uint32, uint8) throw (bus_error) = 0;
+    virtual void putw (int, uint32, uint16) throw (bus_error) = 0;
+    virtual void putl (int, uint32, uint32) throw (bus_error);
+  };
 
-/* Memory page that always raises a bus error.  */
-class bus_error_page
-  : public memory_page
-{
-public:
-  virtual void read (int, uint32, void *, size_t) const throw (bus_error);
-  virtual void write (int, uint32, const void *, size_t) throw (bus_error);
-  virtual uint8 getb (int, uint32) const throw (bus_error);
-  virtual uint16 getw (int, uint32) const throw (bus_error);
-  virtual void putb (int, uint32, uint8) throw (bus_error);
-  virtual void putw (int, uint32, uint16) throw (bus_error);
-};
+  /* Memory page that always raises a bus error.  */
+  class bus_error_page
+    : public memory_page
+  {
+  public:
+    virtual size_t read(int, uint32, void *, size_t) const;
+    virtual size_t write(int, uint32, const void *, size_t);
+    virtual uint8 getb (int, uint32) const throw (bus_error);
+    virtual uint16 getw (int, uint32) const throw (bus_error);
+    virtual void putb (int, uint32, uint8) throw (bus_error);
+    virtual void putw (int, uint32, uint16) throw (bus_error);
+  };
 
   class address_space
   {

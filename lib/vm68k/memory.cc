@@ -86,16 +86,14 @@ memory_page::putl (int fc, uint32 address, uint32 value)
   putw (fc, address + 2, value);
 }
 
-void
+size_t
 bus_error_page::read (int fc, uint32 address, void *, size_t) const
-  throw (bus_error)
 {
   throw bus_error (fc + bus_error::READ, address);
 }
 
-void
+size_t
 bus_error_page::write (int fc, uint32 address, const void *, size_t)
-  throw (bus_error)
 {
   throw bus_error (fc + bus_error::WRITE, address);
 }

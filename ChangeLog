@@ -1,6 +1,10 @@
 1999-03-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* main.cc (main): Prefix human:: as required.
+	* include/vm68k/memory.h (struct memory_page): Modify read and
+	write to return size_t, and remove throw-specs for them.  Update
+	all derived classes.
+
+	* main.cc (main): Add human:: as required.
 
 	* include/vx68k/human.h (class dos): Add member functions: open
 	and close, from.
