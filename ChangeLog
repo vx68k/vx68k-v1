@@ -1,5 +1,10 @@
 1999-10-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vx68k/textvram.cc (scroll): Call update_area.
+
+	* vx68kgtk/gtkconsole.cc (handle_timeout): Use update_area to
+	optimize updates.
+
 	* bin/Makefile.am (vx68k_LDADD): Change libvx68kgtk's location.
 
 	* vx68k/Makefile.am (noinst_LIBRARIES): Remove libvx68kgtk.a.

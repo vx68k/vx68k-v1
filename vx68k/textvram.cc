@@ -48,6 +48,8 @@ text_vram::scroll()
     {
       *i++ = 0;
     }
+
+  connected_console->update_area(0, 0, ROW_SIZE * 8, 31 * 16);
 }
 
 void

@@ -261,17 +261,37 @@ gtk_console::get_k16_image(unsigned int c,
 bool
 gtk_console::handle_timeout()
 {
-  _m->get_image(0, 0, width, height, rgb_buf, row_size);
-
   gdk_threads_enter();
-  for (vector<GtkWidget *>::const_iterator i = widgets.begin();
-       i != widgets.end();
-       ++i)
+  if (gdk_region_empty(update_region))
+    gdk_threads_leave();
+  else
     {
-      I(*i != NULL);
-      gtk_widget_queue_draw(*i);
+      GdkRectangle bounds;
+
+      gdk_region_get_clipbox(update_region, &bounds);
+      gdk_region_destroy(update_region);
+      update_region = gdk_region_new();
+      gdk_threads_leave();
+
+      // FIXME: This adjustment is temporary.
+      int x = bounds.x % 16;
+      bounds.x -= x;
+      bounds.width += x;
+
+      _m->get_image(bounds.x, bounds.y, bounds.width, bounds.height,
+		    rgb_buf + bounds.y * row_size + bounds.x * 3, row_size);
+
+      gdk_threads_enter();
+      for (vector<GtkWidget *>::const_iterator i = widgets.begin();
+	   i != widgets.end();
+	   ++i)
+	{
+	  I(*i != NULL);
+	  gtk_widget_queue_draw_area(*i, bounds.x, bounds.y,
+				     bounds.width, bounds.height);
+	}
+      gdk_threads_leave();
     }
-  gdk_threads_leave();
 
   return true;
 }
