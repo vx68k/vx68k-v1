@@ -27,6 +27,8 @@
 # include <unistd.h>
 #endif
 
+#include <stdexcept>
+
 #ifdef HAVE_NANA_H
 # include <nana.h>
 # include <cstdio>
@@ -42,6 +44,8 @@ sint32_type
 image_file_floppy_disk::read(uint_type mode, uint32_type pos,
 			     void *buf, size_t nbytes)
 {
+  I(image_fildes >= 0);
+
 #ifdef HAVE_NANA_H
   L("image_file_floppy_disk: `read' not implemented.\n");
 #endif
@@ -52,6 +56,8 @@ sint32_type
 image_file_floppy_disk::write(uint_type mode, uint32_type pos,
 			      const void *buf, size_t nbytes)
 {
+  I(image_fildes >= 0);
+
 #ifdef HAVE_NANA_H
   L("image_file_floppy_disk: `write' not implemented.\n");
 #endif
@@ -62,6 +68,8 @@ sint32_type
 image_file_floppy_disk::verify(uint_type mode, uint32_type pos,
 			       const void *buf, size_t nbytes)
 {
+  I(image_fildes >= 0);
+
 #ifdef HAVE_NANA_H
   L("image_file_floppy_disk: `verify' not implemented.\n");
 #endif
@@ -80,5 +88,9 @@ image_file_floppy_disk::~image_file_floppy_disk()
 image_file_floppy_disk::image_file_floppy_disk(int fildes)
   : image_fildes(fildes)
 {
-  I(image_fildes >= 0);
+#ifdef HAVE_NANA_H
+  DI(image_fildes >= 0);
+#endif
+  if (image_fildes < 0)
+    throw invalid_argument("image_file_floppy_disk");
 }
