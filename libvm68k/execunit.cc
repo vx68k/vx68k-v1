@@ -4784,6 +4784,8 @@ namespace
     eu.set_instruction(0xc0f0, 0x0e07, &muluw<indexed_indirect>);
     eu.set_instruction(0xc0f8, 0x0e00, &muluw<absolute_short>);
     eu.set_instruction(0xc0f9, 0x0e00, &muluw<absolute_long>);
+    eu.set_instruction(0xc0fa, 0x0e00, &muluw<disp_pc>);
+    eu.set_instruction(0xc0fb, 0x0e00, &muluw<indexed_pc_indirect>);
     eu.set_instruction(0xc0fc, 0x0e00, &muluw<immediate>);
     eu.set_instruction(0xc110, 0x0e07,
 		       &m68k_and_m<byte_size, byte_indirect>);
