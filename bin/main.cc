@@ -31,6 +31,7 @@
 # include <unistd.h>
 #endif
 #include <exception>
+#include <csignal>
 #include <cstdlib>
 #include <cstdio>
 
@@ -162,6 +163,18 @@ void *
 vx68k_app::run_machine_thread(void *data)
   throw ()
 {
+  sigset_t sigs;
+  sigemptyset(&sigs);
+#ifdef SIGHUP
+  sigaddset(&sigs, SIGHUP);
+#endif
+#ifdef SIGINT
+  sigaddset(&sigs, SIGINT);
+#endif
+#ifdef SIGTERM
+  sigaddset(&sigs, SIGTERM);
+#endif
+  pthread_sigmask(SIG_BLOCK, &sigs, NULL);
   try
     {
       vx68k_app *app = static_cast<vx68k_app *>(data);
@@ -190,6 +203,7 @@ vx68k_app::create_window()
       gtk_box_pack_end(GTK_BOX(vbox), statusbar, false, false, 0);
     }
     {
+#if 0
       GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
       {
 	GtkWidget *console_widget = con.create_widget();
@@ -199,6 +213,21 @@ vx68k_app::create_window()
       }
       gtk_widget_show(scrolled_window);
       gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, true, true, 0);
+
+      GdkGeometry geometry = {0, 0, 0, 0, 0, 0, 1, 1};
+      gtk_window_set_geometry_hints(GTK_WINDOW(window),
+				    scrolled_window,
+				    &geometry, GDK_HINT_RESIZE_INC);
+#else
+      GtkWidget *console_widget = con.create_widget();
+      gtk_widget_show(console_widget);
+      gtk_box_pack_start(GTK_BOX(vbox), console_widget, true, true, 0);
+
+      GdkGeometry geometry = {0, 0, 0, 0, 0, 0, 1, 1};
+      gtk_window_set_geometry_hints(GTK_WINDOW(window),
+				    console_widget,
+				    &geometry, GDK_HINT_RESIZE_INC);
+#endif
     }
     gtk_widget_show(vbox);
     gtk_container_add(GTK_CONTAINER(window), vbox);

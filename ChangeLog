@@ -1,5 +1,11 @@
 1999-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/gtkconsole.cc (create_widget): Set style to black
+	background.
+
+	* bin/main.cc (run_machine_thread): Mask signals.
+	(create_window): #if out code to use GtkScrolledWindow.
+
 	* lib/vm68k/execunit.cc (oril): Fix debug message.
 	(roxrw_i, roxrl_i): New function.
 	(asll_i, asrl_i, rolw_i, roll_i, rorw_i): Fix bit count.

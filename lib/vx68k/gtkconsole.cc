@@ -58,9 +58,14 @@ GtkWidget *
 gtk_console::create_widget()
 {
   GtkWidget *drawing_area = gtk_drawing_area_new();
+  gtk_drawing_area_size(GTK_DRAWING_AREA(drawing_area), width, height);
   gtk_signal_connect(GTK_OBJECT(drawing_area), "expose_event",
 		     GTK_SIGNAL_FUNC(&handle_expose_event), this);
-  gtk_drawing_area_size(GTK_DRAWING_AREA(drawing_area), width, height);
+
+  GtkStyle *style = gtk_widget_get_style(drawing_area);
+  style->bg[0] = style->black;
+  gtk_widget_set_style(drawing_area, style);
+
   return drawing_area;
 }
 
