@@ -766,7 +766,7 @@ namespace
 	ch2 += 0x21;
       }
 
-    if (ch1 != 0)
+    if (ch1 >= 0x21 && ch1 <= 0x7e)
       {
 	switch (size)
 	  {
