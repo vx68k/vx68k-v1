@@ -2,6 +2,11 @@
 
 	* libvx68kgtk/gtkconsole.cc: Change update timeout to 100ms.
 	(~gtk_console, gtk_console): Use timeouts for screen update again.
+	(pvalue): Do not compile if not GDK_IMAGE.
+	(class pixel_iterator): Change argument type of operator=.
+	(class pixel_iterator) [!GDK_IMAGE]: Use precomputed table to get
+	a RGB value.
+	(gtk_console) [!GDK_IMAGE]: Precompute a RGB table.
 
 2000-08-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 

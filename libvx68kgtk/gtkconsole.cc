@@ -413,7 +413,12 @@ gtk_console::get_k16_image(unsigned int c,
 
 namespace
 {
-  guint32 pvalue(GdkImage *image, unsigned short value)
+#ifndef GDK_IMAGE
+  unsigned char rgb_table[0x10000 * 3];
+  bool rgb_once;
+#else
+  guint32
+  pvalue(GdkImage *image, uint_type value)
   {
     unsigned int x = value & 0x1;
     unsigned int r = value >> 5 & 0x3e | x;
@@ -426,6 +431,7 @@ namespace
 
     return p;
   }
+#endif
 
   class pixel_iterator: public output_iterator
   {
@@ -462,17 +468,13 @@ namespace
       return *this;
     }
 
-    pixel_iterator &operator=(unsigned short p)
+    pixel_iterator &operator=(uint_type p)
     {
 #ifndef GDK_IMAGE
-      unsigned int x = p & 0x1;
-      unsigned int r = p >> 5 & 0x3e | x;
-      unsigned int g = p >> 10 & 0x3e | x;
-      unsigned int b = p & 0x3f;
-
-      rgb_ptr[0] = r * 0xff / 0x3f;
-      rgb_ptr[1] = g * 0xff / 0x3f;
-      rgb_ptr[2] = b * 0xff / 0x3f;
+      unsigned char *rgb = rgb_table + p * 3;
+      rgb_ptr[0] = rgb[0];
+      rgb_ptr[1] = rgb[1];
+      rgb_ptr[2] = rgb[2];
 #else
       guint32 pp = table[p];
       unsigned char *ptr = (static_cast<unsigned char *>(image->mem)
@@ -704,6 +706,17 @@ gtk_console::gtk_console(machine *m)
     kanji16_font(NULL)
 {
 #ifndef GDK_IMAGE
+  if (!rgb_once++)
+    {
+      for (uint32_type i = 0; i != 0x10000; ++i)
+	{
+	  unsigned int x = i & 0x1;
+	  rgb_table[i * 3] = (i >> 5 & 0x3e | x) * 0xff / 0x3f;
+	  rgb_table[i * 3 + 1] = (i >> 10 & 0x3e | x) * 0xff / 0x3f;
+	  rgb_table[i * 3 + 2] = (i & 0x3f) * 0xff / 0x3f;
+	}
+    }
+
   rgb_buf = new guchar [height * row_size];
 #endif
 
