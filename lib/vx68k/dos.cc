@@ -479,32 +479,32 @@ dos::dos(machine *m)
 {
   exec_unit *eu = vm->exec_unit();
 
-  eu->set_instruction(0xff02, 0, &dos_putchar);
-  eu->set_instruction(0xff09, 0, &dos_print);
-  eu->set_instruction(0xff1b, 0, &dos_fgetc);
-  eu->set_instruction(0xff1e, 0, &dos_fputs);
-  eu->set_instruction(0xff25, 0, &dos_intvcs);
-  eu->set_instruction(0xff27, 0, &dos_gettim2);
-  eu->set_instruction(0xff2a, 0, &dos_getdate);
-  eu->set_instruction(0xff30, 0, &dos_vernum);
-  eu->set_instruction(0xff3c, 0, &dos_create);
-  eu->set_instruction(0xff3d, 0, &dos_open);
-  eu->set_instruction(0xff3e, 0, &dos_close);
-  eu->set_instruction(0xff3f, 0, &dos_read);
-  eu->set_instruction(0xff40, 0, &dos_write);
-  eu->set_instruction(0xff41, 0, &dos_delete);
-  eu->set_instruction(0xff42, 0, &dos_seek);
-  eu->set_instruction(0xff43, 0, &dos_chmod);
-  eu->set_instruction(0xff44, 0, &dos_ioctrl);
-  eu->set_instruction(0xff48, 0, &dos_malloc);
-  eu->set_instruction(0xff4a, 0, &dos_setblock);
-  eu->set_instruction(0xff4c, 0, &dos_exit2);
-  eu->set_instruction(0xff51, 0, &dos_getpdb);
-  eu->set_instruction(0xff53, 0, &dos_getenv);
-  eu->set_instruction(0xff57, 0, &dos_filedate);
+  eu->set_instruction(0xff02, 0, &dos_putchar, this);
+  eu->set_instruction(0xff09, 0, &dos_print, this);
+  eu->set_instruction(0xff1b, 0, &dos_fgetc, this);
+  eu->set_instruction(0xff1e, 0, &dos_fputs, this);
+  eu->set_instruction(0xff25, 0, &dos_intvcs, this);
+  eu->set_instruction(0xff27, 0, &dos_gettim2, this);
+  eu->set_instruction(0xff2a, 0, &dos_getdate, this);
+  eu->set_instruction(0xff30, 0, &dos_vernum, this);
+  eu->set_instruction(0xff3c, 0, &dos_create, this);
+  eu->set_instruction(0xff3d, 0, &dos_open, this);
+  eu->set_instruction(0xff3e, 0, &dos_close, this);
+  eu->set_instruction(0xff3f, 0, &dos_read, this);
+  eu->set_instruction(0xff40, 0, &dos_write, this);
+  eu->set_instruction(0xff41, 0, &dos_delete, this);
+  eu->set_instruction(0xff42, 0, &dos_seek, this);
+  eu->set_instruction(0xff43, 0, &dos_chmod, this);
+  eu->set_instruction(0xff44, 0, &dos_ioctrl, this);
+  eu->set_instruction(0xff48, 0, &dos_malloc, this);
+  eu->set_instruction(0xff4a, 0, &dos_setblock, this);
+  eu->set_instruction(0xff4c, 0, &dos_exit2, this);
+  eu->set_instruction(0xff51, 0, &dos_getpdb, this);
+  eu->set_instruction(0xff53, 0, &dos_getenv, this);
+  eu->set_instruction(0xff57, 0, &dos_filedate, this);
 
-  eu->set_instruction(0xff81, 0, &dos_getpdb);
-  eu->set_instruction(0xff83, 0, &dos_getenv);
-  eu->set_instruction(0xff87, 0, &dos_filedate);
+  eu->set_instruction(0xff81, 0, &dos_getpdb, this);
+  eu->set_instruction(0xff83, 0, &dos_getenv, this);
+  eu->set_instruction(0xff87, 0, &dos_filedate, this);
 }
 

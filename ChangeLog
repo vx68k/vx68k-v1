@@ -1,6 +1,10 @@
 1999-06-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/dos.cc (dos): Pass this to all handlers as
+	instructions_data *.
+
 	* include/vx68k/human.h (class dos): Updated.
+	(class): Add instruction_data to virtual base.
 
 	* lib/vx68k/dos.cc (load): New function.
 	(execute): Rerote using load.
