@@ -1,3 +1,8 @@
+1999-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vx68k/human.h (class dos_exec_context): Add member
+	functions: load_executable, start, and execute.
+
 1999-03-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/dos.cc (dos): Fix main_ec initialization.
