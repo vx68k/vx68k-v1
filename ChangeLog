@@ -1,5 +1,9 @@
 1999-07-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/machine.h (struct console): New class.
+	(class graphics_vram): Add member connected_console and connect.
+	(class text_vram): Likewise.
+
 	* bin/main.cc: Remove include for vx68k/memory.h.
 
 	* lib/vx68k/mainmem.cc: Use <vx68k/machine.h> instead.

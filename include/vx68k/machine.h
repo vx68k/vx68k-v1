@@ -53,12 +53,18 @@ namespace vx68k
   const size_t TEXT_VRAM_PLANE_SIZE = 128 * 1024;
   const size_t TEXT_VRAM_SIZE = 4 * TEXT_VRAM_PLANE_SIZE;
 
+  /* Interface to console.  */
+  struct console
+  {
+  };
+
   /* Graphics VRAM.  */
   class graphics_vram
     : public memory
   {
   private:
     uint16 *base;
+    console *connected_console;
 
   public:
     graphics_vram();
@@ -73,6 +79,9 @@ namespace vx68k
     size_t write(int, uint32_type, const void *, size_t);
     void putb(int, uint32_type, uint_type);
     void putw(int, uint32_type, uint_type);
+
+  public:
+    void connect(console *);
   };
 
   /* Text VRAM.  */
@@ -81,6 +90,7 @@ namespace vx68k
   {
   private:
     uint16 *base;
+    console *connected_console;
 
   public:
     text_vram();
@@ -95,6 +105,9 @@ namespace vx68k
     size_t write(int, uint32_type, const void *, size_t);
     void putb(int, uint32_type, uint_type);
     void putw(int, uint32_type, uint_type);
+
+  public:
+    void connect(console *);
   };
 
   class machine
