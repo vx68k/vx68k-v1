@@ -71,6 +71,12 @@ namespace vx68k
       ~process();
 
     public:
+      sint32_type load(const char *name,
+		       uint32_type first, uint32_type last) const;
+      sint32_type create_process(const char *name, process *&) const;
+      sint32_type exec(uint32_type, uint32_type, uint32_type);
+
+    public:
       file_system *fs() const
 	{return _fs;}
 
