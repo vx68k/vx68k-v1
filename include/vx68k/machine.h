@@ -141,11 +141,13 @@ namespace vx68k
 
   private:
     size_t _memory_size;
+
     main_memory mem;
     text_video_memory tvram;
     crtc_memory crtc;
     palettes_memory palettes;
     area_set _area_set;
+    system_ports_memory system_ports;
     opm_memory opm;
     scc_memory scc;
     ppi_memory ppi;

@@ -411,6 +411,7 @@ machine::configure(memory_address_space &as)
   as.set_pages(0xe80000 >> PAGE_SHIFT, 0xe82000 >> PAGE_SHIFT, &crtc);
   as.set_pages(0xe82000 >> PAGE_SHIFT, 0xe84000 >> PAGE_SHIFT, &palettes);
   as.set_pages(0xe86000 >> PAGE_SHIFT, 0xe88000 >> PAGE_SHIFT, &_area_set);
+  as.set_pages(0xe8e000 >> PAGE_SHIFT, 0xe90000 >> PAGE_SHIFT, &system_ports);
   as.set_pages(0xe90000 >> PAGE_SHIFT, 0xe92000 >> PAGE_SHIFT, &opm);
   as.set_pages(0xe98000 >> PAGE_SHIFT, 0xe9a000 >> PAGE_SHIFT, &scc);
   as.set_pages(0xe9a000 >> PAGE_SHIFT, 0xe9c000 >> PAGE_SHIFT, &ppi);

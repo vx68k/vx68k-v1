@@ -1,5 +1,17 @@
 2000-08-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add sysportmem.cc.
+
+	* libvx68k/sysportmem.cc: New file.
+	(get_16, get_8, put_16, put_8): New function.
+
+	* libvx68k/machine.cc (configure): Map system_ports.
+
+	* include/vx68k/machine.h (class machine): Add member
+	system_ports;
+
+	* include/vx68k/memory.h (class system_ports_memory): New class.
+
 	* libvx68k/areaset.cc: Modify comments.
 	(put_8): Moved before put_16.
 	(put_8): Set the supervisor area in _mm.
