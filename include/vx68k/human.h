@@ -20,6 +20,7 @@
 #define VX68K_HUMAN_H 1
 
 #include <vx68k/machine.h>
+#include <map>
 
 namespace vx68k
 {
@@ -59,11 +60,14 @@ namespace vx68k
     /* File system.  */
     class file_system
     {
+    private:
+      map<file *, int> files;
     public:
       sint_type chmod(const address_space *, uint32_type, sint_type);
     public:
-      sint_type create(file *&, const char *, sint_type);
-      sint_type open(file *&, const char *, sint_type);
+      sint_type create(file *&, const address_space *, uint32_type, sint_type);
+      void open(file *&, int);
+      sint_type open(file *&, const address_space *, uint32_type, sint_type);
       file *ref(file *);
       void unref(file *);
     };
@@ -111,7 +115,8 @@ namespace vx68k
       int debug_level;
 
     public:
-      dos_exec_context(address_space *, exec_unit *, memory_allocator *);
+      dos_exec_context(address_space *, exec_unit *,
+		       memory_allocator *, file_system *);
       ~dos_exec_context();
 
     public:

@@ -370,14 +370,25 @@ dos_exec_context::~dos_exec_context()
 }
 
 dos_exec_context::dos_exec_context(address_space *m, exec_unit *eu,
-				   memory_allocator *a)
+				   memory_allocator *a, file_system *fs)
   : context(m, eu),
     _allocator(a),
+    _fs(fs),
     current_pdb(0),
     debug_level(0)
 {
-  current_pdb = _allocator->root();
   fill(std_files + 0, std_files + 5, (file *) 0);
   fill(files + 0, files + NFILES, (file *) 0);
+  current_pdb = _allocator->root();
+  _fs->open(std_files[0], STDIN_FILENO);
+  _fs->open(std_files[1], STDOUT_FILENO);
+  _fs->open(std_files[2], STDERR_FILENO);
+  std_files[3] = _fs->ref(std_files[2]); // FIXME
+  std_files[4] = _fs->ref(std_files[2]); // FIXME
+  files[0] = _fs->ref(std_files[0]);
+  files[1] = _fs->ref(std_files[1]);
+  files[2] = _fs->ref(std_files[2]);
+  files[3] = _fs->ref(std_files[3]);
+  files[4] = _fs->ref(std_files[4]);
 }
 

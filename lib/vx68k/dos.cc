@@ -429,7 +429,8 @@ dos_exec_context *
 dos::create_context()
 {
   dos_exec_context *c
-    = new dos_exec_context(vm->address_space(), vm->exec_unit(), &allocator);
+    = new dos_exec_context(vm->address_space(), vm->exec_unit(),
+			   &allocator, &_fs);
   c->set_debug_level(debug_level);
 
   return c;

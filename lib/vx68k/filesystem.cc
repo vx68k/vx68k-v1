@@ -32,6 +32,14 @@
 #endif
 #include <cstring>
 
+#ifdef HAVE_NANA_H
+# include <nana.h>
+# include <cstdio>
+#else
+# include <cassert>
+# define I assert
+#endif
+
 using namespace vx68k::human;
 using namespace vx68k;
 using namespace std;
@@ -90,16 +98,56 @@ regular_file::regular_file(int f)
 void
 file_system::unref(file *f)
 {
-  // FIXME
-  delete f;
+  if (f == NULL)
+    return;
+
+  map<file *, int>::iterator found = files.find(f);
+  I(found != files.end());
+
+  I(found->second > 0);
+  --(found->second);
+  if (found->second == 0)
+    {
+      files.erase(found);
+      delete f;
+    }
+}
+
+file *
+file_system::ref(file *f)
+{
+  if (f == NULL)
+    return NULL;
+
+  map<file *, int>::iterator found = files.find(f);
+  I(found != files.end());
+
+  ++(found->second);
+  I(found->second > 0);
+  return found->first;
+}
+
+void
+file_system::open(file *&ret, int fd)
+{
+  regular_file *f = new regular_file(fd);
+  files.insert(make_pair(f, 0));
+  ret = f;
 }
 
 sint_type
-file_system::open(file *&ret, const char *name, sint_type mode)
+file_system::open(file *&ret, const address_space *as, uint32_type nameptr,
+		  sint_type mode)
 {
   // FIXME.
   static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
 
+  // FIXME.
+  char name[256];
+  as->read(SUPER_DATA, nameptr, name, 256);
+  char *c = strpbrk(name, " "); // ???
+  if (c != NULL)
+    *c = '\0';
 
   if ((mode & 0xf) > 2)
     return -12;			// FIXME.
@@ -108,14 +156,28 @@ file_system::open(file *&ret, const char *name, sint_type mode)
   if (fd == -1)
     return -2;			// FIXME: errno test.
 
-  ret = new regular_file(fd);
+  open(ret, fd);
   return 0;
 }
 
 sint_type
-file_system::create(file *&ret, const char *name, sint_type atr)
+file_system::create(file *&ret, const address_space *as, uint32_type nameptr,
+		    sint_type atr)
 {
-  return -1;
+  // FIXME.
+  char name[256];
+  as->read(SUPER_DATA, nameptr, name, 256);
+  char *c = strpbrk(name, " "); // ???
+  if (c != NULL)
+    *c = '\0';
+
+  // FIXME.
+  int fd = ::open(name, O_RDWR | O_CREAT | O_TRUNC, 0666);
+  if (fd == -1)
+    return -2;			// FIXME: errno test.
+
+  open(ret, fd);
+  return 0;
 }
 
 sint_type
