@@ -2,6 +2,7 @@
 
 vm68kincludedir = ${includedir}/vm68k
 
-vm68kinclude_HEADERS = addressing.h \
-types.h except.h memory.h cpu.h condition.h
+vm68kinclude_HEADERS = types.h except.h \
+memory.h cpu.h addressing.h condition.h \
+mutex.h
 

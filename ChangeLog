@@ -1,3 +1,15 @@
+2000-08-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/textvram.cc: Add using auto_lock.
+	* libvx68k/crtcmem.cc: Likewise.
+	* libvx68k/palettemem.cc: Likewise.
+	* libvx68k/opmmem.cc: Likewise.
+
+	* include/vx68k/utility.h: Removed.
+
+	* include/vm68k/mutex.h: Moved from vx68k/utility.h.  Also change
+	macro names and all users.
+
 2000-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* bin/main.cc (run_boot): Set status text on exception.

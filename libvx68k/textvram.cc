@@ -22,7 +22,7 @@
 #undef inline
 
 #include <vx68k/memory.h>
-#include <vx68k/utility.h>
+#include <vm68k/mutex.h>
 
 #include <algorithm>
 
@@ -38,6 +38,7 @@ using vx68k::text_video_raster_iterator;
 using vx68k::text_video_memory;
 using vm68k::bus_error_exception;
 using vm68k::SUPER_DATA;
+using vm68k::auto_lock;
 using namespace vm68k::types;
 using namespace std;
 

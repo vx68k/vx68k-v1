@@ -26,7 +26,7 @@
 #undef inline
 
 #include <vx68k/machine.h>
-#include <vx68k/utility.h>
+#include <vm68k/mutex.h>
 
 #include <algorithm>
 #include <memory>

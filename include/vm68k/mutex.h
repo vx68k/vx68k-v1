@@ -16,12 +16,12 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef _VX68K_UTILITY_H
-#define _VX68K_UTILITY_H 1
+#ifndef _VM68K_MUTEX_H
+#define _VM68K_MUTEX_H 1
 
 #include <pthread.h>
 
-namespace vx68k
+namespace vm68k
 {
   template <class Mutex> class auto_lock
   {
@@ -87,6 +87,6 @@ namespace vx68k
   auto_lock<Mutex>::auto_lock(auto_lock &x) throw ()
     : _mutex(x.release())
   {}
-} // namespace vx68k
+} // namespace
 
-#endif /* not _VX68K_UTILITY_H */
+#endif /* not _VM68K_MUTEX_H */

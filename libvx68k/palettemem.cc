@@ -22,7 +22,7 @@
 #undef inline
 
 #include <vx68k/memory.h>
-#include <vx68k/utility.h>
+#include <vm68k/mutex.h>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
@@ -35,6 +35,7 @@
 using vx68k::palettes_memory;
 using vm68k::bus_error_exception;
 using vm68k::SUPER_DATA;
+using vm68k::auto_lock;
 using namespace vm68k::types;
 using namespace std;
 
