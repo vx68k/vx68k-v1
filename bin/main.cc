@@ -547,7 +547,7 @@ namespace
     for (;;)
       {
 	int index;
-	int opt = getopt_long(argc, argv, "0:1:m:", longopts, &index);
+	int opt = getopt_long(argc, argv, "0:1:bm:", longopts, &index);
 	if (opt == -1)		// no more options
 	  break;
 
@@ -559,6 +559,10 @@ namespace
 
 	  case '1':
 	    opt_fd_images[1] = optarg;
+	    break;
+
+	  case 'b':
+	    opt_boot = true;
 	    break;
 
 	  case 'm':
@@ -597,10 +601,10 @@ namespace
     printf(_("Usage: %s [OPTION]... [--] [COMMAND [ARGUMENT]...]\n"), arg0);
     printf(_("Run X68000 COMMAND on a virtual machine.\n"));
     printf("\n");
-    printf(_("      --boot            boot from media\n"));
+    printf(_("  -b, --boot            boot from media\n"));
     printf(_("  -0, --fd0-image=FILE  load FILE on FD unit 0 as an image\n"));
     printf(_("  -1, --fd1-image=FILE  load FILE on FD unit 1 as an image\n"));
-    printf(_("  -M, --memory-size=N   allocate N megabytes for main memory\n"));
+    printf(_("  -m, --memory-size=N   allocate N megabytes for main memory\n"));
     printf(_("      --one-thread      run in one thread\n"));
     printf(_("      --help            display this help and exit\n"));
     printf(_("      --version         output version information and exit\n"));

@@ -1,5 +1,8 @@
 2000-06-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (parse_options): Handle `-b'.
+	(display_help): Modify help messages.
+
 	* libvx68k/systemrom.cc (initialize): Use 0xfe0000 as initial
 	handler base address.
 	(dispatch_iocs_function, iocs_trap): Likewise.
