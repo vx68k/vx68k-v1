@@ -1,3 +1,27 @@
+2000-09-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_trap): Call sched_yield.
+
+	* libvx68k/textvram.cc (row_changed): New function.
+
+	* include/vx68k/memory.h: Include pthread.h.
+	(class text_video_memory): Add member row_changed.
+
+	* libvx68kgtk/gtkconsole.cc: Change TIMEOUT_INTERVAL to 50.
+	(handle_expose_event): Cast width and height for comparison.
+	(handle_timeout): Rewrite using scan_row.
+	(counter): Initialize counter to 1.
+
+	* include/vx68k/gtk.h (class gtk_console): Add member counter.
+
+	* libvx68k/machine.cc (update_image): #if out.
+
+	* include/vx68k/machine.h (class machine): Remove struct
+	rectangle.  Add member screen_changed, row_changed, and scan_row.
+	Remove member update_image.
+	(update_image): Removed.
+	(scan_row): New function.
+
 2000-09-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* doc/vx68k.texi: Update.
