@@ -51,7 +51,7 @@ memory_allocator::remove_block(uint32_type block)
 
 void
 memory_allocator::make_block(uint32_type block, uint32_type len,
-			      uint32_type prev, uint32_type parent)
+			     uint32_type prev, uint32_type parent)
 {
   uint32_type next = _as->getl(SUPER_DATA, prev + 12);
 
