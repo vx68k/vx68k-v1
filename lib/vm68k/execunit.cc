@@ -2587,6 +2587,8 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x23d8, 0x0007, &movel<postinc_indirect, absolute_long>);
   eu.set_instruction(0x23e0, 0x0007, &movel<predec_indirect, absolute_long>);
   eu.set_instruction(0x23e8, 0x0007, &movel<disp_indirect, absolute_long>);
+  eu.set_instruction(0x23f0, 0x0007, &movel<indexed_indirect, absolute_long>);
+  eu.set_instruction(0x23f9, 0x0000, &movel<absolute_long, absolute_long>);
   eu.set_instruction(0x23fc, 0x0000, &movel<immediate, absolute_long>);
   eu.set_instruction(0x3000, 0x0e07, &movew<data_register, data_register>);
   eu.set_instruction(0x3008, 0x0e07, &movew<address_register, data_register>);
@@ -2798,6 +2800,13 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x51e8, 0x0007, &s_b<f, disp_indirect>);
   eu.set_instruction(0x51f0, 0x0007, &s_b<f, indexed_indirect>);
   eu.set_instruction(0x51f9, 0x0000, &s_b<f, absolute_long>);
+  eu.set_instruction(0x56c0, 0x0007, &s_b<eq, data_register>);
+  eu.set_instruction(0x56d0, 0x0007, &s_b<eq, indirect>);
+  eu.set_instruction(0x56d8, 0x0007, &s_b<eq, postinc_indirect>);
+  eu.set_instruction(0x56e0, 0x0007, &s_b<eq, predec_indirect>);
+  eu.set_instruction(0x56e8, 0x0007, &s_b<eq, disp_indirect>);
+  eu.set_instruction(0x56f0, 0x0007, &s_b<eq, indexed_indirect>);
+  eu.set_instruction(0x56f9, 0x0000, &s_b<eq, absolute_long>);
   eu.set_instruction(0x6000, 0x00ff, &bra);
   eu.set_instruction(0x6100, 0x00ff, &bsr);
   eu.set_instruction(0x6200, 0x00ff, &b<hi>);

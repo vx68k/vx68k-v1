@@ -82,6 +82,24 @@ namespace vm68k
 	{return "cs";}
     };
 
+    struct ne
+      : unary_function<context, bool>
+    {
+      bool operator()(const context &ec) const
+	{return ec.regs.sr.ne();}
+      const char *text() const
+	{return "ne";}
+    };
+
+    struct eq
+      : unary_function<context, bool>
+    {
+      bool operator()(const context &ec) const
+	{return ec.regs.sr.eq();}
+      const char *text() const
+	{return "eq";}
+    };
+
     struct pl
       : unary_function<context, bool>
     {
