@@ -1,8 +1,12 @@
 History of user-visible changes in Virtual X68000.  -*-Outline-*-
 
+* Version 1.1.11
+
 * Version 1.1.10
 
-Most changes are in vx68k-gtk.
+** Use of OpenGL
+
+Screen drawing was changed to use the OpenGL API.
 
 * Version 1.1.9
 

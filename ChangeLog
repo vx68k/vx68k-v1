@@ -1,5 +1,9 @@
 2002-05-07  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* NEWS.gtk: Removed.
+
+	* NEWS: Copy entries from NEWS.gtk.
+
 	* configure.in: Reverse the order of libvx68k and libvx68kdos.
 	* Makefile (SUBDIRS): Likewise.
 
