@@ -595,6 +595,16 @@ namespace
     word_size::put(c.regs.d[2], 0);
   }
 
+  /* Handles a 0x3a call.  */
+  void
+  iocs_x3a(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: 0x3a %%a1=%#010x\n", c.regs.a[1]);
+#endif
+    fprintf(stderr, "iocs_x3a: FIXME: not implemented\n");
+  }
+
   /* Initializes the IOCS functions.  */
   void
   initialize_iocs_functions(system_rom *rom)
@@ -619,6 +629,7 @@ namespace
     rom->set_iocs_function(0x37, iocs_function_type(&iocs_x37, 0));
     rom->set_iocs_function(0x38, iocs_function_type(&iocs_x38, 0));
     rom->set_iocs_function(0x39, iocs_function_type(&iocs_x39, 0));
+    rom->set_iocs_function(0x3a, iocs_function_type(&iocs_x3a, 0));
     rom->set_iocs_function(0x3c, iocs_function_type(&iocs_init_prn, 0));
     rom->set_iocs_function(0x45, iocs_function_type(&iocs_b_write, 0));
     rom->set_iocs_function(0x46, iocs_function_type(&iocs_b_read, 0));

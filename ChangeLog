@@ -1,5 +1,8 @@
 2000-06-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_x3a): New function.
+	(initialize_iocs_functions): Use the new handler.
+
 	* libvm68k/execunit.cc (m68k_adda, m68k_addq_a, m68k_subq_a): Use
 	long_word_size::svalue for value1/value2.
 	(m68k_addx_r): New function template.
