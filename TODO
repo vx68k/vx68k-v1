@@ -1,6 +1,6 @@
 Virtual X68000 TO DO
 
-$Date: Fri, 09 Jul 1999 23:08:47 +0900 $
+$Date: Fri, 09 Jul 1999 23:09:07 +0900 $
 
 Version 0.36
 
@@ -41,7 +41,7 @@ code from platform-independent code.
 
 Version 1.1 or later
 
-* Common code optimization.
+* Common case optimization.
 
 Some common code sequences (strcpy, memcpy, etc.) can be optimized.
 
