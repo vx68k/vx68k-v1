@@ -405,9 +405,20 @@ namespace vm68k
     uint32_type d[8];		/* %d0-%d7 */
     uint32_type a[8];		/* %a0-%a6/%sp */
     uint32_type pc;
-    status_register ccr;
+    condition_code ccr;
     uint32_type usp;
     uint32_type ssp;
+
+    template <class Size>
+    typename Size::svalue_type data_register(unsigned int regno, Size)
+    {return Size::get(d[regno]);}
+    template <class Size>
+    void set_data_register(unsigned int regno, Size,
+			   typename Size::uvalue_type value)
+    {Size::put(d[regno], value);}
+
+    void set_pc(uint32_type value) {long_word_size::put(pc, value);}
+    void advance_pc(uint32_type value) {long_word_size::put(pc, pc + value);}
   };
 
   /* Context of execution.  A context represents all the state of

@@ -1,3 +1,66 @@
+2000-09-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/addressing.h (class data_register): Removed.
+	(class address_register): Removed.
+	(class indirect): Removed.
+	(class postinc_indirect): Removed.
+	(class predec_indirect): Removed.
+	(class disp_indirect): Removed.
+	(class indexed_indirect): Removed.
+	(class absolute_short): Removed.
+	(class absolute_long): Removed.
+	(class disp_pc): Removed.
+	(class indexed_pc_indirect): Removed.
+	(class immediate): Removed.
+
+	* include/vm68k/cpu.h (struct registers): Replace status_register
+	with condition_code.
+	(struct registers): Add members data_register, set_data_register,
+	set_pc, and advance_pc.
+
+	* libvm68k/execunit.cc: Modify log messages.
+	(m68k_add, m68k_add_m, m68k_adda): Avoid typedefs.
+	(m68k_add, m68k_add_m, m68k_adda): Modify for new Size::get and
+	Size::svalue.
+	(m68k_add, m68k_add_m): Refer extension_size via class.
+	(andib, andiw, andil, asll_i, asll_r, asrl_i, asrl_r, bcc, beq,
+	bge, bmi, bne, bclrl_i, bsetl_i, moveb, movew, movel, moveaw,
+	moveal, moveql_d, rorw_i, subl_r, subal, subib, subil, subqw,
+	subql): Removed.
+	(m68k_andi_to_sr, m68k_asr_r, m68k_btst_i, m68k_clr, m68k_cmpa,
+	m68k_cmpi, m68k_eor_m, m68k_exg_d_d, m68k_exg_a_a, m68k_exg_d_a,
+	m68k_ext, m68k_lsl_i, m68k_lsl_r, m68k_lsr_i, m68k_lsr_r,
+	m68k_lsr_m, m68k_movem_m_r, m68k_moveq, m68k_neg, m68k_or,
+	m68k_ori, m68k_rol_i, m68k_roxr_i, m68k_sub, m68k_subi, m68k_tst):
+	New function.
+	(btstb_i, btstl_i, clrb, clrw, clrl, cmpaw, cmpal, cmpib, cmpiw,
+	cmpil, eorb_r, eorw_r, eorl_r, exgl, extw, extl, lslb_i, lslw_i,
+	lslw_r, lsll_i, lsll_r, lsrb_i, lsrw_i, lsrw_r, lsrl_i, lsrl_r,
+	moveml_mr, negb, negw, negl, orb, orw, orl, rolw_i, roll_i,
+	roxrw_i, subb, subw, subl, tstb, tstw, tstl): #if'd out.
+	(m68k_bra): Modified from bra.
+	(m68k_bsr): Modified from bsr.
+	(m68k_divu): Modified from divuw.
+	(m68k_jmp): Modified from jmp.
+	(m68k_jsr): Modified from jsr.
+	(m68k_lea): Modified from lea.
+	(m68k_link): Modified from link_a.
+	(m68k_muls): Modified from mulsw.
+	(m68k_mulu): Modified from muluw.
+	(m68k_pea): Modified from pea.
+	(m68k_rts): Modified from rts.
+	(m68k_s): Modified from s_b.
+	(m68k_swap): Modified from swapw.
+	(m68k_unlk): Modified from unlk_a.
+	(initialize_instructions): Update for new handlers.
+
+	* libvx68k/dmacmem.cc: Include cstdio always.
+
+	* libvx68k/crtcmem.cc: Include cstdio always.
+
+	* libvx68k/systemrom.cc (iocs_fntadr): Modify test for JIS X 0208
+	charset.
+
 2000-09-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68kgtk/gtkconsole.cc: Change update timeout to 100ms.
