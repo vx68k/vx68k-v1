@@ -1,5 +1,9 @@
 1999-04-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* TODO: Modified.
+
+	* NEWS: Modified.
+
 	* lib/vm68k/execunit.cc (addqw<address_register>): Fix size.
 	(addql, addql<address_register>, clrw, cmpib): New template
 	functions.

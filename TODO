@@ -1,8 +1,10 @@
 TO DO
 
-$Date: Fri, 26 Mar 1999 23:24:37 +0900 $
+$Date: Thu, 01 Apr 1999 22:39:56 +0900 $
 
 * More instructions must be implemented.
+
+* Instruction handlers must be changed into templates.
 
 * DOS memory management
 
