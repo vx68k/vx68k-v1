@@ -1,5 +1,10 @@
 1999-06-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (cmpw): New function template.
+	(movew): Use L instead of VL.
+	(movew_d_postinc): #if-out the function.
+	(install_instructions): Add new functions.
+
 	* lib/vx68k/dos.cc (dos_ioctrl): New function.
 	(dos): Add new function.
 
