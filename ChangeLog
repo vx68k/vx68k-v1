@@ -1,5 +1,7 @@
 1998-10-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vx68k/main.cc (main): Use x68k_memory and cpu.
+
 	* vm68k/memory.cc (read16): New function.
 
 	* include/vm68k/memory.h (VM68K_MEMORY_H): Fix typo.
