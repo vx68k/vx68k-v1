@@ -53,7 +53,7 @@ void
 memory_allocator::make_block(uint32_type block, uint32_type len,
 			      uint32_type prev, uint32_type parent)
 {
-  uint32_type next = _as->getl(SUPER_DATA, block + 12);
+  uint32_type next = _as->getl(SUPER_DATA, prev + 12);
 
   _as->putl(SUPER_DATA, block + 0, prev);
   _as->putl(SUPER_DATA, block + 4, parent);

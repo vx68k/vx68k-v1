@@ -1,3 +1,7 @@
+2000-06-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/allocator.cc (make_block): Use PREV to get NEXT.
+
 2000-05-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvm68k/execunit.cc (initialize_instructions): Add new
