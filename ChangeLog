@@ -1,5 +1,7 @@
 2000-05-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (boot): Fix the unit specification.
+
 	* libvm68k/execunit.cc: Add using declarations.
 	(m68k_adda): Change Destination to Source.
 	(m68k_movea): New function template.

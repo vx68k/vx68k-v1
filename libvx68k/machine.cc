@@ -1,5 +1,5 @@
 /* Virtual X68000 - Sharp X68000 emulator
-   Copyright (C) 1998, 2000 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -171,7 +171,7 @@ machine::boot(context &c)
 {
   /* c.mem must be of class x68k_address_space.  */
 
-  sint32_type st = read_disk(*c.mem, 0x9000, 0x03000001, 0x2000, 1024);
+  sint32_type st = read_disk(*c.mem, 0x9070, 0x03000001, 0x2000, 1024);
   if (st >> 24 & 0xc0)
     {
 #ifdef HAVE_NANA_H
