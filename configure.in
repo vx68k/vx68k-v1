@@ -1,8 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(vx68k/main.cc)
 dnl $Format: "AM_INIT_AUTOMAKE($Project$, $ProjectVersion$)" $
-AM_INIT_AUTOMAKE(vx68k, 0.14)
+AM_INIT_AUTOMAKE(vx68k, 0.23)
 AM_CONFIG_HEADER(config.h)
 AC_PROG_CXX
 AC_PROG_RANLIB
+AC_TYPE_SIZE_T
 AC_OUTPUT(Makefile include/Makefile include/vm68k/Makefile include/vx68k/Makefile vm68k/Makefile vx68k/Makefile)
