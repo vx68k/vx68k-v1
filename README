@@ -14,7 +14,10 @@ Many functions are not implemented yet.
 
 See the file NEWS in this directory for the current limitations.
 
->> REQUIREMENTS
+PREREQUISITE
+
+This program requires Libvm68k 1.0.1 or later, and GTK+ 1.2.0 or
+later.
 
 This program is written in C++ with exception handling, templates, and
 namespaces.  For the best performance, a compiler that is good at
@@ -28,8 +31,6 @@ optimizing templates and inline functions is recommended.
 
 This program uses POSIX threads.
 
-This program uses GTK+ 1.2 for GUI.
-
 For debugging output, GNU Nana is also required.
 
 >> INSTALLATION
@@ -37,15 +38,10 @@ For debugging output, GNU Nana is also required.
 See the file INSTALL in this directory for general instructions on
 installation.
 
-PREREQUISITE
-
-This program requires Libvm68k 1.0.1 or later, and GTK+ 1.2.0 or
-later.
-
 CONTACT
 
 Send comments, suggestions, or anything you thought about this program
 to vx68k@lists.hypercore.co.jp.
 
 ---
-$ProjectHeader: vx68k 1.346 Wed, 20 Jun 2001 21:12:08 +0900 kaz $
+$ProjectHeader: vx68k 1.347 Wed, 20 Jun 2001 21:27:37 +0900 kaz $
