@@ -1,0 +1,27 @@
+'\"
+.\" $Format: ".TH VX68K 1 \"$Date\"" $
+.TH VX68K 1 "$Date"
+.SH NAME
+vx68k \- run X68000 command on a virtual machine
+.SH SYNOPSIS
+\fBvx68k\fR [-M \fIN\fR] [--memory-size=\fIN\fR] [--one-thread] [--help] [--version] [--] \fIcommand\fR [\fIargument\fR]...
+.SH DESCRIPTION
+This documentation is a working draft and may be inaccurate.
+.LP
+\fBvx68k\fR runs X68000 \fIcommand\fR on a virtual machine.
+.SH OPTIONS
+.TP
+\fB-M\fR \fIN\fR, \fB--memory-size=\fIN\fR
+Allocate \fIN\fR megabytes for main memory.
+.TP
+\fB--one-thread\fR
+Run in one thread.
+.TP
+\fB--help\fR
+Display help and exit.
+.TP
+\fB--version\fR
+Display version information and exit.
+.SH BUGS
+Many functions are not implemented yet.
+

@@ -99,7 +99,7 @@ namespace
   {
     // XXX: `--debug' is undocumented
     printf(_("Usage: %s [OPTION]... [--] COMMAND [ARGUMENT]...\n"), arg0);
-    printf(_("Run X68000 COMMAND in a virtual machine.\n"));
+    printf(_("Run X68000 COMMAND on a virtual machine.\n"));
     printf("\n");
     printf(_("  -M, --memory-size=N   allocate N megabytes for main memory\n"));
     printf(_("      --one-thread      run in one thread\n"));
