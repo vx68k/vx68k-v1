@@ -1,6 +1,7 @@
 1999-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/textvram.cc (draw_char): Handle kanji.
+	(scroll): Add code.
 
 	* lib/vx68k/gtkconsole.cc (kanji16_font_array): Use pointer
 	increments to write into kanji16_font.

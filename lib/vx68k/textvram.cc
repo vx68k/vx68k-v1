@@ -37,6 +37,17 @@ advance_row(uint16 *&ptr)
 void
 text_vram::scroll()
 {
+  uint16 *i = buf;
+  for (uint16 *j = buf + 16 * (ROW_SIZE >> 1);
+       j != buf + 31 * 16 * (ROW_SIZE >> 1);
+       ++j)
+    {
+      *i++ = *j;
+    }
+  while (i != buf + 31 * 16 * (ROW_SIZE >> 1))
+    {
+      *i++ = 0;
+    }
 }
 
 void
