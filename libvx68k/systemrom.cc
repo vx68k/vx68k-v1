@@ -165,6 +165,8 @@ system_rom::initialize(address_space &as)
 
 namespace
 {
+  using vm68k::long_word_size;
+
   /* Handles a _B_CONSOL call.  */
   void
   iocs_b_consol(context &c, unsigned long data)
@@ -216,6 +218,21 @@ namespace
 					   c.regs.d[1] & 0xffffu, c.regs.d[2],
 					   c.regs.a[1], c.regs.d[3]);
     // FIXME?
+  }
+
+  /* Handles a _B_RECALI call.  */
+  void
+  iocs_b_recali(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _B_RECALI %%d1=%#010x\n", c.regs.d[1]);
+#endif
+    fprintf(stderr, "iocs_b_recali: FIXME: not implemented\n");
+    if ((c.regs.d[1] & 0xf000) == 0x9000 &&
+	(c.regs.d[1] & 0x0f00) < 0x0200)
+      long_word_size::put(c.regs.d[0], 0);
+    else
+      long_word_size::put(c.regs.d[0], -1);
   }
 
   /* Handles a _B_SFTSNS call.  */
@@ -318,6 +335,7 @@ namespace
     rom->set_iocs_function(0x3c, iocs_function_type(&iocs_init_prn, 0));
     rom->set_iocs_function(0x45, iocs_function_type(&iocs_b_write, 0));
     rom->set_iocs_function(0x46, iocs_function_type(&iocs_b_read, 0));
+    rom->set_iocs_function(0x47, iocs_function_type(&iocs_b_recali, 0));
     rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));
     rom->set_iocs_function(0x8e, iocs_function_type(&iocs_bootinf, 0));
     rom->set_iocs_function(0xaf, iocs_function_type(&iocs_os_curof, 0));

@@ -1,3 +1,8 @@
+2000-05-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_b_recali): New function.
+	(initialize_iocs_functions): Use iocs_b_recali.
+
 2000-05-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/systemrom.cc (iocs_b_consol, iocs_b_sftsns,
