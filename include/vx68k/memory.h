@@ -21,9 +21,14 @@
 
 #include "vm68k/memory.h"
 
-class x68k_memory
+namespace vx68k
+{
+
+class memory
   : public vm68k::memory
 {
 };
+
+};				// namespace vx68k
 
 #endif

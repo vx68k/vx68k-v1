@@ -24,12 +24,13 @@
 #include "vm68k/cpu.h"
 #include "vx68k/memory.h"
 
+using namespace vx68k;
 using vm68k::cpu;
 
 int
 main (int argc, char **argv)
 {
-  x68k_memory mem;
+  memory mem;
   cpu main_cpu (&mem);
   abort ();			// FIXME
   main_cpu.run ();
