@@ -1,0 +1,935 @@
+This is vx68k.info, produced by makeinfo version 4.0 from vx68k.texi.
+
+INFO-DIR-SECTION Miscellaneous packages
+START-INFO-DIR-ENTRY
+* Virtual X68000: (vx68k).      A Sharp X68000 virtual machine.
+END-INFO-DIR-ENTRY
+
+INFO-DIR-SECTION Individual utilities
+START-INFO-DIR-ENTRY
+* vx68k: (vx68k.info)Invoking vx68k.
+                                Execute X68000 programs.
+END-INFO-DIR-ENTRY
+
+   This file documents the usage and the internals of Virtual X68000.
+
+   Copyright 1999-2000 Hypercore Software Design, Ltd.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+
+File: vx68k.info,  Node: Top,  Next: Introduction,  Prev: (dir),  Up: (dir)
+
+Virtual X68000
+**************
+
+   Virtual X68000 is a host-architecture independent emulator of Sharp
+X68000 written in C++.
+
+   This is Revision 1.25 of the Virtual X68000 Reference Manual,
+updated Wed, 20 Jun 2001 20:45:26 +0900.  This manual applies to Version
+1.1 of Virtual X68000.
+
+* Menu:
+
+* Introduction::
+* Command Reference::           Invoking commands.
+* M68000 Architecture::         Quick look at the M68000 architecture.
+* Coding Conventions::          How code is written.
+* General Purpose Components::  Generic components.
+* X68000 Emulation::            X68000 specific components.
+* Human68k Emulation::          The Disk Operating System.
+* GTK+ User Interface::
+* Sample Application::
+* Document Type Definitions::
+* Function and Variable Index::  Index for functions and variables.
+* Data Type Index::             Index menu for data types and classes.
+* Concept Index::               Index menu for concepts.
+
+ --- The Detailed Node Listing ---
+
+Command Reference
+
+* Invoking vx68k::              Example command.
+
+M68000 Architecture
+
+* Data Size::                   Data size description.
+
+Virtual X68000 Coding Conventions
+
+* Basic Types::                 Typedefs.
+
+General Purpose Components
+
+* Memory Interface::            Basics of the memory subsystem.
+* Processor::                   How is a processor constructed?
+
+Memory Interface
+
+* Memory Exceptions::
+* Memory::
+* Memory Map::
+
+Processor
+
+* Context::
+* Execution Unit::
+
+Execution Unit
+
+* Instructions::
+
+X68000 Emulation
+
+* Machine::                     Hardware and BIOS emulation.
+* Memory Components::
+* Disk I/O::
+
+Memory Components
+
+* Main Memory::                 The main memory.
+* IOCS and System ROM::
+* Text Video Memory::
+* Graphic Video Memory::
+* SCC::
+
+Disk I/O
+
+* Floppy Disk::
+
+Human68k Emulation
+
+* Memory Management::
+* Filesystem::
+
+Document Type Definitions
+
+* Target Program Descriptors::
+* Option Settings::
+
+
+File: vx68k.info,  Node: Introduction,  Next: Command Reference,  Prev: Top,  Up: Top
+
+Introduction
+************
+
+   Virtual X68000 is a virtual machine that emulates a Sharp X68000
+system.
+
+   Virtual X68000 is written in C++ and uses many templates.
+
+
+File: vx68k.info,  Node: Command Reference,  Next: M68000 Architecture,  Prev: Introduction,  Up: Top
+
+Command Reference
+*****************
+
+   While Virtual X68000 is written primarily as a set of reusable class
+libraries, a sample program is also provided for demonstration.
+
+   This chapter describes the usage of the sample program.
+
+* Menu:
+
+* Invoking vx68k::              Example command.
+
+
+File: vx68k.info,  Node: Invoking vx68k,  Prev: Command Reference,  Up: Command Reference
+
+Invoking `vx68k'
+================
+
+   `vx68k' executes X68000 programs.
+
+   `vx68k' [OPTION]...  [-] COMMAND [ARGUMENT]...
+
+Options
+-------
+
+`-M n'
+`--memory-size=n'
+     Allocate N megabytes.
+
+
+File: vx68k.info,  Node: M68000 Architecture,  Next: Coding Conventions,  Prev: Command Reference,  Up: Top
+
+M68000 Architecture
+*******************
+
+   Before describing internals of Virtual X68000, let's review the
+M68000 architecture.
+
+   Readers who is familiar with this architecture can skip this chapter.
+
+* Menu:
+
+* Data Size::                   Data size description.
+
+
+File: vx68k.info,  Node: Data Size,  Prev: M68000 Architecture,  Up: M68000 Architecture
+
+Data Size
+=========
+
+   In M68000 architecture, a "byte" is an octet.  A "word" is two
+octets.  A "long word" is four octets.
+
+
+File: vx68k.info,  Node: Coding Conventions,  Next: General Purpose Components,  Prev: M68000 Architecture,  Up: Top
+
+Virtual X68000 Coding Conventions
+*********************************
+
+   This chapter describes the coding conventions used in the Virtual
+X68000 programs.
+
+* Menu:
+
+* Basic Types::                 Typedefs.
+
+
+File: vx68k.info,  Node: Basic Types,  Prev: Coding Conventions,  Up: Coding Conventions
+
+Basic Types
+===========
+
+   Virtual X68000 defines several basic types to keep the program
+portable. These types are defined in namespace `vm68k::types' and
+imported in namespace `vm68k'.
+
+ - Typedef: uint_type
+     This is a natural unsigned type that can hold an unsigned word
+     number on M68000. This type is `unsigned int' on all host
+     architectures.
+
+ - Typedef: uint32_type
+     This is a natural unsigned type that can hold an unsigned long
+     word number on M68000. This type is `unsigned int' on host
+     architectures that have `unsigned int' with at least 32-bit.
+
+ - Typedef: sint_type
+     `sint_type' is a natural signed type that can hold a signed word
+     number on M68000. This type is `int' on most host architectures,
+     but if the host architecture cannot represent -0x8000 in that
+     type, i.e. it does not use 2's complement representation, it is
+     `long int' instead.
+
+ - Typedef: sint32_type
+     `sint32_type' is a natural signed type that can hold a signed long
+     word number on M68000. This type is `int' on host architectures
+     that have `int' with at least 32-bit and that can represent
+     -0x80000000 in that type. Otherwise, it is `long int' if the type
+     can hold -0x80000000, or `long long int' if the compiler is GCC.
+     If no type can hold -0x80000000 on the architecture, Virtual
+     X68000 cannot be compiled.
+
+
+File: vx68k.info,  Node: General Purpose Components,  Next: X68000 Emulation,  Prev: Coding Conventions,  Up: Top
+
+General Purpose Components
+**************************
+
+   General purpose components are provided by the library libvm68k.
+These components are declared in the namespace vm68k.
+
+* Menu:
+
+* Memory Interface::            Basics of the memory subsystem.
+* Processor::                   How is a processor constructed?
+
+
+File: vx68k.info,  Node: Memory Interface,  Next: Processor,  Prev: General Purpose Components,  Up: General Purpose Components
+
+Memory Interface
+================
+
+   Memory is an object that can be mapped in an address space.  The
+class `memory' is the abstract base class for all memory.
+
+   Virtual X68000 uses a single address space to access memory and
+peripheral devices.
+
+* Menu:
+
+* Memory Exceptions::
+* Memory::
+* Memory Map::
+
+
+File: vx68k.info,  Node: Memory Exceptions,  Next: Memory,  Prev: Memory Interface,  Up: Memory Interface
+
+Memory Exceptions
+-----------------
+
+ - Abstract Class: memory_exception
+
+ - Class: bus_error_exception
+
+ - Class: address_error_exception
+
+
+File: vx68k.info,  Node: Memory,  Next: Memory Map,  Prev: Memory Exceptions,  Up: Memory Interface
+
+Memory
+------
+
+ - Abstract Class: memory
+     Abstract base class for memory components.
+
+ - Enumeration in `memory': function_code
+     Classifies memory references.  These values are defined:
+
+    `USER_DATA'
+          User data reference.  The processor uses this value in the
+          user state for reading and writing data.
+
+    `USER_PROGRAM'
+          User program reference.  The processor uses this value in the
+          user state for reading instructions.
+
+    `SUPER_DATA'
+          Supervisor data reference.  The processor uses this value in
+          the supervisor state for reading and writing data.
+
+    `SUPER_PROGRAM'
+          Supervisor program reference.  The processor uses this value
+          in the supervisor state for reading instructions.
+
+ - Abstract Method on memory: int get_8 (uint32_type ADDRESS,
+          function_code FC) const
+     Reads an 8-bit data from this memory.  The return value is
+     unsigned.
+
+ - Abstract Method on memory: uint16_type get_16 (uint32_type ADDRESS,
+          function_code FC) const
+     Reads a 16-bit data from this memory.  ADDRESS must be a multiple
+     of 2.  The return value is unsigned.
+
+ - Method on memory: uint32_type get_32 (uint32_type ADDRESS,
+          function_code FC) const
+     Reads a 32-bit data from this memory.  ADDRESS must be a multiple
+     of 4.  The return value is unsigned.
+
+     This method is just implemented using two `get_16' calls for
+     convenience, but can be overridden by a derived class for a
+     slightly better performance.
+
+ - Abstract Method on memory: void put_8 (uint32_type ADDRESS, int
+          VALUE, function_code FC)
+     Writes an 8-bit value to this memory.  VALUE may be signed or
+     unsigned.  FC must be one of the data references.
+
+ - Abstract Method on memory: void put_16 (uint32_type ADDRESS,
+          uint16_type VALUE, function_code FC)
+     Writes a 16-bit value to this memory.  ADDRESS must be a multiple
+     of 2.  VALUE may be signed or unsigned.  FC must be one of the
+     data references.
+
+ - Method on memory: void put_32 (uint32_type ADDRESS, uint32_type
+          VALUE, function_code FC)
+     Writes a 32-bit value to this memory.  ADDRESS must be a multiple
+     of 4.  VALUE may be signed or unsigned.  FC must be one of the
+     data references.
+
+     This method is just implemented using two `put_16' calls for
+     convenience, but can be overridden by a derived class for a
+     slightly better performance.
+
+
+File: vx68k.info,  Node: Memory Map,  Prev: Memory,  Up: Memory Interface
+
+Memory Map
+----------
+
+ - Class: memory_map
+     This is a class of address spaces for memory.
+
+ - Typedef in `memory_map': function_code
+     Alias of `memory::function_code'.
+
+ - Method on memory_map: int get_8 (uint32_type ADDRESS, function_code
+          FC) const
+
+ - Method on memory_map: uint16_type get_16 (uint32_type ADDRESS,
+          function_code FC) const
+
+ - Method on memory_map: uint16_type get_16_unchecked (uint32_type
+          ADDRESS, function_code FC) const
+
+ - Method on memory_map: uint32_type get_32 (uint32_type ADDRESS,
+          function_code FC) const
+
+ - Method on memory_map: void put_8 (uint32_type ADDRESS, int VALUE,
+          function_code FC)
+
+ - Method on memory_map: void put_16 (uint32_type ADDRESS, uint16_type
+          VALUE, function_code FC)
+
+ - Method on memory_map: void put_16_unchecked (uint32_type ADDRESS,
+          uint16_type VALUE, function_code FC)
+
+ - Method on memory_map: void put_32 (uint32_type ADDRESS, uint32_type
+          VALUE, function_code FC)
+
+
+File: vx68k.info,  Node: Processor,  Prev: Memory Interface,  Up: General Purpose Components
+
+Processor
+=========
+
+   A processor is made of a pair of a context and an execution unit. A
+context represents the dynamic state, which is updated by program
+execution. An execution unit represents the static setting that is not
+changed while program execution.
+
+* Menu:
+
+* Context::
+* Execution Unit::
+
+
+File: vx68k.info,  Node: Context,  Next: Execution Unit,  Prev: Processor,  Up: Processor
+
+Context
+-------
+
+   The state of the processor is stored in a context. Major components
+of a context are a set of registers and a reference to an address space.
+
+ - Class: context
+     This class represents the dynamic part of a processor.
+
+ - Instance Variable of context: registers regs
+     This variable keeps values of the processor registers.
+
+ - Method on context: bool supervisor_state () const
+     This method returns true if this context is in the supervisor
+     state.
+
+ - Method on context: void set_supervisor_state (bool STATE)
+     This method sets the supervisor state to STATE.
+
+ - Method on context: memory::function_code data_fc () const
+     This method returns the function code for data.
+
+ - Method on context: memory::function_code program_fc () const
+     This method returns the function code for programs.
+
+
+File: vx68k.info,  Node: Execution Unit,  Prev: Context,  Up: Processor
+
+Execution Unit
+--------------
+
+   Virtual X68000 encapsulates non-dynamic aspects of a M68000
+processor into an execution unit.
+
+ - Class: exec_unit
+     This class represents the static part of a processor.
+
+ - Method on exec_unit: instruction_type set_instruction (uint16_type
+          OP, const instruction_type &I)
+     This method sets an instruction for operation word OP to I and
+     returns the previous value.
+
+ - Method on exec_unit: void step (context &C) const
+     This method executes a single instruction in context C.
+
+ - Method on exec_unit: void run (context &C) const
+     This method executes instructions in context C.
+
+* Menu:
+
+* Instructions::
+
+
+File: vx68k.info,  Node: Instructions,  Prev: Execution Unit,  Up: Execution Unit
+
+Instructions
+............
+
+   An instruction is defined by a function.  This function is called
+"instruction handler".
+
+
+File: vx68k.info,  Node: X68000 Emulation,  Next: Human68k Emulation,  Prev: General Purpose Components,  Up: Top
+
+X68000 Emulation
+****************
+
+   This chapter describes UI-independent part of Virtual X68000.
+
+   They are available in library `libvx68k'.
+
+* Menu:
+
+* Machine::                     Hardware and BIOS emulation.
+* Memory Components::
+* Disk I/O::
+
+
+File: vx68k.info,  Node: Machine,  Next: Memory Components,  Prev: X68000 Emulation,  Up: X68000 Emulation
+
+Machine
+=======
+
+   In Virtual X68000, a machine is an abstraction of X68000 hardware
+and firmware BIOS.
+
+   These definitions are available in `<vx68k/machine.h>'.
+
+ - Class: machine
+     This class represents the user-interface independent part of an
+     X68000 hardware and firmware.
+
+ - Constructor on machine: machine (size_t MEMORY_SIZE)
+     This method constructs a machine.
+
+ - Method on machine: size_t memory_size () const
+     Returns the size of main memory.
+
+ - Method on machine: class exec_unit * exec_unit () const
+     Returns the pointer to the execution unit of this object.
+
+ - Method on machine: context * master_context () const
+     Returns the master context.
+
+ - Method on machine: void connect (console *C)
+     Sets a "console" for this object.  A console is an abstract
+     interface to the host system.
+
+ - Method on machine: void configure (memory_map &MM)
+     Configures address space MM for this object.
+
+ - Abstract Class: console
+     This class is an abstract interface to the host system.
+
+
+File: vx68k.info,  Node: Memory Components,  Next: Disk I/O,  Prev: Machine,  Up: X68000 Emulation
+
+Memory Components
+=================
+
+* Menu:
+
+* Main Memory::                 The main memory.
+* IOCS and System ROM::
+* Text Video Memory::
+* Graphic Video Memory::
+* SCC::
+
+
+File: vx68k.info,  Node: Main Memory,  Next: IOCS and System ROM,  Prev: Memory Components,  Up: Memory Components
+
+Main Memory
+-----------
+
+ - Class: main_memory
+     Memory component for the main memory.
+
+
+File: vx68k.info,  Node: IOCS and System ROM,  Next: Text Video Memory,  Prev: Main Memory,  Up: Memory Components
+
+The IOCS and the System ROM
+---------------------------
+
+   X68000 uses the "IOCS" for input/output and other primitive
+services.  The name IOCS stands for input/output control subsystem.  It
+is stored in the "System ROM".
+
+ - Class: system_rom
+     Memory component for the System ROM.  This class derives
+     `vm68k::memory'.
+
+     This class manages a table of IOCS call handlers, and dispatches
+     IOCS calls to them.
+
+ - Method on system_rom: uint16_type get_16 (function_code FC,
+          uint32_type ADDRESS) const
+     Returns the 16-bit value at address ADDRESS using function code FC.
+
+ - Method on system_rom: int get_8 (function_code FC, uint32_type
+          ADDRESS) const
+     Returns the 8-bit value at address ADDRESS using function code FC.
+
+ - Method on system_rom: void put_16 (function_code FC, uint32_type
+          ADDRESS, uint16_type VALUE)
+     Stores 16-bit value VALUE at address ADDRESS using function code
+     FC.
+
+ - Method on system_rom: void put_8 (function_code FC, uint32_type
+          ADDRESS, int VALUE)
+     Stores 8-bit value VALUE at address ADDRESS using function code FC.
+
+ - Method on system_rom: void attach (exec_unit *EU)
+
+ - Method on system_rom: void detach (exec_unit *EU)
+
+ - Method on system_rom: void initialize (memory_map &MM)
+
+ - Typedef in `system_rom': iocs_call_type
+     Type for IOCS call handlers.
+
+ - Method on system_rom: void set_iocs_call (int NUMBER, const
+          iocs_call_type &HANDLER)
+     Sets the handler for IOCS call NUMBER to HANDLER.
+
+ - Method on system_rom: void call_iocs (int NUMBER, context &C)
+
+
+File: vx68k.info,  Node: Text Video Memory,  Next: Graphic Video Memory,  Prev: IOCS and System ROM,  Up: Memory Components
+
+Text Video Memory
+-----------------
+
+ - Class: text_video_memory
+     Memory component for text video frame buffer.
+
+ - Method on text_video_memory: uint16_type get_16 (function_code FC,
+          uint32_type ADDRESS) const
+     Returns the 16-bit value at address ADDRESS using function code FC.
+
+ - Method on text_video_memory: int get_8 (function_code FC,
+          uint32_type ADDRESS) const
+     Returns the 8-bit value at address ADDRESS using function code FC.
+
+ - Method on text_video_memory: void put_16 (function_code FC,
+          uint32_type ADDRESS, uint16_type VALUE)
+     Stores 16-bit value VALUE at address ADDRESS using function code
+     FC.
+
+ - Method on text_video_memory: void put_8 (function_code FC,
+          uint32_type ADDRESS, int VALUE)
+     Stores 8-bit value VALUE at address ADDRESS using function code FC.
+
+ - Method on text_video_memory: void install_iocs_calls (system_rom
+          &ROM)
+
+ - Method on text_video_memory: void fill_plane (int LEFT, int TOP, int
+          RIGHT, int BOTTOM, int PLANE, uint16_type PATTERN)
+     Fills a rectangular area in a plane.  This method implements the
+     function of an IOCS call `_TXFILL'.
+
+
+File: vx68k.info,  Node: Graphic Video Memory,  Next: SCC,  Prev: Text Video Memory,  Up: Memory Components
+
+Graphic Video Memory
+--------------------
+
+ - Class: graphic_video_memory
+
+
+File: vx68k.info,  Node: SCC,  Prev: Graphic Video Memory,  Up: Memory Components
+
+Z8530 SCC
+---------
+
+   X68000 uses a Zilog Z8530 SCC, or serial communication controller,
+for a COM port and a mouse port.
+
+
+File: vx68k.info,  Node: Disk I/O,  Prev: Memory Components,  Up: X68000 Emulation
+
+Disk I/O
+========
+
+ - Abstrace Class: disk_unit
+     Base class for disk units.
+
+ - Abstrace Method on disk_unit: uint32_type recalibrate (uint16_type
+          MODE)
+
+ - Abstract Method on disk_unit: uint32_type seek (uint16_type MODE,
+          uint32_type POS)
+
+ - Abstract Method on disk_unit: uint32_type read (uint16_type MODE,
+          uint32_type POS, memory_map &MM, uint32_type BUF, uint32_type
+          NBYTES)
+
+ - Abstract Method on disk_unit: uint32_type write (uint16_type MODE,
+          uint32_type POS, const memory_map &MM, uint32_type BUF,
+          uint32_type NBYTES)
+
+ - Abstract Method on disk_unit: uint32_type verify (uint16_type MODE,
+          uint32_type POS, const memory_map &MM, uint32_type BUF,
+          uint32_type NBYTES)
+
+ - Abstract Method on disk_unit: uint32_type check (uint16_type MODE,
+          int OP)
+
+* Menu:
+
+* Floppy Disk::
+
+
+File: vx68k.info,  Node: Floppy Disk,  Prev: Disk I/O,  Up: Disk I/O
+
+Floppy Disk
+-----------
+
+ - Class: floppy_disk_unit
+
+
+File: vx68k.info,  Node: Human68k Emulation,  Next: GTK+ User Interface,  Prev: X68000 Emulation,  Up: Top
+
+Human68k Emulation
+******************
+
+   Virtual X68000 is unique as it also offers functions of the basic
+operating system, Human68k.
+
+* Menu:
+
+* Memory Management::
+* Filesystem::
+
+
+File: vx68k.info,  Node: Memory Management,  Next: Filesystem,  Prev: Human68k Emulation,  Up: Human68k Emulation
+
+Memory Management
+=================
+
+
+File: vx68k.info,  Node: Filesystem,  Prev: Memory Management,  Up: Human68k Emulation
+
+Filesystem
+==========
+
+
+File: vx68k.info,  Node: GTK+ User Interface,  Next: Sample Application,  Prev: Human68k Emulation,  Up: Top
+
+GTK+ User Interface
+*******************
+
+   This chapter describes the GTK+ implementation of user interface
+components.
+
+   All components described in this chapter is declared in namespace
+`vx68k::gtk'.
+
+ - Class: gtk_console
+     Implements a console using the GTK+ user interface toolkit.
+
+
+File: vx68k.info,  Node: Sample Application,  Next: Document Type Definitions,  Prev: GTK+ User Interface,  Up: Top
+
+Sample Application
+******************
+
+   This chapter describes the implementation of the sample application
+`vx68k'.
+
+
+File: vx68k.info,  Node: Document Type Definitions,  Next: Function and Variable Index,  Prev: Sample Application,  Up: Top
+
+Document Type Definitions
+*************************
+
+* Menu:
+
+* Target Program Descriptors::
+* Option Settings::
+
+
+File: vx68k.info,  Node: Target Program Descriptors,  Next: Option Settings,  Prev: Document Type Definitions,  Up: Document Type Definitions
+
+Target Program Descriptors
+==========================
+
+     <!-- Target Program Descriptor DTD -->
+     <!ELEMENT program (title, disk*)>
+     <!ATTLIST program
+       xmlns CDATA #FIXED "http://www.vx68k.org/vx68k/program1">
+     
+     <!ELEMENT title (#PCDATA)>
+     
+     <!ELEMENT disk (#PCDATA)*>
+     <!ATTLIST disk
+       file CDATA #REQUIRED
+       type (floppy|fixed) "floppy"
+       unit CDATA #IMPLIED>
+
+
+File: vx68k.info,  Node: Option Settings,  Prev: Target Program Descriptors,  Up: Document Type Definitions
+
+Option Setting
+==============
+
+     [Insert DTD here.]
+
+
+File: vx68k.info,  Node: Function and Variable Index,  Next: Data Type Index,  Prev: Document Type Definitions,  Up: Top
+
+Function and Variable Index
+***************************
+
+* Menu:
+
+* attach on system_rom:                  IOCS and System ROM.
+* call_iocs on system_rom:               IOCS and System ROM.
+* check on disk_unit:                    Disk I/O.
+* configure on machine:                  Machine.
+* connect on machine:                    Machine.
+* data_fc on context:                    Context.
+* detach on system_rom:                  IOCS and System ROM.
+* exec_unit on machine:                  Machine.
+* fill_plane on text_video_memory:       Text Video Memory.
+* get_16 on memory:                      Memory.
+* get_16 on memory_map:                  Memory Map.
+* get_16 on system_rom:                  IOCS and System ROM.
+* get_16 on text_video_memory:           Text Video Memory.
+* get_16_unchecked on memory_map:        Memory Map.
+* get_32 on memory:                      Memory.
+* get_32 on memory_map:                  Memory Map.
+* get_8 on memory:                       Memory.
+* get_8 on memory_map:                   Memory Map.
+* get_8 on system_rom:                   IOCS and System ROM.
+* get_8 on text_video_memory:            Text Video Memory.
+* initialize on system_rom:              IOCS and System ROM.
+* install_iocs_calls on text_video_memory: Text Video Memory.
+* machine on machine:                    Machine.
+* master_context on machine:             Machine.
+* memory_size on machine:                Machine.
+* program_fc on context:                 Context.
+* put_16 on memory:                      Memory.
+* put_16 on memory_map:                  Memory Map.
+* put_16 on system_rom:                  IOCS and System ROM.
+* put_16 on text_video_memory:           Text Video Memory.
+* put_16_unchecked on memory_map:        Memory Map.
+* put_32 on memory:                      Memory.
+* put_32 on memory_map:                  Memory Map.
+* put_8 on memory:                       Memory.
+* put_8 on memory_map:                   Memory Map.
+* put_8 on system_rom:                   IOCS and System ROM.
+* put_8 on text_video_memory:            Text Video Memory.
+* read on disk_unit:                     Disk I/O.
+* recalibrate on disk_unit:              Disk I/O.
+* regs of context:                       Context.
+* run on exec_unit:                      Execution Unit.
+* seek on disk_unit:                     Disk I/O.
+* set_instruction on exec_unit:          Execution Unit.
+* set_iocs_call on system_rom:           IOCS and System ROM.
+* set_supervisor_state on context:       Context.
+* step on exec_unit:                     Execution Unit.
+* SUPER_DATA:                            Memory.
+* SUPER_PROGRAM:                         Memory.
+* supervisor_state on context:           Context.
+* USER_DATA:                             Memory.
+* USER_PROGRAM:                          Memory.
+* verify on disk_unit:                   Disk I/O.
+* write on disk_unit:                    Disk I/O.
+
+
+File: vx68k.info,  Node: Data Type Index,  Next: Concept Index,  Prev: Function and Variable Index,  Up: Top
+
+Data Type Index
+***************
+
+* Menu:
+
+* address_error_exception:               Memory Exceptions.
+* bus_error_exception:                   Memory Exceptions.
+* console:                               Machine.
+* context:                               Context.
+* disk_unit:                             Disk I/O.
+* exec_unit:                             Execution Unit.
+* floppy_disk_unit:                      Floppy Disk.
+* function_code <1>:                     Memory Map.
+* function_code:                         Memory.
+* graphic_video_memory:                  Graphic Video Memory.
+* gtk_console:                           GTK+ User Interface.
+* iocs_call_type:                        IOCS and System ROM.
+* machine:                               Machine.
+* main_memory:                           Main Memory.
+* memory:                                Memory.
+* memory_exception:                      Memory Exceptions.
+* memory_map:                            Memory Map.
+* sint32_type:                           Basic Types.
+* sint_type:                             Basic Types.
+* system_rom:                            IOCS and System ROM.
+* text_video_memory:                     Text Video Memory.
+* uint32_type:                           Basic Types.
+* uint_type:                             Basic Types.
+
+
+File: vx68k.info,  Node: Concept Index,  Prev: Data Type Index,  Up: Top
+
+Concept Index
+*************
+
+* Menu:
+
+* coding convention:                     Coding Conventions.
+* COM port:                              SCC.
+* context:                               Context.
+* disk:                                  Disk I/O.
+* Disk Operating System:                 Human68k Emulation.
+* DOS:                                   Human68k Emulation.
+* execution unit:                        Execution Unit.
+* filesystem:                            Filesystem.
+* floppy disk:                           Floppy Disk.
+* graphic video memory:                  Graphic Video Memory.
+* Human68k:                              Human68k Emulation.
+* input/output control sybsystem:        IOCS and System ROM.
+* instruction handler:                   Instructions.
+* IOCS:                                  IOCS and System ROM.
+* machine:                               Machine.
+* memory:                                Memory Interface.
+* memory management, DOS:                Memory Management.
+* mouse port:                            SCC.
+* Operating System, Disk:                Human68k Emulation.
+* processor:                             Processor.
+* SCC, Z8530:                            SCC.
+* serial communication controller, Z8530: SCC.
+* System ROM:                            IOCS and System ROM.
+* text video memory:                     Text Video Memory.
+* video memory, graphic:                 Graphic Video Memory.
+* video memory, text:                    Text Video Memory.
+* Z8530 SCC:                             SCC.
+
+
+
+Tag Table:
+Node: Top682
+Node: Introduction2683
+Node: Command Reference2938
+Node: Invoking vx68k3336
+Node: M68000 Architecture3623
+Node: Data Size4003
+Node: Coding Conventions4222
+Node: Basic Types4550
+Node: General Purpose Components6022
+Node: Memory Interface6455
+Node: Memory Exceptions6894
+Node: Memory7143
+Node: Memory Map9718
+Node: Processor10807
+Node: Context11207
+Node: Execution Unit12135
+Node: Instructions12880
+Node: X68000 Emulation13085
+Node: Machine13455
+Node: Memory Components14595
+Node: Main Memory14872
+Node: IOCS and System ROM15081
+Node: Text Video Memory16785
+Node: Graphic Video Memory18082
+Node: SCC18268
+Node: Disk I/O18478
+Node: Floppy Disk19439
+Node: Human68k Emulation19564
+Node: Memory Management19858
+Node: Filesystem20012
+Node: GTK+ User Interface20125
+Node: Sample Application20531
+Node: Document Type Definitions20770
+Node: Target Program Descriptors21011
+Node: Option Settings21571
+Node: Function and Variable Index21738
+Node: Data Type Index24790
+Node: Concept Index26220
+
+End Tag Table

@@ -1,0 +1,12 @@
+<!-- Target Program Descriptor DTD -->
+<!ELEMENT program (title, disk*)>
+<!ATTLIST program
+  xmlns CDATA #FIXED "http://www.vx68k.org/vx68k/program1">
+
+<!ELEMENT title (#PCDATA)>
+
+<!ELEMENT disk (#PCDATA)*>
+<!ATTLIST disk
+  file CDATA #REQUIRED
+  type (floppy|fixed) "floppy"
+  unit CDATA #IMPLIED>

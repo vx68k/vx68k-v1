@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE program SYSTEM "program.dtd">
+<program xmlns="http://www.vx68k.org/vx68k/program1">
+  <title>Sample TPD</title>
+  <disk file="disk1.bin" type="floppy" unit="0">Disk 1</disk>
+  <disk file="disk2.bin" type="floppy" unit="1">Disk 2</disk>
+  <disk file="disk3.bin" type="floppy">Disk 3</disk>
+</program>
