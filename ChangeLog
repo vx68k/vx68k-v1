@@ -1,5 +1,25 @@
 2000-08-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/addressing.h: Return string from member text.
+
+	* libvm68k/statusreg.cc: Switch status_register to condition_code.
+
+	* libvm68k/execunit.cc: Modify debug outputs.
+	(run): Remove C-style cast.
+	(bsetl_i): #if'd out.
+	(m68k_bset_i): New function template.
+	(initialize_instructions): Add new handlers.
+
+	* include/vm68k/cpu.h (struct byte_size): Add member uvalue.
+	(struct word_size): Likewise.
+	(struct long_word_size): Likewise.
+	(class condition_tester): Move function definitions out of the
+	class definition.  Add member x.
+	(class condition_code): Renamed from status_register.  Typedef
+	status_register as condition_code.  Reformat inline functions.
+	(struct exception_listener): Removed.
+	(context::fetch<byte_size>): Use byte_size::svalue.
+
 	* libvx68k/sccmem.cc (mouse_motion): Call sched_yield and
 	pthread_testcancel.
 

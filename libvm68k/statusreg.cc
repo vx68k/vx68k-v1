@@ -24,7 +24,7 @@
 
 #include <vm68k/cpu.h>
 
-using vm68k::status_register;
+using vm68k::condition_code;
 using vm68k::bitset_condition_tester;
 using namespace vm68k::types;
 
@@ -119,7 +119,7 @@ namespace
 } // (unnamed namespace)
 
 void
-status_register::set_cc_cmp(sint32_type r, sint32_type d, sint32_type s)
+condition_code::set_cc_cmp(sint32_type r, sint32_type d, sint32_type s)
 {
   cc_eval = &const_sub_condition_tester;
   cc_values[0] = r;
@@ -128,7 +128,7 @@ status_register::set_cc_cmp(sint32_type r, sint32_type d, sint32_type s)
 }
 
 void
-status_register::set_cc_sub(sint32_type r, sint32_type d, sint32_type s)
+condition_code::set_cc_sub(sint32_type r, sint32_type d, sint32_type s)
 {
   x_eval = cc_eval = &const_sub_condition_tester;
   x_values[0] = cc_values[0] = r;
@@ -137,7 +137,7 @@ status_register::set_cc_sub(sint32_type r, sint32_type d, sint32_type s)
 }
 
 void
-status_register::set_cc_asr(sint32_type r, sint32_type d, uint_type s)
+condition_code::set_cc_asr(sint32_type r, sint32_type d, uint_type s)
 {
   x_eval = cc_eval = &const_asr_condition_tester;
   x_values[0] = cc_values[0] = r;
@@ -146,7 +146,7 @@ status_register::set_cc_asr(sint32_type r, sint32_type d, uint_type s)
 }
 
 void
-status_register::set_cc_lsl(sint32_type r, sint32_type d, uint_type s)
+condition_code::set_cc_lsl(sint32_type r, sint32_type d, uint_type s)
 {
   x_eval = cc_eval = &const_lsl_condition_tester;
   x_values[0] = cc_values[0] = r;
@@ -154,7 +154,7 @@ status_register::set_cc_lsl(sint32_type r, sint32_type d, uint_type s)
   x_values[2] = cc_values[2] = s;
 }
 
-status_register::operator uint_type() const
+condition_code::operator uint_type() const
 {
   uint_type v = value & 0xff00;
   if (cs())
@@ -169,18 +169,18 @@ status_register::operator uint_type() const
   return v;
 }
 
-status_register::status_register()
+condition_code::condition_code()
   : cc_eval(general_condition_tester),
     x_eval(general_condition_tester),
     value(S)
 {
 }
 
-const bitset_condition_tester status_register::bitset_tester;
+const bitset_condition_tester condition_code::bitset_tester;
 const condition_tester *const
-status_register::general_condition_tester = &const_general_condition_tester;
+condition_code::general_condition_tester = &const_general_condition_tester;
 const condition_tester *const
-status_register::add_condition_tester = &const_add_condition_tester;
+condition_code::add_condition_tester = &const_add_condition_tester;
 
 bool
 bitset_condition_tester::cs(const sint32_type *v) const

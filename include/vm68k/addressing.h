@@ -20,14 +20,16 @@
 #define _VM68K_ADDRESSING_H 1
 
 #include <vm68k/cpu.h>
+
+#include <string>
 #include <cstdio>
 
 namespace vm68k
 {
+  using namespace std;
+
   namespace addressing
   {
-    using std::sprintf;
-
     template <class Size> class basic_d_register
     {
     public:
@@ -54,18 +56,21 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      const char *text(const context &c) const
-	{
-	  static char buf[8];
-	  sprintf(buf, "%%d%u", reg);
-	  return buf;
-	}
+      string text(const context &c) const;
     };
 
     template <class Size> inline typename Size::svalue_type
     basic_d_register<Size>::get(const context &c) const
     {
       return Size::get(c.regs.d[reg]);
+    }
+
+    template <class Size> string
+    basic_d_register<Size>::text(const context &c) const
+    {
+      char buf[8];
+      sprintf(buf, "%%d%u", reg);
+      return buf;
     }
 
     typedef basic_d_register<byte_size> byte_d_register;
@@ -98,18 +103,21 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      const char *text(const context &c) const
-	{
-	  static char buf[8];
-	  sprintf(buf, "%%a%u", reg);
-	  return buf;
-	}
+      string text(const context &c) const;
     };
 
     template <class Size> inline typename Size::svalue_type
     basic_a_register<Size>::get(const context &c) const
     {
       return Size::get(c.regs.a[reg]);
+    }
+
+    template <class Size> string
+    basic_a_register<Size>::text(const context &c) const
+    {
+      char buf[8];
+      sprintf(buf, "%%a%u", reg);
+      return buf;
     }
 
     // XXX Address register direct is not allowed for byte size.
@@ -142,7 +150,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      const char *text(const context &c) const;
+      string text(const context &c) const;
     };
 
     template <class Size> inline typename Size::svalue_type
@@ -151,10 +159,10 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), address(c));
     }
 
-    template <class Size> const char *
+    template <class Size> string
     basic_indirect<Size>::text(const context &c) const
     {
-      static char buf[64];
+      char buf[64];
       sprintf(buf, "%%a%u@/* %#lx */", reg, address(c) + 0UL);
       return buf;
     }
@@ -202,7 +210,7 @@ namespace vm68k
       {c.regs.a[reg] += advance_size();}
 
     public:
-      const char *text(const context &c) const;
+      string text(const context &c) const;
     };
 
     template <class Size> inline typename Size::svalue_type
@@ -211,10 +219,10 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), c.regs.a[reg]);
     }
 
-    template <class Size> const char *
+    template <class Size> string
     basic_postinc_indirect<Size>::text(const context &c) const
     {
-      static char buf[64];
+      char buf[64];
       sprintf(buf, "%%a%u@+/* %#lx */", reg, c.regs.a[reg] + 0UL);
       return buf;
     }
@@ -260,7 +268,7 @@ namespace vm68k
         {c.regs.a[reg] -= advance_size();}
 
     public:
-      const char *text(const context &c) const;
+      string text(const context &c) const;
     };
 
     template <class Size> inline typename Size::svalue_type
@@ -269,10 +277,10 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), c.regs.a[reg] - advance_size());
     }
 
-    template <class Size> const char *
+    template <class Size> string
     basic_predec_indirect<Size>::text(const context &c) const
     {
-      static char buf[64];
+      char buf[64];
       sprintf(buf, "%%a%u@-/* %#lx */", reg,
 	      c.regs.a[reg] - advance_size() + 0UL);
       return buf;
@@ -311,7 +319,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      const char *text(const context &c) const;
+      string text(const context &c) const;
     };
 
     template <class Size> inline uint32_type
@@ -326,10 +334,10 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), address(c));
     }
 
-    template <class Size> const char *
+    template <class Size> string
     basic_disp_indirect<Size>::text(const context &c) const
     {
-      static char buf[64];
+      char buf[64];
       sprintf(buf, "%%a%u@(%d)/* %#lx */", reg, c.fetch(word_size(), offset),
 	      address(c) + 0UL);
       return buf;
@@ -372,7 +380,7 @@ namespace vm68k
       {}
 
     public:
-      const char *text(const context &c) const;
+      string text(const context &c) const;
     };
 
     template <class Size> inline uint32_type
@@ -382,9 +390,9 @@ namespace vm68k
       unsigned int r = w >> 12 & 0xf;
       uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
       if (w & 0x800)
-	return c.regs.a[reg] + byte_size::get(w) + long_word_size::get(x);
+	return c.regs.a[reg] + byte_size::svalue(w) + long_word_size::get(x);
       else
-	return c.regs.a[reg] + byte_size::get(w) + word_size::get(x);
+	return c.regs.a[reg] + byte_size::svalue(w) + word_size::get(x);
     }
 
     template <class Size> inline typename Size::svalue_type
@@ -393,17 +401,17 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), address(c));
     }
 
-    template <class Size> const char *
+    template <class Size> string
     basic_index_indirect<Size>::text(const context &c) const
     {
       uint_type w = c.fetch(word_size(), offset);
       unsigned int r = w >> 12 & 0xf;
-      static char buf[64];
+      char buf[64];
       if (r >= 8)
-	sprintf(buf, "%%a%u@(%d,%%a%u%s)/* %#lx */", reg, byte_size::get(w),
+	sprintf(buf, "%%a%u@(%d,%%a%u%s)/* %#lx */", reg, byte_size::svalue(w),
 		r - 8, w & 0x800 ? ":l" : ":w", address(c) + 0UL);
       else
-	sprintf(buf, "%%a%u@(%d,%%d%u%s)/* %#lx */", reg, byte_size::get(w),
+	sprintf(buf, "%%a%u@(%d,%%d%u%s)/* %#lx */", reg, byte_size::svalue(w),
 		r, w & 0x800 ? ":l" : ":w", address(c) + 0UL);
       return buf;
     }
@@ -438,9 +446,9 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      const char *text(const context &c) const
+      string text(const context &c) const
       {
-	static char buf[32];
+	char buf[32];
 	sprintf(buf, "%#lx:s", address(c) + 0UL);
 	return buf;
       }
@@ -488,7 +496,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      const char *text(const context &c) const;
+      string text(const context &c) const;
     };
 
     template <class Size> inline uint32_type
@@ -503,10 +511,10 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), address(c));
     }
 
-    template <class Size> const char *
+    template <class Size> string
     basic_abs_long<Size>::text(const context &c) const
     {
-      static char buf[32];
+      char buf[32];
       sprintf(buf, "%#lx", address(c) + 0UL);
       return buf;
     }
@@ -540,7 +548,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      const char *text(const context &c) const;
+      string text(const context &c) const;
     };
 
     template <class Size> inline uint32_type
@@ -555,10 +563,10 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), address(c));
     }
 
-    template <class Size> const char *
+    template <class Size> string
     basic_disp_pc_indirect<Size>::text(const context &c) const
     {
-      static char buf[64];
+      char buf[64];
       sprintf(buf, "%%pc@(%d)/* %#lx */", c.fetch(word_size(), offset),
 	      address(c) + 0UL);
       return buf;
@@ -594,7 +602,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      const char *text(const context &c) const;
+      string text(const context &c) const;
     };
 
     template <class Size> inline uint32_type
@@ -604,9 +612,9 @@ namespace vm68k
       unsigned int r = w >> 12 & 0xf;
       uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
       if (w & 0x800)
-	return c.regs.pc + offset + byte_size::get(w) + long_word_size::get(x);
+	return c.regs.pc + offset + byte_size::svalue(w) + long_word_size::get(x);
       else
-	return c.regs.pc + offset + byte_size::get(w) + word_size::get(x);
+	return c.regs.pc + offset + byte_size::svalue(w) + word_size::get(x);
     }
 
     template <class Size> inline typename Size::svalue_type
@@ -615,17 +623,17 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), address(c));
     }
 
-    template <class Size> const char *
+    template <class Size> string
     basic_index_pc_indirect<Size>::text(const context &c) const
     {
       uint_type w = c.fetch(word_size(), offset);
       unsigned int r = w >> 12 & 0xf;
-      static char buf[64];
+      char buf[64];
       if (r >= 8)
-	sprintf(buf, "%%pc@(%d,%%a%u%s)/* %#lx */", byte_size::get(w), r - 8,
+	sprintf(buf, "%%pc@(%d,%%a%u%s)/* %#lx */", byte_size::svalue(w), r - 8,
 		w & 0x800 ? ":l" : ":w", address(c) + 0UL);
       else
-	sprintf(buf, "%%pc@(%d,%%d%u%s)/* %#lx */", byte_size::get(w), r,
+	sprintf(buf, "%%pc@(%d,%%d%u%s)/* %#lx */", byte_size::svalue(w), r,
 		w & 0x800 ? ":l" : ":w", address(c) + 0UL);
       return buf;
     }
@@ -660,7 +668,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      const char *text(const context &c) const;
+      string text(const context &c) const;
     };
 
     template <class Size> inline typename Size::svalue_type
@@ -669,10 +677,10 @@ namespace vm68k
       return c.fetch(Size(), offset);
     }
 
-    template <class Size> const char *
+    template <class Size> string
     basic_immediate<Size>::text(const context &c) const
     {
-      static char buf[32];
+      char buf[32];
       sprintf(buf, "#%#lx", (get(c) & Size::value_mask()) + 0UL);
       return buf;
     }

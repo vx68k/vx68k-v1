@@ -41,6 +41,7 @@ namespace vm68k
     static size_t value_size() {return 1;}
     static size_t aligned_value_size() {return 2;}
 
+    static unsigned int uvalue(unsigned int value);
     static int svalue(unsigned int value);
 
     static int get(uint32_type value);
@@ -54,10 +55,16 @@ namespace vm68k
     static const char *suffix() {return "b";}
   };
 
+  inline unsigned int
+  byte_size::uvalue(unsigned int value)
+  {
+    return value & value_mask();
+  }
+
   inline int
   byte_size::svalue(unsigned int value)
   {
-    value &= value_mask();
+    value = uvalue(value);
     const unsigned int N = 1u << value_bit() - 1;
     if (value >= N)
       return -int(value_mask() - value) - 1;
@@ -102,6 +109,7 @@ namespace vm68k
     static size_t value_size() {return 2;}
     static size_t aligned_value_size() {return value_size();}
 
+    static uint_type uvalue(uint_type value);
     static sint_type svalue(uint_type value);
 
     static sint_type get(uint32_type value);
@@ -115,10 +123,16 @@ namespace vm68k
     static const char *suffix() {return "w";}
   };
 
+  inline uint_type
+  word_size::uvalue(uint_type value)
+  {
+    return value & value_mask();
+  }
+
   inline sint_type
   word_size::svalue(uint_type value)
   {
-    value &= value_mask();
+    value = uvalue(value);
     const uint_type N = uint_type(1) << value_bit() - 1;
     if (value >= N)
       return -sint_type(value_mask() - value) - 1;
@@ -165,6 +179,7 @@ namespace vm68k
     static size_t value_size() {return 4;}
     static size_t aligned_value_size() {return value_size();}
 
+    static uint32_type uvalue(uint32_type value);
     static sint32_type svalue(uint32_type value);
 
     static sint32_type get(uint32_type value);
@@ -177,6 +192,12 @@ namespace vm68k
 
     static const char *suffix() {return "l";}
   };
+
+  inline uint32_type
+  long_word_size::uvalue(uint32_type value)
+  {
+    return value & value_mask();
+  }
 
   inline sint32_type
   long_word_size::svalue(uint32_type value)
@@ -251,20 +272,37 @@ namespace vm68k
   }
 
 #endif /* VM68K_ENABLE_DEPRECATED */
-
+
   /* Abstruct base class for condition testers.  */
   class condition_tester
   {
   public:
-    virtual bool ls(const sint32_type *v) const
-    {return cs(v) || eq(v);}
+    virtual bool ls(const sint32_type *) const;
     virtual bool cs(const sint32_type *) const = 0;
     virtual bool eq(const sint32_type *) const = 0;
     virtual bool mi(const sint32_type *) const = 0;
     virtual bool lt(const sint32_type *) const = 0;
-    virtual bool le(const sint32_type *v) const
-    {return eq(v) || lt(v);}
+    virtual bool le(const sint32_type *) const;
+    virtual unsigned int x(const sint32_type *) const;
   };
+
+  inline bool
+  condition_tester::ls(const sint32_type *v) const
+  {
+    return this->cs(v) || this->eq(v);
+  }
+
+  inline bool
+  condition_tester::le(const sint32_type *v) const
+  {
+    return this->eq(v) || this->lt(v);
+  }
+
+  inline unsigned int
+  condition_tester::x(const sint32_type *v) const
+  {
+    return this->cs(v);
+  }
 
   class bitset_condition_tester: public condition_tester
   {
@@ -274,9 +312,9 @@ namespace vm68k
     bool mi(const sint32_type *) const;
     bool lt(const sint32_type *) const;
   };
-
+
   /* Status register.  */
-  class status_register
+  class condition_code
   {
   protected:
     enum
@@ -295,11 +333,11 @@ namespace vm68k
     uint_type value;
 
   public:
-    status_register();
+    condition_code();
 
   public:
     operator uint_type() const;
-    status_register &operator=(uint_type v)
+    condition_code &operator=(uint_type v)
     {
       value = v & 0xff00;
       x_eval = cc_eval = &bitset_tester;
@@ -308,30 +346,18 @@ namespace vm68k
     }
 
   public:
-    bool hi() const
-      {return !ls();}
-    bool ls() const
-      {return cc_eval->ls(cc_values);}
-    bool cc() const
-      {return !cs();}
-    bool cs() const
-      {return cc_eval->cs(cc_values);}
-    bool ne() const
-      {return !eq();}
-    bool eq() const
-      {return cc_eval->eq(cc_values);}
-    bool pl() const
-      {return !mi();}
-    bool mi() const
-      {return cc_eval->mi(cc_values);}
-    bool ge() const
-      {return !lt();}
-    bool lt() const
-      {return cc_eval->lt(cc_values);}
-    bool gt() const
-      {return !le();}
-    bool le() const
-      {return cc_eval->le(cc_values);}
+    bool hi() const {return !cc_eval->ls(cc_values);}
+    bool ls() const {return  cc_eval->ls(cc_values);}
+    bool cc() const {return !cc_eval->cs(cc_values);}
+    bool cs() const {return  cc_eval->cs(cc_values);}
+    bool ne() const {return !cc_eval->eq(cc_values);}
+    bool eq() const {return  cc_eval->eq(cc_values);}
+    bool pl() const {return !cc_eval->mi(cc_values);}
+    bool mi() const {return  cc_eval->mi(cc_values);}
+    bool ge() const {return !cc_eval->lt(cc_values);}
+    bool lt() const {return  cc_eval->lt(cc_values);}
+    bool gt() const {return !cc_eval->le(cc_values);}
+    bool le() const {return  cc_eval->le(cc_values);}
 
   public:
     uint_type x() const
@@ -371,6 +397,8 @@ namespace vm68k
       {if (s) value |= S; else value &= ~S;}
   };
 
+  typedef condition_code status_register;
+
   /* CPU registers (mc68000).  */
   struct registers
   {
@@ -382,17 +410,6 @@ namespace vm68k
     uint32_type ssp;
   };
 
-#if 0
-  struct exception_listener
-  {
-    virtual void bus_error (registers *, memory_address_space *) = 0;
-    virtual void address_error (registers *, memory_address_space *) = 0;
-    virtual void trap (int, registers *, memory_address_space *) = 0;
-    virtual void interrupt (int, registers *, memory_address_space *) = 0;
-    virtual void illegal (int, registers *, memory_address_space *) = 0;
-  };
-#endif
-
   /* Context of execution.  A context represents all the state of
      execution.  See also `class exec_unit'.  */
   class context
@@ -400,7 +417,6 @@ namespace vm68k
   public:
     registers regs;
     memory_address_space *mem;
-    //exception_listener *exception;
 
   private:
     /* Cache values for program and data FC's.  */
@@ -461,8 +477,8 @@ namespace vm68k
   template <> inline byte_size::svalue_type
   context::fetch(byte_size, size_t offset) const
   {
-    return byte_size::get(word_size::get(*mem, program_fc(),
-					 regs.pc + offset));
+    return byte_size::svalue(word_size::get(*mem, program_fc(),
+					    regs.pc + offset));
   }
 
   /* Execution unit.  */

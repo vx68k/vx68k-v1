@@ -69,8 +69,8 @@ exec_unit::run(context &c) const
 	}
 # endif
       LG(nana_instruction_trace, "| 0x%08lx (0x%04x)\n",
-	 (unsigned long) long_word_size::get(c.regs.pc),
-	 c.fetch(word_size(), 0));
+	 long_word_size::uvalue(c.regs.pc) + 0UL,
+	 word_size::uvalue(c.fetch(word_size(), 0)));
 #endif
       step(c);
     }
@@ -149,8 +149,7 @@ namespace
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L(" add%s %s", Size::suffix(), ea1.text(c));
-    L(",%%d%u\n", reg2);
+    L("\tadd%s\t%s,%%d%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
     svalue_type value1 = ea1.get(c);
@@ -173,8 +172,7 @@ namespace
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L(" add%s %%d%u,", Size::suffix(), reg2);
-    L("%s\n", ea1.text(c));
+    L("\tadd%s\t%%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
     svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
@@ -197,8 +195,7 @@ namespace
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L(" adda%s %s", Size::suffix(), ea1.text(c));
-    L(",%%a%u\n", reg2);
+    L("\tadda%s\t%s,%%a%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
     // The condition codes are not affected by this instruction.
@@ -223,8 +220,8 @@ namespace
     svalue_type value2 = Size::svalue(c.fetch(Size(), 2));
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
 #ifdef HAVE_NANA_H
-    L(" addi%s #%#lx", Size::suffix(), (unsigned long) value2);
-    L(",%s\n", ea1.text(c));
+    L("\taddi%s\t#%#lx,%s\n", Size::suffix(), Size::uvalue(value2) + 0UL,
+      ea1.text(c).c_str());
 #endif
 
     svalue_type value1 = ea1.get(c);
@@ -248,8 +245,7 @@ namespace
     if (value2 == 0)
       value2 = 8;
 #ifdef HAVE_NANA_H
-    L(" addq%s #%d", Size::suffix(), value2);
-    L(",%s\n", ea1.text(c));
+    L("\taddq%s\t#%d,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
 
     svalue_type value1 = ea1.get(c);
@@ -273,8 +269,7 @@ namespace
     if (value2 == 0)
       value2 = 8;
 #ifdef HAVE_NANA_H
-    L(" addq%s #%d", Size::suffix(), value2);
-    L(",%%a%u\n", reg1);
+    L("\taddq%s\t#%d,%%a%u\n", Size::suffix(), value2, reg1);
 #endif
 
     // The condition codes are not affected by this instruction.
@@ -297,8 +292,7 @@ namespace
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L(" addx%s %%d%u,", Size::suffix(), reg1);
-    L("%%d%u\n", reg2);
+    L("\taddx%s\t%%d%u,%%d%u\n", Size::suffix(), reg1, reg2);
 #endif
 
     svalue_type value1 = Size::svalue(Size::get(c.regs.d[reg1]));
@@ -321,8 +315,7 @@ namespace
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L(" and%s %s", Size::suffix(), ea1.text(c));
-    L(",%%d%u\n", reg2);
+    L("\tand%s\t%s,%%d%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
     svalue_type value1 = ea1.get(c);
@@ -346,9 +339,7 @@ namespace
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L("\tand%s\t", Size::suffix());
-    L("%%d%u,", reg2);
-    L("%s\n", ea1.text(c));
+    L("\tand%s\t%%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
     svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
@@ -371,9 +362,8 @@ namespace
     svalue_type value2 = Size::svalue(c.fetch(Size(), 2));
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
 #ifdef HAVE_NANA_H
-    L("\tandi%s\t", Size::suffix());
-    L("#%#lx,", (unsigned long) Size::get(value2));
-    L("%s\n", ea1.text(c));
+    L("\tandi%s\t#%#lx,%s\n", Size::suffix(), Size::uvalue(value2) + 0UL,
+      ea1.text(c).c_str());
 #endif
 
     svalue_type value1 = ea1.get(c);
@@ -454,9 +444,7 @@ namespace
 
     uvalue_type value2 = c.fetch(byte_size(), 2);
 #ifdef HAVE_NANA_H
-    L("\tandi%s\t", byte_size::suffix());
-    L("#%#x,", value2);
-    L("%%ccr\n");
+    L("\tandi%s\t#%#x,%%ccr\n", byte_size::suffix(), value2);
 #endif
 
     uvalue_type value1 = c.regs.ccr & 0xffu;
@@ -478,8 +466,7 @@ namespace
     if (value2 == 0)
       value2 = 8;
 #ifdef HAVE_NANA_H
-    L(" asl%s #%u", Size::suffix(), value2);
-    L(",%%d%u\n", reg1);
+    L("\tasl%s\t#%u,%%d%u\n", Size::suffix(), value2, reg1);
 #endif
 
     svalue_type value1 = Size::svalue(Size::get(c.regs.d[reg1]));
@@ -640,8 +627,8 @@ namespace
 	extsize = 0;
       }
 #ifdef HAVE_NANA_H
-    L("\tb%s\t", Condition::text());
-    L("%#lx\n", (unsigned long) (c.regs.pc + 2 + disp));
+    L("\tb%s\t%#lx\n", Condition::text(),
+      long_word_size::uvalue(c.regs.pc + 2 + disp) + 0UL);
 #endif
 
     // This instruction does not affect the condition codes.
@@ -754,9 +741,7 @@ namespace
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L("\tbclr%s\t", Size::suffix());
-    L("%%d%u,", reg2);
-    L("%s\n", ea1.text(c));
+    L("\tbclr%s\t%%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
     // This instruction affects only the Z bit of the condition codes.
@@ -781,9 +766,7 @@ namespace
     Destination ea1(op & 0x7, 2 + 2);
     unsigned int value2 = c.fetch(word_size(), 2) % Size::value_bit();
 #ifdef HAVE_NANA_H
-    L("\tbclr%s\t", Size::suffix());
-    L("#%u,", value2);
-    L("%s\n", ea1.text(c));
+    L("\tbclr%s\t#%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
 
     // This instruction affects only the Z bit of the condition codes.
@@ -839,6 +822,7 @@ namespace
       ec.regs.pc += 2 + disp;
     }
 
+#if 0
   void
   bsetl_i(uint_type op, context &ec, unsigned long data)
   {
@@ -858,6 +842,7 @@ namespace
 
     ec.regs.pc += 2 + 2;
   }
+#endif
 
   /* Handles a BSET instruction (register).  */
   template <class Size, class Destination> void
@@ -869,8 +854,7 @@ namespace
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L(" bset%s %%d%u,", Size::suffix(), reg2);
-    L("%s\n", ea1.text(c));
+    L("\tbset%s\t%%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
     // This instruction affects only the Z bit of the condition codes.
@@ -881,6 +865,31 @@ namespace
     c.regs.ccr.set_cc(value);	// FIXME.
 
     c.regs.pc += 2 + ea1.extension_size();
+  }
+
+  /* Handles a BSET instruction (immediate).  */
+  template <class Size, class Destination> void
+  m68k_bset_i(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    unsigned int value2 = c.fetch(word_size(), 2) % Size::value_bit();
+    Destination ea1(op & 0x7, 2 + word_size::aligned_value_size());
+#ifdef HAVE_NANA_H
+    L("\tbset%s\t#%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
+#endif
+
+    // This instruction affects only the Z bit of the condition codes.
+    uvalue_type mask = uvalue_type(1) << value2;
+    uvalue_type value1 = ea1.get(c);
+    bool value = value1 & mask;
+    ea1.put(c, value1 | mask);
+    c.regs.ccr.set_cc(value);	// FIXME.
+
+    ea1.finish(c);
+    c.regs.pc += (2 + word_size::aligned_value_size()
+		  + Destination::extension_size());
   }
 
   void
@@ -916,9 +925,7 @@ namespace
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L("\tbtst%s\t", Size::suffix());
-    L("%%d%u,", reg2);
-    L("%s\n", ea1.text(c));
+    L("\tbtst%s\t%%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
     // This instruction affects only the Z bit of the condition codes.
@@ -1026,9 +1033,7 @@ namespace
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L("\tcmp%s\t", Size::suffix());
-    L("%s,", ea1.text(c));
-    L("%%d%u\n", reg2);
+    L("\tcmp%s\t%s,%%d%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
     svalue_type value1 = ea1.get(c);
@@ -1201,9 +1206,8 @@ namespace
     basic_postinc_indirect<Size> ea1(op & 0x7, 2);
     basic_postinc_indirect<Size> ea2(op >> 9 & 0x7, 2 + ea1.extension_size());
 #ifdef HAVE_NANA_H
-    L("\tcmpm%s\t", Size::suffix());
-    L("%s,", ea1.text(c));
-    L("%s\n", ea2.text(c));
+    L("\tcmpm%s\t%s,%s\n", Size::suffix(), ea1.text(c).c_str(),
+      ea2.text(c).c_str());
 #endif
 
     svalue_type value1 = ea1.get(c);
@@ -1308,9 +1312,8 @@ namespace
     svalue_type value2 = Size::svalue(c.fetch(Size(), 2));
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
 #ifdef HAVE_NANA_H
-    L("\teori%s\t", Size::suffix());
-    L("#%#lx,", (unsigned long) Size::get(value2));
-    L("%s\n", ea1.text(c));
+    L("\teori%s\t#%#lx,%s\n", Size::suffix(), Size::uvalue(value2) + 0UL,
+      ea1.text(c).c_str());
 #endif
 
     svalue_type value1 = ea1.get(c);
@@ -1351,8 +1354,8 @@ namespace
     unsigned int reg1 = op & 0x7;
     sint_type disp = word_size::svalue(c.fetch(word_size(), 2));
 #ifdef HAVE_NANA_H
-    L(" db%s %%d%u,", cond.text(), reg1);
-    L("%#lx\n", (unsigned long) (c.regs.pc + 2 + disp));
+    L("\tdb%s\t%%d%u,%#lx\n", Condition::text(), reg1,
+      long_word_size::uvalue(c.regs.pc + 2 + disp) + 0UL);
 #endif
 
     // This instruction does not affect the condition codes.
@@ -1714,9 +1717,8 @@ namespace
     Source ea1(op & 0x7, 2);
     Destination ea2(op >> 9 & 0x7, 2 + ea1.extension_size());
 #ifdef HAVE_NANA_H
-    L("\tmove%s\t", Size::suffix());
-    L("%s,", ea1.text(c));
-    L("%s\n", ea2.text(c));
+    L("\tmove%s\t%s,%s\n", Size::suffix(), ea1.text(c).c_str(),
+      ea2.text(c).c_str());
 #endif
 
     svalue_type value = ea1.get(c);
@@ -1796,9 +1798,7 @@ namespace
 
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
-    L("\tmove%s\t", word_size::suffix());
-    L("%%sr,");
-    L("%s\n", ea1.text(c));
+    L("\tmove%s\t%%sr,%s\n", word_size::suffix(), ea1.text(c).c_str());
 #endif
 
     // This instruction is not privileged on MC68000.
@@ -1819,9 +1819,7 @@ namespace
 
     Source ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
-    L("\tmove%s\t", word_size::suffix());
-    L("%s,", ea1.text(c));
-    L("%%sr\n");
+    L("\tmove%s\t%s,%%sr\n", word_size::suffix(), ea1.text(c).c_str());
 #endif
 
     // This instruction is privileged.
@@ -1842,8 +1840,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
 #ifdef HAVE_NANA_H
-    L(" movel %%usp,");
-    L("%%a%u\n", reg1);
+    L("\tmove%s\t%%usp,%%a%u\n", long_word_size::suffix(), reg1);
 #endif
 
     // This instruction is privileged.
@@ -1887,8 +1884,7 @@ namespace
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L(" movea%s %s", Size::suffix(), ea1.text(c));
-    L(",%%a%u\n", reg2);
+    L("\tmovea%s\t%s,%%a%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
     // The condition codes are not affected by this instruction.
@@ -1947,8 +1943,7 @@ namespace
     uint_type mask = c.fetch(word_size(), 2);
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef HAVE_NANA_H
-    L(" movem%s %#06x,", Size::suffix(), mask);
-    L("%s\n", ea1.text(c));
+    L("\tmovem%s\t#%#x,%s\n", Size::suffix(), mask, ea1.text(c).c_str());
 #endif
 
     // This instruction does not affect the condition codes.
@@ -1987,9 +1982,7 @@ namespace
     unsigned int reg1 = op & 0x7;
     uint_type mask = c.fetch(word_size(), 2);
 #ifdef HAVE_NANA_H
-    L("\tmovem%s\t", Size::suffix());
-    L("#0x%04x,", mask);
-    L("%%a%u@-\n", reg1);
+    L("\tmovem%s\t#%#x,%%a%u@-\n", Size::suffix(), mask, reg1);
 #endif
 
     // This instruction does not affect the condition codes.
@@ -2069,9 +2062,7 @@ namespace
     unsigned int reg1 = op & 0x7;
     uint_type mask = c.fetch(word_size(), 2);
 #ifdef HAVE_NANA_H
-    L("\tmovem%s\t", Size::suffix());
-    L("%%a%u@+,", reg1);
-    L("#0x%04x\n", mask);
+    L("\tmovem%s\t%%a%u@+,#%#x\n", Size::suffix(), reg1, mask);
 #endif
 
     // This instruction does not affect the condition codes.
@@ -2221,8 +2212,7 @@ namespace
 
     Destination ea1(op & 0x7, 2);
 #ifdef HAVE_NANA_H
-    L("\tnot%s\t", Size::suffix());
-    L("%s\n", ea1.text(c));
+    L("\tnot%s\t%s\n", Size::suffix(), ea1.text(c).c_str());
 #endif
 
     svalue_type value1 = ea1.get(c);
@@ -2317,9 +2307,7 @@ namespace
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L("\tor%s\t", Size::suffix());
-    L("%%d%u,", reg2);
-    L("%s\n", ea1.text(c));
+    L("\tor%s\t%%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
     svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
@@ -2341,9 +2329,7 @@ namespace
 
     uvalue_type value2 = c.fetch(byte_size(), 2);
 #ifdef HAVE_NANA_H
-    L("\tori%s\t", byte_size::suffix());
-    L("#%#x,", value2);
-    L("%%ccr\n");
+    L("\tori%s\t#%#x,%%ccr\n", byte_size::suffix(), value2);
 #endif
 
     uvalue_type value1 = c.regs.ccr & 0xffu;
@@ -2362,9 +2348,7 @@ namespace
 
     uvalue_type value2 = c.fetch(word_size(), 2);
 #ifdef HAVE_NANA_H
-    L("\tori%s\t", word_size::suffix());
-    L("#%#x,", value2);
-    L("%%sr\n");
+    L("\tori%s\t#%#x,%%sr\n", word_size::suffix(), value2);
 #endif
 
     // This instruction is privileged.
@@ -2559,8 +2543,7 @@ namespace
     if (count == 0)
       count = 8;
 #ifdef HAVE_NANA_H
-    L(" ror%s #%u,", Size::suffix(), count);
-    L("%%d%u\n", reg1);
+    L("\tror%s\t#%u,%%d%u\n", Size::suffix(), count, reg1);
 #endif
 
     svalue_type value1 = Size::svalue(Size::get(c.regs.d[reg1]));
@@ -2650,7 +2633,7 @@ namespace
   m68k_rte(uint_type op, context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    L(" rte\n");
+    L("\trte\n");
 #endif
 
     // This instruction is privileged.
@@ -2704,8 +2687,7 @@ namespace
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L(" sub%s %%d%u,", Size::suffix(), reg2);
-    L("%s\n", ea1.text(c));
+    L("\tsub%s\t%%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
     svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
@@ -2812,9 +2794,7 @@ namespace
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
 #ifdef HAVE_NANA_H
-    L("\tsuba%s\t", Size::suffix());
-    L("%s,", ea1.text(c));
-    L("%%a%u\n", reg2);
+    L("\tsuba%s\t%s,%%a%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
     // This instruction does not affect the condition codes.
@@ -2901,8 +2881,7 @@ namespace
     if (value2 == 0)
       value2 = 8;
 #ifdef HAVE_NANA_H
-    L(" subq%s #%d,", Size::suffix(), value2);
-    L("%s\n", ea1.text(c));
+    L("\tsubq%s\t#%d,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
 
     svalue_type value1 = ea1.get(c);
@@ -2926,8 +2905,7 @@ namespace
     if (value2 == 0)
       value2 = 8;
 #ifdef HAVE_NANA_H
-    L(" subq%s #%d,", Size::suffix(), value2);
-    L("%%a%u\n", reg1);
+    L("\tsubq%s\t#%d,%%a%u\n", Size::suffix(), value2, reg1);
 #endif
 
     // This instruction does not affect the condition codes.
@@ -3313,7 +3291,22 @@ namespace
 		       &m68k_bclr_i<byte_size, byte_abs_short>);
     eu.set_instruction(0x08b9, 0x0000,
 		       &m68k_bclr_i<byte_size, byte_abs_long>);
-    eu.set_instruction(0x08c0, 0x0007, &bsetl_i);
+    eu.set_instruction(0x08c0, 0x0007,
+		       &m68k_bset_i<long_word_size, long_word_d_register>);
+    eu.set_instruction(0x08d0, 0x0007,
+		       &m68k_bset_i<byte_size, byte_indirect>);
+    eu.set_instruction(0x08d8, 0x0007,
+		       &m68k_bset_i<byte_size, byte_postinc_indirect>);
+    eu.set_instruction(0x08e0, 0x0007,
+		       &m68k_bset_i<byte_size, byte_predec_indirect>);
+    eu.set_instruction(0x08e8, 0x0007,
+		       &m68k_bset_i<byte_size, byte_disp_indirect>);
+    eu.set_instruction(0x08f0, 0x0007,
+		       &m68k_bset_i<byte_size, byte_index_indirect>);
+    eu.set_instruction(0x08f8, 0x0000,
+		       &m68k_bset_i<byte_size, byte_abs_short>);
+    eu.set_instruction(0x08f9, 0x0000,
+		       &m68k_bset_i<byte_size, byte_abs_long>);
     eu.set_instruction(0x0a00, 0x0007,
 		       &m68k_eori<byte_size, byte_d_register>);
     eu.set_instruction(0x0a10, 0x0007,
