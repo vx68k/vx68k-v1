@@ -76,7 +76,7 @@ namespace vx68k
 	   None};
       Display *d = GDK_DISPLAY();
       XVisualInfo *xvi = glXChooseVisual(d, DefaultScreen(d), glx_attr);
-      GdkVisual v = gdkx_visual_get(xvi->visualid);
+      GdkVisual *v = gdkx_visual_get(xvi->visualid);
       XFree(xvi);
       return v;
     }
