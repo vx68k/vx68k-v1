@@ -1,0 +1,6 @@
+proc vx68k_exit {} {
+}
+
+proc vx68k_version {} {
+}
+

@@ -2,7 +2,7 @@
 
 EXTRA_DIST = VERSION-ID
 
-SUBDIRS = include lib bin
+SUBDIRS = include lib bin testsuite
 
 dist-snapshot distcheck-snapshot:
 	${MAKE} VERSION=${VERSION}.`date +%Y%m%d` `echo $@ | sed -e 's/-snapshot//'`
