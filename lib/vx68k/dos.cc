@@ -43,20 +43,20 @@ using namespace std;
 
 /* Reads data from the file with a DOS file descriptor.  */
 int32
-dos::read(int fd, uint32 data, uint32 size)
+dos_exec_context::read(int fd, uint32 data, uint32 size)
 {
   // FIXME.
   uint8 *data_buf = static_cast<uint8 *>(malloc(size));
   ssize_t done = ::read(fd, data_buf, size);
   if (done == -1)
     return -6;			// FIXME.
-  main_ec.mem->write(SUPER_DATA, data, data_buf, size);
+  mem->write(SUPER_DATA, data, data_buf, size);
   return done;
 }
 
 /* Closes a DOS file descriptor.  */
 int
-dos::close(int fd)
+dos_exec_context::close(int fd)
 {
   // FIXME.
   if (::close(fd) == -1)
@@ -66,7 +66,7 @@ dos::close(int fd)
 
 /* Opens a file.  */
 int
-dos::open(const char *name, unsigned int flag)
+dos_exec_context::open(const char *name, unsigned int flag)
 {
   // FIXME.
   static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
@@ -220,7 +220,7 @@ namespace
 
       // FIXME.
       int fd = extsw(ec->mem->getw(SUPER_DATA, ec->regs.a[7]));
-      ec->regs.d[0] = dos::from(ec)->close(fd);
+      ec->regs.d[0] = static_cast<dos_exec_context *>(ec)->close(fd);
 
       ec->regs.pc += 2;
     }
@@ -245,7 +245,7 @@ namespace
 
       char name[256];
       ec->mem->read(SUPER_DATA, name_address, name, 256);
-      ec->regs.d[0] = dos::from(ec)->open(name, flags);
+      ec->regs.d[0] = static_cast<dos_exec_context *>(ec)->open(name, flags);
 
       ec->regs.pc += 2;
     }
@@ -279,7 +279,7 @@ namespace
       int fd = extsw(ec->mem->getw(SUPER_DATA, sp));
       uint32 data = ec->mem->getl(SUPER_DATA, sp + 2);
       uint32 size = ec->mem->getl(SUPER_DATA, sp + 6);
-      ec->regs.d[0] = dos::from(ec)->read(fd, data, size);
+      ec->regs.d[0] = static_cast<dos_exec_context *>(ec)->read(fd, data, size);
 
       ec->regs.pc += 2;
     }

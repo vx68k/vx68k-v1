@@ -33,7 +33,6 @@ namespace vx68k
     class dos_exec_context
       : public execution_context
     {
-      friend class dos;		// FIXME.
     private:
       class dos *dos;
     public:
@@ -48,19 +47,12 @@ namespace vx68k
 
     class dos
     {
-    public:
-      static dos *from(execution_context *ec)
-	{return static_cast<dos_exec_context *>(ec)->dos;}
     private:
       vm68k::exec_unit main_cpu;
       dos_exec_context main_ec;
     public:
       dos (address_space *, size_t);
     public:
-      int open(const char *, unsigned int);
-      int close(int);
-      int32 read(int, uint32, uint32);
-      int32 write(int, uint32, uint32);
       uint32 load_executable (const char *);
       uint16 start (uint32, const char *const *);
       uint16 execute (const char *, const char *const *);
