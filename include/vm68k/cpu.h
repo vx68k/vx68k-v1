@@ -45,19 +45,19 @@ struct cpu_regs
 
 struct exception_listener
 {
-  virtual void bus_error (cpu_regs *, memory *) = 0;
-  virtual void address_error (cpu_regs *, memory *) = 0;
-  virtual void trap (int, cpu_regs *, memory *) = 0;
-  virtual void interrupt (int, cpu_regs *, memory *) = 0;
-  virtual void illegal (int, cpu_regs *, memory *) = 0;
+  virtual void bus_error (cpu_regs *, address_space *) = 0;
+  virtual void address_error (cpu_regs *, address_space *) = 0;
+  virtual void trap (int, cpu_regs *, address_space *) = 0;
+  virtual void interrupt (int, cpu_regs *, address_space *) = 0;
+  virtual void illegal (int, cpu_regs *, address_space *) = 0;
 };
 
 struct execution_context
 {
   cpu_regs regs;
-  memory *mem;
+  address_space *mem;
   exception_listener *exception;
-  explicit execution_context (memory *);
+  explicit execution_context (address_space *);
 };
 
 /* A CPU.

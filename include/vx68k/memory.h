@@ -42,7 +42,7 @@ public:
 };
 
 class address_space
-  : public vm68k::memory
+  : public vm68k::address_space
 {
 public:
   explicit address_space (size_t);

@@ -2,6 +2,7 @@
 
 	* include/vx68k/memory.h (class address_space): Renamed from
 	memory.  All references changed.
+	* include/vm68k/memory.h (class address_space): Likewise.
 
 	* vm68k/memory.cc (set_memory_pages): Defined.
 

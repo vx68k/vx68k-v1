@@ -32,7 +32,7 @@ using namespace std;
 namespace vm68k
 {
 
-execution_context::execution_context (memory *m)
+execution_context::execution_context (address_space *m)
   : mem (m)
 {
 }

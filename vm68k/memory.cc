@@ -102,7 +102,7 @@ bus_error_page::putw (int fc, uint32 address, uint16)
 
 /* Get a word from memory.  */
 uint16
-memory::getw (int fc, uint32 address) const
+address_space::getw (int fc, uint32 address) const
   throw (bus_error)
 {
   uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
@@ -110,7 +110,7 @@ memory::getw (int fc, uint32 address) const
 }
 
 void
-memory::set_memory_pages (int first, int last, memory_page *p)
+address_space::set_memory_pages (int first, int last, memory_page *p)
 {
   assert (first >= 0);
   assert (first <= last);
@@ -118,7 +118,7 @@ memory::set_memory_pages (int first, int last, memory_page *p)
   fill (page_table + first, page_table + last, p);
 }
 
-memory::memory ()
+address_space::address_space ()
 {
   fill (page_table + 0, page_table + NPAGES, &default_page);
 }

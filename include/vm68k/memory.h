@@ -74,7 +74,7 @@ public:
   virtual void putw (int, uint32, uint16) throw (bus_error);
 };
 
-class memory
+class address_space
 {
 public:
 #if 0
@@ -82,7 +82,7 @@ public:
   {
   };
 #endif
-  memory ();
+  address_space ();
   void set_memory_pages (int begin, int end, memory_page *);
   void read (int, uint32, void *, size_t) const throw (bus_error);
   void write (int, uint32, const void *, size_t) throw (bus_error);
