@@ -1,10 +1,21 @@
 1999-12-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (create_window): Set focus to the console widget.
+  	Move gtk_widget_show earlier.
+
+	* libvx68kgtk/gtkconsole.cc (handle_key_press_event): New
+ 	function.
+	(deliver_key_press_event): New function.
+	(create_widget): Add key press handling
+
+	* include/vx68k/gtk.h (class gtk_console): Add new member
+ 	handle_key_press_event.
+
 	* libvx68k/machine.cc (get_key): New function.
 	(machine): Initialize key_queue_not_empty.
 	(~machine): Destroy key_queue_not_empty.
 
-	* include/vx68k/machine.h (class machine): Add members
+	* include/vx68k/machine.h (class machine): Add new members
  	key_queue_not_empty and get_key.  Add pthread_cond_signal in
  	queue_key_unlocked.
 

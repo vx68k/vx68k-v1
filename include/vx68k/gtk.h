@@ -29,6 +29,7 @@ namespace vx68k
 
   namespace gtk
   {
+    /* Console for GTK+.  */
     class gtk_console
       : public virtual console
     {
@@ -71,6 +72,9 @@ namespace vx68k
 
       /* Handles a GDK expose event E on widget W.  */
       bool handle_expose_event(GtkWidget *w, GdkEventExpose *e);
+
+      /* Handles a GDK key press event E on widget W.  */
+      bool handle_key_press_event(GtkWidget *w, GdkEventKey *e);
     };
   } // gtk
 } // vx68k

@@ -134,8 +134,11 @@ vx68k_app::create_window()
   GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_signal_connect(GTK_OBJECT(window), "delete_event",
 		     GTK_SIGNAL_FUNC(&gtk_main_quit), NULL);
+  gtk_widget_show(window);
   {
     GtkWidget *vbox = gtk_vbox_new(false, 0);
+    gtk_widget_show(vbox);
+    gtk_container_add(GTK_CONTAINER(window), vbox);
     {
       GtkItemFactory *ifactory
 	= gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<Window>", NULL);
@@ -155,10 +158,12 @@ vx68k_app::create_window()
       gtk_box_pack_end(GTK_BOX(vbox), statusbar, false, false, 0);
     }
     {
+      GtkWidget *console_widget = con.create_widget();
+      gtk_widget_show(console_widget);
+
 #if 0
       GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
       {
-	GtkWidget *console_widget = con.create_widget();
 	gtk_widget_show(console_widget);
 	gtk_scrolled_window_add_with_viewport
 	  (GTK_SCROLLED_WINDOW(scrolled_window), console_widget);
@@ -171,8 +176,6 @@ vx68k_app::create_window()
 				    scrolled_window,
 				    &geometry, GDK_HINT_RESIZE_INC);
 #else
-      GtkWidget *console_widget = con.create_widget();
-      gtk_widget_show(console_widget);
       gtk_box_pack_start(GTK_BOX(vbox), console_widget, true, true, 0);
 
       GdkGeometry geometry = {0, 0, 0, 0, 0, 0, 1, 1};
@@ -180,11 +183,10 @@ vx68k_app::create_window()
 				    console_widget,
 				    &geometry, GDK_HINT_RESIZE_INC);
 #endif
+
+      gtk_widget_grab_focus(console_widget);
     }
-    gtk_widget_show(vbox);
-    gtk_container_add(GTK_CONTAINER(window), vbox);
   }
-  gtk_widget_show(window);
 
   return window;
 }
@@ -342,4 +344,3 @@ main(int argc, char **argv)
       return EXIT_FAILURE;
     }
 }
-

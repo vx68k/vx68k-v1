@@ -46,6 +46,21 @@ const char *const KANJI16_FONT_NAME
 const unsigned int TIMEOUT_INTERVAL = 200;
 
 bool
+gtk_console::handle_key_press_event(GtkWidget *drawing_area,
+				    GdkEventKey *e)
+{
+  for (gchar *i = e->string + 0; i != e->string + e->length; ++i)
+    {
+      // FIXME character code translation?
+      uint_type key = *i;
+#ifdef HAVE_NANA_H
+      L("gtk_console: Key press %#x\n", key);
+#endif
+      _m->queue_key(key);
+    }
+}
+
+bool
 gtk_console::handle_expose_event(GtkWidget *drawing_area,
 				 GdkEventExpose *e)
 {
@@ -92,21 +107,37 @@ namespace
 
     c->handle_destroy(w);
   }
-} // (unnamed namespace)
+
+  /* Delivers a GDK key press event E to the asociated console.  */
+  gint
+  deliver_key_press_event(GtkWidget *w, GdkEventKey *e,
+			  gpointer data) throw ()
+  {
+    gtk_console *c = static_cast<gtk_console *>(data);
+    I(c != NULL);
+
+    return c->handle_key_press_event(w, e);    
+  }
+} // (unnamed)
 
 GtkWidget *
 gtk_console::create_widget()
 {
   GtkWidget *drawing_area = gtk_drawing_area_new();
-  gtk_drawing_area_size(GTK_DRAWING_AREA(drawing_area), width, height);
   gtk_signal_connect(GTK_OBJECT(drawing_area), "destroy",
 		     GTK_SIGNAL_FUNC(&::handle_destroy), this);
   gtk_signal_connect(GTK_OBJECT(drawing_area), "expose_event",
 		     GTK_SIGNAL_FUNC(&::handle_expose_event), this);
-
-  GtkStyle *style = gtk_style_copy(gtk_widget_get_style(drawing_area));
-  style->bg[GTK_STATE_NORMAL] = style->black;
-  gtk_widget_set_style(drawing_area, style);
+  gtk_signal_connect(GTK_OBJECT(drawing_area), "key_press_event",
+		     GTK_SIGNAL_FUNC(&deliver_key_press_event), this);
+  GTK_WIDGET_SET_FLAGS(drawing_area, GTK_CAN_FOCUS);
+  gtk_widget_add_events(drawing_area, GDK_KEY_PRESS_MASK);
+  {
+    GtkStyle *style = gtk_style_copy(gtk_widget_get_style(drawing_area));
+    style->bg[GTK_STATE_NORMAL] = style->black;
+    gtk_widget_set_style(drawing_area, style);
+  }
+  gtk_drawing_area_size(GTK_DRAWING_AREA(drawing_area), width, height);
 
   widgets.push_back(drawing_area);
   return drawing_area;
