@@ -34,6 +34,10 @@ namespace vx68k
       virtual ~file() {}
     };
 
+    class file_system
+    {
+    };
+
     class process
     {
     public:
@@ -81,6 +85,7 @@ namespace vx68k
     private:
       address_space *mem;
       vm68k::exec_unit main_cpu;
+      file_system fs;
     public:
       dos (address_space *, size_t);
     public:

@@ -27,6 +27,7 @@
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
+#include <cstring>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
