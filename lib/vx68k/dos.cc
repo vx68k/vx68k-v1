@@ -24,11 +24,21 @@
 
 #include <vx68k/human.h>
 
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 
-#include "debug.h"
+#ifdef HAVE_NANA_H
+# include <nana.h>
+# include <cstdio>
+#else
+# include <cassert>
+# define I assert
+# define VL(EXPR)
+#endif
 
 using namespace vx68k::human;
 using namespace vm68k;
@@ -67,6 +77,20 @@ namespace
 
       ec.regs.pc += 2;
     }
+
+  void
+  dos_create(unsigned int op, context &ec)
+  {
+#ifdef L
+    L(" DOS _CREATE");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    // FIXME.
+    ec.regs.d[0] = open("/dev/null", O_RDWR);
+
+    ec.regs.pc += 2;
+  }
 
   void dos_exit2(unsigned int op, context &ec)
     {
@@ -178,6 +202,20 @@ namespace
 
       ec.regs.pc += 2;
     }
+
+  void
+  dos_write(unsigned int op, context &ec)
+  {
+#ifdef L
+    L(" DOS _WRITE");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    // FIXME.
+    ec.regs.d[0] = 0;
+
+    ec.regs.pc += 2;
+  }
 } // (unnamed namespace)
 
 dos::dos(address_space *m, size_t)
@@ -185,9 +223,11 @@ dos::dos(address_space *m, size_t)
 {
   main_cpu.set_instruction(0xff09, 0, &dos_print);
   main_cpu.set_instruction(0xff1b, 0, &dos_fgetc);
+  main_cpu.set_instruction(0xff3c, 0, &dos_create);
   main_cpu.set_instruction(0xff3d, 0, &dos_open);
   main_cpu.set_instruction(0xff3e, 0, &dos_close);
   main_cpu.set_instruction(0xff3f, 0, &dos_read);
+  main_cpu.set_instruction(0xff40, 0, &dos_write);
   main_cpu.set_instruction(0xff42, 0, &dos_seek);
   main_cpu.set_instruction(0xff43, 0, &dos_chmod);
   main_cpu.set_instruction(0xff44, 0, &dos_ioctrl);
