@@ -1,5 +1,7 @@
 1999-03-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Modified.
+
 	* lib/vm68k/execunit.cc (cmpib_postinc, moveb_postinc_d,
 	movel_postinc_d, subb_postinc_d, subql_d): New functions.
 	(install_instructions): Set instruction handlers to the new
