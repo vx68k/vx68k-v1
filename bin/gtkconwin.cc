@@ -34,6 +34,8 @@
 # define I assert
 #endif
 
+using namespace std;
+
 #define _(MSG) gettext(MSG)
 
 void
@@ -46,6 +48,12 @@ void
 gtk_console_window::add_callback(console_callback *c)
 {
   callback = c;
+}
+
+void
+gtk_console_window::show_about()
+{
+  aw.open(GTK_WINDOW(window));
 }
 
 void
@@ -100,11 +108,20 @@ namespace
     return tmi;
   }
 
+  /* Handles a destroy notification on a window.  */
   void
-  handle_window_destroy(gpointer data)
+  handle_window_destroy(gpointer data) throw ()
   {
     gtk_console_window *cw = static_cast<gtk_console_window *>(data);
     cw->notify_window_destroyed();
+  }
+
+  /* Handles an activate signal on an `about' menu item.  */
+  void
+  handle_about_item_activate(GtkMenuItem *mi, gpointer data)
+  {
+    gtk_console_window *cw = static_cast<gtk_console_window *>(data);
+    cw->show_about();
   }
 } // namespace (unnamed)
 
@@ -208,10 +225,11 @@ gtk_console_window::gtk_console_window(GtkWidget *w)
 
       gtk_signal_connect(GTK_OBJECT(exit_item), "activate",
 			 GTK_SIGNAL_FUNC(&gtk_main_quit), NULL);
+      gtk_signal_connect(GTK_OBJECT(about_item), "activate",
+			 GTK_SIGNAL_FUNC(&handle_about_item_activate), this);
 
       gtk_widget_set_sensitive(load_floppy_item, false);
       gtk_widget_set_sensitive(run_item, false);
-      gtk_widget_set_sensitive(about_item, false);
       gtk_widget_set_sensitive(eject_floppy_0_item, false);
       gtk_widget_set_sensitive(eject_floppy_1_item, false);
     }

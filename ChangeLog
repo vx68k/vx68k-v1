@@ -1,3 +1,22 @@
+2000-08-05  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/gtkconwin.cc (show_about, handle_about_item_activate): New
+	function.
+	(handle_window_destroy): Add a throw spec.
+	(gtk_console_window): Connect about_item's "activate" to a
+	handler.  Do not disable about_item.
+
+	* bin/Makefile.am (vx68k_SOURCES): Add gtkabout.cc.
+
+	* bin/gtkabout.cc: New file.
+	(notify_window_destroyed, handle_window_destroy,
+	handle_ok_button_clicked, close, open, ~gtk_about_window,
+	gtk_about_window): New function.
+
+	* bin/gtkapp.h (class gtk_about_dialog): Removed.
+	(class gtk_about_window): New class.
+	(class gtk_console_window): Add new members aw and show_about.
+
 2000-08-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* bin/gtkconwin.cc (gtk_console_window): Set window policy and

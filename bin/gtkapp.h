@@ -35,17 +35,35 @@ public:
   ~gtk_load_floppy_dialog();
 };
 
-/* About dialog for GTK+.  */
-class gtk_about_dialog
+/* About dialog window for GTK+.  */
+class gtk_about_window
 {
 private:
-  GtkWidget *dialog;
+  /* Window widget or null.  If this member is null, no window is open
+     for this object.  */
+  GtkWidget *window;
 
+  /* OK button.  */
   GtkWidget *ok_button;
 
 public:
-  explicit gtk_about_dialog(GtkWindow *);
-  ~gtk_about_dialog();
+  /* Constructs this object.  */
+  gtk_about_window();
+
+  /* Destructs this object.  */
+  ~gtk_about_window();
+
+public:
+  /* Opens a new window for this object.  If there is already a window
+     open, the window will be closed before a new one is opened.  */
+  void open(GtkWindow *parent);
+
+  /* Closes the window for this object if one is open.  */
+  void close();
+
+public:
+  /* Notifies the window is destroyed.  */
+  void notify_window_destroyed();
 };
 
 /* Console window for GTK+.  */
@@ -71,6 +89,8 @@ private:
   GtkWidget *exit_item;
   GtkWidget *about_item;
 
+  gtk_about_window aw;
+
 public:
   explicit gtk_console_window(GtkWidget *w);
   ~gtk_console_window();
@@ -78,6 +98,9 @@ public:
 public:
   void show();
   void hide();
+
+public:
+  void show_about();
 
 public:
   void add_callback(console_callback *);
