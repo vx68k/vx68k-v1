@@ -1,5 +1,7 @@
 1999-12-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* TODO: Modified.
+
 	* bin/main.cc (create_window): Set focus to the console widget.
   	Move gtk_widget_show earlier.
 
