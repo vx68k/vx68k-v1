@@ -3,6 +3,7 @@
 	* bin/main.cc (class vx68k_app): Add new member main_window.
 	(show_about_dialog): Enable set_transient_for.
 	(vx68k_app): Initialize main_window.
+	(run): Moved.
 
 2000-02-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 

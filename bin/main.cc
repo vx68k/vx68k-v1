@@ -143,6 +143,30 @@ vx68k_app::run_machine_thread(void *data)
 
   return NULL;
 }
+
+void
+vx68k_app::run()
+{
+  if (opt_single_threaded)
+    {
+      run_machine();
+
+      gdk_threads_enter();
+      gtk_main();
+      gdk_threads_leave();
+    }
+  else
+    {
+      pthread_t vm_thread;
+      pthread_create(&vm_thread, NULL, &run_machine_thread, this);
+
+      gdk_threads_enter();
+      gtk_main();
+      gdk_threads_leave();
+
+      pthread_join(vm_thread, NULL);
+    }
+}
 
 /* Window management.  */
 
@@ -349,30 +373,6 @@ vx68k_app::create_window()
   }
 
   return window;
-}
-
-void
-vx68k_app::run()
-{
-  if (opt_single_threaded)
-    {
-      run_machine();
-
-      gdk_threads_enter();
-      gtk_main();
-      gdk_threads_leave();
-    }
-  else
-    {
-      pthread_t vm_thread;
-      pthread_create(&vm_thread, NULL, &run_machine_thread, this);
-
-      gdk_threads_enter();
-      gtk_main();
-      gdk_threads_leave();
-
-      pthread_join(vm_thread, NULL);
-    }
 }
 
 const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
