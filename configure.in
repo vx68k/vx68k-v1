@@ -41,7 +41,7 @@ AC_CHECK_FUNCS(localtime_r)
 ALL_LINGUAS=""
 AM_GNU_GETTEXT
 AC_OUTPUT(Makefile intl/Makefile include/Makefile include/vx68k/Makefile \
-libvx68k/Makefile libvx68kdos/Makefile \
+libvx68kdos/Makefile libvx68k/Makefile \
 libvx68k-gtk/Makefile libvx68k-gtk/vx68k/Makefile \
 programs/Makefile doc/Makefile testsuite/Makefile po/Makefile.in)
 if test "$ac_cv_cxx_exceptions" != yes; then

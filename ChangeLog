@@ -1,5 +1,8 @@
 2002-05-07  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* configure.in: Reverse the order of libvx68k and libvx68kdos.
+	* Makefile (SUBDIRS): Likewise.
+
 	* Makefile.am (SUBDIRS): Remove @subdirs@.  Add intl, programs and
 	po.
 
