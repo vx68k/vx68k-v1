@@ -1,3 +1,12 @@
+1999-06-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (addw, andl, asll_r, asrl_r, extl, lsll_r,
+	lsrl_r, tstw): New functions.
+	(addw_off_d, andl_i_d, tstw_d): #if'd out.
+	(install_instructions): Add new handlers.
+
 1999-06-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/execunit.cc (lsrw, lsrw): Apply masks before shifts.
