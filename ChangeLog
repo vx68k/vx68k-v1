@@ -1,6 +1,7 @@
 1999-03-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/dos.cc: Use I and VL instead of assert and fprintf.
+	Remove cpp tests for TRACE_STEPS.
 
 	* configure.in: Add checks for Nana.
 

@@ -159,9 +159,7 @@ namespace
   void close(int op, execution_context *ec)
     {
       I(ec != NULL);
-#ifdef TRACE_STEPS
       VL((" DOS _CLOSE\n"));
-#endif
 
       ec->regs.d0 = 0u;		// FIXME.
 
@@ -171,9 +169,7 @@ namespace
   void open(int op, execution_context *ec)
     {
       I(ec != NULL);
-#ifdef TRACE_STEPS
       VL((" DOS _OPEN\n"));
-#endif
 
       ec->regs.d0 = -2u;	// FIXME.
 
@@ -183,9 +179,7 @@ namespace
   void print(int op, execution_context *ec)
     {
       I(ec != NULL);
-#ifdef TRACE_STEPS
       VL((" DOS _PRINT\n"));
-#endif
 
       uint32 address = ec->mem->getl(SUPER_DATA, ec->regs.a7);
 
