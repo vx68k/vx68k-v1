@@ -1,5 +1,10 @@
 2000-12-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/Makefile.am (noinst_HEADERS): Replace inst.h with
+	instr.h.
+
+	* libvm68k/instr.h: Renamed from inst.h.  Also change all users.
+
 	* include/vm68k/processor.h: Renamed from cpu.h.  Also change all
 	users.
 

@@ -22,6 +22,8 @@
 #undef const
 #undef inline
 
+#include "instr.h"
+
 #include <vm68k/addressing.h>
 #include <vm68k/condition.h>
 #include <vm68k/processor.h>
@@ -29,8 +31,6 @@
 #include <algorithm>
 
 #include <cstdio>
-
-#include "inst.h"
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
