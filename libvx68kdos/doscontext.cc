@@ -275,10 +275,12 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
       uint32_type address = load_address;
       while (p != fixup_buf + reloc_size)
 	{
-	  uint32_type d = *const_uint16_iterator(p)++;
+	  uint32_type d = *const_uint16_iterator(p);
+	  p += 2;
 	  if (d == 1)		// Prefix for long offset.
 	    {
-	      d = *const_uint32_iterator(p)++;
+	      d = *const_uint32_iterator(p);
+	      p += 4;
 	    }
 	  if (d % 2 != 0)
 	    {
