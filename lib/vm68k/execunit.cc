@@ -182,10 +182,9 @@ namespace
 #endif
 
       int fc = ec->data_fc();
-      int value = 0;
-      ec->mem->putw(fc, (&ec->regs.a0)[reg] - 2, value);
-      // FIXME: The condition codes must be set.
+      ec->mem->putw(fc, (&ec->regs.a0)[reg] - 2, 0);
       (&ec->regs.a0)[reg] -= 2;
+      ec->regs.sr.set_cc(0);
 
       ec->regs.pc += 2;
     }
@@ -266,8 +265,9 @@ namespace
 #endif
 
       int fc = ec->data_fc();
-      ec->mem->putw(fc, address, (&ec->regs.d0)[reg]);
-      // FIXME: The condition codes must be set.
+      int value = extsw((&ec->regs.d0)[reg]);
+      ec->mem->putw(fc, address, value);
+      ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2 + 4;
     }
@@ -343,7 +343,7 @@ namespace
 #endif
       
       (&ec->regs.d0)[reg] = value;
-      // FIXME: The condition codes must be set.
+      ec->regs.sr.set_cc(value);
 
       ec->regs.pc += 2;
     }

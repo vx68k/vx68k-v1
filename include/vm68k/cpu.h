@@ -40,12 +40,16 @@ namespace vm68k
       return value >= M >> 1 ? -(int) (M - value) : (int) value;
     }
 
-  struct status_register
+  class status_register
   {
+  private:
+    int32 result;
+  public:
     bool eq() const;
     bool ne() const {return !eq();}
     bool lt() const;
     bool ge() const {return !lt();}
+    void set_cc(int32);
     bool supervisor_state() const;
   };
 

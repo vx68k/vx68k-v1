@@ -29,13 +29,20 @@ using namespace vm68k;
 bool
 status_register::eq() const
 {
-  return true;			// FIXME.
+  return result == 0;		// FIXME.
 }
 
 bool
 status_register::lt() const
 {
-  return true;			// FIXME.
+  return result < 0;		// FIXME.
+}
+
+/* Sets the condition codes by a result.  */
+void
+status_register::set_cc(int32 r)
+{
+  result = r;
 }
 
 bool
