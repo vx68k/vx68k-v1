@@ -38,7 +38,8 @@ namespace vx68k
       memory_allocator(address_space *, uint32_type, uint32_type);
 
     public:
-      sint32_type alloc(uint32_type, uint32_type);
+      sint32_type alloc(uint32_type len, uint32_type parent);
+      sint32_type alloc_largest(uint32_type parent);
       sint_type free(uint32_type);
     };
 
