@@ -335,7 +335,7 @@ namespace
 	  s_reg, d_reg, (unsigned long) d_addr));
 
       int fc = ec->data_fc();
-      int32 value = ec->regs.a[s_reg];
+      int32 value = extsl(ec->regs.a[s_reg]);
       ec->mem->putl(fc, d_addr, value);
       ec->regs.a[d_reg] = d_addr;
       ec->regs.sr.set_cc(value);
@@ -445,10 +445,8 @@ namespace
   void moveql_d(int op, execution_context *ec)
     {
       I(ec != NULL);
-      int value = op & 0xff;
+      int value = extsb(op & 0xff);
       int reg = op >> 9 & 0x7;
-      if (value >= 0x80)
-	value -= 0x100;
       VL((" moveql #%d,%%d%d\n", value, reg));
       
       ec->regs.d[reg] = value;

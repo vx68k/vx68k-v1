@@ -6,8 +6,11 @@
 	(clrw_predec, moveb_postinc_postinc, movew_d_predec,
 	movel_a_predec, movel_postinc_a): Keep addresses in auto
 	variables.
+	(movel_a_predec): Use extsl for value.
+	(moveql_d): Use extsb for value.
 
 	* include/vm68k/cpu.h (extsl): New inline function.
+	(extsb, extsw): Divide M by 2.
 
 1999-03-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
