@@ -1,7 +1,11 @@
 1999-10-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Updated.
+
 	* vm68k/execunit.cc (install_instructions): Add missing
 	instruction.
+	(negb): New function template.
+	(install_instructions): Add negb.
 
 	* vx68k/filesystem.cc (export_file_name): Implement translation.
 

@@ -1827,6 +1827,23 @@ namespace
   }
 
   template <class Destination> void
+  negb(uint_type op, context &c, instruction_data *data)
+  {
+    Destination ea1(op & 0x7, 2);
+#ifdef TRACE_INSTRUCTIONS
+    L(" negb %s\n", ea1.textb(c));
+#endif
+
+    sint_type value1 = ea1.getb(c);
+    sint_type value = extsb(-value1);
+    ea1.putb(c, value);
+    c.regs.sr.set_cc_sub(value, 0, value1);
+    ea1.finishb(c);
+
+    c.regs.pc += 2 + ea1.isize(2);
+  }
+
+  template <class Destination> void
   negw(uint_type op, context &ec, instruction_data *data)
   {
     Destination ea1(op & 0x7, 2);
@@ -2854,6 +2871,13 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x42a0, 0x0007, &clrl<predecrement_indirect>);
   eu.set_instruction(0x42a8, 0x0007, &clrl<disp_indirect>);
   eu.set_instruction(0x42b9, 0x0000, &clrl<absolute_long>);
+  eu.set_instruction(0x4400, 0x0007, &negb<data_register>);
+  eu.set_instruction(0x4410, 0x0007, &negb<indirect>);
+  eu.set_instruction(0x4418, 0x0007, &negb<postinc_indirect>);
+  eu.set_instruction(0x4420, 0x0007, &negb<predec_indirect>);
+  eu.set_instruction(0x4428, 0x0007, &negb<disp_indirect>);
+  eu.set_instruction(0x4430, 0x0007, &negb<indexed_indirect>);
+  eu.set_instruction(0x4439, 0x0000, &negb<absolute_long>);
   eu.set_instruction(0x4440, 0x0007, &negw<data_register>);
   eu.set_instruction(0x4450, 0x0007, &negw<indirect>);
   eu.set_instruction(0x4458, 0x0007, &negw<postinc_indirect>);
