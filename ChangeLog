@@ -1,5 +1,13 @@
 2000-07-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Updated.
+
+	* libvm68k/execunit.cc (m68k_and_m, m68k_eori, m68k_not,
+	m68k_or_m, m68k_rol_r): New function template.
+	(m68k_bclr_r, m68k_bset_r, m68k_btst_r): Fix the operand offset.
+	(eoriw, rolb_r): Disabled.
+	(initialize_instructions): Add new handlers.  Fix some errors.
+
 	* libvx68k/systemrom.cc (iocs_romver): Change the ROM version and
 	the debug message.
 

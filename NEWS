@@ -1,14 +1,14 @@
 News and History of User-Visible Changes in Virtual X68000
 
-$Date: Sat, 27 May 2000 18:26:28 +0900 $
+$Date: Tue, 18 Jul 2000 23:26:45 +0900 $
 
 Version 1.1.0 (not released)
 
-* Changes in M68000 core
+* Changes in M68000 processor.
 
 ** Some of common condition codes are implemented.
 
-** More than 800 instruction handlers are implemented though some do
+** More than 1100 instruction handlers are implemented though some do
 not update the condition codes properly.
 
 ** It is close to run DIS source code generator for itself.
