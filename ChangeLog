@@ -1,5 +1,17 @@
 2001-06-30  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* Version 1.1.8.
+
+	* libvx68k/Makefile.am (libvx68k_la_LDFLAGS): Update the version
+	information.
+	* libvx68kdos/Makefile.am (libvx68kdos_la_LDFLAGS): Likewise.
+
+	* configure.in: Set VERSION to 1.1.8.
+
+	* NEWS: Updated.
+
+	* README: Updated.
+
 	* Modify tests for Nana macros.
 
 	* libvx68kdos/doscontext.cc (load_executable): Use

@@ -1,5 +1,11 @@
 History of user-visible changes in Virtual X68000.  -*-Outline-*-
 
+* Version 1.1.8
+
+** Updates for Libvm68k 1.0.5
+
+All calls to removed functions were replaced.
+
 * Version 1.1.7
 
 ** Updates for Libvm68k 1.0.4
