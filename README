@@ -1,6 +1,6 @@
 READ ME
 
-$Date: Fri, 19 Mar 1999 20:09:39 +0900 $
+$Date: Thu, 01 Apr 1999 23:13:56 +0900 $
 
 >> DESCRIPTION
 
@@ -17,7 +17,9 @@ only.  It lacks many common instructions.
 
 >> REQUIREMENTS
 
-This program is written in C++ with exception handling and namespaces.
+This program is written in C++ with exception handling, templates, and
+namespaces.  For the best performance, a compiler that is good at
+optimizing templates and inline functions is recommended.
 
 This program will use POSIX threads.
 

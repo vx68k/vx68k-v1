@@ -1,5 +1,7 @@
 1999-04-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* README: Modified.
+
 	* include/vm68k/cpu.h (class exec_unit): Change the first arg of
 	insn_handler.  Also update all functions.
 
