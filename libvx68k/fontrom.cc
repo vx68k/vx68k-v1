@@ -23,9 +23,10 @@
 
 #include <vx68k/memory.h>
 
+#include <cstdio>
+
 #ifdef HAVE_NANA_H
 # include <nana.h>
-# include <cstdio>
 #else
 # include <cassert>
 # define I assert
@@ -93,7 +94,7 @@ uint_type
 font_rom::get_16(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("class font_rom: get_16 fc=%d address=%#010x\n", fc, address);
+  DL("class font_rom: get_16: fc=%d address=0x%08lx\n", fc, address + 0UL);
 #endif
   address &= 0xfffff;
   if (address >= 0xc0000)
@@ -106,11 +107,11 @@ font_rom::get_16(int fc, uint32_type address) const
     }
 }
 
-uint_type
+unsigned int
 font_rom::get_8(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("class font_rom: get_8 fc=%d address=%#010x\n", fc, address);
+  DL("class font_rom: get_8: fc=%d address=0x%08lx\n", fc, address + 0UL);
 #endif
   address &= 0xfffff;
   if (address >= 0xc0000)
@@ -123,19 +124,27 @@ font_rom::get_8(int fc, uint32_type address) const
 }
 
 void
-font_rom::put_16(int, uint32_type, uint_type)
+font_rom::put_16(int fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
-  L("class font_rom: FIXME: `put_16' not implemented\n");
+  DL("class font_rom: put_16: fc=%d address=0x%08lx value=0x%04x\n",
+     fc, address + 0UL, value);
 #endif
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class font_rom: FIXME: `put_16' not implemented\n");
 }
 
 void
-font_rom::put_8(int, uint32_type, uint_type)
+font_rom::put_8(int fc, uint32_type address, unsigned int value)
 {
 #ifdef HAVE_NANA_H
-  L("class font_rom: FIXME: `put_8' not implemented\n");
+  DL("class font_rom: put_8: fc=%d address=0x%08lx value=0x%02x\n",
+     fc, address + 0UL, value);
 #endif
+  static bool once;
+  if (!once++)
+    fprintf(stderr, "class font_rom: FIXME: `put_8' not implemented\n");
 }
 
 font_rom::~font_rom()
