@@ -5,10 +5,10 @@
 	(vx68k_app): Load image files.
 	(class gtk_app): Renamed from vx68k_app.
 	(class gtk_app): Remove members opt_fd0_image, opt_fd1_image.
-	(load_fd_image): Open the image file.
+	(load_fd_image): Change the second argument to int.
 	(gtk_app): Remove image loading.
-	(parse_options): Make opt_fd0_image and opt_fd1_image
-	namespace-local.  Reorder cases.
+	(parse_options): Make opt_fd_images namespace-local.  Reorder
+	cases.
 	(main): Load images.
 
 	* libvx68k/machine.cc (iocs_b_lpeek, invalid_iocs_function,

@@ -111,7 +111,7 @@ public:
 
 public:
   /* Loads an image file on a FD unit.  */
-  void load_fd_image(unsigned int u, const char *);
+  void load_fd_image(unsigned int u, int fildes);
 
 public:
   GtkWidget *create_window();
@@ -201,26 +201,9 @@ gtk_app::join(int *status)
 }
 
 void
-gtk_app::load_fd_image(unsigned int u, const char *name)
+gtk_app::load_fd_image(unsigned int u, int fildes)
 {
-  int fildes = open(name, O_RDWR);
-  if (fildes == -1)
-    {
-      perror(name);
-      throw runtime_error("gtk_app");
-    }
-
-  iocs::image_file_floppy_disk *fd;
-  try
-    {
-      fd = new iocs::image_file_floppy_disk(fildes);
-    }
-  catch (...)
-    {
-      close(fildes);
-      throw;
-    }
-
+  iocs::image_file_floppy_disk *fd = new iocs::image_file_floppy_disk(fildes);
   g_message("`load_fd_image' function not implemented yet");
   delete fd;
 }
@@ -491,8 +474,7 @@ namespace
   int opt_boot = false;
 
   /* File names of FD images.  */
-  const char *opt_fd0_image = "";
-  const char *opt_fd1_image = "";
+  const char *opt_fd_images[2] = {"", ""};
 
   int opt_help = false;
   int opt_version = false;
@@ -521,11 +503,11 @@ namespace
 	switch (opt)
 	  {
 	  case '0':
-	    opt_fd0_image = optarg;
+	    opt_fd_images[0] = optarg;
 	    break;
 
 	  case '1':
-	    opt_fd1_image = optarg;
+	    opt_fd_images[1] = optarg;
 	    break;
 
 	  case 'm':
@@ -620,10 +602,26 @@ main(int argc, char **argv)
       GtkWidget *window = app.create_window();
       gtk_widget_show(window);
 
-      if (opt_fd0_image[0] != '\0')
-	app.load_fd_image(0, opt_fd0_image);
-      if (opt_fd1_image[0] != '\0')
-	app.load_fd_image(1, opt_fd0_image);
+      for (int u = 0; u != 2; ++u)
+	if (opt_fd_images[u][0] != '\0')
+	  {
+	    int fildes = open(opt_fd_images[u], O_RDWR);
+	    if (fildes == -1)
+	      {
+		perror(opt_fd_images[u]);
+		return EXIT_FAILURE;
+	      }
+
+	    try
+	      {
+		app.load_fd_image(u, fildes);
+	      }
+	    catch (...)
+	      {
+		close(fildes);
+		throw;
+	      }
+	  }
 
       if (opt_boot)
 	{
