@@ -1,5 +1,15 @@
 1999-10-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/Makefile.am (vx68k_LDADD): Use libvm68k.la.
+
+	* vm68k/Makefile.am (lib_LTLIBRARIES): Changed from
+	noinst_LIBRARIES.
+	(libvm68k_la_LDFLAGS): New macro.
+	(libvm68k_la_SOURCES): Changed from libvm68k_a_SOURCES.
+
+	* configure.in: Add comment text to _GNU_SOURCE definition.  Use
+	AM_PROG_LIBTOOL and remove AC_PROG_RANLIB.
+
 	* bin/Makefile.am (vx68k_LDADD): Modify directory of libvm68k.a.
 
 	* lib/Makefile.am (SUBDIRS): Remove vm68k.
