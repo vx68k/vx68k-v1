@@ -1,8 +1,8 @@
 1999-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/execunit.cc (addq_off_d, addil_d, movew_off_d,
-	movel_off_d, movel_d_predec, movel_d_absl, movel_a_absl): New
-	functions.
+	movel_a_d, movel_off_d, movel_d_predec, movel_d_absl,
+	movel_a_absl): New functions.
 	(movew_absl_d): Fix to modify only the low word of register.
 	(install_instructions): Set new instructions.
 

@@ -377,6 +377,21 @@ namespace
       ec->regs.pc += 2 + 4;
     }
 
+  void movel_a_d(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+      VL((" movel %%a%d,%%d%d\n", s_reg, d_reg));
+
+      int fc = ec->data_fc();
+      int32 value = extsl(ec->regs.a[s_reg]);
+      ec->regs.d[d_reg] = value;
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2;
+    }
+
   void movel_off_d(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -649,6 +664,7 @@ exec_unit::install_instructions(exec_unit *eu)
 
   eu->set_instruction(0x0680, 0x0007, &addil_d);
   eu->set_instruction(0x10d8, 0x0e07, &moveb_postinc_postinc);
+  eu->set_instruction(0x2008, 0x0e07, &movel_a_d);
   eu->set_instruction(0x2028, 0x0e07, &movel_off_d);
   eu->set_instruction(0x2058, 0x0e07, &movel_postinc_a);
   eu->set_instruction(0x2100, 0x0e07, &movel_d_predec);
