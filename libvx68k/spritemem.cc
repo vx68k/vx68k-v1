@@ -38,7 +38,7 @@ using namespace vm68k::types;
 using namespace std;
 
 uint16_type
-sprites_memory::get_16(function_code fc, uint32_type address) const
+sprites_memory::get_16(uint32_type address, function_code fc) const
 {
 #ifdef HAVE_NANA_H
   L("class sprites_memory: get_16: fc=%d address=%#010lx\n",
@@ -49,7 +49,7 @@ sprites_memory::get_16(function_code fc, uint32_type address) const
 }
 
 int
-sprites_memory::get_8(function_code fc, uint32_type address) const
+sprites_memory::get_8(uint32_type address, function_code fc) const
 {
 #ifdef HAVE_NANA_H
   L("class sprites_memory: get_8: fc=%d address=%#010lx\n",
@@ -64,8 +64,8 @@ sprites_memory::get_8(function_code fc, uint32_type address) const
 }
 
 void
-sprites_memory::put_16(function_code fc, uint32_type address,
-		       uint16_type value)
+sprites_memory::put_16(uint32_type address, uint16_type value,
+		       function_code fc)
 {
 #ifdef HAVE_NANA_H
   L("class sprites_memory: put_16: fc=%d address=%#010lx value=%#06x\n",
@@ -75,7 +75,7 @@ sprites_memory::put_16(function_code fc, uint32_type address,
 }
 
 void
-sprites_memory::put_8(function_code fc, uint32_type address, int value)
+sprites_memory::put_8(uint32_type address, int value, function_code fc)
 {
 #ifdef HAVE_NANA_H
   L("class sprites_memory: put_8: fc=%d address=%#010lx value=%#04x\n",

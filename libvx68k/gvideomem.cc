@@ -37,7 +37,7 @@ using namespace vm68k::types;
 using namespace std;
 
 uint16_type
-graphics_video_memory::get_16(function_code fc, uint32_type address) const
+graphics_video_memory::get_16(uint32_type address, function_code fc) const
 {
 #ifdef HAVE_NANA_H
   DL("class graphics_video_memory: get_16: fc=%d address=0x%08lx\n",
@@ -51,7 +51,7 @@ graphics_video_memory::get_16(function_code fc, uint32_type address) const
 }
 
 int
-graphics_video_memory::get_8(function_code fc, uint32_type address) const
+graphics_video_memory::get_8(uint32_type address, function_code fc) const
 {
 #ifdef HAVE_NANA_H
   DL("class graphics_video_memory: get_8: fc=%d address=0x%08lx\n",
@@ -65,7 +65,8 @@ graphics_video_memory::get_8(function_code fc, uint32_type address) const
 }
 
 void
-graphics_video_memory::put_16(function_code fc, uint32_type address, uint16_type value)
+graphics_video_memory::put_16(uint32_type address, uint16_type value,
+			      function_code fc)
 {
 #ifdef HAVE_NANA_H
   DL("class graphics_video_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
@@ -78,7 +79,7 @@ graphics_video_memory::put_16(function_code fc, uint32_type address, uint16_type
 }
 
 void
-graphics_video_memory::put_8(function_code fc, uint32_type address, int value)
+graphics_video_memory::put_8(uint32_type address, int value, function_code fc)
 {
 #ifdef HAVE_NANA_H
   DL("class graphics_video_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",

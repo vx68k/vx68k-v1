@@ -307,28 +307,28 @@ namespace vm68k
     virtual ~memory() {}
 
   public:
-    virtual uint16_type get_16(function_code, uint32_type) const = 0;
-    virtual int get_8(function_code, uint32_type) const = 0;
-    virtual uint32_type get_32(function_code, uint32_type) const;
+    virtual int get_8(uint32_type address, function_code) const = 0;
+    virtual uint16_type get_16(uint32_type address, function_code) const = 0;
+    virtual uint32_type get_32(uint32_type address, function_code) const;
 
-    virtual void put_16(function_code, uint32_type, uint16_type) = 0;
-    virtual void put_8(function_code, uint32_type, int) = 0;
-    virtual void put_32(function_code, uint32_type, uint32_type);
+    virtual void put_8(uint32_type address, int, function_code) = 0;
+    virtual void put_16(uint32_type address, uint16_type, function_code) = 0;
+    virtual void put_32(uint32_type address, uint32_type, function_code);
   };
 
   /* Default memory that always raises a bus error.  */
   class default_memory: public memory
   {
   public:
-    uint16_type get_16(function_code, uint32_type) const;
-    int get_8(function_code, uint32_type) const;
+    int get_8(uint32_type address, function_code) const;
+    uint16_type get_16(uint32_type address, function_code) const;
 
-    void put_16(function_code, uint32_type, uint16_type);
-    void put_8(function_code, uint32_type, int);
+    void put_8(uint32_type address, int, function_code);
+    void put_16(uint32_type address, uint16_type, function_code);
   };
-
-  /* Address space for memories.  An address space is a software view
-     of a target machine.  */
+
+  /* Maps an address space to memories.  An address space is a
+     software view of a target machine.  */
   class memory_map
   {
   public:
@@ -407,21 +407,21 @@ namespace vm68k
   memory_map::get_8(uint32_type address, function_code fc) const
   {
     const memory *p = *this->find_memory(address);
-    return p->get_8(fc, address);
+    return p->get_8(address, fc);
   }
 
   inline uint16_type
   memory_map::get_16_unchecked(uint32_type address, function_code fc) const
   {
     const memory *p = *this->find_memory(address);
-    return p->get_16(fc, address);
+    return p->get_16(address, fc);
   }
 
   inline void
   memory_map::put_8(uint32_type address, int value, function_code fc)
   {
     memory *p = *this->find_memory(address);
-    p->put_8(fc, address, value);
+    p->put_8(address, value, fc);
   }
 
   inline void
@@ -429,7 +429,7 @@ namespace vm68k
 			       function_code fc)
   {
     memory *p = *this->find_memory(address);
-    p->put_16(fc, address, value);
+    p->put_16(address, value, fc);
   }
 } // vm68k
 

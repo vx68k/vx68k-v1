@@ -23,12 +23,14 @@
 
 #include <vm68k/memory.h>
 
+#include <cstdio>
+
 #ifdef HAVE_NANA_H
 # include <nana.h>
-# include <cstdio>
+# undef assert
+# define assert I
 #else
 # include <cassert>
-# define I assert
 #endif
 
 using vm68k::default_memory;
@@ -36,30 +38,29 @@ using vm68k::bus_error_exception;
 using namespace vm68k::types;
 using namespace std;
 
-uint16_type
-default_memory::get_16(function_code fc, uint32_type address) const
+int
+default_memory::get_8(uint32_type address, function_code fc) const
 {
-  address &= 0xfffffffeU;
   throw bus_error_exception(true, fc, address);
 }
 
-int
-default_memory::get_8(function_code fc, uint32_type address) const
+uint16_type
+default_memory::get_16(uint32_type address, function_code fc) const
 {
-  address &= 0xffffffffU;
+  assert((address & 1) == 0);
   throw bus_error_exception(true, fc, address);
 }
 
 void
-default_memory::put_16(function_code fc, uint32_type address, uint16_type)
+default_memory::put_8(uint32_type address, int value, function_code fc)
 {
-  address &= 0xfffffffeU;
   throw bus_error_exception(false, fc, address);
 }
 
 void
-default_memory::put_8(function_code fc, uint32_type address, int)
+default_memory::put_16(uint32_type address, uint16_type value,
+		       function_code fc)
 {
-  address &= 0xffffffffU;
+  assert((address & 1) == 0);
   throw bus_error_exception(false, fc, address);
 }

@@ -127,7 +127,7 @@ opm_memory::set_interrupt_enabled(bool value)
 }
 
 int
-opm_memory::get_8(function_code fc, uint32_type address) const
+opm_memory::get_8(uint32_type address, function_code fc) const
 {
   address &= 0xffffffffu;
 #ifdef HAVE_NANA_H
@@ -153,18 +153,18 @@ opm_memory::get_8(function_code fc, uint32_type address) const
 }
 
 uint16_type
-opm_memory::get_16(function_code fc, uint32_type address) const
+opm_memory::get_16(uint32_type address, function_code fc) const
 {
 #ifdef HAVE_NANA_H
   DL("class opm_memory: get_16: fc=%d address=0x%08lx\n",
      fc, address + 0UL);
 #endif
 
-  return get_8(fc, address | 0x1u);
+  return get_8(address | 0x1u, fc);
 }
 
 void
-opm_memory::put_8(function_code fc, uint32_type address, int value)
+opm_memory::put_8(uint32_type address, int value, function_code fc)
 {
   address &= 0xffffffffu;
   value &= 0xffu;
@@ -194,7 +194,7 @@ opm_memory::put_8(function_code fc, uint32_type address, int value)
 }
 
 void
-opm_memory::put_16(function_code fc, uint32_type address, uint16_type value)
+opm_memory::put_16(uint32_type address, uint16_type value, function_code fc)
 {
   address &= 0xffffffffu;
   value &= 0xffffu;
@@ -203,7 +203,7 @@ opm_memory::put_16(function_code fc, uint32_type address, uint16_type value)
      fc, address + 0UL, value);
 #endif
 
-  this->put_8(fc, address | 0x1u, value);
+  this->put_8(address | 0x1u, value, fc);
 }
 
 opm_memory::~opm_memory()

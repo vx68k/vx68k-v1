@@ -1,3 +1,17 @@
+2000-12-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/defaultmem.cc (get_8, get_16, put_8, put_16): Remove
+	address masking.
+	(get_16, put_16): Add assertion checking.
+
+	* libvx68k/mainmem.cc (get_16, get_8, get_32, put_16, put_8,
+	put_32): Remove address masking.  Add assertion checks.
+
+	* libvm68k/memory.cc (get_32, put_32): Add assertion check.
+
+	* include/vm68k/memory.h (class memory): Move the function_code
+	argument to the end.  Also change all users and derived classes.
+
 2000-12-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvm68k/inst14.cc (m68k_roxl_i): New function.

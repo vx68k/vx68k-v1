@@ -37,7 +37,7 @@ using namespace vm68k::types;
 using namespace std;
 
 uint16_type
-area_set::get_16(function_code fc, uint32_type address) const
+area_set::get_16(uint32_type address, function_code fc) const
 {
 #ifdef HAVE_NANA_H
   L("class area_set: get_16 fc=%d address=%#010x\n", fc, address);
@@ -46,7 +46,7 @@ area_set::get_16(function_code fc, uint32_type address) const
 }
 
 int
-area_set::get_8(function_code fc, uint32_type address) const
+area_set::get_8(uint32_type address, function_code fc) const
 {
 #ifdef HAVE_NANA_H
   L("class area_set: get_8 fc=%d address=%#010x\n", fc, address);
@@ -55,7 +55,7 @@ area_set::get_8(function_code fc, uint32_type address) const
 }
 
 void
-area_set::put_8(function_code fc, uint32_type address, int value)
+area_set::put_8(uint32_type address, int value, function_code fc)
 {
   address &= 0xffffffffu;
   value &= 0xffu;
@@ -84,9 +84,9 @@ area_set::put_8(function_code fc, uint32_type address, int value)
 }
 
 void
-area_set::put_16(function_code fc, uint32_type address, uint16_type value)
+area_set::put_16(uint32_type address, uint16_type value, function_code fc)
 {
-  this->put_8(fc, address / 2 * 2 + 1, value);
+  this->put_8(address / 2 * 2 + 1, value, fc);
 }
 
 area_set::area_set(main_memory *mm)

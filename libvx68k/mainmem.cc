@@ -33,13 +33,14 @@
 #endif
 
 #include <cstdlib>
+#include <cstdio>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
-# include <cstdio>
+# undef assert
+# define assert I
 #else
 # include <cassert>
-# define I assert
 #endif
 
 using vx68k::main_memory;
@@ -53,26 +54,9 @@ main_memory::set_super_area(size_t n)
   super_area = n;
 }
 
-uint16_type
-main_memory::get_16(function_code fc, uint32_type address) const
-{
-  address &= 0xfffffffeU;
-
-  if (address % 0x1000000U >= end)
-    throw bus_error_exception(true, fc, address);
-
-  uint32_type i = address % 0x1000000U / 2;
-  uint_type value = data[i];
-  I(value <= 0xffff);
-
-  return value;
-}
-
 int
-main_memory::get_8(function_code fc, uint32_type address) const
+main_memory::get_8(uint32_type address, function_code fc) const
 {
-  address &= 0xffffffffU;
-
   if (address % 0x1000000U >= end)
     throw bus_error_exception(true, fc, address);
 
@@ -85,47 +69,45 @@ main_memory::get_8(function_code fc, uint32_type address) const
   else
     {
       unsigned int value = data[i] >> 8;
-      I(value <= 0xff);
+      assert(value <= 0xff);
       return value;
     }
 }
 
-uint32_type
-main_memory::get_32(function_code fc, uint32_type address) const
+uint16_type
+main_memory::get_16(uint32_type address, function_code fc) const
 {
-  address &= 0xfffffffcU;
+  assert((address & 1) == 0);
+  if (address % 0x1000000U >= end)
+    throw bus_error_exception(true, fc, address);
 
+  uint32_type i = address % 0x1000000U / 2;
+  uint_type value = data[i];
+  assert(value <= 0xffff);
+
+  return value;
+}
+
+uint32_type
+main_memory::get_32(uint32_type address, function_code fc) const
+{
+  assert((address & 3) == 0);
   if (address % 0x1000000U >= end)
     throw bus_error_exception(true, fc, address);
 
   uint32_type i = address % 0x1000000U / 2;
   uint_type value0 = data[i];
   uint_type value1 = data[i + 1];
-  I(value0 <= 0xffff);
-  I(value1 <= 0xffff);
+  assert(value0 <= 0xffff);
+  assert(value1 <= 0xffff);
 
   uint32_type value = uint32_type(value0) << 16 | value1;
   return value;
 }
 
 void
-main_memory::put_16(function_code fc, uint32_type address, uint16_type value)
+main_memory::put_8(uint32_type address, int value, function_code fc)
 {
-  address &= 0xfffffffeU;
-  value &= 0xffff;
-
-  if (address % 0x1000000U >= end
-      || fc != memory::SUPER_DATA && address % 0x1000000U < super_area)
-    throw bus_error_exception(false, fc, address);
-
-  uint32_type i = address % 0x1000000 / 2;
-  data[i] = value;
-}
-
-void
-main_memory::put_8(function_code fc, uint32_type address, int value)
-{
-  address &= 0xffffffffU;
   value &= 0xff;
 
   if (address % 0x1000000U >= end
@@ -144,9 +126,23 @@ main_memory::put_8(function_code fc, uint32_type address, int value)
 }
 
 void
-main_memory::put_32(function_code fc, uint32_type address, uint32_type value)
+main_memory::put_16(uint32_type address, uint16_type value, function_code fc)
 {
-  address &= 0xfffffffcU;
+  assert((address & 1) == 0);
+  value &= 0xffff;
+
+  if (address % 0x1000000U >= end
+      || fc != memory::SUPER_DATA && address % 0x1000000U < super_area)
+    throw bus_error_exception(false, fc, address);
+
+  uint32_type i = address % 0x1000000 / 2;
+  data[i] = value;
+}
+
+void
+main_memory::put_32(uint32_type address, uint32_type value, function_code fc)
+{
+  assert((address & 3) == 0);
   value &= 0xffffffffU;
 
   if (address % 0x1000000U >= end

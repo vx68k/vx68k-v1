@@ -48,7 +48,7 @@ msm6258v_memory::install_iocs_calls(system_rom &rom)
 }
 
 int
-msm6258v_memory::get_8(function_code fc, uint32_type address) const
+msm6258v_memory::get_8(uint32_type address, function_code fc) const
 {
   address &= 0xffffffff;
 #ifdef HAVE_NANA_H
@@ -64,7 +64,7 @@ msm6258v_memory::get_8(function_code fc, uint32_type address) const
 }
 
 uint16_type
-msm6258v_memory::get_16(function_code fc, uint32_type address) const
+msm6258v_memory::get_16(uint32_type address, function_code fc) const
 {
   address &= 0xffffffff & ~1;
 #ifdef HAVE_NANA_H
@@ -81,7 +81,7 @@ msm6258v_memory::get_16(function_code fc, uint32_type address) const
 }
 
 void
-msm6258v_memory::put_8(function_code fc, uint32_type address, int value)
+msm6258v_memory::put_8(uint32_type address, int value, function_code fc)
 {
   address &= 0xffffffff;
   value &= 0xff;
@@ -97,8 +97,8 @@ msm6258v_memory::put_8(function_code fc, uint32_type address, int value)
 }
 
 void
-msm6258v_memory::put_16(function_code fc, uint32_type address,
-			uint16_type value)
+msm6258v_memory::put_16(uint32_type address, uint16_type value,
+			function_code fc)
 {
   address &= 0xffffffff & ~1;
   value &= 0xff;

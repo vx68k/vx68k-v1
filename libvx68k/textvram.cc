@@ -478,7 +478,7 @@ text_video_memory::install_iocs_calls(system_rom &rom)
 }
 
 uint16_type
-text_video_memory::get_16(function_code fc, uint32_type address) const
+text_video_memory::get_16(uint32_type address, function_code fc) const
 {
   if (fc != SUPER_DATA)
     throw bus_error_exception(true, fc, address);
@@ -489,7 +489,7 @@ text_video_memory::get_16(function_code fc, uint32_type address) const
 }
 
 int
-text_video_memory::get_8(function_code fc, uint32_type address) const
+text_video_memory::get_8(uint32_type address, function_code fc) const
 {
   if (fc != SUPER_DATA)
     throw bus_error_exception(true, fc, address);
@@ -500,8 +500,8 @@ text_video_memory::get_8(function_code fc, uint32_type address) const
 }
 
 void
-text_video_memory::put_16(function_code fc, uint32_type address,
-			  uint16_type value)
+text_video_memory::put_16(uint32_type address, uint16_type value,
+			  function_code fc)
 {
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);
@@ -518,8 +518,7 @@ text_video_memory::put_16(function_code fc, uint32_type address,
 }
 
 void
-text_video_memory::put_8(function_code fc, uint32_type address,
-			 int value)
+text_video_memory::put_8(uint32_type address, int value, function_code fc)
 {
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);

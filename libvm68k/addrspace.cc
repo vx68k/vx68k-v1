@@ -68,7 +68,7 @@ memory_map::get_32(uint32_type address, function_code fc) const
   else
     {
       const memory *p = *this->find_memory(address);
-      uint32_type value = p->get_32(fc, address);
+      uint32_type value = p->get_32(address, fc);
       return value;
     }
 }
@@ -123,7 +123,7 @@ memory_map::put_32(uint32_type address, uint32_type value, function_code fc)
   else
     {
       memory *p = *this->find_memory(address);
-      p->put_32(fc, address, value);
+      p->put_32(address, value, fc);
     }
 }
 

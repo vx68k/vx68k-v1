@@ -91,7 +91,7 @@ palettes_memory::get_text_colors(unsigned int first, unsigned int last,
 }
 
 uint16_type
-palettes_memory::get_16(function_code fc, uint32_type address) const
+palettes_memory::get_16(uint32_type address, function_code fc) const
 {
   address &= 0xfffffffeu;
 #ifdef HAVE_NANA_H
@@ -133,7 +133,7 @@ palettes_memory::get_16(function_code fc, uint32_type address) const
 }
 
 int
-palettes_memory::get_8(function_code fc, uint32_type address) const
+palettes_memory::get_8(uint32_type address, function_code fc) const
 {
   address &= 0xffffffffU;
 #ifdef HAVE_NANA_H
@@ -141,7 +141,7 @@ palettes_memory::get_8(function_code fc, uint32_type address) const
      fc, address + 0UL);
 #endif
 
-  uint_type w = get_16(fc, address);
+  uint_type w = get_16(address, fc);
   if (address % 2 != 0)
     return w >> 8 & 0xff;
   else
@@ -149,8 +149,8 @@ palettes_memory::get_8(function_code fc, uint32_type address) const
 }
 
 void
-palettes_memory::put_16(function_code fc, uint32_type address,
-			uint16_type value)
+palettes_memory::put_16(uint32_type address, uint16_type value,
+			function_code fc)
 {
   address &= 0xfffffffeu;
   value &= 0xffffu;
@@ -197,7 +197,7 @@ palettes_memory::put_16(function_code fc, uint32_type address,
 }
 
 void
-palettes_memory::put_8(function_code fc, uint32_type address, int value)
+palettes_memory::put_8(uint32_type address, int value, function_code fc)
 {
   address &= 0xffffffffU;
   value &= 0xff;
@@ -206,11 +206,11 @@ palettes_memory::put_8(function_code fc, uint32_type address, int value)
      fc, address + 0UL, value);
 #endif
 
-  uint_type w = this->get_16(fc, address);
+  uint_type w = this->get_16(address, fc);
   if (address % 2 != 0)
-    this->put_16(fc, address, w & 0xff | value << 8);
+    this->put_16(address, w & 0xff | value << 8, fc);
   else
-    this->put_16(fc, address, w & ~0xff | value);
+    this->put_16(address, w & ~0xff | value, fc);
 }
 
 palettes_memory::~palettes_memory()

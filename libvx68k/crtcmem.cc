@@ -76,7 +76,7 @@ crtc_memory::set_vdisp_counter_data(unsigned int value)
 }
 
 uint16_type
-crtc_memory::get_16(function_code fc, uint32_type address) const
+crtc_memory::get_16(uint32_type address, function_code fc) const
 {
 #ifdef HAVE_NANA_H
   DL("class crtc_memory: get_16: fc=%d address=0x%08lx\n", fc, address + 0UL);
@@ -92,13 +92,13 @@ crtc_memory::get_16(function_code fc, uint32_type address) const
 }
 
 int
-crtc_memory::get_8(function_code fc, uint32_type address) const
+crtc_memory::get_8(uint32_type address, function_code fc) const
 {
 #ifdef HAVE_NANA_H
   DL("class crtc_memory: get_8: fc=%d address=0x%08lx\n", fc, address + 0UL);
 #endif
 
-  uint_type w = get_16(fc, address & ~1u);
+  uint_type w = get_16(address & ~1u, fc);
   if (address & 1u)
     return w >> 8 & 0xff;
   else
@@ -106,7 +106,7 @@ crtc_memory::get_8(function_code fc, uint32_type address) const
 }
 
 void
-crtc_memory::put_16(function_code fc, uint32_type address, uint16_type value)
+crtc_memory::put_16(uint32_type address, uint16_type value, function_code fc)
 {
 #ifdef HAVE_NANA_H
   DL("class crtc_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
@@ -119,7 +119,7 @@ crtc_memory::put_16(function_code fc, uint32_type address, uint16_type value)
 }
 
 void
-crtc_memory::put_8(function_code fc, uint32_type address, int value)
+crtc_memory::put_8(uint32_type address, int value, function_code fc)
 {
 #ifdef HAVE_NANA_H
   DL("class crtc_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",

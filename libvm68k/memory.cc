@@ -24,7 +24,14 @@
 #include "vm68k/memory.h"
 
 #include <algorithm>
-#include <cassert>
+
+#ifdef HAVE_NANA_H
+# include <nana.h>
+# undef assert
+# define assert I
+#else
+# include <cassert>
+#endif
 
 using vm68k::memory;
 using vm68k::bus_error_exception;
@@ -32,15 +39,16 @@ using namespace vm68k::types;
 using namespace std;
 
 uint32_type
-memory::get_32(function_code fc, uint32_type address) const
+memory::get_32(uint32_type address, function_code fc) const
 {
-  return (uint32_type(get_16(fc, address + 0)) << 16
-	  | uint32_type(get_16(fc, address + 2)));
+  assert((address & 3) == 0);
+  return uint32_type(get_16(address, fc)) << 16 | get_16(address + 2, fc);
 }
 
 void
-memory::put_32(function_code fc, uint32_type address, uint32_type value)
+memory::put_32(uint32_type address, uint32_type value, function_code fc)
 {
-  put_16(fc, address + 0, value >> 16);
-  put_16(fc, address + 2, value);
+  assert((address & 3) == 0);
+  put_16(address,     value >> 16, fc);
+  put_16(address + 2, value,       fc);
 }
