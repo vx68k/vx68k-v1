@@ -1,3 +1,9 @@
+2000-03-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (show_about_dialog): Add "report bugs" paragraph.
+	(main): Print copyright for `--version'.
+	(main): Modify "unhandled exception" message.
+
 2000-02-29  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* bin/main.cc (class vx68k_app): Add new member main_window.

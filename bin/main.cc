@@ -261,6 +261,16 @@ vx68k_app::show_about_dialog()
     gtk_misc_set_alignment(GTK_MISC(notice1_label), 0.0, 0.5);
     gtk_label_set_justify(GTK_LABEL(notice1_label), GTK_JUSTIFY_LEFT);
     // gtk_label_set_line_wrap(GTK_LABEL(notice1_label), true);
+
+    const char *report_bugs
+      = _("Send comments or report bugs to <vx68k@lists.hypercore.co.jp>.");
+    GtkWidget *report_bugs_label = gtk_label_new(report_bugs);
+    gtk_widget_show(report_bugs_label);
+    gtk_box_pack_start(GTK_BOX(vbox1), report_bugs_label,
+		       false, false, 0);
+    gtk_misc_set_alignment(GTK_MISC(report_bugs_label), 0.0, 0.5);
+    gtk_label_set_justify(GTK_LABEL(report_bugs_label), GTK_JUSTIFY_LEFT);
+    gtk_label_set_line_wrap(GTK_LABEL(report_bugs_label), true);
   }
 
   const char *ok = _("OK");
@@ -484,6 +494,8 @@ main(int argc, char **argv)
   if (opt_version)
     {
       printf("%s %s\n", PACKAGE, VERSION);
+      printf(_("Copyright (C) %s Hypercore Software Design, Ltd.\n"),
+	     COPYRIGHT_YEAR);
       return EXIT_SUCCESS;
     }
 
@@ -512,7 +524,7 @@ main(int argc, char **argv)
     }
   catch (exception &x)
     {
-      fprintf(stderr, _("%s: Unhandled exception: %s\n"), argv[0], x.what());
+      fprintf(stderr, _("%s: unhandled exception: %s\n"), argv[0], x.what());
       return EXIT_FAILURE;
     }
 }
