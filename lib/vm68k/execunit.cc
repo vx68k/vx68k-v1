@@ -721,40 +721,51 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void lsrw_i_d(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int d_reg = op & 0x7;
-      int count = op >> 9 & 0x7;
-      if (count == 0)
-	count = 8;
-      VL((" lsrw #%d,%%d%d\n", count, d_reg));
+  void
+  lsrw_i(unsigned int op, context *ec)
+  {
+    I(ec != NULL);
+    unsigned int reg1 = op & 0x7;
+    uint_type count = op >> 9 & 0x7;
+    if (count == 0)
+      count = 8;
+#ifdef L
+    L(" lsrw #%u", count);
+    L(",%%d%u", reg1);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
 
-      unsigned int value = ec->regs.d[d_reg] >> count;
-      const uint32 MASK = ((uint32) 1u << 16) - 1;
-      ec->regs.d[d_reg] = ec->regs.d[d_reg] & ~MASK | (uint32) value & MASK;
-      ec->regs.sr.set_cc(value); // FIXME.
+    const uint32_type MASK = (uint32_type(1) << 16) - 1;
+    uint_type value1 = ec->regs.d[reg1] & MASK;
+    uint_type value = value1 >> count & MASK;
+    ec->regs.d[reg1] = ec->regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
+    ec->regs.sr.set_cc_lsr(value, value1, count);
 
-      ec->regs.pc += 2;
-    }
+    ec->regs.pc += 2;
+  }
 
-  void lsrl_i(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int reg1 = op & 0x7;
-      int value2 = op >> 9 & 0x7;
-      if (value2 == 0)
-	value2 = 8;
-      VL((" lsrl #%d", value2));
-      VL((",%%d%d\n", reg1));
+  void
+  lsrl_i(unsigned int op, context *ec)
+  {
+    I(ec != NULL);
+    unsigned int reg1 = op & 0x7;
+    uint_type count = op >> 9 & 0x7;
+    if (count == 0)
+      count = 8;
+#ifdef L
+    L(" lsrl #%u", count);
+    L(",%%d%u\n", reg1);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
 
-      uint32 value1 = ec->regs.d[reg1];
-      uint32 value = value1 >> value2;
-      ec->regs.d[reg1] = value;
-      ec->regs.sr.set_cc(value); // FIXME.
+    const uint32_type MASK = (uint32_type(1) << 32) - 1;
+    uint32_type value1 = ec->regs.d[reg1] & MASK;
+    uint32_type value = value1 >> count & MASK;
+    ec->regs.d[reg1] = value;
+    ec->regs.sr.set_cc_lsr(value, value1, count);
 
-      ec->regs.pc += 2;
-    }
+    ec->regs.pc += 2;
+  }
 
   template <class Source, class Destination>
     void moveb(unsigned int op, execution_context *ec)
@@ -1503,7 +1514,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0xd1e8, 0x0e07, &addal<disp_indirect>);
   eu->set_instruction(0xd1f9, 0x0e07, &addal<absolute_long>);
   eu->set_instruction(0xd1fc, 0x0e07, &addal<immediate>);
-  eu->set_instruction(0xe048, 0x0e07, &lsrw_i_d);
+  eu->set_instruction(0xe048, 0x0e07, &lsrw_i);
   eu->set_instruction(0xe088, 0x0e07, &lsrl_i);
   eu->set_instruction(0xe148, 0x0e07, &lslw_i_d);
   eu->set_instruction(0xe188, 0x0e07, &lsll_i_d);

@@ -1,3 +1,20 @@
+1999-06-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (lsrw_i): Renamed from lsrw_i_d.  Also
+	change all users.
+	(lsrw_i, lsrl_i): Change code to set condition codes properly.
+
+	* lib/vm68k/statusreg.cc (struct result_cc_evaluator, struct
+	asr_cc_evaluator): New classes.
+	(cs, eq, mi, lt): Moved into the header as inline functions using
+	cc_eval.
+	(set_cc): Change code to use new members.
+	(set_cc_asr): New function.
+	(status_register): Initialize new members.
+
+	* include/vm68k/cpu.h (struct cc_evaluator): New class.
+	(class status_register): Modify members.
+
 1999-06-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/execunit.cc (movew_d_postinc, movel_d_postinc,

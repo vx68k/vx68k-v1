@@ -50,33 +50,55 @@ namespace vm68k
       return value >= N ? -(int32) (M - value) - 1 : (int32) value;
     }
 
+  /* Condition code evaluator (abstract base class).  */
+  struct cc_evaluator
+  {
+    virtual bool ls(const sint32_type *) const = 0;
+    virtual bool cs(const sint32_type *) const = 0;
+    virtual bool eq(const sint32_type *) const = 0;
+    virtual bool mi(const sint32_type *) const = 0;
+    virtual bool lt(const sint32_type *) const = 0;
+  };
+
+  /* Status register.  */
   class status_register
   {
   protected:
     enum
     {S = 1 << 13};
   private:
-    int32 result;
+    const cc_evaluator *cc_eval;
+    sint32_type cc_values[3];
     uint16 value;
   public:
     status_register();
   public:
     bool hi() const
       {return !ls();}
-    bool ls() const;
+    bool ls() const
+      {return cc_eval->ls(cc_values);}
     bool cc() const
       {return !cs();}
-    bool cs() const;
+    bool cs() const
+      {return cc_eval->cs(cc_values);}
     bool ne() const
       {return !eq();}
-    bool eq() const;
+    bool eq() const
+      {return cc_eval->eq(cc_values);}
     bool pl() const
       {return !mi();}
-    bool mi() const;
+    bool mi() const
+      {return cc_eval->mi(cc_values);}
     bool ge() const
       {return !lt();}
-    bool lt() const;
+    bool lt() const
+      {return cc_eval->lt(cc_values);}
+  public:
     void set_cc(int32);
+    void set_cc_asr(sint32_type, sint32_type, uint_type);
+    void set_cc_lsr(sint32_type r, sint32_type d, uint_type s)
+      {set_cc_asr(r, d, s);}
+  public:
     bool supervisor_state() const
       {return (value & S) != 0;}
   };
