@@ -126,6 +126,15 @@ dos::load_executable (const char *name)
   return load_address + start_offset;
 }
 
+namespace
+{
+  struct quit_loop
+  {
+    uint16 status;
+    quit_loop(uint16 s): status(s) {};
+  };
+}
+
 uint16
 dos::start (uint32 address, const char *const *argv)
 {
@@ -137,6 +146,10 @@ dos::start (uint32 address, const char *const *argv)
     {
       main_cpu.run (&main_ec);
       abort ();
+    }
+  catch (quit_loop &x)
+    {
+      status = x.status;
     }
   catch (illegal_instruction &e)
     {
@@ -164,6 +177,14 @@ namespace
       ec->regs.d[0] = 0u;	// FIXME.
 
       ec->regs.pc += 2;
+    }
+
+  void exit2(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      VL((" DOS _EXIT2\n"));
+
+      throw quit_loop(ec->mem->getw(SUPER_DATA, ec->regs.a[7]));
     }
 
   void open(int op, execution_context *ec)
@@ -203,5 +224,6 @@ dos::dos (address_space *as, size_t)
   main_cpu.set_handlers(0xff09, 0, &print);
   main_cpu.set_handlers(0xff3d, 0, &open);
   main_cpu.set_handlers(0xff3e, 0, &close);
+  main_cpu.set_handlers(0xff4c, 0, &exit2);
 }
 

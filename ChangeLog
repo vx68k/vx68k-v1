@@ -1,5 +1,10 @@
 1999-03-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/dos.cc (quit_loop): New struct.
+	(start): Handle quit_loop exception.
+	(exit2): New function.
+	(dos): Set instruction to the new function.
+
 	* lib/vm68k/execunit.cc (moveml_postinc_r): New function.
 	(install_instructions): Set instructions to the new function.
 	(moveml_r_predec, moveml_postinc_r): Move array subscripts out of
