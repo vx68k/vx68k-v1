@@ -1,5 +1,17 @@
 1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/memory.cc: Remove namespace block.
+	(getw, getl): Change return type and reformat code.
+	(putw, putl): Change argument type and reformat code.
+	[class memory] (getl): Change return type and reformat code.
+	[class memory] (putl): Change argument type and reformat code.
+	[class no_memory] (read, getb, getw, write, putb, putw): Use
+	generate_bus_error.
+
+	* include/vm68k/memory.h (class memory): Renamed from memory_page
+	and cleaned.
+	(class no_memory): Renamed from bus_error_page and cleaned.
+
 	* lib/vm68k/Makefile.am (libvm68k_a_SOURCES): Change file order.
 
 	* bin/main.cc (display_help): New function.

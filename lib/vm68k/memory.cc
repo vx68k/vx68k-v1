@@ -29,46 +29,34 @@
 using namespace vm68k;
 using namespace std;
 
-void
-memory_page::generate_bus_error(int fc, uint32_type address) const
+uint_type
+vm68k::getw(const void *address)
 {
-  throw bus_error(fc, address);
-}
-
-namespace vm68k
-{
-#if 0
-};
-#endif
-
-uint16
-getw (const void *address)
-{
-  const uint8 *p = static_cast <const uint8 *> (address);
+  const uint8 *p = static_cast<const uint8 *>(address);
   return p[0] << 8 | p[1];
 }
 
-uint32
-getl (const void *address)
+uint32_type
+vm68k::getl(const void *address)
 {
-  const uint8 *p = static_cast <const uint8 *> (address);
-  return uint32 (getw (p + 0)) << 16 | uint32 (getw (p + 2));
+  const uint8 *p = static_cast<const uint8 *>(address);
+  return uint32_type(getw(p + 0)) << 16 | uint32_type(getw(p + 2));
 }
 
 void
-putw (void *address, uint16 value)
+vm68k::putw(void *address, uint_type value)
 {
-  uint8 *p = static_cast <uint8 *> (address);
+  uint8 *p = static_cast<uint8 *>(address);
   p[0] = value >> 8;
   p[1] = value;
 }
 
 void
-putl (void *address, uint32 value)
+vm68k::putl(void *address, uint32_type value)
 {
-  uint8 *p = static_cast <uint8 *> (address);
-  putw (p + 0, value >> 16);
-  putw (p + 2, value);
+  uint8 *p = static_cast<uint8 *>(address);
+  putw(p + 0, value >> 16);
+  putw(p + 2, value);
 }
 
 bus_error::bus_error (int s, uint32 a)
@@ -77,55 +65,65 @@ bus_error::bus_error (int s, uint32 a)
 {
 }
 
-uint32
-memory_page::getl (int fc, uint32 address) const
+void
+memory::generate_bus_error(int fc, uint32_type address) const
 {
-  return (uint32 (getw (fc, address + 0)) << 16
-	  | uint32 (getw (fc, address + 2)));
+  throw bus_error(fc, address);
+}
+
+uint32_type
+memory::getl(int fc, uint32_type address) const
+{
+  return (uint32_type(getw(fc, address + 0)) << 16
+	  | uint32_type(getw(fc, address + 2)));
 }
 
 void
-memory_page::putl (int fc, uint32 address, uint32 value)
+memory::putl(int fc, uint32_type address, uint32_type value)
 {
-  putw (fc, address + 0, value >> 16);
-  putw (fc, address + 2, value);
+  putw(fc, address + 0, value >> 16);
+  putw(fc, address + 2, value);
 }
 
 size_t
-bus_error_page::read (int fc, uint32 address, void *, size_t) const
+no_memory::read(int fc, uint32_type address, void *, size_t) const
 {
-  throw bus_error (fc + bus_error::READ, address);
+  generate_bus_error(fc | bus_error::READ, address);
+  abort();
+}
+
+uint_type
+no_memory::getb(int fc, uint32_type address) const
+{
+  generate_bus_error(fc + bus_error::READ, address);
+  abort();
+}
+
+uint_type
+no_memory::getw(int fc, uint32_type address) const
+{
+  generate_bus_error(fc + bus_error::READ, address);
+  abort();
 }
 
 size_t
-bus_error_page::write (int fc, uint32 address, const void *, size_t)
+no_memory::write(int fc, uint32_type address, const void *, size_t)
 {
-  throw bus_error (fc + bus_error::WRITE, address);
-}
-
-uint8
-bus_error_page::getb (int fc, uint32 address) const
-{
-  throw bus_error (fc + bus_error::READ, address);
-}
-
-uint16
-bus_error_page::getw (int fc, uint32 address) const
-{
-  throw bus_error (fc + bus_error::READ, address);
+  generate_bus_error(fc | bus_error::WRITE, address);
+  abort();
 }
 
 void
-bus_error_page::putb (int fc, uint32 address, uint8)
+no_memory::putb(int fc, uint32_type address, uint_type)
 {
-  throw bus_error (fc + bus_error::WRITE, address);
+  generate_bus_error(fc + bus_error::WRITE, address);
+  abort();
 }
 
 void
-bus_error_page::putw (int fc, uint32 address, uint16)
+no_memory::putw(int fc, uint32_type address, uint_type)
 {
-  throw bus_error (fc + bus_error::WRITE, address);
+  generate_bus_error(fc + bus_error::WRITE, address);
+  abort();
 }
-
-};				// namespace vm68k
 
