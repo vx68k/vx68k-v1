@@ -1,5 +1,12 @@
 2001-06-24  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* bin/gtkabout.cc: Add #include <cstring>.
+
+	* libvx68k/iocsdisk.cc (disk_error::disk_error): Call the
+	constructor of runtime_error.
+
+	* vx68kui/gtkconsole.cc (operator!=): New function.
+
 	* NEWS: Updated and reformated for the Emacs outline mode.
 
 	* configure.in: Add AM_DISABLE_SHARED and enable AC_PROG_CPP.
