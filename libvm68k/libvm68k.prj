@@ -1,0 +1,115 @@
+;; -*- Prcs -*-
+(Created-By-Prcs-Version 1 3 1)
+(Project-Description "M68000 virtual machine library")
+(Project-Version libvm68k 0 118)
+(Parent-Version libvm68k 0 117)
+(Version-Log "")
+(New-Version-Log "")
+(Checkin-Time "Sat, 25 May 2002 23:32:33 +0900")
+(Checkin-Login kaz)
+(Populate-Ignore ("libvm68k\\.la$"
+		  "\\.o$"
+		  "\\.lo$"
+		  "\\.libs/"
+		  "\\.deps/"
+		  "config\\.h$"
+		  "Makefile$"
+		  "config\\.cache$" "config\\.log$" "TAGS$" "stamp-h$"
+		  "libtool$"
+		  "config\\.status$"
+		  "obsolete/"
+		  "\\.log$"
+		  "~$"))
+(Project-Keywords)
+(Files
+  (configure.in (libvm68k/33_configure. 1.13 644))
+  (acinclude.m4 (libvm68k/29_acinclude. 1.3 644) :no-keywords)
+  (aclocal.m4 (libvm68k/42_aclocal.m4 1.2 644) :no-keywords)
+
+  (Makefile.am (libvm68k/28_Makefile.a 1.20 644))
+  (vm68k/Makefile.am (libvm68k/6_Makefile.a 1.13 644))
+
+  (vm68k/addressing (libvm68k/2_addressing 1.9 644))
+  (vm68k/condition (libvm68k/1_conditiona 1.3 644))
+  (vm68k/iterator.h (libvm68k/40_iterator.h 1.5 644))
+  (vm68k/bus (libvm68k/4_memory.h 1.11 644))
+  (vm68k/misc.h (libvm68k/38_misc.h 1.2 644))
+  (vm68k/mutex.h (libvm68k/0_mutex.h 1.1 644))
+  (vm68k/processor (libvm68k/7_processor. 1.20 644))
+  (vm68k/size (libvm68k/41_size.h 1.6 644))
+  (vm68k/type (libvm68k/5_types.h 1.4 644))
+
+  (AUTHORS (libvm68k/31_AUTHORS 1.1 644))
+  (COPYING (/usr/share/automake/COPYING) :symlink)
+  (ChangeLog (libvm68k/30_ChangeLog 1.76 644))
+  (ChangeLog.vx68k (libvm68k/35_ChangeLog. 1.1 644))
+  (INSTALL (/usr/share/automake/INSTALL) :symlink)
+  (NEWS (libvm68k/32_NEWS 1.10 644))
+  (NEWS.vx68k (libvm68k/36_NEWS.vx68k 1.1 644))
+  (README (libvm68k/22_README 1.4 644))
+  (TODO (libvm68k/21_TODO 1.4 644))
+  (condition_code.cc (libvm68k/24_condition_ 1.9 644))
+  (config.guess (/usr/share/automake/config.guess) :symlink)
+  (config.sub (/usr/share/automake/config.sub) :symlink)
+  (context.cc (libvm68k/27_context.cc 1.12 644))
+  (install-sh (/usr/share/automake/install-sh) :symlink)
+  (instr.h (libvm68k/8_instr.h 1.6 644))
+  (instr0.cc (libvm68k/9_inst0.cc 1.23 644))
+  (instr1-3.cc (libvm68k/14_inst1to3.c 1.18 644))
+  (instr11.cc (libvm68k/10_inst11.cc 1.15 644))
+  (instr12.cc (libvm68k/11_inst12.cc 1.14 644))
+  (instr13.cc (libvm68k/12_inst13.cc 1.13 644))
+  (instr14.cc (libvm68k/13_inst14.cc 1.13 644))
+  (instr4.cc (libvm68k/15_inst4.cc 1.18 644))
+  (instr5.cc (libvm68k/16_inst5.cc 1.18 644))
+  (instr6.cc (libvm68k/17_inst6.cc 1.15 644))
+  (instr7.cc (libvm68k/18_inst7.cc 1.15 644))
+  (instr8.cc (libvm68k/19_inst8.cc 1.16 644))
+  (instr9.cc (libvm68k/20_inst9.cc 1.16 644))
+  (libvm68k.texi (libvm68k/37_libvm68k.t 1.4 644))
+  
+  (ltmain.sh (/usr/share/libtool/ltmain.sh) :symlink)
+  (bus_target.cc (libvm68k/26_memory.cc 1.12 644))
+  (bus.cc (libvm68k/23_memory_map 1.14 644))
+  (missing (/usr/share/automake/missing) :symlink)
+  (mkinstalldirs (/usr/share/automake/mkinstalldirs) :symlink)
+  (processor.cc (libvm68k/25_execunit.c 1.16 644))
+  (texinfo.tex (/usr/share/automake/texinfo.tex) :symlink)
+  (version.cc (libvm68k/39_version.cc 1.4 644))
+
+;; Generated files:
+
+  (config.h.in (libvm68k/43_config.h.i 1.2 664))
+  (configure (libvm68k/44_configure 1.2 755))
+
+;; Files deleted by depopulate at Tue, 26 Jun 2001 22:05:08 +0900,
+;; from version 0.17(w), by kaz:
+
+  ; (vm68k/except.h ())
+
+;; Files deleted by depopulate at Wed, 27 Jun 2001 22:07:14 +0900,
+;; from version 0.25(w), by kaz:
+
+  ; (acconfig.h ())
+
+;; Files added by populate at Tue, 30 Apr 2002 21:49:09 +0900,
+;; to version 0.86(w), by kaz:
+
+  (stamp-h.in (libvm68k/45_stamp-h.in 1.1 644))
+  (Makefile.in (libvm68k/46_Makefile.i 1.5 644))
+  
+  (vm68k/Makefile.in (libvm68k/48_Makefile.i 1.7 644))
+  (libvm68k.info (libvm68k/49_libvm68k.i 1.2 664))
+
+;; Files deleted by populate at Tue, 30 Apr 2002 21:56:54 +0900,
+;; from version 0.86(w), by kaz:
+
+  ; (ltconfig () :symlink)
+
+;; Files deleted by populate at Sun, 12 May 2002 21:48:04 +0900,
+;; from version 0.100(w), by kaz:
+
+  ; (vm68k/stamp-h.in ())
+)
+(Merge-Parents)
+(New-Merge-Parents)

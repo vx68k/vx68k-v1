@@ -2,6 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT(libvx68k/machine.cc)
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(vx68k, 1.1.10)
+AC_CONFIG_SUBDIRS(libvm68k)
 LTLIBRELEASE="-release 1.1"
 AC_SUBST(LTLIBRELEASE)dnl
 AC_ARG_WITH(includes,
@@ -19,11 +20,6 @@ AM_PATH_GTK(1.2.0,,, gthread)
 AC_SEARCH_LIBS(glGetError, GL)
 AC_SEARCH_LIBS(gluErrorString, GLU)
 AC_CHECK_HEADERS(GL/gl.h GL/glu.h GL/glx.h fcntl.h unistd.h)
-AC_LANG_SAVE
-AC_LANG_CPLUSPLUS
-AC_CHECK_LIB(vm68k, main, LIBVM68K="-lvm68k")
-AC_SUBST(LIBVM68K)dnl
-AC_LANG_RESTORE
 AC_ARG_WITH(nana,
 [  --with-nana             use GNU Nana for debugging])
 if test "$with_nana" = yes; then
