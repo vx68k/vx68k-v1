@@ -23,6 +23,15 @@
 
 #include <vx68k/machine.h>
 
+#ifdef DUMP_MEMORY
+# ifdef HAVE_FCNTL_H
+#  include <fcntl.h>
+# endif
+# ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+# endif
+#endif
+
 using namespace vx68k;
 using namespace std;
 
@@ -154,6 +163,11 @@ main_memory::putw(int fc, uint32_type address, uint_type value)
 
 main_memory::~main_memory()
 {
+#ifdef DUMP_MEMORY
+  int fd = open("dump", O_WRONLY | O_CREAT | O_TRUNC, 0666);
+  ::write(fd, array, end);
+  close(fd);
+#endif
   delete [] array;
 }
 
