@@ -1,5 +1,16 @@
 2000-05-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/dos.cc (dos_chmod, dos_fflush, dos_nameck): Use
+	reinterpret_cast for data.
+	(dos_super_jsr): Use c.mem to get a machine.
+	(add_instructions): Use reinterpret_cast for data.
+
+	* include/vx68k/human.h (class dos): Remove the base class.
+	Remove member machine.
+
+	* libvx68k/systemrom.cc (attach): Use the single version of
+	set_instruction.
+
 	* libvx68k/filesystem.cc (write): Remove the use of
 	machine::address_space.
 	* libvx68k/dos.cc (create_context, dos): Likewise.

@@ -130,8 +130,9 @@ system_rom::attach(exec_unit *eu)
     throw logic_error("system_rom");
 
   attached_eu = eu;
-  attached_eu->set_instruction(0x4e4f, 0, &iocs_trap,
-			       reinterpret_cast<instruction_data *>(this));
+
+  instruction_data *d = reinterpret_cast<instruction_data *>(this);
+  attached_eu->set_instruction(0x4e4f, exec_unit::instruction(&iocs_trap, d));
 }
 
 void
