@@ -22,16 +22,29 @@
 #undef const
 #undef inline
 
-#include "vm68k/cpu.h"
+#include <vm68k/cpu.h>
 
 #include <cstdio>
-#include <cassert>
+
+#include "debug.h"
 
 using namespace vm68k;
 using namespace std;
 
-execution_context::execution_context (address_space *m)
-  : mem (m)
+void
+execution_context::run()
+{
+  for (;;)
+    {
+      unsigned int op = fetchw(0);
+      I(eu != NULL);
+      eu->dispatch(op, this);
+    }
+}
+
+execution_context::execution_context(exec_unit *e, address_space *m)
+  : mem(m),
+    eu(e)
 {
 }
 
@@ -63,10 +76,10 @@ cpu::set_exception_listener (exception_listener *l)
 void
 cpu::run (execution_context *ec)
 {
-  assert (ec != NULL);
+  I(ec != NULL);
   try
     {
-      eu.execute(ec);
+      ec->run();
     }
   catch (bus_error &e)
     {
@@ -80,8 +93,8 @@ cpu::run (execution_context *ec)
 void
 cpu::set_handlers (int code, int mask, exec_unit::insn_handler h)
 {
-  assert (code >= 0);
-  assert (code < 0x10000);
+  I(code >= 0);
+  I(code < 0x10000);
   eu.set_instruction(code, mask, h);
 }
 

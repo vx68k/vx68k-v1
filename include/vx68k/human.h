@@ -34,8 +34,8 @@ namespace vx68k
       : execution_context
     {
       class dos *dos;
-      dos_exec_context(address_space *m, class dos *d)
-	: execution_context(m), dos(d) {}
+      dos_exec_context(exec_unit *e, address_space *m, class dos *d)
+	: execution_context(e, m), dos(d) {}
     };
 
     class dos
@@ -44,7 +44,7 @@ namespace vx68k
       static dos *from(execution_context *ec)
 	{return static_cast<dos_exec_context *>(ec)->dos;}
     private:
-      vm68k::cpu main_cpu;
+      vm68k::exec_unit main_cpu;
       dos_exec_context main_ec;
     public:
       dos (address_space *, size_t);

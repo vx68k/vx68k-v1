@@ -31,17 +31,12 @@
 using namespace vm68k;
 using namespace std;
 
-/* Executes code.  */
+/* Dispatches for instructions.  */
 void
-exec_unit::execute(execution_context *ec) const
+exec_unit::dispatch(unsigned int op, execution_context *ec) const
 {
-  I (ec != NULL);
-  for (;;)
-    {
-      unsigned int op = ec->fetchw(0);
-      I (op < 0x10000);
-      instruction[op](op, ec);
-    }
+  I(op < 0x10000);
+  instruction[op](op, ec);
 }
 
 /* Sets an instruction to operation codes.  */

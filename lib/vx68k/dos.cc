@@ -188,7 +188,7 @@ dos::start (uint32 address, const char *const *argv)
  restart:
   try
     {
-      main_cpu.run (&main_ec);
+      main_ec.run();
       abort ();
     }
   catch (quit_loop &x)
@@ -286,12 +286,12 @@ namespace
 } // (unnamed namespace)
 
 dos::dos (address_space *as, size_t)
-  : main_ec(as, this)
+  : main_ec(&main_cpu, as, this)
 {
-  main_cpu.set_handlers(0xff09, 0, &dos_print);
-  main_cpu.set_handlers(0xff3d, 0, &dos_open);
-  main_cpu.set_handlers(0xff3e, 0, &dos_close);
-  main_cpu.set_handlers(0xff3f, 0, &dos_read);
-  main_cpu.set_handlers(0xff4c, 0, &dos_exit2);
+  main_cpu.set_instruction(0xff09, 0, &dos_print);
+  main_cpu.set_instruction(0xff3d, 0, &dos_open);
+  main_cpu.set_instruction(0xff3e, 0, &dos_close);
+  main_cpu.set_instruction(0xff3f, 0, &dos_read);
+  main_cpu.set_instruction(0xff4c, 0, &dos_exit2);
 }
 

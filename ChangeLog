@@ -1,3 +1,25 @@
+1999-03-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/cpu.cc (run): Use ec->run.
+
+	* lib/vx68k/dos.cc (start): Use main_ec.run.
+	(dos): Use set_instruction instead of set_handlers.
+
+	* include/vx68k/human.h (struct dos_exec_unit): Add argument to
+	constructor.
+	(class dos): Change main_cpu to of type vm68k::exec_unit.
+
+	* include/vm68k/cpu.h (class execution_context): Add member eu.
+	* lib/vm68k/cpu.cc: Use <> for <vx68k/cpu.h>.
+	Include "debug.h" instead of <cassert>.  Update all users.
+	(run): New function.
+	(execution_context): Initialize eu with the new argument.  Update
+	all callers.
+
+	* lib/vm68k/execunit.cc (dispatch): New function.
+	(execute): Removed.
+	* include/vm68k/cpu.h (class exec_unit): Updated.
+
 1999-03-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/cpu.cc: Remove `#include <algorithm>'.

@@ -80,25 +80,8 @@ struct exception_listener
   virtual void illegal (int, registers *, address_space *) = 0;
 };
 
-  class execution_context
-  {
-  public:
-    registers regs;
-    address_space *mem;
-    exception_listener *exception;
-  public:
-    explicit execution_context (address_space *);
-  public:
-    int program_fc() const
-      {return regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM;}
-    int data_fc() const
-      {return regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA;}
-    unsigned int fetchw(int disp) const
-      {return mem->getw(program_fc(), regs.pc + disp);}
-    uint32 fetchl(int disp) const
-      {return mem->getl(program_fc(), regs.pc + disp);}
-  };
-
+  class execution_context;	// Forward declaration.
+ 
   /* Execution unit.  */
   class exec_unit
   {
@@ -114,7 +97,29 @@ struct exception_listener
     exec_unit();
   public:
     void set_instruction(int op, int mask, insn_handler);
-    void execute(execution_context *) const;
+    void dispatch(unsigned int op, execution_context *) const;
+  };
+
+  class execution_context
+  {
+  public:
+    registers regs;
+    address_space *mem;
+    exception_listener *exception;
+  private:
+    exec_unit *eu;
+  public:
+    execution_context(exec_unit *, address_space *);
+  public:
+    int program_fc() const
+      {return regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM;}
+    int data_fc() const
+      {return regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA;}
+    unsigned int fetchw(int disp) const
+      {return mem->getw(program_fc(), regs.pc + disp);}
+    uint32 fetchl(int disp) const
+      {return mem->getl(program_fc(), regs.pc + disp);}
+    void run();
   };
 
   /* A CPU.
