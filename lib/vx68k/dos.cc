@@ -199,8 +199,8 @@ namespace
 
     // FIXME.
     uint32 sp = ec.regs.a[7];
-    int ch = extsw(ec.mem->getw(SUPER_DATA, sp));
-    putchar(ch);
+    char ch = extsw(ec.mem->getw(SUPER_DATA, sp));
+    write(STDOUT_FILENO, &ch, 1);
     ec.regs.d[0] = 0;
 
     ec.regs.pc += 2;

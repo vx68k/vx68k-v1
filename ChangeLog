@@ -1,5 +1,12 @@
 1999-06-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (bmi): #if'd out.
+	(install_instructions): Add new handlers.
+
+	* include/vm68k/condition.h (struct pl, struct mi): New classes.
+
+	* lib/vx68k/dos.cc (dos_putchar): Avoid stdio.
+
 	* NEWS: Modified.
 
 	* lib/vm68k/statusreg.cc (struct cmp_cc_evaluator): Add lt and le.

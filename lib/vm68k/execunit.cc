@@ -577,7 +577,6 @@ namespace
       // XXX: The condition codes are not affected.
       ec.regs.pc += ec.regs.sr.ge() ? 2 + disp : len;
     }
-#endif
 
   void bmi(unsigned int op,
 	   context &ec)
@@ -599,6 +598,7 @@ namespace
       // XXX: The condition codes are not affected.
       ec.regs.pc += ec.regs.sr.mi() ? 2 + disp : len;
     }
+#endif
 
   void bne(unsigned int op, context &ec)
     {
@@ -2123,7 +2123,8 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x6500, 0x00ff, &b<cs>);
   eu.set_instruction(0x6600, 0x00ff, &bne);
   eu.set_instruction(0x6700, 0x00ff, &beq);
-  eu.set_instruction(0x6b00, 0x00ff, &bmi);
+  eu.set_instruction(0x6a00, 0x00ff, &b<pl>);
+  eu.set_instruction(0x6b00, 0x00ff, &b<mi>);
   eu.set_instruction(0x6c00, 0x00ff, &b<ge>);
   eu.set_instruction(0x6d00, 0x00ff, &b<lt>);
   eu.set_instruction(0x6e00, 0x00ff, &b<gt>);
