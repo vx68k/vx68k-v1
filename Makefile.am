@@ -1,6 +1,6 @@
 ## Process this file with automake to produce a Makefile.in.
 
-EXTRA_DIST = VERSION-ID doc/vx68k.sgml
+EXTRA_DIST = VERSION-ID
 
-SUBDIRS = include vm68k vx68k vx68kgtk bin testsuite
+SUBDIRS = include vm68k vx68k vx68kgtk bin doc testsuite
 

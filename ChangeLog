@@ -1,3 +1,14 @@
+1999-11-02  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Makefile.am (EXTRA_DIST): Remove doc/vx68k.sgml.
+	(SUBDIRS): Add doc.
+
+	* configure.in: Add doc/Makefile to AC_OUTPUT.
+
+	* doc/Makefile.am: New file.
+
+	* doc/vx68k.xml: Converted from vx68k.sgml.
+
 1999-11-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* vx68kgtk/gtkconsole.cc (handle_timeout): Adjust bounds so that
