@@ -290,7 +290,7 @@ namespace vm68k
     uint32_type d[8];		/* %d0-%d7 */
     uint32_type a[8];		/* %a0-%a6/%sp */
     uint32_type pc;
-    status_register sr;
+    status_register ccr;
     uint32_type usp;
     uint32_type ssp;
   };
@@ -329,7 +329,7 @@ namespace vm68k
   public:
     /* Returns true if supervisor state.  */
     bool supervisor_state() const
-    {return regs.sr.supervisor_state();}
+    {return regs.ccr.supervisor_state();}
 
     /* Sets the supervisor state to STATE.  */
     void set_supervisor_state(bool state);

@@ -44,7 +44,7 @@ context::set_supervisor_state(bool state)
       if (!supervisor_state())
 	{
 	  regs.usp = regs.a[7];
-	  regs.sr.set_s_bit(true);
+	  regs.ccr.set_s_bit(true);
 	  regs.a[7] = regs.ssp;
 
 	  pfc_cache = SUPER_PROGRAM;
@@ -56,7 +56,7 @@ context::set_supervisor_state(bool state)
       if (supervisor_state())
 	{
 	  regs.ssp = regs.a[7];
-	  regs.sr.set_s_bit(false);
+	  regs.ccr.set_s_bit(false);
 	  regs.a[7] = regs.usp;
 
 	  pfc_cache = USER_PROGRAM;
@@ -68,14 +68,14 @@ context::set_supervisor_state(bool state)
 uint_type
 context::sr() const
 {
-  return regs.sr;
+  return regs.ccr;
 }
 
 void
 context::set_sr(uint_type value)
 {
   set_supervisor_state(value & 0x2000);
-  regs.sr = value;
+  regs.ccr = value;
 }
 
 void
@@ -86,8 +86,8 @@ context::handle_interrupts()
 
 context::context(address_space *m)
   : mem(m),
-    pfc_cache(regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM),
-    dfc_cache(regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA),
+    pfc_cache(regs.ccr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM),
+    dfc_cache(regs.ccr.supervisor_state() ? SUPER_DATA : USER_DATA),
     a_interrupted(false)
 {
 }

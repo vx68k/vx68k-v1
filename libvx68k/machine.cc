@@ -194,7 +194,7 @@ machine::boot(context &c)
 	{
 	case 0xf:
 	  {
-	    uint_type status = c.regs.sr;
+	    uint_type status = c.regs.ccr;
 	    c.set_supervisor_state(true);
 	    c.regs.a[7] -= 6;
 	    c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);

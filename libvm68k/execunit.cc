@@ -118,7 +118,7 @@ namespace
     svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
     svalue_type value = Size::svalue(Size::get(value2 + value1));
     Size::put(c.regs.d[reg2], value);
-    c.regs.sr.set_cc_as_add(value, value2, value1);
+    c.regs.ccr.set_cc_as_add(value, value2, value1);
     ea1.finish(c);
 
     c.regs.pc += 2 + ea1.extension_size();
@@ -142,7 +142,7 @@ namespace
     svalue_type value1 = ea1.get(c);
     svalue_type value = Size::svalue(Size::get(value1 + value2));
     ea1.put(c, value);
-    c.regs.sr.set_cc_as_add(value, value1, value2);
+    c.regs.ccr.set_cc_as_add(value, value1, value2);
     ea1.finish(c);
 
     c.regs.pc += 2 + ea1.extension_size();
@@ -191,7 +191,7 @@ namespace
     svalue_type value1 = ea1.get(c);
     svalue_type value = Size::svalue(Size::get(value1 + value2));
     ea1.put(c, value);
-    c.regs.sr.set_cc_as_add(value, value1, value2);
+    c.regs.ccr.set_cc_as_add(value, value1, value2);
     ea1.finish(c);
 
     c.regs.pc += 2 + Size::aligned_value_size() + ea1.extension_size();
@@ -216,7 +216,7 @@ namespace
     svalue_type value1 = ea1.get(c);
     svalue_type value = Size::svalue(Size::get(value1 + value2));
     ea1.put(c, value);
-    c.regs.sr.set_cc_as_add(value, value1, value2);
+    c.regs.ccr.set_cc_as_add(value, value1, value2);
     ea1.finish(c);
 
     c.regs.pc += 2 + ea1.extension_size();
@@ -265,9 +265,9 @@ namespace
     svalue_type value1 = Size::svalue(Size::get(c.regs.d[reg1]));
     svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
     svalue_type value
-      = Size::svalue(Size::get(value2 + value1 + c.regs.sr.x()));
+      = Size::svalue(Size::get(value2 + value1 + c.regs.ccr.x()));
     Size::put(c.regs.d[reg2], value);
-    c.regs.sr.set_cc_as_add(value, value2, value1);
+    c.regs.ccr.set_cc_as_add(value, value2, value1);
 
     c.regs.pc += 2;
   }
@@ -291,7 +291,7 @@ namespace
     svalue_type value
       = Size::svalue(Size::get(uvalue_type(value2) & uvalue_type(value1)));
     Size::put(c.regs.d[reg2], value);
-    c.regs.sr.set_cc(value);
+    c.regs.ccr.set_cc(value);
     ea1.finish(c);
 
     c.regs.pc += 2 + ea1.extension_size();
@@ -311,7 +311,7 @@ namespace
     sint_type value1 = ea1.getb(c);
     sint_type value = extsb(uint_type(value1) & uint_type(value2));
     ea1.putb(c, value);
-    c.regs.sr.set_cc(value);
+    c.regs.ccr.set_cc(value);
     ea1.finishb(c);
 
     c.regs.pc += 2 + 2 + ea1.isize(2);
@@ -330,7 +330,7 @@ namespace
     sint_type value1 = ea1.getw(ec);
     sint_type value = extsw(uint_type(value1) & uint_type(value2));
     ea1.putw(ec, value);
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + 2 + ea1.isize(2);
@@ -349,7 +349,7 @@ namespace
     sint32_type value1 = ea1.getl(ec);
     sint32_type value = extsl(uint32_type(value1) & uint32_type(value2));
     ea1.putl(ec, value);
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
     ea1.finishl(ec);
 
     ec.regs.pc += 2 + 4 + ea1.isize(4);
@@ -374,7 +374,7 @@ namespace
     svalue_type value1 = Size::svalue(Size::get(c.regs.d[reg1]));
     svalue_type value = Size::svalue(Size::get(value1 << value2));
     Size::put(c.regs.d[reg1], value);
-    c.regs.sr.set_cc_lsl(value, value1, value2 + (32 - Size::value_bit())); // FIXME?
+    c.regs.ccr.set_cc_lsl(value, value1, value2 + (32 - Size::value_bit())); // FIXME?
 
     c.regs.pc += 2;
   }
@@ -395,7 +395,7 @@ namespace
     sint32_type value1 = extsl(ec.regs.d[reg1]);
     sint32_type value = extsl(value1 << count);
     ec.regs.d[reg1] = value;
-    ec.regs.sr.set_cc(value);	// FIXME.
+    ec.regs.ccr.set_cc(value);	// FIXME.
 
     ec.regs.pc += 2;
   }
@@ -415,7 +415,7 @@ namespace
     sint32_type value1 = extsl(ec.regs.d[reg1]);
     sint32_type value = extsl(value1 << count);
     ec.regs.d[reg1] = value;
-    ec.regs.sr.set_cc(value);	// FIXME.
+    ec.regs.ccr.set_cc(value);	// FIXME.
 
     ec.regs.pc += 2;
   }
@@ -435,7 +435,7 @@ namespace
     sint32_type value1 = extsl(c.regs.d[reg1]);
     sint32_type value = value1 >> count;
     c.regs.d[reg1] = value;
-    c.regs.sr.set_cc_asr(value, value1, count);
+    c.regs.ccr.set_cc_asr(value, value1, count);
 
     c.regs.pc += 2;
   }
@@ -454,7 +454,7 @@ namespace
     sint32_type value1 = extsl(ec.regs.d[reg1]);
     sint32_type value = value1 >> count;
     ec.regs.d[reg1] = value;
-    ec.regs.sr.set_cc_asr(value, value1, count);
+    ec.regs.ccr.set_cc_asr(value, value1, count);
 
     ec.regs.pc += 2;
   }
@@ -597,7 +597,7 @@ namespace
     uvalue_type value1 = ea1.get(c);
     bool value = value1 & mask;
     ea1.put(c, value1 & ~mask);
-    c.regs.sr.set_cc(value);	// FIXME.
+    c.regs.ccr.set_cc(value);	// FIXME.
 
     c.regs.pc += 2 + ea1.extension_size();
   }
@@ -617,7 +617,7 @@ namespace
     uint32_type value1 = ec.regs.d[reg1];
     bool value = value1 & mask;
     ec.regs.d[reg1] = value1 & ~mask;
-    ec.regs.sr.set_cc(value);	// FIXME.
+    ec.regs.ccr.set_cc(value);	// FIXME.
 
     ec.regs.pc += 2 + 2;
   }
@@ -657,7 +657,7 @@ namespace
     uint32_type value1 = ec.regs.d[reg1];
     bool value = value1 & mask;
     ec.regs.d[reg1] = value1 | mask;
-    ec.regs.sr.set_cc(value);	// FIXME.
+    ec.regs.ccr.set_cc(value);	// FIXME.
 
     ec.regs.pc += 2 + 2;
   }
@@ -681,7 +681,7 @@ namespace
     uvalue_type value1 = ea1.get(c);
     bool value = value1 & mask;
     ea1.put(c, value1 | mask);
-    c.regs.sr.set_cc(value);	// FIXME.
+    c.regs.ccr.set_cc(value);	// FIXME.
 
     c.regs.pc += 2 + ea1.extension_size();
   }
@@ -721,7 +721,7 @@ namespace
 
     // This instruction affects only the Z bit of condition codes.
     bool value = uint_type(ea1.getb(c)) & 1u << bit;
-    c.regs.sr.set_cc(value);	// FIXME.
+    c.regs.ccr.set_cc(value);	// FIXME.
 
     c.regs.pc += 2 + 2 + ea1.isize(2);
   }
@@ -738,7 +738,7 @@ namespace
 
     // This instruction affects only the Z bit of condition codes.
     bool value = ec.regs.d[reg1] & uint32_type(1) << bit;
-    ec.regs.sr.set_cc(value);	// FIXME.
+    ec.regs.ccr.set_cc(value);	// FIXME.
 
     ec.regs.pc += 2 + 2;
   }
@@ -753,7 +753,7 @@ namespace
 
       ea1.putb(ec, 0);
       ea1.finishb(ec);
-      ec.regs.sr.set_cc(0);
+      ec.regs.ccr.set_cc(0);
 
       ec.regs.pc += 2 + ea1.isize(2);
     }
@@ -768,7 +768,7 @@ namespace
 
       ea1.putw(ec, 0);
       ea1.finishw(ec);
-      ec.regs.sr.set_cc(0);
+      ec.regs.ccr.set_cc(0);
 
       ec.regs.pc += 2 + ea1.isize(2);
     }
@@ -788,7 +788,7 @@ namespace
 
       ea1.putl(ec, 0);
       ea1.finishl(ec);
-      ec.regs.sr.set_cc(0);
+      ec.regs.ccr.set_cc(0);
 
       ec.regs.pc += 2 + ea1.isize(2);
     }
@@ -811,7 +811,7 @@ namespace
     svalue_type value1 = ea1.get(c);
     svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
     svalue_type value = Size::svalue(Size::get(value2 - value1));
-    c.regs.sr.set_cc_cmp(value, value2, value1);
+    c.regs.ccr.set_cc_cmp(value, value2, value1);
     ea1.finish(c);
 
     c.regs.pc += 2 + ea1.extension_size();
@@ -831,7 +831,7 @@ namespace
     sint_type value1 = ea1.getb(ec);
     sint_type value2 = extsb(ec.regs.d[reg2]);
     sint_type value = extsb(value2 - value1);
-    ec.regs.sr.set_cc_cmp(value, value2, value1);
+    ec.regs.ccr.set_cc_cmp(value, value2, value1);
     ea1.finishb(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -850,7 +850,7 @@ namespace
     sint_type value1 = ea1.getw(ec);
     sint_type value2 = extsw(ec.regs.d[reg2]);
     sint_type value = extsw(value2 - value1);
-    ec.regs.sr.set_cc_cmp(value, value2, value1);
+    ec.regs.ccr.set_cc_cmp(value, value2, value1);
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -869,7 +869,7 @@ namespace
     sint32_type value1 = ea1.getl(ec);
     sint32_type value2 = extsl(ec.regs.d[reg2]);
     sint32_type value = extsl(value2 - value1);
-    ec.regs.sr.set_cc_cmp(value, value2, value1);
+    ec.regs.ccr.set_cc_cmp(value, value2, value1);
     ea1.finishl(ec);
 
     ec.regs.pc += 2 + ea1.isize(4);
@@ -889,7 +889,7 @@ namespace
     sint32_type value1 = ea1.getw(ec);
     sint32_type value2 = extsl(ec.regs.a[reg2]);
     sint32_type value = extsl(value2 - value1);
-    ec.regs.sr.set_cc_cmp(value, value2, value1);
+    ec.regs.ccr.set_cc_cmp(value, value2, value1);
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -908,7 +908,7 @@ namespace
     sint32_type value1 = ea1.getl(ec);
     sint32_type value2 = extsl(ec.regs.a[reg2]);
     sint32_type value = extsl(value2 - value1);
-    ec.regs.sr.set_cc_cmp(value, value2, value1);
+    ec.regs.ccr.set_cc_cmp(value, value2, value1);
     ea1.finishl(ec);
 
     ec.regs.pc += 2 + ea1.isize(4);
@@ -926,7 +926,7 @@ namespace
 
     sint_type value1 = ea1.getb(ec);
     sint_type value = extsb(value1 - value2);
-    ec.regs.sr.set_cc_cmp(value, value1, value2);
+    ec.regs.ccr.set_cc_cmp(value, value1, value2);
     ea1.finishb(ec);
 
     ec.regs.pc += 2 + 2 + ea1.isize(2);
@@ -944,7 +944,7 @@ namespace
 
     sint_type value1 = ea1.getw(ec);
     sint_type value = extsw(value1 - value2);
-    ec.regs.sr.set_cc_cmp(value, value1, value2);
+    ec.regs.ccr.set_cc_cmp(value, value1, value2);
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + 2 + ea1.isize(2);
@@ -962,7 +962,7 @@ namespace
 
     sint32_type value1 = ea1.getl(c);
     sint32_type value = extsl(value1 - value2);
-    c.regs.sr.set_cc_cmp(value, value1, value2);
+    c.regs.ccr.set_cc_cmp(value, value1, value2);
     ea1.finishl(c);
 
     c.regs.pc += 2 + 4 + ea1.isize(4);
@@ -981,7 +981,7 @@ namespace
     sint_type value1 = ea1.getb(c);
     sint_type value2 = ea2.getb(c);
     sint_type value = extsb(value2 - value1);
-    c.regs.sr.set_cc_cmp(value, value2, value1);
+    c.regs.ccr.set_cc_cmp(value, value2, value1);
     ea1.finishb(c);
     ea2.finishb(c);
 
@@ -1003,7 +1003,7 @@ namespace
     sint32_type value = uint32_type(value2) / (uint32_type(value1) & 0xffffu);
     sint32_type rem = uint32_type(value2) % (uint32_type(value1) & 0xffffu);
     ec.regs.d[reg2] = uint32_type(rem) << 16 | uint32_type(value) & 0xffffu;
-    ec.regs.sr.set_cc(value); // FIXME.
+    ec.regs.ccr.set_cc(value); // FIXME.
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -1023,7 +1023,7 @@ namespace
     sint_type value2 = extsb(ec.regs.d[reg2]);
     sint_type value = extsb(uint_type(value1) ^ uint_type(value2));
     ea1.putb(ec, value);
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
     ea1.finishb(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -1043,7 +1043,7 @@ namespace
     sint_type value2 = extsw(ec.regs.d[reg2]);
     sint_type value = extsw(uint_type(value1) ^ uint_type(value2));
     ea1.putw(ec, value);
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -1063,7 +1063,7 @@ namespace
     sint32_type value1 = ea1.getw(c);
     sint32_type value = extsw(uint_type(value1) ^ uint_type(value2));
     ea1.putl(c, value);
-    c.regs.sr.set_cc(value);
+    c.regs.ccr.set_cc(value);
     ea2.finishl(c);
     ea1.finishl(c);
 
@@ -1083,7 +1083,7 @@ namespace
     sint_type value1 = ea1.getw(ec);
     sint_type value = extsw(uint_type(value1) ^ uint_type(value2));
     ea1.putw(ec, value);
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + 2 + ea1.isize(2);
@@ -1163,7 +1163,7 @@ namespace
 
     sint_type value = ea1.getb(c);
     ea1.putw(c, value);
-    c.regs.sr.set_cc(value);
+    c.regs.ccr.set_cc(value);
     ea1.finishw(c);
 
     c.regs.pc += 2 + ea1.isize(2);
@@ -1179,7 +1179,7 @@ namespace
 
     sint32_type value = extsw(ec.regs.d[reg1]);
     ec.regs.d[reg1] = value;
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
 
     ec.regs.pc += 2;
   }
@@ -1266,7 +1266,7 @@ namespace
     sint_type value = extsb(uint_type(value1) << count);
     const uint32_type MASK = ((uint32_type) 1u << 8) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.sr.set_cc_lsl(value, value1, count + (32 - 8));
+    ec.regs.ccr.set_cc_lsl(value, value1, count + (32 - 8));
 
     ec.regs.pc += 2;
   }
@@ -1287,7 +1287,7 @@ namespace
     sint_type value = extsw(uint_type(value1) << count);
     const uint32_type MASK = ((uint32_type) 1u << 16) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.sr.set_cc_lsl(value, value1, count + (32 - 16));
+    ec.regs.ccr.set_cc_lsl(value, value1, count + (32 - 16));
 
     ec.regs.pc += 2;
   }
@@ -1307,7 +1307,7 @@ namespace
     sint_type value = extsw(uint_type(value1) << count);
     const uint32_type MASK = ((uint32_type) 1u << 16) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.sr.set_cc_lsl(value, value1, count + (32 - 16));
+    ec.regs.ccr.set_cc_lsl(value, value1, count + (32 - 16));
 
     ec.regs.pc += 2;
   }
@@ -1327,7 +1327,7 @@ namespace
     sint32_type value1 = extsl(ec.regs.d[reg1]);
     sint32_type value = extsl(uint32_type(value1) << count);
     ec.regs.d[reg1] = value;
-    ec.regs.sr.set_cc_lsl(value, value1, count);
+    ec.regs.ccr.set_cc_lsl(value, value1, count);
 
     ec.regs.pc += 2;
   }
@@ -1346,7 +1346,7 @@ namespace
     sint32_type value1 = extsl(ec.regs.d[reg1]);
     sint32_type value = extsl(uint_type(value1) << count);
     ec.regs.d[reg1] = value;
-    ec.regs.sr.set_cc_lsl(value, value1, count);
+    ec.regs.ccr.set_cc_lsl(value, value1, count);
 
     ec.regs.pc += 2;
   }
@@ -1366,7 +1366,7 @@ namespace
     sint_type value1 = ea1.getb(c);
     sint_type value = extsb((uint_type(value1) & 0xffu) >> count);
     ea1.putb(c, value);
-    c.regs.sr.set_cc_lsr(value, value1, count);
+    c.regs.ccr.set_cc_lsr(value, value1, count);
 
     c.regs.pc += 2 + ea1.isize(2);
   }
@@ -1387,7 +1387,7 @@ namespace
     sint_type value = extsw((uint_type(value1) & 0xffffu) >> count);
     const uint32_type MASK = (uint32_type(1) << 16) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.sr.set_cc_lsr(value, value1, count);
+    ec.regs.ccr.set_cc_lsr(value, value1, count);
 
     ec.regs.pc += 2;
   }
@@ -1407,7 +1407,7 @@ namespace
     sint_type value = extsw((uint_type(value1) & 0xffffu) >> count);
     const uint32_type MASK = (uint32_type(1) << 16) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.sr.set_cc_lsr(value, value1, count);
+    ec.regs.ccr.set_cc_lsr(value, value1, count);
 
     ec.regs.pc += 2;
   }
@@ -1427,7 +1427,7 @@ namespace
     sint32_type value1 = extsl(ec.regs.d[reg1]);
     sint32_type value = extsl((uint32_type(value1) & 0xffffffffu) >> count);
     ec.regs.d[reg1] = value;
-    ec.regs.sr.set_cc_lsr(value, value1, count);
+    ec.regs.ccr.set_cc_lsr(value, value1, count);
 
     ec.regs.pc += 2;
   }
@@ -1446,7 +1446,7 @@ namespace
     sint32_type value1 = extsl(ec.regs.d[reg1]);
     sint32_type value = extsl((uint32_type(value1) & 0xffffffffu) >> count);
     ec.regs.d[reg1] = value;
-    ec.regs.sr.set_cc_lsr(value, value1, count);
+    ec.regs.ccr.set_cc_lsr(value, value1, count);
 
     ec.regs.pc += 2;
   }
@@ -1463,7 +1463,7 @@ namespace
 
     sint_type value = ea1.getb(ec);
     ea2.putb(ec, value);
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
     ea1.finishb(ec);
     ea2.finishb(ec);
 
@@ -1482,7 +1482,7 @@ namespace
 
     sint_type value = ea1.getw(ec);
     ea2.putw(ec, value);
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
     ea1.finishw(ec);
     ea2.finishw(ec);
 
@@ -1503,7 +1503,7 @@ namespace
       ea2.putl(ec, value);
       ea1.finishl(ec);
       ea2.finishl(ec);
-      ec.regs.sr.set_cc(value);
+      ec.regs.ccr.set_cc(value);
 
       ec.regs.pc += 2 + ea1.isize(4) + ea2.isize(4);
     }
@@ -1750,7 +1750,7 @@ namespace
 #endif
       
       ec.regs.d[reg] = value;
-      ec.regs.sr.set_cc(value);
+      ec.regs.ccr.set_cc(value);
 
       ec.regs.pc += 2;
     }
@@ -1769,7 +1769,7 @@ namespace
     sint_type value2 = extsw(ec.regs.d[reg2]);
     sint32_type value = sint32_type(value2) * sint32_type(value1);
     ec.regs.d[reg2] = value;
-    ec.regs.sr.set_cc(value); // FIXME.
+    ec.regs.ccr.set_cc(value); // FIXME.
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -1790,7 +1790,7 @@ namespace
     sint32_type value
       = (uint32_type(value2) & 0xffffu) * (uint32_type(value1) & 0xffffu);
     ec.regs.d[reg2] = value;
-    ec.regs.sr.set_cc(value); // FIXME.
+    ec.regs.ccr.set_cc(value); // FIXME.
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -1807,7 +1807,7 @@ namespace
     sint_type value1 = ea1.getb(c);
     sint_type value = extsb(-value1);
     ea1.putb(c, value);
-    c.regs.sr.set_cc_sub(value, 0, value1);
+    c.regs.ccr.set_cc_sub(value, 0, value1);
     ea1.finishb(c);
 
     c.regs.pc += 2 + ea1.isize(2);
@@ -1824,7 +1824,7 @@ namespace
     sint_type value1 = ea1.getw(ec);
     sint_type value = extsw(-value1);
     ea1.putw(ec, value);
-    ec.regs.sr.set_cc_sub(value, 0, value1);
+    ec.regs.ccr.set_cc_sub(value, 0, value1);
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -1841,7 +1841,7 @@ namespace
     sint32_type value1 = ea1.getl(ec);
     sint32_type value = extsl(-value1);
     ea1.putl(ec, value);
-    ec.regs.sr.set_cc_sub(value, 0, value1);
+    ec.regs.ccr.set_cc_sub(value, 0, value1);
     ea1.finishl(ec);
 
     ec.regs.pc += 2 + ea1.isize(4);
@@ -1862,7 +1862,7 @@ namespace
     sint_type value = extsb(uint_type(value2) | uint_type(value1));
     ec.regs.d[reg2]
       = ec.regs.d[reg2] & ~0xff | uint32_type(value) & 0xff;
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
     ea1.finishb(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -1883,7 +1883,7 @@ namespace
     uint_type value = value2 | value1;
     ec.regs.d[reg2]
       = ec.regs.d[reg2] & ~0xffff | uint32_type(value) & 0xffff;
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -1903,7 +1903,7 @@ namespace
     sint32_type value2 = extsl(ec.regs.d[reg2]);
     sint32_type value = extsl(uint32_type(value2) | uint32_type(value1));
     ec.regs.d[reg2] = value;
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
     ea1.finishl(ec);
 
     ec.regs.pc += 2 + ea1.isize(4);
@@ -1919,9 +1919,9 @@ namespace
     L("ccr\n");
 #endif
 
-    uint_type value1 = c.regs.sr & 0xffu;
+    uint_type value1 = c.regs.ccr & 0xffu;
     uint_type value = value1 | value2;
-    c.regs.sr = c.regs.sr & ~0xffu | value & 0xffu;
+    c.regs.ccr = c.regs.ccr & ~0xffu | value & 0xffu;
 
     c.regs.pc += 2 + 2;
   }
@@ -1939,7 +1939,7 @@ namespace
     sint_type value1 = ea1.getb(ec);
     sint_type value = extsb(uint_type(value1) | uint_type(value2));
     ea1.putb(ec, value);
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
     ea1.finishb(ec);
 
     ec.regs.pc += 2 + 2 + ea1.isize(2);
@@ -1958,7 +1958,7 @@ namespace
     sint_type value1 = ea1.getw(c);
     sint_type value = extsw(uint_type(value1) | uint_type(value2));
     ea1.putw(c, value);
-    c.regs.sr.set_cc(value);
+    c.regs.ccr.set_cc(value);
     ea1.finishw(c);
 
     c.regs.pc += 2 + 2 + ea1.isize(2);
@@ -1977,7 +1977,7 @@ namespace
     sint32_type value1 = ea1.getl(c);
     sint32_type value = extsl(uint32_type(value1) | uint32_type(value2));
     ea1.putl(c, value);
-    c.regs.sr.set_cc(value);
+    c.regs.ccr.set_cc(value);
     ea1.finishl(c);
 
     c.regs.pc += 2 + 4 + ea1.isize(4);
@@ -2016,7 +2016,7 @@ namespace
 			    | (uint_type(value1) & 0xff) >> 8 - count);
     const uint32_type MASK = 0xff;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.sr.set_cc(value);	// FIXME.
+    ec.regs.ccr.set_cc(value);	// FIXME.
 
     ec.regs.pc += 2;
   }
@@ -2038,7 +2038,7 @@ namespace
 			    | (uint_type(value1) & 0xffffu) >> 16 - count);
     const uint32_type MASK = 0xffffu;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.sr.set_cc(value);	// FIXME.
+    ec.regs.ccr.set_cc(value);	// FIXME.
 
     ec.regs.pc += 2;
   }
@@ -2060,7 +2060,7 @@ namespace
       = extsl(uint32_type(value1) << count
 	      | (uint32_type(value1) & 0xffffffffu) >> 32 - count);
     ea1.putl(c, value);
-    c.regs.sr.set_cc(value);	// FIXME.
+    c.regs.ccr.set_cc(value);	// FIXME.
     ea1.finishl(c);
 
     c.regs.pc += 2 + ea1.isize(4);
@@ -2089,7 +2089,7 @@ namespace
 			       | (uvalue_type(value1)
 				  << Size::value_bit() - count)));
     Size::put(c.regs.d[reg1], value);
-    c.regs.sr.set_cc(value);	// FIXME.
+    c.regs.ccr.set_cc(value);	// FIXME.
 
     c.regs.pc += 2;
   }
@@ -2111,7 +2111,7 @@ namespace
     sint_type value = extsw((uint_type(value1) & 0xffffu) >> count
 			    | uint_type(value1) << 16 - count);
     ea1.putw(c, value);
-    c.regs.sr.set_cc(value);	// FIXME.
+    c.regs.ccr.set_cc(value);	// FIXME.
     ea1.finishw(c);
 
     c.regs.pc += 2 + ea1.isize(2);
@@ -2132,10 +2132,10 @@ namespace
 
     sint_type value1 = ea1.getw(c);
     sint_type value = extsw((uint_type(value1) & 0xffffu) >> count
-			    | c.regs.sr.x() << 16 - count
+			    | c.regs.ccr.x() << 16 - count
 			    | uint_type(value1) << 17 - count);
     ea1.putw(c, value);
-    c.regs.sr.set_cc(value);	// FIXME.
+    c.regs.ccr.set_cc(value);	// FIXME.
     ea1.finishw(c);
 
     c.regs.pc += 2 + ea1.isize(2);
@@ -2155,10 +2155,10 @@ namespace
 
     sint32_type value1 = ea1.getl(c);
     sint32_type value = extsl((uint32_type(value1) & 0xffffffffu) >> count
-			      | uint32_type(c.regs.sr.x()) << 32 - count
+			      | uint32_type(c.regs.ccr.x()) << 32 - count
 			      | uint32_type(value1) << 33 - count);
     ea1.putl(c, value);
-    c.regs.sr.set_cc(value);	// FIXME.
+    c.regs.ccr.set_cc(value);	// FIXME.
     ea1.finishl(c);
 
     c.regs.pc += 2 + ea1.isize(4);
@@ -2234,7 +2234,7 @@ namespace
     svalue_type value1 = ea1.get(c);
     svalue_type value = Size::svalue(Size::get(value1 - value2));
     ea1.put(c, value);
-    c.regs.sr.set_cc_sub(value, value1, value2);
+    c.regs.ccr.set_cc_sub(value, value1, value2);
     ea1.finish(c);
 
     c.regs.pc += 2 + ea1.extension_size();
@@ -2255,7 +2255,7 @@ namespace
     sint_type value = extsb(value2 - value1);
     const uint32_type MASK = 0xff;
     ec.regs.d[reg2] = ec.regs.d[reg2] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.sr.set_cc_sub(value, value2, value1);
+    ec.regs.ccr.set_cc_sub(value, value2, value1);
     ea1.finishb(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -2276,7 +2276,7 @@ namespace
     sint_type value = extsw(value2 - value1);
     const uint32_type MASK = 0xffffu;
     ec.regs.d[reg2] = ec.regs.d[reg2] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.sr.set_cc_sub(value, value2, value1);
+    ec.regs.ccr.set_cc_sub(value, value2, value1);
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -2297,7 +2297,7 @@ namespace
       sint32_type value = extsl(value2 - value1);
       ec.regs.d[reg2] = value;
       ea1.finishl(ec);
-      ec.regs.sr.set_cc_sub(value, value2, value1);
+      ec.regs.ccr.set_cc_sub(value, value2, value1);
 
       ec.regs.pc += 2 + ea1.isize(4);
     }
@@ -2317,7 +2317,7 @@ namespace
     sint32_type value1 = ea1.getl(ec);
     sint32_type value = extsl(value1 - value2);
     ea1.putl(ec, value);
-    ec.regs.sr.set_cc_sub(value, value1, value2);
+    ec.regs.ccr.set_cc_sub(value, value1, value2);
     ea1.finishl(ec);
 
     ec.regs.pc += 2 + ea1.isize(4);
@@ -2358,7 +2358,7 @@ namespace
       int value = extsb(value1 - value2);
       ea1.putb(ec, value);
       ea1.finishb(ec);
-      ec.regs.sr.set_cc_sub(value, value1, value2);
+      ec.regs.ccr.set_cc_sub(value, value1, value2);
 
       ec.regs.pc += 2 + 2 + ea1.isize(2);
     }
@@ -2376,7 +2376,7 @@ namespace
     sint32_type value1 = ea1.getl(ec);
     sint32_type value = extsl(value1 - value2);
     ea1.putl(ec, value);
-    ec.regs.sr.set_cc_sub(value, value1, value2);
+    ec.regs.ccr.set_cc_sub(value, value1, value2);
     ea1.finishl(ec);
 
     ec.regs.pc += 2 + 4 + ea1.isize(4);
@@ -2401,7 +2401,7 @@ namespace
     svalue_type value1 = ea1.get(c);
     svalue_type value = Size::svalue(Size::get(value1 - value2));
     ea1.put(c, value);
-    c.regs.sr.set_cc_sub(value, value1, value2);
+    c.regs.ccr.set_cc_sub(value, value1, value2);
     ea1.finish(c);
 
     c.regs.pc += 2 + ea1.extension_size();
@@ -2449,7 +2449,7 @@ namespace
     sint_type value1 = ea1.getw(ec);
     sint_type value = extsw(value1 - value2);
     ea1.putw(ec, value);
-    ec.regs.sr.set_cc_sub(value, value1, value2);
+    ec.regs.ccr.set_cc_sub(value, value1, value2);
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -2491,7 +2491,7 @@ namespace
     sint32_type value1 = ea1.getl(ec);
     sint32_type value = extsl(value1 - value2);
     ea1.putl(ec, value);
-    ec.regs.sr.set_cc_sub(value, value1, value2);
+    ec.regs.ccr.set_cc_sub(value, value1, value2);
     ea1.finishl(ec);
 
     ec.regs.pc += 2 + ea1.isize(4);
@@ -2531,7 +2531,7 @@ namespace
     sint32_type value
       = extsl(uint32_type(value1) << 16 | uint32_type(value1) >> 16 & 0xffffu);
     ec.regs.d[reg1] = value;
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
 
     ec.regs.pc += 2;
   }
@@ -2545,7 +2545,7 @@ namespace
 #endif
 
       int value = ea1.getb(ec);
-      ec.regs.sr.set_cc(value);
+      ec.regs.ccr.set_cc(value);
       ea1.finishb(ec);
 
       ec.regs.pc += 2 + ea1.isize(2);
@@ -2560,7 +2560,7 @@ namespace
 #endif
 
     sint_type value = ea1.getw(ec);
-    ec.regs.sr.set_cc(value);
+    ec.regs.ccr.set_cc(value);
     ea1.finishw(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
@@ -2575,7 +2575,7 @@ namespace
 #endif
 
       sint32_type value = ea1.getl(ec);
-      ec.regs.sr.set_cc(value);
+      ec.regs.ccr.set_cc(value);
       ea1.finishl(ec);
 
       ec.regs.pc += 2 + ea1.isize(4);

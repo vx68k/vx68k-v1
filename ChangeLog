@@ -1,5 +1,8 @@
 2000-06-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/cpu.h (struct registers): Rename member sr to ccr.
+	Also change all referrers.
+
 	* libvx68k/systemrom.cc (iocs_b_intvcs): Fix the data size.
 
 	* libvm68k/execunit.cc (m68k_cmp): New function template.

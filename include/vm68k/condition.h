@@ -53,7 +53,7 @@ namespace vm68k
     struct hi: unary_function<context, bool>
     {
       bool operator()(const context &c) const
-      {return c.regs.sr.hi();}
+      {return c.regs.ccr.hi();}
 
       static const char *text()
       {return "hi";}
@@ -63,7 +63,7 @@ namespace vm68k
     struct ls: unary_function<context, bool>
     {
       bool operator()(const context &c) const
-      {return c.regs.sr.ls();}
+      {return c.regs.ccr.ls();}
 
       static const char *text()
       {return "ls";}
@@ -73,7 +73,7 @@ namespace vm68k
     struct cc: unary_function<context, bool>
     {
       bool operator()(const context &c) const
-      {return c.regs.sr.cc();}
+      {return c.regs.ccr.cc();}
 
       static const char *text()
       {return "cc";}
@@ -83,7 +83,7 @@ namespace vm68k
     struct cs: unary_function<context, bool>
     {
       bool operator()(const context &c) const
-      {return c.regs.sr.cs();}
+      {return c.regs.ccr.cs();}
 
       static const char *text()
       {return "cs";}
@@ -93,7 +93,7 @@ namespace vm68k
     struct ne: unary_function<context, bool>
     {
       bool operator()(const context &c) const
-      {return c.regs.sr.ne();}
+      {return c.regs.ccr.ne();}
 
       static const char *text()
       {return "ne";}
@@ -103,7 +103,7 @@ namespace vm68k
     struct eq: unary_function<context, bool>
     {
       bool operator()(const context &c) const
-      {return c.regs.sr.eq();}
+      {return c.regs.ccr.eq();}
 
       static const char *text()
       {return "eq";}
@@ -115,7 +115,7 @@ namespace vm68k
     struct pl: unary_function<context, bool>
     {
       bool operator()(const context &c) const
-      {return c.regs.sr.pl();}
+      {return c.regs.ccr.pl();}
 
       static const char *text()
       {return "pl";}
@@ -125,7 +125,7 @@ namespace vm68k
     struct mi: unary_function<context, bool>
     {
       bool operator()(const context &c) const
-      {return c.regs.sr.mi();}
+      {return c.regs.ccr.mi();}
 
       static const char *text()
       {return "mi";}
@@ -135,7 +135,7 @@ namespace vm68k
     struct ge: unary_function<context, bool>
     {
       bool operator()(const context &c) const
-      {return c.regs.sr.ge();}
+      {return c.regs.ccr.ge();}
 
       static const char *text()
       {return "ge";}
@@ -145,7 +145,7 @@ namespace vm68k
     struct lt: unary_function<context, bool>
     {
       bool operator()(const context &c) const
-      {return c.regs.sr.lt();}
+      {return c.regs.ccr.lt();}
 
       static const char *text()
       {return "lt";}
@@ -155,7 +155,7 @@ namespace vm68k
     struct gt: unary_function<context, bool>
     {
       bool operator()(const context &c) const
-      {return c.regs.sr.gt();}
+      {return c.regs.ccr.gt();}
 
       static const char *text()
       {return "gt";}
@@ -165,7 +165,7 @@ namespace vm68k
     struct le: unary_function<context, bool>
     {
       bool operator()(const context &c) const
-      {return c.regs.sr.le();}
+      {return c.regs.ccr.le();}
 
       static const char *text()
       {return "le";}
