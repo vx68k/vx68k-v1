@@ -1,5 +1,11 @@
 1999-11-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Updated.
+
+	* vm68k/execunit.cc (install_instructions): Replace addw and addl
+ 	using m68k_add.
+	(addb, addw): Removed.
+
 	* vm68k/Makefile.am (lib_LTLIBRARIES): Add -release for snapshots.
 
 	* include/vm68k/addressing.h (class basic_postinc_indirect,
