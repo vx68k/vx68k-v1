@@ -42,10 +42,11 @@ namespace vx68k
       sint32_type alloc(uint32_type len, uint32_type parent);
       sint32_type alloc_largest(uint32_type parent);
       sint_type free(uint32_type memptr);
-      void free_children(uint32_type parent);
+      void free_by_parent(uint32_type parent);
 
     protected:
-      void free_block(uint32_type block);
+      void make_block(uint32_type, uint32_type, uint32_type, uint32_type);
+      void remove_block(uint32_type block);
     };
 
     class file

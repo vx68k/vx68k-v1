@@ -29,7 +29,7 @@ using namespace vm68k;
 using namespace std;
 
 void
-memory_allocator::free_block(uint32_type block)
+memory_allocator::remove_block(uint32_type block)
 {
   uint32_type prev = _as->getl(SUPER_DATA, block + 0);
   uint32_type next = _as->getl(SUPER_DATA, block + 12);
@@ -42,15 +42,33 @@ memory_allocator::free_block(uint32_type block)
 }
 
 void
-memory_allocator::free_children(uint32_type parent)
+memory_allocator::make_block(uint32_type block, uint32_type len,
+			      uint32_type prev, uint32_type parent)
+{
+  uint32_type next = _as->getl(SUPER_DATA, block + 12);
+
+  _as->putl(SUPER_DATA, block + 0, prev);
+  _as->putl(SUPER_DATA, block + 4, parent);
+  _as->putl(SUPER_DATA, block + 8, block + len);
+  _as->putl(SUPER_DATA, block + 12, next);
+
+  _as->putl(SUPER_DATA, prev + 12, block);
+  if (next != 0)
+    _as->putl(SUPER_DATA, next + 0, block);
+  else
+    last_block = block;
+}
+
+void
+memory_allocator::free_by_parent(uint32_type parent)
 {
   uint32_type block = last_block;
   while (block != 0)
     {
       if (_as->getl(SUPER_DATA, block + 4) == parent)
 	{
-	  free_children(block);
-	  free_block(block);
+	  free_by_parent(block);
+	  remove_block(block);
 	}
 
       block = _as->getl(SUPER_DATA, block + 0);
@@ -67,8 +85,8 @@ memory_allocator::free(uint32_type memptr)
     {
       if (block == memptr)
 	{
-	  free_children(block);
-	  free_block(block);
+	  free_by_parent(block);
+	  remove_block(block);
 	  return 0;
 	}
 
@@ -93,20 +111,8 @@ memory_allocator::alloc(uint32_type len, uint32_type parent)
       uint32_type free_size = end - candidate;
       if (free_size >= len)
 	{
-	  uint32_type next = _as->getl(SUPER_DATA, block + 12);
-
-	  _as->putl(SUPER_DATA, candidate + 0, block);
-	  _as->putl(SUPER_DATA, candidate + 4, parent);
-	  _as->putl(SUPER_DATA, candidate + 8, candidate + len);
-	  _as->putl(SUPER_DATA, candidate + 12, next);
-
-	  _as->putl(SUPER_DATA, block + 12, candidate);
-	  if (next != 0)
-	    _as->putl(SUPER_DATA, next + 0, candidate);
-	  else
-	    last_block = block;
-
-	  return candidate + 0x10;
+	  make_block(candidate, len, block, parent);
+	  return extsl(candidate + 0x10);
 	}
 
       if (free_size > max_free_size)
@@ -117,9 +123,42 @@ memory_allocator::alloc(uint32_type len, uint32_type parent)
     }
 
   if (max_free_size > 0x10)
-    return 0x81000000 + (max_free_size - 0x10);
+    return extsl(0x81000000 + (max_free_size - 0x10));
 
-  return 0x82000000;
+  return extsl(0x82000000);
+}
+
+sint32_type
+memory_allocator::alloc_largest(uint32_type parent)
+{
+  uint32_type prev = 0;
+  uint32_type largest = 0;
+  uint32_type max_free_size = 0;
+
+  uint32_type end = limit;
+  uint32_type block = last_block;
+  while (block != 0)
+    {
+      uint32_type candidate = (_as->getl(SUPER_DATA, block + 8) + 0xf) & ~0xf;
+      uint32_type free_size = end - candidate;
+      if (free_size > max_free_size)
+	{
+	  prev = block;
+	  largest = candidate;
+	  max_free_size = free_size;
+	}
+
+      end = block;
+      block = _as->getl(SUPER_DATA, block + 0);
+    }
+
+  if (max_free_size > 0x10)
+    {
+      make_block(largest, max_free_size, prev, parent);
+      return extsl(largest + 0x10);
+    }
+
+  return extsl(0x82000000);
 }
 
 memory_allocator::memory_allocator(address_space *as,

@@ -1,7 +1,7 @@
 1999-06-28  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* lib/vx68k/allocator.cc (free_block, free_children): New
-	functions.
+	* lib/vx68k/allocator.cc (remove_block, make_block,
+	free_by_parent, alloc_largest): New functions.
 	(free, alloc): Implemented.
 	(memory_allocator): Initialize limit.
 
