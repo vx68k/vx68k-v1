@@ -1,5 +1,8 @@
 1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (run_machine): Remove pthread_exit, and add
+	try-catch block.
+
 	* TODO: Modified.
 
 	* NEWS: Modified.

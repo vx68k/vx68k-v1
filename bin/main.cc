@@ -114,19 +114,27 @@ namespace
 
   void *
   run_machine(void *data)
+    throw ()
   {
-    machine_data *md = static_cast<machine_data *>(data);
+    try
+      {
+	machine_data *md = static_cast<machine_data *>(data);
 
-    human::dos env(md->vm);
-    if (opt_debug)
-      env.set_debug_level(1);
+	human::dos env(md->vm);
+	if (opt_debug)
+	  env.set_debug_level(1);
 
-    human::dos_exec_context *c = env.create_context();
-    human::shell p(c);
-    md->status = p.exec(md->argv[optind], md->argv + optind + 1, environ);
-    delete c;
+	human::dos_exec_context *c = env.create_context();
+	human::shell p(c);
+	md->status = p.exec(md->argv[optind], md->argv + optind + 1, environ);
+	delete c;
+      }
+    catch (exception &x)
+      {
+	fprintf(stderr, _("Unhandled exception in thread: %s\n"), x.what());
+      }
 
-    pthread_exit(NULL);
+    return NULL;
   }
 } // (unnamed namespace)
 
