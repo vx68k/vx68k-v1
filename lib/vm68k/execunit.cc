@@ -186,7 +186,7 @@ namespace
       I(ec != NULL);
       int reg = op & 0x7;
       uint32 d_addr = ec->regs.a[reg] - 2;
-      VL((" clrw %%a%d@- | 0x%lx\n", reg, (unsigned long) d_addr));
+      VL((" clrw %%a%d@- |0x%lx\n", reg, (unsigned long) d_addr));
 
       int fc = ec->data_fc();
       ec->mem->putw(fc, d_addr, 0);
@@ -246,7 +246,7 @@ namespace
       uint32 s_addr = ec->regs.a[s_reg];
       int d_reg = op >> 9 & 0x7;
       uint32 d_addr = ec->regs.a[d_reg];
-      VL((" moveb %%a%d@+,%%a%d@+ | 0x%lx,0x%lx\n",
+      VL((" moveb %%a%d@+,%%a%d@+ |0x%lx,0x%lx\n",
 	  s_reg, d_reg, (unsigned long) s_addr, (unsigned long) d_addr));
 
       int fc = ec->data_fc();
@@ -280,7 +280,7 @@ namespace
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
       uint32 d_addr = ec->regs.d[d_reg] - 2;
-      VL((" movew %%d%d,%%a%x@- | *,0x%lx\n",
+      VL((" movew %%d%d,%%a%x@- |*,0x%lx\n",
 	  s_reg, d_reg, (unsigned long) d_addr));
 
       int fc = ec->data_fc();
@@ -313,7 +313,7 @@ namespace
       int d_reg = op >> 9 & 0x7;
       uint32 d_addr = ec->regs.a[d_reg] - 2;
       uint32 s_addr = ec->fetchl(2);
-      VL((" movew 0x%lx,%%a%x@- | *,0x%lx\n",
+      VL((" movew 0x%lx,%%a%x@- |*,0x%lx\n",
 	  (unsigned long) s_addr, d_reg, (unsigned long) d_addr));
 
       int fc = ec->data_fc();
@@ -331,7 +331,7 @@ namespace
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
       uint32 d_addr = ec->regs.a[d_reg] - 4;
-      VL((" movel %%a%d,%%a%d@- | *,0x%lx\n",
+      VL((" movel %%a%d,%%a%d@- |*,0x%lx\n",
 	  s_reg, d_reg, (unsigned long) d_addr));
 
       int fc = ec->data_fc();
@@ -349,7 +349,7 @@ namespace
       int s_reg = op & 0x7;
       uint32 s_addr = ec->regs.a[s_reg];
       int d_reg = op >> 9 & 0x7;
-      VL((" movel %%a%d@+,%%a%d | 0x%lx,*\n",
+      VL((" movel %%a%d@+,%%a%d |0x%lx,*\n",
 	  s_reg, d_reg, (unsigned long) s_addr));
 
       // XXX: The condition codes are not affected.
@@ -366,7 +366,7 @@ namespace
       int d_reg = op >> 9 & 0x7;
       uint32 d_addr = ec->regs.a[d_reg] - 4;
       int32 value = extsl(ec->fetchl(2));
-      VL((" movel #%ld,%%a%d@- | *,0x%lx\n",
+      VL((" movel #%ld,%%a%d@- |*,0x%lx\n",
 	  (long) value, d_reg, (unsigned long) d_addr));
 
       int fc = ec->data_fc();
