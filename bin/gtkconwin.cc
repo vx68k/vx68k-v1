@@ -26,6 +26,8 @@
 
 #include <libintl.h>
 
+#include <cstdlib>
+
 #ifdef HAVE_NANA_H
 # include <nana.h>
 # include <cstdio>

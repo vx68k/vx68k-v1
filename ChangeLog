@@ -1,6 +1,10 @@
-2000-08-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+2000-08-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* Version 1.1.2.
+
+	* bin/gtkconwin.cc: Include <cstdlib>.
+
+2000-08-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* configure.in: Set VERSION to 1.1.2.
 
