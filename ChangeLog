@@ -1,5 +1,19 @@
 1999-06-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/statusreg.cc (struct cmp_cc_evaluator): Add lt and le.
+	(struct asr_cc_evaluator): Remove use of eq in ls.
+	(struct lsl_cc_evaluator): Likewise.
+
+	* lib/vm68k/execunit.cc (set_instruction) [L]: Add warning
+	message.
+	(addw_r, andiw, andil, mulsw, subal, subil): New functions.
+	(asrl_r): Use set_cc_asr.
+	(cmpiw): Fix the size of an immediate value.
+	(eoriw): Use extsw for an immediate value.
+	(subb): Fix to use textb for logging.
+	(install_instructions): Add new handlers.
+	(install_instructions): Fix wrong mask bits.
+
 	* lib/vx68k/dos.cc (dos_write): Use dos_exec_context::write.
 	(dos_create): Change file name to "create.out".
 

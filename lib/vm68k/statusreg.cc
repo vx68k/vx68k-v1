@@ -52,13 +52,17 @@ namespace
       {return uint32_type(values[1]) <= uint32_type(values[2]);}
     bool cs(const sint32_type *values) const
       {return uint32_type(values[1]) < uint32_type(values[2]);}
+    bool lt(const sint32_type *values) const
+      {return values[1] < values[2];}
+    bool le(const sint32_type *values) const
+      {return values[1] <= values[2];}
   };
 
   struct asr_cc_evaluator
     : common_cc_evaluator
   {
     bool ls(const sint32_type *values) const
-      {return eq(values) || cs(values);}
+      {return values[0] == 0 || cs(values);}
     bool cs(const sint32_type *values) const
       {return (values[2] >= 1
 	       && uint32_type(values[1]) & uint32_type(1) << values[2] - 1);}
@@ -68,7 +72,7 @@ namespace
     : common_cc_evaluator
   {
     bool ls(const sint32_type *values) const
-      {return eq(values) || cs(values);}
+      {return values[0] == 0 || cs(values);}
     bool cs(const sint32_type *values) const
       {return (values[2] >= 1
 	       && uint32_type(values[1]) & uint32_type(1) << 32 - values[2]);}
