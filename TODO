@@ -1,10 +1,26 @@
-TODO
+TODO for vx68k
 
-* Efficient condition code update.
+* X68000 Executable loader.
+
+An executable loader must be implemented.  The loader also have to
+handle relocations.
+
+Since Human68k is not loaded, an executable can be loaded at as low
+address as 0x8000, so that unused memory can be reduced.
+
+* Efficient CCR update.
+
+Since CCR is normally updated more often than referenced, speed of CCR
+update is important to improve system performance.
 
 Deferred update seems difficult on m68k architecture.  Some bits in
 CCR may not change by an instruction while others do, so its value
 cannot be determined by the last operation.
+
+M68k instructions can be categorized into three classes:
+(1) that change all five bits in CCR,
+(2) that change all bits except X, and
+(3) that change Z only (bit test).
 
 * Modular design.
 
