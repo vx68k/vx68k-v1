@@ -1,3 +1,28 @@
+2000-08-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68kgtk/gtkconsole.cc (handle_motion_event,
+	handle_button_event): New function.
+	(create_widget): Add new signal handlers.
+
+	* libvx68k/machine.cc (check_timers): Call scc.track_mouse.
+
+	* libvx68k/sccmem.cc (mouse_state, set_mouse_state, mouse_motion,
+	set_mouse_position, track_mouse): New function.
+	(iocs_ms_getdt): Implemented.
+	(~scc_memory): Destroy mutex.
+	(scc_memory): Initialize new members.
+
+	* include/vx68k/gtk.h (class gtk_console): Add members
+	set_mouse_state, and set_mouse_position.
+
+	* include/vx68k/machine.h (class machine): Add members
+	set_mouse_state, and set_mouse_position.
+
+	* include/vx68k/memory.h (class scc_memory): Add new members
+	mouse_states, _mouse_position, old_mouse_position, mutex,
+	mouse_state, set_mouse_state, mouse_motion, set_mouse_position,
+	and track_mouse.  Add type point.
+
 2000-08-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Reorder files.

@@ -134,6 +134,9 @@ namespace vx68k
     void set_vdisp_counter_data(unsigned int n)
     {crtc.set_vdisp_counter_data(n);}
 
+    void set_mouse_state(unsigned int i, bool s) {scc.set_mouse_state(i, s);}
+    void set_mouse_position(int x, int y) {scc.set_mouse_position(x, y);}
+
   public:
     void connect(console *con);
 

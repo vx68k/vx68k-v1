@@ -64,6 +64,9 @@ namespace vx68k
     public:
       void check_machine_timers(uint32_type t) {_m->check_timers(t);}
 
+      void set_mouse_state(unsigned int b, bool s) {_m->set_mouse_state(b, s);}
+      void set_mouse_position(int x, int y) {_m->set_mouse_position(x, y);}
+
       /* Handles a timeout.  */
       bool handle_timeout();
 

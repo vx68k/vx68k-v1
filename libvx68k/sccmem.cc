@@ -22,6 +22,7 @@
 #undef inline
 
 #include <vx68k/memory.h>
+#include <vm68k/mutex.h>
 
 #include <cstdio>
 
@@ -33,6 +34,7 @@
 #endif
 
 using vx68k::scc_memory;
+using vm68k::mutex_lock;
 using namespace vm68k::types;
 using namespace std;
 
@@ -40,6 +42,64 @@ using namespace std;
 extern bool nana_iocs_call_trace;
 #endif
 
+bool
+scc_memory::mouse_state(unsigned int button) const
+{
+  mutex_lock lock(&mutex);
+
+  if (button >= mouse_states.size())
+    throw out_of_range("class scc_memory");
+
+  return mouse_states[button];
+}
+
+void
+scc_memory::set_mouse_state(unsigned int button, bool state)
+{
+  mutex_lock lock(&mutex);
+
+  if (button >= mouse_states.size())
+    throw out_of_range("class scc_memory");
+
+  mouse_states[button] = state;
+}
+
+scc_memory::point
+scc_memory::mouse_motion() const
+{
+  mutex_lock lock(&mutex);
+
+  point p = {_mouse_position.x - old_mouse_position.x,
+	     _mouse_position.y - old_mouse_position.y};
+  return p;
+}
+
+void
+scc_memory::set_mouse_position(int x, int y)
+{
+  mutex_lock lock(&mutex);
+
+  if (x < 0)
+    x = 0;
+  else if (x > 768)
+    x = 768;
+  if (y < 0)
+    y = 0;
+  else if (y > 512)
+    y = 512;
+
+  _mouse_position.x = x;
+  _mouse_position.y = y;
+}
+
+void
+scc_memory::track_mouse()
+{
+  mutex_lock lock(&mutex);
+
+  old_mouse_position = _mouse_position;
+}
+
 uint_type
 scc_memory::get_16(int fc, uint32_type address) const
 {
@@ -134,14 +194,28 @@ namespace
   iocs_ms_getdt(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    LG(nana_iocs_call_trace,
-       "IOCS _MS_GETDT\n");
+    LG(nana_iocs_call_trace, "IOCS _MS_GETDT\n");
 #endif
+    scc_memory *m = reinterpret_cast<scc_memory *>(data);
 
-    static bool once;
-    if (!once++)
-      fprintf(stderr, "iocs_ms_getdt: FIXME: not implemented\n");
-    long_word_size::put(c.regs.d[0], 0);
+    bool left_button = m->mouse_state(0);
+    bool right_button = m->mouse_state(1);
+    scc_memory::point delta = m->mouse_motion();
+
+    if (delta.x < -127)
+      delta.x = -127;
+    else if (delta.x > 127)
+      delta.x = 127;
+    if (delta.y < -127)
+      delta.y = -127;
+    else if (delta.y > 127)
+      delta.y = 127;
+
+    uint32_type value
+      = (uint32_type(delta.x & 0xff) << 24 | uint32_type(delta.y & 0xff) << 16
+	 | (left_button ? 0xff : 0) << 8 | (right_button ? 0xff : 0));
+
+    long_word_size::put(c.regs.d[0], value);
   }
 
   /* Handles a _MS_INIT IOCS call.  */
@@ -217,9 +291,12 @@ namespace
 
 scc_memory::~scc_memory()
 {
+  pthread_mutex_destroy(&mutex);
 }
 
 scc_memory::scc_memory(system_rom &bios)
+  : mouse_states(2, false)
 {
+  pthread_mutex_init(&mutex, 0);
   install_iocs_calls(bios, reinterpret_cast<unsigned long>(this));
 }

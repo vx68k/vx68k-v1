@@ -438,9 +438,29 @@ namespace vx68k
     void check_timeouts(console::time_type t, context &c);
   };
 
-  /* SCC input/output ports memory.  */
+  /* Memory for SCC input/output.  This memory also manages mouse
+     input.  This memory is mapped to the address range from 0xe98000
+     to 0xe9a000 on X68000.  */
   class scc_memory: public memory
   {
+  public:
+    struct point
+    {
+      int x, y;
+    };
+
+  private:
+    /* Button states of the mouse.  */
+    vector<bool> mouse_states;
+
+    /* Most recent X and Y position of the mouse.  */
+    point _mouse_position;
+
+    /* Second most recent X and Y position of the mouse.  */
+    point old_mouse_position;
+
+    mutable pthread_mutex_t mutex;
+
   public:
     explicit scc_memory(system_rom &);
     ~scc_memory();
@@ -453,6 +473,22 @@ namespace vx68k
     /* Writes data to this object.  */
     void put_16(int, uint32_type, uint_type);
     void put_8(int, uint32_type, uint_type);
+
+  public:
+    /* Returns the state of a mouse button.  */
+    bool mouse_state(unsigned int button) const;
+
+    /* Sets the state of a mouse button.  */
+    void set_mouse_state(unsigned int button, bool state);
+
+    /* Returns the mouse motion.  */
+    point mouse_motion() const;
+
+    /* Sets the mouse position.  */
+    void set_mouse_position(int x, int y);
+
+    /* Tracks the mouse motion.  */
+    void track_mouse();
   };
 
   /* PPI (a.k.a 8255A) registers memory.  On X68000, a PPI is used for

@@ -163,6 +163,43 @@ namespace
     c->handle_destroy(w);
   }
 
+  /* Handles a GDK motion event.  */
+  gint
+  handle_motion_event(GtkWidget *w, GdkEventMotion *e, gpointer data) throw ()
+  {
+    gtk_console *c = static_cast<gtk_console *>(data);
+    I(c != NULL);
+
+    c->set_mouse_position(e->x, e->y);
+  }
+
+  /* Handles a GDK button press or release event.  */
+  gint
+  handle_button_event(GtkWidget *w, GdkEventButton *e, gpointer data) throw ()
+  {
+    gtk_console *c = static_cast<gtk_console *>(data);
+    I(c != NULL);
+
+    bool state = e->type != GDK_BUTTON_RELEASE;
+    if (state)
+      gtk_grab_add(w);
+    else
+      gtk_grab_remove(w);
+
+    switch (e->button)
+      {
+      case 1:
+	c->set_mouse_state(0, state);
+	break;
+
+      case 3:
+	c->set_mouse_state(1, state);
+	break;
+      }
+
+    return true;
+  }
+
   /* Delivers a GDK key press event E to the associated console.  */
   gint
   deliver_key_press_event(GtkWidget *w, GdkEventKey *e,
@@ -194,13 +231,21 @@ gtk_console::create_widget()
 		     GTK_SIGNAL_FUNC(&::handle_destroy), this);
   gtk_signal_connect(GTK_OBJECT(drawing_area), "expose_event",
 		     GTK_SIGNAL_FUNC(&::handle_expose_event), this);
+  gtk_signal_connect(GTK_OBJECT(drawing_area), "motion_notify_event",
+		     GTK_SIGNAL_FUNC(&handle_motion_event), this);
+  gtk_signal_connect(GTK_OBJECT(drawing_area), "button_press_event",
+		     GTK_SIGNAL_FUNC(&handle_button_event), this);
+  gtk_signal_connect(GTK_OBJECT(drawing_area), "button_release_event",
+		     GTK_SIGNAL_FUNC(&handle_button_event), this);
   gtk_signal_connect(GTK_OBJECT(drawing_area), "key_press_event",
 		     GTK_SIGNAL_FUNC(&deliver_key_press_event), this);
   gtk_signal_connect(GTK_OBJECT(drawing_area), "key_release_event",
 		     GTK_SIGNAL_FUNC(&deliver_key_release_event), this);
   GTK_WIDGET_SET_FLAGS(drawing_area, GTK_CAN_FOCUS);
   gtk_widget_add_events(drawing_area,
-			GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
+			GDK_POINTER_MOTION_MASK
+			| GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK
+			| GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
   {
     GtkStyle *style = gtk_style_copy(gtk_widget_get_style(drawing_area));
     style->bg[GTK_STATE_NORMAL] = style->black;

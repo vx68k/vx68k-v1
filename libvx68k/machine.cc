@@ -385,6 +385,7 @@ machine::check_timers(uint32_type t)
 {
   crtc.check_timeouts(t, *master_context());
   opm.check_timeouts(t, *master_context());
+  scc.track_mouse();
   last_check_time = t;
 }
 
