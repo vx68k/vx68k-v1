@@ -3,6 +3,7 @@
 	* include/vx68k/human.h (dos): Add member mem, remove main_ec.
 	* lib/vx68k/dos.cc (execute): Use local dos_exec_context.
 	(dos): Modify member initialization.
+	(load_executable): Set address registers.
 
 	* lib/vx68k/dos.cc (dos_exec_context): Reverse the order of
 	arguments.
