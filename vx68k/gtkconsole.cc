@@ -43,7 +43,7 @@ const char *const BASE16_FONT_NAME
 const char *const KANJI16_FONT_NAME
   = "-*-fixed-medium-r-normal--16-*-*-*-c-*-jisx0208.1983-0";
 
-const unsigned int TIMEOUT_INTERVAL = 500;
+const unsigned int TIMEOUT_INTERVAL = 200;
 
 bool
 gtk_console::handle_expose_event(GtkWidget *drawing_area,

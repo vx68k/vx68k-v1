@@ -1,5 +1,7 @@
 1999-10-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vx68k/gtkconsole.cc: Change TIMEOUT_INTERVAL to 200.
+
 	* NEWS: Updated.
 
 	* vm68k/execunit.cc (install_instructions): Add missing
