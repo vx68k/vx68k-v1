@@ -29,14 +29,15 @@
 
 inline int debug_printf(const char *fmt,...)
 {
-  std::va_list va;
-  std::va_start(va, fmt);
-  int r = std::vfprintf(std::stderr, fmt, va);
-  std::va_end(va, fmt);
+  using namespace std;
+  va_list va;
+  va_start(va, fmt);
+  int r = vfprintf(stderr, fmt, va);
+  va_end(va);
   return r;
 }
 
-#define I(EXPR) (std::assert(EXPR))
+#define I(EXPR) (assert(EXPR))
 #define VL(L) (debug_printf L)
 
 #endif /* not HAVE_NANA_H */

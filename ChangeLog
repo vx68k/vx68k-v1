@@ -1,3 +1,15 @@
+1999-03-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/debug.h (debug_printf): Fix errors.
+	(I): Remove `std::'.
+
+	* configure.in: Add `--with-nana'.
+	Remove `--enable-step-trace'.
+
+	* acconfig.h: Modify comments.
+
+	* TODO: Modified.
+
 1999-03-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/dos.cc: Use I and VL instead of assert and fprintf.
