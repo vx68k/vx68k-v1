@@ -86,9 +86,9 @@ public:
     uint8 getb (int, uint32) const throw (bus_error);
     uint16 getw (int, uint32) const throw (bus_error);
     uint32 getl (int, uint32) const throw (bus_error);
-    int getb_signed(int, uint32) const throw (bus_error);
-    int getw_signed(int, uint32) const throw (bus_error);
-    int32 getl_signed(int, uint32) const throw (bus_error);
+    int getb_signed(int, uint32) const;
+    int getw_signed(int, uint32) const;
+    int32 getl_signed(int, uint32) const;
     void write (int, uint32, const void *, size_t) throw (bus_error);
     void putb (int, uint32, uint8) throw (bus_error);
     void putw (int, uint32, uint16) throw (bus_error);

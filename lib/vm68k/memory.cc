@@ -172,10 +172,9 @@ address_space::getb(int fc, uint32 address) const
 
 int
 address_space::getb_signed(int fc, uint32 address) const
-  throw (bus_error)
 {
   unsigned int value = getb(fc, address);
-  return value >= 1u << 7 ? -(int) ((1u << 8) - value) : value;
+  return value >= 1u << 7 ? -(int) ((1u << 8) - value) : (int) value;
 }
 
 void
@@ -197,10 +196,9 @@ address_space::getw (int fc, uint32 address) const
 
 int
 address_space::getw_signed(int fc, uint32 address) const
-  throw (bus_error)
 {
   unsigned int value = getw(fc, address);
-  return value >= 1u << 15 ? -(int) ((1u << 16) - value) : value;
+  return value >= 1u << 15 ? -(int) ((1u << 16) - value) : (int) value;
 }
 
 /* Put a word to memory.  */
@@ -222,10 +220,9 @@ address_space::getl(int fc, uint32 address) const
 
 int32
 address_space::getl_signed(int fc, uint32 address) const
-  throw (bus_error)
 {
   uint32 value = getl(fc, address);
-  return value >= 1u << 31 ? -(int32) ((1u << 32) - value) : value;
+  return value >= 1u << 31 ? -(int32) ((1u << 32) - value) : (int32) value;
 }
 
 /* Stores the long word value.  */

@@ -1,5 +1,13 @@
 1999-03-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (addqw_a, subql_a): Move the register
+	number extraction earlier.
+
+	* lib/vm68k/memory.cc (getb_signed, getw_signed, getl_signed):
+	Cast non-negative values explicitly.
+	(getb_signed, getw_signed, getl_signed): Remove throw-specs.
+	Update the class-def too.
+
 	* include/vm68k/cpu.h (registers): Renamed from cpu_regs.  Update
 	all users.
 

@@ -78,9 +78,9 @@ namespace
     {
       assert(ec != NULL);
       int value = op >> 9 & 0x7;
+      int reg = op & 0x7;
       if (value == 0)
 	value = 8;
-      int reg = op & 0x7;
 #ifdef TRACE_STEPS
       fprintf(stderr, " addqw #%d,%%a%d\n", value, reg);
 #endif
@@ -315,9 +315,9 @@ namespace
     {
       assert(ec != NULL);
       int value = op >> 9 & 0x7;
+      int reg = op & 0x7;
       if (value == 0)
 	value = 8;
-      int reg = op & 0x7;
 #ifdef TRACE_STEPS
       fprintf(stderr, " subql #%d,%%a%d\n", value, reg);
 #endif
