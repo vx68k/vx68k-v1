@@ -49,7 +49,6 @@ context::interrupt(int prio, unsigned int vecno)
 void
 context::handle_interrupts()
 {
-  // FIXME: Add interrupt handling code.
   vector<queue<unsigned int> >::iterator i = interrupt_queues.begin();
   while (i->empty())
     {

@@ -1,5 +1,7 @@
 2000-08-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/context.cc (handle_interrupts): Remove comments.
+
 	* libvx68k/opmmem.cc (set_reg): Remove comments.
 	(check_timeout): Handle timers even if interrupts are not enabled.
 	(opm_memory): Reorder initializations.
