@@ -524,6 +524,30 @@ namespace
     c.regs.d[0] = 0;
   }
 
+  /* Handles a SYS_STAT call.  */
+  void
+  iocs_sys_stat(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _SYS_STAT %%d1=%#010x %%d2=%#010x\n",
+      c.regs.d[1], c.regs.d[2]);
+#endif
+    uint32_type mode = long_word_size::get(c.regs.d[1]);
+    switch (mode)
+      {
+      case 0:
+	{
+	  uint32_type mpu = 100 << 16 | 0x0000;
+	  long_word_size::put(c.regs.d[0], mpu);
+	}
+	break;
+
+      default:
+	long_word_size::put(c.regs.d[0], 0);
+	break;
+      }
+  }
+
   /* Handles a _TCOLOR call.  */
   void
   iocs_tcolor(context &c, unsigned long data)
@@ -651,16 +675,6 @@ namespace
     fprintf(stderr, "iocs_x3a: FIXME: not implemented\n");
   }
 
-  /* Handles a 0xac call.  */
-  void
-  iocs_xac(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("system_rom: 0xac\n");
-#endif
-    fprintf(stderr, "iocs_xac: FIXME: not implemented\n");
-  }
-
   /* Initializes the IOCS functions.  */
   void
   initialize_iocs_functions(system_rom *rom)
@@ -701,7 +715,7 @@ namespace
     rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));
     rom->set_iocs_function(0x8e, iocs_function_type(&iocs_bootinf, 0));
     rom->set_iocs_function(0x8f, iocs_function_type(&iocs_romver, 0));
-    rom->set_iocs_function(0xac, iocs_function_type(&iocs_xac, 0));
+    rom->set_iocs_function(0xac, iocs_function_type(&iocs_sys_stat, 0));
     rom->set_iocs_function(0xaf, iocs_function_type(&iocs_os_curof, 0));
   }
 } // namespace (unnamed)

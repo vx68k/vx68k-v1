@@ -51,18 +51,23 @@ using namespace std;
 uint_type
 sram::getw(int fc, uint32_type address) const
 {
+#ifdef HAVE_NANA_H
+  L("sram: getw fc=%d address=%#010x\n", fc, address);
+#endif
   address &= 0xfff;
   uint_type value = ::getw(buf + address);
   return value;
 }
 
 uint_type
-sram::getb(int, uint32_type) const
+sram::getb(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
-  L("sram: FIXME: `getb' not implemented\n");
+  L("sram: getb fc=%d address=%#010x\n", fc, address);
 #endif
-  return 0;
+  address &= 0xfff;
+  uint_type value = *(buf + address) & 0xffu;
+  return value;
 }
 
 size_t
@@ -120,4 +125,7 @@ sram::sram()
 
   if (::getl(buf + 8) == 0)
     ::putl(buf + 8, 4 * 1024 * 1024);
+
+  if (*(buf + 0x1d) == 0)
+    *(buf + 0x1d) = 16;
 }
