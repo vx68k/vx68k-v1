@@ -1,5 +1,12 @@
 1999-06-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/dos.cc (execute): Pass &fs to process.
+
+	* lib/vx68k/process.cc (process): New function.
+
+	* include/vx68k/human.h (class process): Add member _fs and fs().
+	(class process): Add explicit constructor.
+
 	* lib/vx68k/dos.cc: Include <cstring>.
 
 	* include/vx68k/human.h (class file_system): New class.

@@ -40,11 +40,22 @@ namespace vx68k
 
     class process
     {
+    private:
+      file_system *_fs;
+
+    public:
+      explicit process(file_system *fs);
+
+    public:
+      file_system *fs() const
+	{return _fs;}
+
     public:
       void exit(sint_type);
       sint32_type malloc(uint32_type);
       sint_type mfree(sint32_type);
       sint32_type setblock(sint32_type, uint32_type);
+
     public:
       sint_type create(const char *name, sint_type attr);
       sint_type open(const char *name, sint_type mode);
