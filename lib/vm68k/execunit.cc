@@ -628,6 +628,24 @@ namespace
       ec->regs.pc += 2;
     }
 
+  template <class Source, class Destination>
+    void moveb(unsigned int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      Source ea1(op & 0x7, 2);
+      Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
+      VL((" moveb %s", ea1.textb(ec)));
+      VL((",%s\n", ea2.textb(ec)));
+
+      int value = ea1.getb(ec);
+      ea2.putb(ec, value);
+      ea1.finishb(ec);
+      ea2.finishb(ec);
+      ec->regs.sr.set_cc(value);
+
+      ec->regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
+    }
+
   void moveb_indir_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -731,7 +749,7 @@ namespace
       VL((" movew %s", ea1.textw(ec)));
       VL((",%s\n", ea2.textw(ec)));
 
-      int value = extsw(ea1.getw(ec));
+      int value = ea1.getw(ec);
       ea2.putw(ec, value);
       ea1.finishw(ec);
       ea2.finishw(ec);
@@ -853,7 +871,7 @@ namespace
       VL((" movel %s", ea1.textl(ec)));
       VL((",%s\n", ea2.textl(ec)));
 
-      int32 value = extsl(ea1.getl(ec));
+      int32 value = ea1.getl(ec);
       ea2.putl(ec, value);
       ea1.finishl(ec);
       ea2.finishl(ec);
@@ -1309,9 +1327,14 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x1028, 0x0e07, &moveb_off_d);
   eu->set_instruction(0x10c0, 0x0e07, &moveb_d_postinc);
   eu->set_instruction(0x10d8, 0x0e07, &moveb_postinc_postinc);
-  eu->set_instruction(0x13c0, 0x0007, &movew<data_register, absolute_long>);
+  eu->set_instruction(0x13c0, 0x0007, &moveb<data_register, absolute_long>);
   eu->set_instruction(0x2000, 0x0e07, &movel_d_d);
   eu->set_instruction(0x2008, 0x0e07, &movel_a_d);
+  eu->set_instruction(0x2010, 0x0e07, &movel<indirect, data_register>);
+  eu->set_instruction(0x2018, 0x0e07, &movel<postincrement_indirect, data_register>);
+  eu->set_instruction(0x2020, 0x0e07, &movel<predecrement_indirect, data_register>);
+  eu->set_instruction(0x2039, 0x0e00, &movel<absolute_long, data_register>);
+  eu->set_instruction(0x203c, 0x0e00, &movel<immediate, data_register>);
   eu->set_instruction(0x2018, 0x0e07, &movel_postinc_d);
   eu->set_instruction(0x2028, 0x0e07, &movel_off_d);
   eu->set_instruction(0x2058, 0x0e07, &movel_postinc_a);
