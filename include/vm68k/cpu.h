@@ -60,6 +60,23 @@ struct execution_context
   explicit execution_context (address_space *);
 };
 
+  /* Execution unit.  */
+  class exec_unit
+  {
+  public:
+    static void illegal(int, execution_context *);
+  protected:
+    static void install_instructions(exec_unit *);
+  private:
+    typedef void (*insn_handler)(int, execution_context *);
+    insn_handler instruction[0x10000];
+  public:
+    exec_unit();
+  public:
+    void set_instruction(int op, int mask, insn_handler);
+    void execute(execution_context *) const;
+  };
+
 /* A CPU.
 
    This CPU will emulate non-exceptional operations of a m68k

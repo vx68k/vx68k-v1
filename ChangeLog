@@ -1,5 +1,9 @@
 1999-03-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/execunit.cc: New file.
+	* include/vm68k/cpu.h (class exec_unit): New class.
+	* vm68k/Makefile.am (libvm68k_a_SOURCES): Add execunit.cc.
+
 	* vx68k/dos.cc (load_executable): Make address fixup.
 
 	* vm68k/memory.cc (getl, putl): New function.
