@@ -1,3 +1,9 @@
+1999-10-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/Makefile.am (vm68kinclude_HEADERS): Renamed from
+	noinst_HEADERS.
+	(vm68kincludedir): New macro.
+
 1999-10-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* vm68k/TODO: New file.
