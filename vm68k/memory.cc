@@ -25,6 +25,9 @@
 
 #include <algorithm>
 
+namespace vm68k
+{
+
 uint16
 memory::read16 (int, uint32) const
   throw (bus_error)
@@ -38,4 +41,6 @@ memory::memory ()
   memory_page *null = NULL;
   fill (page + 0, page + (1 << 32 - PAGE_SIZE_SHIFT), null);
 }
+
+};				// namespace vm68k
 

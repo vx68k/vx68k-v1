@@ -23,6 +23,9 @@
 #include "vm68k/types.h"
 #include "vm68k/memory.h"
 
+namespace vm68k
+{
+
 /* User view of CPU registers.  */
 struct user_cpu_regs
 {
@@ -71,6 +74,8 @@ private:
   execution_context context;
   insn_handler insn[0x10000];
 };
+
+};				// namespace vm68k
 
 #endif
 

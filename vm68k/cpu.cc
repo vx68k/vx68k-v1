@@ -26,6 +26,9 @@
 #include <algorithm>
 #include <cassert>
 
+namespace vm68k
+{
+
 execution_context::execution_context (memory *m)
   : mem (m)
 {
@@ -90,4 +93,6 @@ cpu::cpu (memory *m)
 {
   std::fill (insn + 0, insn + 0x10000, &illegal_insn);
 }
+
+};				// namespace vm68k
 

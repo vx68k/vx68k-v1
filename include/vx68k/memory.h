@@ -22,7 +22,7 @@
 #include "vm68k/memory.h"
 
 class x68k_memory
-  : public memory
+  : public vm68k::memory
 {
 };
 

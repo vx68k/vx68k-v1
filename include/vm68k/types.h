@@ -21,6 +21,9 @@
 
 #include <climits>
 
+namespace vm68k
+{
+
 #if INT_MAX >= 0x7fffffff
 typedef int int32;
 typedef unsigned int uint32;
@@ -31,6 +34,8 @@ typedef unsigned long uint32;
 
 typedef unsigned short uint16;
 typedef unsigned char uint8;
+
+};				// namespace vm68k
 
 #endif
 

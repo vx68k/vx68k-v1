@@ -22,6 +22,9 @@
 #include <iterator>
 #include "vm68k/types.h"
 
+namespace vm68k
+{
+
 enum function_code
 {
   USER_DATA = 1,
@@ -69,6 +72,8 @@ public:
 private:
   memory_page *page[1 << 24 - PAGE_SIZE_SHIFT];
 };
+
+};				// namespace vm68k
 
 #endif
 

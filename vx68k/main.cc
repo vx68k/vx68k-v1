@@ -24,6 +24,8 @@
 #include "vm68k/cpu.h"
 #include "vx68k/memory.h"
 
+using vm68k::cpu;
+
 int
 main (int argc, char **argv)
 {
