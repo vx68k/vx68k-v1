@@ -6,6 +6,7 @@
 	number.
 	(rorw_i, subqw, subql): Disabled in #if-#endif.
 	(initialize_instructions): Update the instruction table.
+	(m68k_ror_i): Fix a bit mask.
 
 	* libvx68k/systemrom.cc (iocs_datebin, iocs_dateget,
 	iocs_timebin): New function.

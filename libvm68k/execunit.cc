@@ -1961,6 +1961,7 @@ namespace
     c.regs.pc += 2 + ea1.isize(4);
   }
 
+  /* Handles a ROR instruction (immediate).  */
   template <class Size> void
   m68k_ror_i(uint_type op, context &c, unsigned long data)
   {
@@ -1978,8 +1979,10 @@ namespace
 
     svalue_type value1 = Size::svalue(Size::get(c.regs.d[reg1]));
     svalue_type value
-      = Size::svalue((uvalue_type(value1) & Size::value_mask()) >> count
-		     | uvalue_type(value1) << Size::value_bit() - count);
+      = Size::svalue(Size::get(((uvalue_type(value1) & Size::value_mask())
+				>> count)
+			       | (uvalue_type(value1)
+				  << Size::value_bit() - count)));
     Size::put(c.regs.d[reg1], value);
     c.regs.sr.set_cc(value);	// FIXME.
 
@@ -3028,8 +3031,8 @@ namespace
 		       &m68k_subq<word_size, word_predec_indirect>);
     eu.set_instruction(0x5168, 0x0e07,
 		       &m68k_subq<word_size, word_disp_indirect>);
-    eu.set_instruction(0x5168, 0x0e07,
-		       &m68k_subq<word_size, word_disp_indirect>);
+    eu.set_instruction(0x5170, 0x0e07,
+		       &m68k_subq<word_size, word_index_indirect>);
     eu.set_instruction(0x5178, 0x0e00, &m68k_subq<word_size, word_abs_short>);
     eu.set_instruction(0x5179, 0x0e00, &m68k_subq<word_size, word_abs_long>);
     eu.set_instruction(0x5180, 0x0e07,
