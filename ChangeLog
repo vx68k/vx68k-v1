@@ -1,5 +1,7 @@
 2000-05-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/memory.h: Add comments.
+
 	* libvx68k/dos.cc (dos_super_jsr): Use x68k_address_space.
 	(create_context, dos): Use as instead of vm.
 

@@ -84,7 +84,8 @@ namespace vm68k
     void putw(int, uint32_type, uint_type);
   };
 
-  /* Address space.  */
+  /* Address space.  An address space is a software view of a target
+     machine.  */
   class address_space
   {
   protected:
