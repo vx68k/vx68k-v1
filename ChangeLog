@@ -1,3 +1,12 @@
+2000-08-06  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (class gtk_app): Remove `#if 0' sections.
+	(class gtk_app): Remove show_about_dialog.
+	(handle_about_ok_clicked, show_about_dialog, handle_run_command,
+	handle_fd_load_command, handle_fd_eject_command,
+	handle_about_command): Removed.
+	(create_window, main): Remove `#if 0' sections.
+
 2000-08-05  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* bin/gtkconwin.cc (show_about, handle_about_item_activate): New

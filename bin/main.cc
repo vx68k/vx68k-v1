@@ -93,12 +93,8 @@ private:
      pthread_self() when no thread is running.  */
   pthread_t vm_thread;
 
-#if 0
-  /* Main window of this application.  */
-  GtkWidget *main_window;
-#else
+  /* Main console window of this application.  */
   gtk_console_window *main_window;
-#endif
 
 public:
   gtk_app();
@@ -125,15 +121,7 @@ public:
   {vm.load_fd(u, fildes);}
 
 public:
-#if 0
-  GtkWidget *create_window();
-#else
   gtk_console_window *create_window();
-#endif
-
-public:
-  /* Shows the about dialog and returns immediately.  */
-  void show_about_dialog();
 };
 
 size_t gtk_app::opt_memory_size = 0;
@@ -280,253 +268,11 @@ gtk_app::join(int *status)
 
 /* Window management.  */
 
-namespace
-{
-  void
-  handle_about_ok_clicked(GtkButton *button, gpointer data) throw ()
-  {
-    GtkWidget *dialog = gtk_widget_get_toplevel(GTK_WIDGET(button));
-
-    gtk_widget_destroy(dialog);
-  }
-} // namespace (unnamed)
-
-void
-gtk_app::show_about_dialog()
-{
-  GtkWidget *dialog = gtk_dialog_new();
-
-  try
-    {
-      gtk_window_set_policy(GTK_WINDOW(dialog), false, false, false);
-      gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-      gtk_window_set_modal(GTK_WINDOW(dialog), true);
-      if (main_window != NULL)
-	gtk_window_set_transient_for(GTK_WINDOW(dialog),
-				     GTK_WINDOW(main_window));
-
-      const char *title_format = _("About %s");
-      char *title;
-#ifdef HAVE_ASPRINTF
-      asprintf(&title, title_format, PROGRAM);
-#else
-      title = static_cast<char *>(malloc(strlen(title_format) - 2
-					 + strlen(PROGRAM) + 1));
-      sprintf(title, title_format, PROGRAM);
-#endif
-
-      gtk_window_set_title(GTK_WINDOW(dialog), title);
-      free(title);
-
-      GtkWidget *vbox1 = gtk_vbox_new(false, 10);
-      gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox1,
-			 false, false, 0);
-
-      gtk_widget_show(vbox1);
-      gtk_container_set_border_width(GTK_CONTAINER(vbox1), 20);
-      {
-	const char *version_format = _("%s %s (library %s)");
-	char *version;
-#ifdef HAVE_ASPRINTF
-	asprintf(&version, version_format, PROGRAM, VERSION,
-		 library_version());
-#else
-	version = static_cast<char *>(malloc(strlen(version_format) - 3 * 2
-					     + strlen(PROGRAM)
-					     + strlen(VERSION)
-					     + strlen(library_version()) + 1));
-	sprintf(version, version_format, PROGRAM, VERSION, library_version());
-#endif
-
-	GtkWidget *version_label = gtk_label_new(version);
-	gtk_box_pack_start(GTK_BOX(vbox1), version_label, false, false, 0);
-
-	gtk_widget_show(version_label);
-	gtk_misc_set_alignment(GTK_MISC(version_label), 0.0, 0.5);
-	gtk_label_set_justify(GTK_LABEL(version_label), GTK_JUSTIFY_LEFT);
-	free(version);
-
-	const char *copyright_format
-	  = _("Copyright (C) %s Hypercore Software Design, Ltd.");
-	char *copyright;
-#ifdef HAVE_ASPRINTF
-	asprintf(&copyright, copyright_format, COPYRIGHT_YEAR);
-#else
-	copyright = static_cast<char *>(malloc(strlen(copyright_format) - 2
-					       + strlen(COPYRIGHT_YEAR) + 1));
-	sprintf(copyright, copyright_format, COPYRIGHT_YEAR);
-#endif
-
-	GtkWidget *copyright_label = gtk_label_new(copyright);
-	gtk_box_pack_start(GTK_BOX(vbox1), copyright_label, false, false, 0);
-
-	gtk_widget_show(copyright_label);
-	gtk_misc_set_alignment(GTK_MISC(copyright_label), 0.0, 0.5);
-	gtk_label_set_justify(GTK_LABEL(copyright_label), GTK_JUSTIFY_LEFT);
-	free(copyright);
-
-	const char *notice1
-	  = _("This is free software; see the source for copying conditions.\n"
-	      "There is NO WARRANTY; not even for MERCHANTABILITY\n"
-	      "or FITNESS FOR A PARTICULAR PURPOSE.");
-	GtkWidget *notice1_label = gtk_label_new(notice1);
-	gtk_box_pack_start(GTK_BOX(vbox1), notice1_label, false, false, 0);
-
-	gtk_widget_show(notice1_label);
-	gtk_misc_set_alignment(GTK_MISC(notice1_label), 0.0, 0.5);
-	gtk_label_set_justify(GTK_LABEL(notice1_label), GTK_JUSTIFY_LEFT);
-	// gtk_label_set_line_wrap(GTK_LABEL(notice1_label), true);
-
-	const char *report_bugs
-	  = _("Send comments or report bugs to <vx68k@lists.hypercore.co.jp>.");
-	GtkWidget *report_bugs_label = gtk_label_new(report_bugs);
-	gtk_box_pack_start(GTK_BOX(vbox1), report_bugs_label, false, false, 0);
-
-	gtk_widget_show(report_bugs_label);
-	gtk_misc_set_alignment(GTK_MISC(report_bugs_label), 0.0, 0.5);
-	gtk_label_set_justify(GTK_LABEL(report_bugs_label), GTK_JUSTIFY_LEFT);
-	gtk_label_set_line_wrap(GTK_LABEL(report_bugs_label), true);
-      }
-
-      const char *ok = _("OK");
-      GtkWidget *ok_button = gtk_button_new_with_label(ok);
-      gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
-			 ok_button, false, false, 0);
-
-      gtk_widget_show(ok_button);
-      gtk_window_set_focus(GTK_WINDOW(dialog), ok_button);
-      gtk_signal_connect(GTK_OBJECT(ok_button), "clicked",
-			 GTK_SIGNAL_FUNC(&handle_about_ok_clicked), this);
-    }
-  catch (...)
-    {
-      gtk_widget_destroy(dialog);
-      throw;
-    }
-
-  gtk_widget_show(dialog);
-}
-
-namespace
-{
-  /* Handles a `run' command.  */
-  void
-  handle_run_command(gpointer data, guint i, GtkWidget *item) throw ()
-  {
-    g_message("`run' command is not implemented yet");
-  }
-
-  /* Handles a `FD load' command.  */
-  void
-  handle_fd_load_command(gpointer data, guint i, GtkWidget *item) throw ()
-  {
-    g_message("`FD load' command is not implemented yet");
-  }
-
-  /* Handles a `FD eject' command.  */
-  void
-  handle_fd_eject_command(gpointer data, guint i, GtkWidget *item) throw ()
-  {
-    g_message("`FD eject' command is not implemented yet");
-  }
-
-  /* Handles an `about' command.  */
-  void
-  handle_about_command(gpointer data, guint, GtkWidget *item) throw ()
-  {
-    gtk_app *app = static_cast<gtk_app *>(data);
-
-    app->show_about_dialog();
-  }
-} // namespace (unnamed)
-
-#if 0
-GtkWidget *
-#else
 gtk_console_window *
-#endif
 gtk_app::create_window()
 {
   if (main_window == NULL)
-    {
-#if 0
-      main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-      gtk_window_set_title(GTK_WINDOW(main_window), PROGRAM);
-      gtk_signal_connect(GTK_OBJECT(main_window), "delete_event",
-			 GTK_SIGNAL_FUNC(&gtk_main_quit), this);
-
-      GtkAccelGroup *ag1 = gtk_accel_group_new();
-      gtk_window_add_accel_group(GTK_WINDOW(main_window), ag1);
-      gtk_accel_group_unref(ag1);
-
-      {
-	GtkWidget *vbox = gtk_vbox_new(false, 0);
-	gtk_widget_show(vbox);
-	gtk_container_add(GTK_CONTAINER(main_window), vbox);
-	{
-	  GtkItemFactory *ifactory
-	    = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<Window>", ag1);
-#define ITEM_FACTORY_CALLBACK(f) (reinterpret_cast<GtkItemFactoryCallback>(f))
-	  GtkItemFactoryEntry entries[]
-	    = {{_("/_File/_Load Floppy..."), NULL,
-		ITEM_FACTORY_CALLBACK(&handle_fd_load_command), 0, "<Item>"},
-	       {_("/_File/_Eject Floppy/_0"), NULL,
-		ITEM_FACTORY_CALLBACK(&handle_fd_eject_command), 0, "<Item>"},
-	       {_("/_File/_Eject Floppy/_1"), NULL,
-		ITEM_FACTORY_CALLBACK(&handle_fd_eject_command), 1, "<Item>"},
-	       {_("/_File/"), NULL, NULL, 0, "<Separator>"},
-	       {_("/_File/_Run..."), NULL,
-		ITEM_FACTORY_CALLBACK(&handle_run_command), 0, "<Item>"},
-	       {_("/_File/"), NULL, NULL, 0, "<Separator>"},
-	       {_("/_File/E_xit"), NULL,
-		ITEM_FACTORY_CALLBACK(&gtk_main_quit), 1, "<Item>"},
-	       {_("/_Help/_About..."), NULL,
-		ITEM_FACTORY_CALLBACK(&handle_about_command), 0, "<Item>"}};
-#undef ITEM_FACTORY_CALLBACK
-	  gtk_item_factory_create_items(ifactory,
-					sizeof entries / sizeof entries[0],
-					entries, this);
-
-	  gtk_widget_show(ifactory->widget);
-	  gtk_box_pack_start(GTK_BOX(vbox), ifactory->widget, false, false, 0);
-	  //gtk_object_unref(GTK_OBJECT(ifactory));
-	}
-
-	GtkWidget *statusbar = gtk_statusbar_new();
-	gtk_widget_show(statusbar);
-	gtk_box_pack_end(GTK_BOX(vbox), statusbar, false, false, 0);
-
-	GtkWidget *console_widget = con.create_widget();
-	gtk_widget_show(console_widget);
-#if 0
-	{
-	  GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-	  gtk_widget_show(scrolled_window);
-	  gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, true, true, 0);
-
-	  gtk_scrolled_window_add_with_viewport
-	    (GTK_SCROLLED_WINDOW(scrolled_window), console_widget);
-
-	  GdkGeometry geometry = {0, 0, 0, 0, 0, 0, 1, 1};
-	  gtk_window_set_geometry_hints(GTK_WINDOW(main_window),
-					scrolled_window,
-					&geometry, GDK_HINT_RESIZE_INC);
-	}
-#else
-	gtk_box_pack_start(GTK_BOX(vbox), console_widget, true, true, 0);
-
-	GdkGeometry geometry = {0, 0, 0, 0, 0, 0, 1, 1};
-	gtk_window_set_geometry_hints(GTK_WINDOW(main_window),
-				      console_widget,
-				      &geometry, GDK_HINT_RESIZE_INC);
-#endif
-
-	gtk_widget_grab_focus(console_widget);
-      }
-#else
-      main_window = new gtk_console_window(con.create_widget());
-#endif
-    }
+    main_window = new gtk_console_window(con.create_widget());
 
   return main_window;
 }
@@ -683,13 +429,8 @@ main(int argc, char **argv)
     {
       gtk_app app;
 
-#if 0
-      GtkWidget *window = app.create_window();
-      gtk_widget_show(window);
-#else
       auto_ptr<gtk_console_window> window(app.create_window());
       window->show();
-#endif
 
       for (int u = 0; u != 2; ++u)
 	if (opt_fd_images[u][0] != '\0')
