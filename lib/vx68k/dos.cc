@@ -43,7 +43,7 @@ dos::execute (const char *name, const char *const *argv)
 
 namespace
 {
-  void dos_close(int op, execution_context *ec)
+  void dos_close(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       VL((" DOS _CLOSE\n"));
@@ -55,7 +55,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void dos_exit2(int op, execution_context *ec)
+  void dos_exit2(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       VL((" DOS _EXIT2\n"));
@@ -65,7 +65,7 @@ namespace
       static_cast<dos_exec_context *>(ec)->exit(status);
     }
 
-  void dos_fgetc(int op, execution_context *ec)
+  void dos_fgetc(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       VL((" DOS _FGETC\n"));
@@ -78,7 +78,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void dos_open(int op, execution_context *ec)
+  void dos_open(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       VL((" DOS _OPEN\n"));
@@ -95,7 +95,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void dos_print(int op, execution_context *ec)
+  void dos_print(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       VL((" DOS _PRINT\n"));
@@ -115,7 +115,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void dos_read(int op, execution_context *ec)
+  void dos_read(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       VL((" DOS _READ\n"));
@@ -130,7 +130,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void dos_seek(int op, execution_context *ec)
+  void dos_seek(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       VL((" DOS _SEEK\n"));

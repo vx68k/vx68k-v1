@@ -96,9 +96,9 @@ struct exception_listener
   class exec_unit
   {
   public:
-    typedef void (*insn_handler)(int, execution_context *);
+    typedef void (*insn_handler)(unsigned int, execution_context *);
   public:
-    static void illegal(int, execution_context *);
+    static void illegal(unsigned int, execution_context *);
   protected:
     static void install_instructions(exec_unit *);
   private:

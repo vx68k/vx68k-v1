@@ -62,7 +62,7 @@ exec_unit::exec_unit()
 
 /* Executes an illegal instruction.  */
 void
-exec_unit::illegal(int op, execution_context *)
+exec_unit::illegal(unsigned int op, execution_context *)
 {
   throw illegal_instruction();
 }
@@ -71,7 +71,7 @@ namespace
 {
   using namespace addressing;
 
-  void addw_off_d(int op, execution_context *ec)
+  void addw_off_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -92,7 +92,7 @@ namespace
       ec->regs.pc += 2 + 2;
     }
 
-  template <class Destination> void addil(int op, execution_context *ec)
+  template <class Destination> void addil(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int32 value2 = extsl(ec->fetchl(2));
@@ -108,11 +108,11 @@ namespace
       ec->regs.pc += 2 + 4;
     }
 
-  template <> void addil<address_register>(int, execution_context *);
+  template <> void addil<address_register>(unsigned int, execution_context *);
   // XXX: Address register cannot be the destination.
 
 #if 0
-  void addil_d(int op, execution_context *ec)
+  void addil_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int d_reg = op & 0x7;
@@ -128,7 +128,7 @@ namespace
     }
 #endif /* 0 */
 
-  template <class Destination> void addqb(int op, execution_context *ec)
+  template <class Destination> void addqb(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       Destination ea1(op & 0x7, 2);
@@ -147,7 +147,7 @@ namespace
     }
 
 #if 0
-  void addqb_d(int op, execution_context *ec)
+  void addqb_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg1 = op & 0x7;
@@ -166,7 +166,7 @@ namespace
     }
 #endif /* 0 */
 
-  template <class Destination> void addqw(int op, execution_context *ec)
+  template <class Destination> void addqw(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       Destination ea1(op & 0x7, 2);
@@ -184,7 +184,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  template <> void addqw<address_register>(int op, execution_context *ec)
+  template <> void addqw<address_register>(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       address_register ea1(op & 0x7, 2);
@@ -204,7 +204,7 @@ namespace
     }
 
 #if 0
-  void addqw_a(int op, execution_context *ec)
+  void addqw_a(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int value = op >> 9 & 0x7;
@@ -220,7 +220,7 @@ namespace
     }
 #endif /* 0 */
 
-  template <class Destination> void addql(int op, execution_context *ec)
+  template <class Destination> void addql(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       Destination ea1(op & 0x7, 2);
@@ -238,7 +238,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  template <> void addql<address_register>(int op, execution_context *ec)
+  template <> void addql<address_register>(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       address_register ea1(op & 0x7, 2);
@@ -257,7 +257,7 @@ namespace
     }
 
 #if 0
-  void addql_d(int op, execution_context *ec)
+  void addql_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg1 = op & 0x7;
@@ -275,7 +275,7 @@ namespace
     }
 #endif /* 0 */
 
-  void andl_i_d(int op, execution_context *ec)
+  void andl_i_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg1 = op >> 9 & 0x7;
@@ -289,7 +289,7 @@ namespace
       ec->regs.pc += 2 + 4;
     }
 
-  void bcc(int op, execution_context *ec)
+  void bcc(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int len = 2;
@@ -307,7 +307,7 @@ namespace
       ec->regs.pc += ec->regs.sr.cc() ? 2 + disp : len;
     }
 
-  void beq(int op, execution_context *ec)
+  void beq(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int len = 2;
@@ -325,7 +325,7 @@ namespace
       ec->regs.pc += ec->regs.sr.eq() ? 2 + disp : len;
     }
 
-  void bge(int op, execution_context *ec)
+  void bge(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int len = 2;
@@ -343,7 +343,7 @@ namespace
       ec->regs.pc += ec->regs.sr.ge() ? 2 + disp : len;
     }
 
-  void bne(int op, execution_context *ec)
+  void bne(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int len = 2;
@@ -361,7 +361,7 @@ namespace
       ec->regs.pc += ec->regs.sr.ne() ? 2 + disp : len;
     }
 
-  void bra(int op, execution_context *ec)
+  void bra(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int len = 2;
@@ -379,7 +379,7 @@ namespace
       ec->regs.pc += 2 + disp;
     }
 
-  void bsr(int op, execution_context *ec)
+  void bsr(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int len = 2;
@@ -400,7 +400,7 @@ namespace
       ec->regs.pc += 2 + disp;
     }
 
-  template <class Destination> void clrw(int op, execution_context *ec)
+  template <class Destination> void clrw(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       Destination ea1(op & 0x7, 2);
@@ -413,11 +413,11 @@ namespace
       ec->regs.pc += 2;
     }
 
-  template <> void clrw<address_register>(int, execution_context *);
+  template <> void clrw<address_register>(unsigned int, execution_context *);
   // XXX: Address register cannot be the destination.
 
 #if 0
-  void clrw_predec(int op, execution_context *ec)
+  void clrw_predec(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg = op & 0x7;
@@ -433,7 +433,7 @@ namespace
     }
 #endif /* 0 */
 
-  template <class Destination> void cmpib(int op, execution_context *ec)
+  template <class Destination> void cmpib(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int value2 = extsb(ec->fetchw(2));
@@ -449,7 +449,7 @@ namespace
     }
 
 #if 0
-  void cmpib_postinc(int op, execution_context *ec)
+  void cmpib_postinc(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg1 = op & 0x7;
@@ -468,7 +468,7 @@ namespace
     }
 #endif /* 0 */
 
-  void dbf_d(int op, execution_context *ec)
+  void dbf_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg = op & 0x7;
@@ -482,7 +482,7 @@ namespace
       ec->regs.pc += value != -1 ? 2 + disp : 2 + 2;
     }
 
-  void lea_offset_a(int op, execution_context *ec)
+  void lea_offset_a(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -496,7 +496,7 @@ namespace
       ec->regs.pc += 4;
     }
 
-  void lea_absl_a(int op, execution_context *ec)
+  void lea_absl_a(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg = op >> 9 & 0x7;
@@ -509,7 +509,7 @@ namespace
       ec->regs.pc += 6;
     }
 
-  void link_a(int op, execution_context *ec)
+  void link_a(unsigned int op, execution_context *ec)
     {
       int reg = op & 0x0007;
       int disp = extsw(ec->fetchw(2));
@@ -525,7 +525,7 @@ namespace
       ec->regs.pc += 4;
     }
 
-  void lslw_i_d(int op, execution_context *ec)
+  void lslw_i_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg1 = op & 0x7;
@@ -542,7 +542,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void lsll_i_d(int op, execution_context *ec)
+  void lsll_i_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg1 = op & 0x7;
@@ -558,7 +558,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void lsrw_i_d(int op, execution_context *ec)
+  void lsrw_i_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int d_reg = op & 0x7;
@@ -575,7 +575,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void moveb_indir_d(int op, execution_context *ec)
+  void moveb_indir_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -593,7 +593,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void moveb_postinc_d(int op, execution_context *ec)
+  void moveb_postinc_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -612,7 +612,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void moveb_off_d(int op, execution_context *ec)
+  void moveb_off_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -631,7 +631,7 @@ namespace
       ec->regs.pc += 2 + 2;
     }
 
-  void moveb_d_postinc(int op, execution_context *ec)
+  void moveb_d_postinc(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -649,7 +649,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void moveb_postinc_postinc(int op, execution_context *ec)
+  void moveb_postinc_postinc(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -669,7 +669,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void movew_off_d(int op, execution_context *ec)
+  void movew_off_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -688,7 +688,7 @@ namespace
       ec->regs.pc += 2 + 2;
     }
 
-  void movew_absl_d(int op, execution_context *ec)
+  void movew_absl_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int d_reg = op >> 9 & 0x7;
@@ -704,7 +704,7 @@ namespace
       ec->regs.pc += 2 + 4;
     }
 
-  void movew_d_postinc(int op, execution_context *ec)
+  void movew_d_postinc(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -722,7 +722,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void movew_d_predec(int op, execution_context *ec)
+  void movew_d_predec(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -740,7 +740,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void movew_absl_predec(int op, execution_context *ec)
+  void movew_absl_predec(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int d_reg = op >> 9 & 0x7;
@@ -758,7 +758,7 @@ namespace
       ec->regs.pc += 2 + 4;
     }
 
-  void movew_d_absl(int op, execution_context *ec)
+  void movew_d_absl(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg = op & 0x7;
@@ -773,7 +773,7 @@ namespace
       ec->regs.pc += 2 + 4;
     }
 
-  void movel_d_d(int op, execution_context *ec)
+  void movel_d_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -787,7 +787,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void movel_a_d(int op, execution_context *ec)
+  void movel_a_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -801,7 +801,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void movel_postinc_d(int op, execution_context *ec)
+  void movel_postinc_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg1 = op & 0x7;
@@ -819,7 +819,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void movel_off_d(int op, execution_context *ec)
+  void movel_off_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -837,7 +837,7 @@ namespace
       ec->regs.pc += 2 + 2;
     }
 
-  void movel_d_postinc(int op, execution_context *ec)
+  void movel_d_postinc(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -855,7 +855,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void movel_d_predec(int op, execution_context *ec)
+  void movel_d_predec(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -873,7 +873,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void movel_a_predec(int op, execution_context *ec)
+  void movel_a_predec(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -891,7 +891,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void movel_postinc_a(int op, execution_context *ec)
+  void movel_postinc_a(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -908,7 +908,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void movel_i_predec(int op, execution_context *ec)
+  void movel_i_predec(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int d_reg = op >> 9 & 0x7;
@@ -925,7 +925,7 @@ namespace
       ec->regs.pc += 2 + 4;
     }
 
-  void movel_d_absl(int op, execution_context *ec)
+  void movel_d_absl(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -940,7 +940,7 @@ namespace
       ec->regs.pc += 2 + 4;
     }
 
-  void movel_a_absl(int op, execution_context *ec)
+  void movel_a_absl(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -956,7 +956,7 @@ namespace
     }
 
   /* movem regs to EA (postdec).  */
-  void moveml_r_predec(int op, execution_context *ec)
+  void moveml_r_predec(unsigned int op, execution_context *ec)
     {
       int reg = op & 0x0007;
       unsigned int bitmap = ec->fetchw(2);
@@ -988,7 +988,7 @@ namespace
       ec->regs.pc += 2 + 2;
     }
 
-  void moveml_postinc_r(int op, execution_context *ec)
+  void moveml_postinc_r(unsigned int op, execution_context *ec)
     {
       int reg = op & 0x0007;
       unsigned int bitmap = ec->fetchw(2);
@@ -1020,7 +1020,7 @@ namespace
       ec->regs.pc += 2 + 2;
     }
 
-  void moveql_d(int op, execution_context *ec)
+  void moveql_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int value = extsb(op & 0xff);
@@ -1033,7 +1033,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void pea_absl(int op, execution_context *ec)
+  void pea_absl(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       uint32 address = ec->fetchl(2);
@@ -1047,7 +1047,7 @@ namespace
       ec->regs.pc += 2 + 4;
     }
 
-  void rts(int op, execution_context *ec)
+  void rts(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       VL((" rts\n"));
@@ -1059,7 +1059,7 @@ namespace
       ec->regs.pc = value;
     }
 
-  void subb_postinc_d(int op, execution_context *ec)
+  void subb_postinc_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg1 = op & 0x7;
@@ -1080,7 +1080,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void subql_d(int op, execution_context *ec)
+  void subql_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg1 = op & 0x7;
@@ -1097,7 +1097,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void subql_a(int op, execution_context *ec)
+  void subql_a(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int value = op >> 9 & 0x7;
@@ -1112,7 +1112,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void tstb_d(int op, execution_context *ec)
+  void tstb_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg = op & 0x7;
@@ -1124,7 +1124,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void tstb_predec(int op, execution_context *ec)
+  void tstb_predec(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg = op & 0x7;
@@ -1139,7 +1139,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void tstw_d(int op, execution_context *ec)
+  void tstw_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int reg = op & 0x7;
@@ -1151,7 +1151,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void tstl_d(int op, execution_context *ec)
+  void tstl_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
       int s_reg = op & 0x7;
@@ -1163,7 +1163,7 @@ namespace
       ec->regs.pc += 2;
     }
 
-  void unlk_a(int op, execution_context *ec)
+  void unlk_a(unsigned int op, execution_context *ec)
     {
       int reg = op & 0x0007;
       VL((" unlk %%a%d\n", reg));
