@@ -69,6 +69,8 @@ namespace vx68k
     mfp_memory mfp;
     system_ports_memory system_ports;
     opm_memory opm;
+    msm6258v_memory adpcm;
+    fdc_memory fdc;
     scc_memory scc;
     ppi_memory ppi;
     sprites_memory sprites;

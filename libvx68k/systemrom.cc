@@ -157,7 +157,7 @@ namespace
 	uint_type oldsr = c.sr();
 	c.set_supervisor_state(true);
 	c.regs.a[7] -= 6;
-	c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+	c.mem->put_32(memory::SUPER_DATA, c.regs.a[7] + 2, c.regs.pc + 2);
 	c.mem->put_16(memory::SUPER_DATA, c.regs.a[7] + 0, oldsr);
 	c.regs.pc = addr;
       }

@@ -12,12 +12,14 @@ libvx68k_la_LDFLAGS = -release ${VERSION} -version-info 0
 
 libvx68k_la_SOURCES = version.cc mainmem.cc gvideomem.cc textvram.cc \
 crtcmem.cc palettemem.cc dmacmem.cc areaset.cc mfpmem.cc sysportmem.cc \
-opmmem.cc sccmem.cc ppimem.cc \
+opmmem.cc msm6258vmem.cc fdcmem.cc sccmem.cc ppimem.cc \
 spritemem.cc sram.cc fontrom.cc \
 iocsdisk.cc systemrom.cc machine.cc x68kaddr.cc \
 allocator.cc filesystem.cc doscontext.cc shell.cc dos.cc
 
 CLEANFILES = *.gdb
 
-libvx68k.gdb: $(libvx68k_la_SOURCES)
-	nana $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libvx68k_la_SOURCES) > $@
+SUFFIXES = .gdb
+
+.cc.gdb:
+	nana $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $<  > $@

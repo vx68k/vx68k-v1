@@ -452,6 +452,42 @@ namespace vx68k
     void check_timeouts(console::time_type t, context &c);
   };
 
+  /* Input/output memory for the MSM6258V ADPCM chip.  This memory is
+     mapped to the address range from 0xe92000 to 0xe94000 on X68000.  */
+  class msm6258v_memory: public memory
+  {
+  public:
+    /* Reads data from this object.  */
+    uint16_type get_16(function_code, uint32_type address) const;
+    int get_8(function_code, uint32_type address) const;
+
+    /* Writes data to this object.  */
+    void put_16(function_code, uint32_type address, uint16_type value);
+    void put_8(function_code, uint32_type address, int value);
+
+  public:
+    /* Installs IOCS calls on this ADPCM chip.  */
+    void install_iocs_calls(system_rom &);
+  };
+
+  /* Input/output memory for the FDC.  This memory is mapped to the
+     address range from 0xe94000 to 0xe96000 on X68000.  */
+  class fdc_memory: public memory
+  {
+  public:
+    /* Reads data from this object.  */
+    uint16_type get_16(function_code, uint32_type address) const;
+    int get_8(function_code, uint32_type address) const;
+
+    /* Writes data to this object.  */
+    void put_16(function_code, uint32_type address, uint16_type value);
+    void put_8(function_code, uint32_type address, int value);
+
+  public:
+    /* Installs IOCS calls on this ADPCM chip.  */
+    void install_iocs_calls(system_rom &);
+  };
+
   /* Memory for SCC input/output.  This memory also manages mouse
      input.  This memory is mapped to the address range from 0xe98000
      to 0xe9a000 on X68000.  */

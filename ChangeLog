@@ -1,3 +1,30 @@
+2000-09-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_trap): Push the next instruction's
+	address for a trap.
+
+	* libvx68k/machine.cc (configure): Map adpcm and fdc into the
+	address space.
+	(machine): Call install_iocs_calls on adpcm and fdc.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add msm6258vmem.cc
+	and fdcmem.cc.
+	(libvx68k.gdb): Removed.
+	(SUFFIXES): New macro.
+	(.cc.gdb): New rule.
+
+	* libvx68k/fdcmem.cc: New file.
+	(install_iocs_calls, get_8, get_16, put_8, put_16): New function.
+
+	* libvx68k/msm6258vmem.cc: New file.
+	(install_iocs_calls, get_8, get_16, put_8, put_16): New function.
+
+	* include/vx68k/machine.h (class machine): Add members adpcm and
+	fdc.
+
+	* include/vx68k/memory.h (class msm6258v_memory): New class.
+	(class fdc_memory): New class.
+
 2000-09-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 	
 	* include/vm68k/types.h: Add new types uint16_type and

@@ -414,6 +414,8 @@ machine::configure(memory_address_space &as)
   as.fill(0xe88000, 0xe8a000, &mfp);
   as.fill(0xe8e000, 0xe90000, &system_ports);
   as.fill(0xe90000, 0xe92000, &opm);
+  as.fill(0xe92000, 0xe94000, &adpcm);
+  as.fill(0xe94000, 0xe96000, &fdc);
   as.fill(0xe98000, 0xe9a000, &scc);
   as.fill(0xe9a000, 0xe9c000, &ppi);
   as.fill(0xeb0000, 0xeb8000, &sprites);
@@ -453,6 +455,8 @@ machine::machine(size_t memory_size)
   rom.attach(&eu);
   tvram.install_iocs_calls(rom);
   dmac.install_iocs_calls(rom);
+  adpcm.install_iocs_calls(rom);
+  fdc.install_iocs_calls(rom);
   scc.install_iocs_calls(rom);
   font.install_iocs_calls(rom);
 }
