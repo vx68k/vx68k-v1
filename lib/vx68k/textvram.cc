@@ -42,56 +42,106 @@ text_vram::scroll()
 void
 text_vram::draw_char(unsigned int c)
 {
-  int high = c >> 8;
-  if (high >= 0x21 && high <= 0x7e)
+  if (c <= 0x1f)
     {
-    }
-  else
-    {
-      if (curx != 96)
+      switch (c)
 	{
+	case 0x09:		// HT
+	  curx = (curx + 8) & ~7;
+	  break;
+	  
+	case 0x0a:		// LF
 	  ++cury;
-	  curx = 0;
-
-	  if (cury != 31)
+	  if (cury == 31)
 	    {
 	      scroll();
 	      --cury;
 	    }
+	  break;
+
+	case 0x0d:		// CR
+	  curx = 0;
+	  break;
 	}
-
-      unsigned char img[16];
-      connected_console->get_b16_image(c, img, 1);
-
-      uint16 *p = buf + (cury * 16 * ROW_SIZE + curx >> 1);
-      if (curx % 2 != 0)
+    }
+  else
+    {
+      int high = c >> 8;
+      if (high >= 0x21 && high <= 0x7e)
 	{
-	  for (uint16 *q = p + 0;
-	       q != p + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
-	       q += TEXT_VRAM_PLANE_SIZE >> 1)
-	    {
-	      uint16 *r = q;
-	      for (unsigned char *i = img + 0; i != img + 16; ++i)
-		{
-		  *r = *r & ~0xff | i[0] & 0xff;
-		  advance_row(r);
-		}
-	    }
 	}
       else
 	{
-	  for (uint16 *q = p + 0;
-	       q != p + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
-	       q += TEXT_VRAM_PLANE_SIZE >> 1)
+	  if (curx == 96)
 	    {
-	      uint16 *r = q;
-	      for (unsigned char *i = img + 0; i != img + 16; ++i)
+	      ++cury;
+	      curx = 0;
+
+	      if (cury == 31)
 		{
-		  *r = i[0] << 8 | *r & 0xff;
-		  advance_row(r);
+		  scroll();
+		  --cury;
 		}
 	    }
+
+	  unsigned char img[16];
+	  connected_console->get_b16_image(c, img, 1);
+
+	  uint16 *p = buf + (cury * 16 * ROW_SIZE + curx >> 1);
+	  if (curx % 2 != 0)
+	    {
+	      for (uint16 *q = p + 0;
+		   q != p + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
+		   q += TEXT_VRAM_PLANE_SIZE >> 1)
+		{
+		  uint16 *r = q;
+		  for (unsigned char *i = img + 0; i != img + 16; ++i)
+		    {
+		      *r = *r & ~0xff | i[0] & 0xff;
+		      advance_row(r);
+		    }
+		}
+	    }
+	  else
+	    {
+	      for (uint16 *q = p + 0;
+		   q != p + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
+		   q += TEXT_VRAM_PLANE_SIZE >> 1)
+		{
+		  uint16 *r = q;
+		  for (unsigned char *i = img + 0; i != img + 16; ++i)
+		    {
+		      *r = i[0] << 8 | *r & 0xff;
+		      advance_row(r);
+		    }
+		}
+	    }
+
+	  ++curx;
 	}
+    }
+}
+
+void
+text_vram::get_image(int x, int y, int width, int height,
+		     unsigned char *rgb_buf, size_t row_size)
+{
+  // FIXME
+  uint16 *p = buf + (y * ROW_SIZE >> 1);
+  for (int i = 0; i != height; ++i)
+    {
+      for (int j = 0; j != width; ++j)
+	{
+	  uint16 *q = p + (j >> 4);
+	  unsigned char *s = rgb_buf + i * row_size + j * 3;
+	  if (*q & 0x8000 >> (j & 0xf))
+	    {
+	      s[0] = 0xff;
+	      s[1] = 0xff;
+	      s[2] = 0xff;
+	    }
+	}
+      advance_row(p);
     }
 }
 

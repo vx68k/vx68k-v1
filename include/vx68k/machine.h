@@ -119,6 +119,12 @@ namespace vx68k
 
   public:
     void connect(console *);
+
+    /* Get the visual image of this text VRAM.  Image is of size
+       [WIDTH HEIGHT] at position [X Y].  RGB_BUF is an array of
+       bytes.  ROW_SIZE is the row size of RGB_BUF.  */
+    void get_image(int x, int y, int width, int height,
+		   unsigned char *rgb_buf, size_t row_size);
   };
 
   class machine
