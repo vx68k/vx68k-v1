@@ -32,7 +32,8 @@
 # define I assert
 #endif
 
-using namespace vm68k;
+using vm68k::context;
+using namespace vm68k::types;
 using namespace std;
 
 void

@@ -1,5 +1,5 @@
 /* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -24,10 +24,14 @@
 
 #include <vm68k/cpu.h>
 
-using namespace vm68k;
+using vm68k::status_register;
+using vm68k::bitset_condition_tester;
+using namespace vm68k::types;
 
 namespace
 {
+  using vm68k::condition_tester;
+
   /* Condition tester for general case.  */
   class general_condition_tester
     : public condition_tester

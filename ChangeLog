@@ -1,5 +1,8 @@
 2000-05-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/statusreg.cc: Use using declarations.
+	* libvm68k/context.cc: Likewise.
+
 	* libvx68k/machine.cc (boot): Save the value of the status
 	register before entering the supervisor state.
 
