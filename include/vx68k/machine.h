@@ -162,6 +162,9 @@ namespace vx68k
     /* Key input queue.  */
     queue<uint_type> key_queue;
 
+    /* Ready condition for key_queue.  */
+    pthread_cond_t key_queue_not_empty;
+
     /* Mutex for key_queue.  */
     pthread_mutex_t key_queue_mutex;
 
@@ -192,14 +195,19 @@ namespace vx68k
     void b_print(uint32_type);
 
   public:			// Keyboard Input
-    /* Queues key input.  */
+    /* Queues a key input.  */
     void queue_key(uint_type key);
 
-    /* Queues key input without locking.  */
+    /* Queues a key input without locking.  */
     void queue_key_unlocked(uint_type key)
-      {key_queue.push(key);}
+      {
+	key_queue.push(key);
+	pthread_cond_signal(&key_queue_not_empty);
+      }
+
+    /* Gets a key input from the queue.  */
+    uint_type get_key();
   };
 } // vx68k
 
 #endif /* not _VX68K_MACHINE_H */
-

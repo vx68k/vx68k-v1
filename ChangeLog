@@ -1,3 +1,13 @@
+1999-12-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/machine.cc (get_key): New function.
+	(machine): Initialize key_queue_not_empty.
+	(~machine): Destroy key_queue_not_empty.
+
+	* include/vx68k/machine.h (class machine): Add members
+ 	key_queue_not_empty and get_key.  Add pthread_cond_signal in
+ 	queue_key_unlocked.
+
 1999-11-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvm68k/Makefile.am (lib_LTLIBRARIES): Update version info.

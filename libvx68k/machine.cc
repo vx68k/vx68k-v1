@@ -134,6 +134,32 @@ machine::queue_key(uint_type key)
 
   pthread_mutex_unlock(&key_queue_mutex);
 }
+
+uint_type
+machine::get_key()
+{
+  uint_type key;
+
+  pthread_mutex_lock(&key_queue_mutex);
+
+  try
+    {
+      while (key_queue.empty())
+	pthread_cond_wait(&key_queue_not_empty, &key_queue_mutex);
+
+      key = key_queue.front();
+      key_queue.pop();
+    }
+  catch (...)
+    {
+      pthread_mutex_unlock(&key_queue_mutex);
+      throw;
+    }
+
+  pthread_mutex_unlock(&key_queue_mutex);
+
+  return key;
+}
 
 /* IOCS functions.  */
 
@@ -209,6 +235,7 @@ machine::get_image(int x, int y, int width, int height,
 machine::~machine()
 {
   pthread_mutex_destroy(&key_queue_mutex);
+  pthread_cond_destroy(&key_queue_not_empty);
 }
 
 machine::machine(size_t memory_size)
@@ -217,6 +244,7 @@ machine::machine(size_t memory_size)
     curx(0), cury(0),
     saved_byte1(0)
 {
+  pthread_cond_init(&key_queue_not_empty, NULL);
   pthread_mutex_init(&key_queue_mutex, NULL);
 
   fill(iocs_functions + 0, iocs_functions + 0x100,
@@ -232,4 +260,3 @@ machine::machine(size_t memory_size)
 
   set_iocs_functions(*this);
 }
-
