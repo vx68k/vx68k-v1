@@ -1,3 +1,13 @@
+1999-03-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (struct data_register, struct
+	address_register, struct indirect): New structs.
+	(addil, addqb): New template functions.
+	(movew_d_postinc): Fix source register reference.
+	(addil_d, addqb_d): #if'd out.
+	(install_instructions): Use the template version.
+	[0] (addil_d): Fix value size.
+
 1999-03-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/doscontext.cc (read): Use unsigned char instead of
