@@ -1,6 +1,6 @@
 /* -*-C++-*- */
-/* vx68k - Virtual X68000
-   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
+/* Virtual X68000 - Sharp X68000 emulator
+   Copyright (C) 1998, 2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,21 +20,49 @@
 #define _VX68K_IOCS_H 1
 
 #include <vm68k/types.h>
+#include <cstddef>
 
 namespace vx68k
 {
   namespace iocs
   {
-    /* Abstract disk in the view of the IOCS.  */
+    using namespace vm68k::types;
+    using std::size_t;
+
+    /* Abstract disk in the view of the IOCS.  This class is not that
+       of disk units but of disk media.  */
     class disk
     {
     public:
       virtual ~disk() {}
+
     public:
-      virtual sint32_type seek(uint_type, uint32_type) = 0;
+      /* Reads records.  */
       virtual sint32_type read(uint_type, uint32_type, void *, size_t) = 0;
-      virtual sint32_type write(uint_type, uint32_type, const void *, size_t) = 0;
-      virtual sint32_type verify(uint_type, uint32_type, const void *, size_t) = 0;
+
+      /* Writes records.  */
+      virtual sint32_type write(uint_type, uint32_type, const void *, size_t)
+	= 0;
+
+      /* Verifies records by comparing the contents.  */
+      virtual sint32_type verify(uint_type, uint32_type, const void *, size_t)
+	= 0;
+    };
+
+    /* Floppy disk that is simulated by an image file.  */
+    class image_file_floppy_disk: public disk
+    {
+    private:
+      int image_fildes;
+
+    public:
+      image_file_floppy_disk(int fildes);
+      ~image_file_floppy_disk();
+
+    public:
+      sint32_type read(uint_type, uint32_type, void *, size_t);
+      sint32_type write(uint_type, uint32_type, const void *, size_t);
+      sint32_type verify(uint_type, uint32_type, const void *, size_t);
     };
   } // namespace iocs
 } // namespace vx68k

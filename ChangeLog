@@ -1,5 +1,13 @@
 2000-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Add iocsdisk.cc.
+
+	* libvx68k/iocsdisk.cc: New file.
+	(read, write, verify, ~image_file_floppy_disk,
+	image_file_floppy_disk): New functions.
+
+	* include/vx68k/iocs.h (class image_file_floppy_disk): New class.
+
 	* include/vx68k/machine.h (class text_vram_raster_iterator): New
 	class.
 	(class text_vram): Typedef raster_iterator.
