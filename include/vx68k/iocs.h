@@ -31,10 +31,10 @@ namespace vx68k
     public:
       virtual ~disk() {}
     public:
-      sint32_type seek(uint_type, uint32_type) = 0;
-      sint32_type read(uint_type, uint32_type, void *, size_t) = 0;
-      sint32_type write(uint_type, uint32_type, const void *, size_t) = 0;
-      sint32_type verify(uint_type, uint32_type, const void *, size_t) = 0;
+      virtual sint32_type seek(uint_type, uint32_type) = 0;
+      virtual sint32_type read(uint_type, uint32_type, void *, size_t) = 0;
+      virtual sint32_type write(uint_type, uint32_type, const void *, size_t) = 0;
+      virtual sint32_type verify(uint_type, uint32_type, const void *, size_t) = 0;
     };
   } // namespace iocs
 } // namespace vx68k
