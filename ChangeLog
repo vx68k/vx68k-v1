@@ -1,5 +1,9 @@
 1999-06-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (andw, negw, rolw_i): New functions.
+	(negl): Fix result and Add putl call.
+	(install_instructions): Add new handlers.
+
 	* configure.in: Add check for localtime_r.
 	Move AC_CHECK_HEADERS.
 
