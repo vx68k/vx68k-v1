@@ -1,6 +1,6 @@
 /* -*-C++-*- */
-/* vx68k - Virtual X68000
-   Copyright (C) 2000 Hypercore Software Design, Ltd.
+/* Virtual X68000 - X68000 virtual machine
+   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,14 +16,13 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef _VX68K_VERSION_H
-#define _VX68K_VERSION_H 1
+#ifndef _VX68K_VERSION
+#define _VX68K_VERSION 1
 
 namespace vx68k
 {
-  /* Returns the library version.  */
+  /* Returns the library version string.  */
   const char *library_version() throw ();
-} // namespace vx68k
+}
 
-#endif /* not _VX68K_VERSION_H */
-
+#endif /* not _VX68K_VERSION */

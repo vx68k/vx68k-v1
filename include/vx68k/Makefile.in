@@ -104,8 +104,7 @@ VERSION = @VERSION@
 
 vx68kincludedir = $(includedir)/vx68k
 
-vx68kinclude_HEADERS = version.h memory.h machine.h iocs.h
-
+vx68kinclude_HEADERS = memory.h machine.h iocs.h
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 

@@ -1,6 +1,15 @@
 2002-05-12  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
-	* include/vx68k/Makefile.am (vx68kinclude_HEADERS): Remove human.h.
+	* include/vx68k/Makefile.am (vx68kinclude_HEADERS): Remove
+	version.h.
+
+	* libvx68kdos/vx68k/Makefile.am (vx68kinclude_HEADERS): Add
+	version.
+
+	* libvx68kdos/vx68k/version: Moved from include/vx68k/version.h.
+
+	* include/vx68k/Makefile.am (vx68kinclude_HEADERS): Remove
+	human.h.
 
 	* libvx68kdos/vx68k/Makefile.am (vx68kincludedir): New macro.
 	(vx68kinclude_HEADERS): New macro.

@@ -2,4 +2,4 @@
 
 vx68kincludedir = $(includedir)/vx68k
 
-vx68kinclude_HEADERS = dos
+vx68kinclude_HEADERS = version dos
