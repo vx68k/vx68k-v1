@@ -1,29 +1,31 @@
 News and History of User-Visible Changes in Virtual X68000
 
-$Date: Tue, 18 Jul 2000 23:26:45 +0900 $
+$Date: Wed, 19 Jul 2000 22:54:14 +0900 $
 
-Version 1.1.0 (not released)
+Version 1.1.1
 
-* Changes in M68000 processor.
+* First release.
 
-** Some of common condition codes are implemented.
+* Limitations.
 
-** More than 1100 instruction handlers are implemented though some do
-not update the condition codes properly.
+** Processor.
 
-** It is close to run DIS source code generator for itself.
+*** Some minor instructions are not implemented.
 
-* Changes in X68000 machine layer
+*** Conditions VC and VS are not implemented.
 
-** Text VRAM now displays characters in a very limmited way.
+*** Some instructions do not change condition codes correctly.
 
-** TRAP #15 handler is implemented.
+** X68000 virtual machine.
 
-* Changes in Human68k DOS layer
+*** Many components including graphic VRAM are not implemented.
 
-** 29 syscall handlers including stubs are implemented
+*** Text VRAM only works in monochrome.
 
-** Memory management is implemented.
+*** Many IOCS calls are either not implemented or just stubs.
 
-** Executable loader can load HU (*.x) executables.
+** Virtual DOS.
 
+*** Many DOS calls are either not implemented or just stubs.
+
+*** Loader only loads HU (*.x) executables.

@@ -1,5 +1,13 @@
 2000-07-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* README: Updated.
+
+	* bin/main.cc (COPYRIGHT_YEAR): Modified.
+
+	* NEWS: Updated for version 1.1.1.
+
+	* bin/vx68k.1: Updated.
+
 	* libvx68k/systemrom.cc (iocs_b_keyinp, iocs_ledmod): New
 	function.
 	(iocs_b_keysns): Replace with working code.

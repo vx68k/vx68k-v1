@@ -62,7 +62,7 @@ using namespace std;
 
 #define PROGRAM "Virtual X68000"
 
-#define COPYRIGHT_YEAR "1998, 2000"
+#define COPYRIGHT_YEAR "1998-2000"
 
 /* Application.  */
 class gtk_app

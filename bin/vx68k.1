@@ -1,30 +1,44 @@
 '\"
 .\" $Format: ".TH VX68K 1 \"$Date$\"" $
-.TH VX68K 1 "Sat, 10 Jul 1999 20:46:59 +0900"
+.TH VX68K 1 "Wed, 19 Jul 2000 22:54:14 +0900"
 .SH NAME
-vx68k \- run X68000 command on a virtual machine
+vx68k \- X68000 virtual machine
 .SH SYNOPSIS
-\fBvx68k\fR [-M \fIN\fR] [--memory-size=\fIN\fR] [--one-thread] [--help] [--version] [--] \fIcommand\fR [\fIargument\fR]...
+\fBvx68k\fR [\fIOPTION\fR]... [\fIPROGRAM\fR [\fIARG\fR]...]
 .SH DESCRIPTION
-This documentation is a working draft and may be inaccurate.
-.LP
-\fBvx68k\fR runs X68000 \fIcommand\fR on a virtual machine.
+\fBvx68k\fR runs X68000 programs in a virtual machine.
 .SH OPTIONS
 .TP
-\fB-M\fR \fIN\fR, \fB--memory-size=\fIN\fR
-Allocate \fIN\fR megabytes for main memory.
+\fB-b\fR, \fB--boot\fR
+Boot a virtual machine from floppy disk unit 0.
 .TP
-\fB--boot\fR
-Boot from floppy image without DOS.  (Not implemented.)
+\fB-0\fR, \fB--fd0-image=\fIFILE\fR
+Load \fIFILE\fR on floppy disk unit 0.
+.TP
+\fB-1\fR, \fB--fd1-image=\fIFILE\fR
+Load \fIFILE\fR on floppy disk unit 1.
+.TP
+\fB-m\fR, \fB--memory-size=\fIN\fR
+Allocate \fIN\fR megabytes for the main memory.
 .TP
 \fB--one-thread\fR
-Run in one thread.
+Run in one thread for debugging.
 .TP
 \fB--help\fR
 Display help and exit.
 .TP
 \fB--version\fR
 Display version information and exit.
+.SH FILES
+.TP
+\fBsram\fR
+SRAM image file.  This file will be created in the current directory
+if not exists.
+.SH NOTES
+This manual page may be inaccurate or out of date.
 .SH BUGS
 Many functions are not implemented yet.
-
+.SH AUTHOR
+Kaz Sasayama.
+.SH "REPORTING BUGS"
+Report bugs to <vx68k@lists.hypercore.co.jp>.

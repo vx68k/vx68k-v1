@@ -1,27 +1,24 @@
 READ ME about Virtual X68000
 
-$Date: Thu, 16 Mar 2000 09:33:49 +0900 $
+$Date: Wed, 19 Jul 2000 22:54:14 +0900 $
 
 >> DESCRIPTION
 
-Virtual X68000 is a software virtual machine, or an emulator, of Sharp
-X68000.  Virutal X68000 will eventually run programs for X68000
-without the ROM image.
+This program is a virtual machine that emulates a Sharp X68000.
+Virutal X68000 runs X68000 programs without any ROM image.
 
-A generic m68k emulation library is also provided.
+This program provides a generic m68k emulation library.
 
 >> STATUS
 
-This version is still in early development phase and for developers
-only.  It lacks many common instructions.
+This program is in early development phase and for developers only.
+Many functions are not implemented yet.
 
-The unimplemented instructions (not all) are:
-
-     ADDX, ANDI to CCR, ANDI to SR, DBcc, etc.
+See the file NEWS in this directory for the current limitations.
 
 >> REQUIREMENTS
 
-This package is written in C++ with exception handling, templates, and
+This program is written in C++ with exception handling, templates, and
 namespaces.  For the best performance, a compiler that is good at
 optimizing templates and inline functions is recommended.
 
@@ -31,11 +28,11 @@ optimizing templates and inline functions is recommended.
 - The compilers known not to work are:
      G++ 2.7.* and earlier.
 
-This package uses POSIX threads.
+This program uses POSIX threads.
 
-This package uses GTK+ 1.2 for GUI.
+This program uses GTK+ 1.2 for GUI.
 
-To get diagnostic log output, GNU Nana is also required.
+For debugging output, GNU Nana is also required.
 
 >> INSTALLATION
 
@@ -46,4 +43,3 @@ installation.
 
 Send comments, suggestions, or anything you thought about this program
 to vx68k@lists.hypercore.co.jp.
-
