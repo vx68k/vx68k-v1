@@ -137,9 +137,15 @@ struct exception_listener
       {return mem->getw(program_fc(), regs.pc + disp);}
     uint32 fetchl(int disp) const
       {return mem->getl(program_fc(), regs.pc + disp);}
-    void step();
+
+    /* Steps one instruction.  */
+    void step()
+      {eu->dispatch(fetchw(0), this);}
+
+    /* Starts the program.  */
     void run();
   };
+
   typedef context execution_context;
 } // namespace vm68k
 

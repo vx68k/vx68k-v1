@@ -36,14 +36,6 @@ using namespace vm68k;
 using namespace std;
 
 void
-context::step()
-{
-  unsigned int op = fetchw(0);
-  I(eu != NULL);
-  eu->dispatch(op, this);
-}
-
-void
 context::run()
 {
   for (;;)

@@ -1,6 +1,7 @@
 1999-05-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/context.cc: Rename execution_context to context.
+	(step): Changed to inline.
 
 	* include/vm68k/cpu.h (class execution_context): Updated.
 	(class context): Renamed from execution_context.  Add typedef for
