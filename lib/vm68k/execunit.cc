@@ -593,6 +593,26 @@ namespace
       ec.regs.pc += 2 + 2 + ea1.isize(2);
     }
 
+  template <class Destination> void
+  eoriw(unsigned int op, context &ec)
+  {
+    sint_type value2 = ec.fetchw(2);
+    Destination ea1(op & 0x7, 2 + 2);
+#ifdef L
+    L(" eoriw #0x%lx", long(value2));
+    L(",%s", ea1.textw(ec));
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    sint_type value1 = ea1.getw(ec);
+    sint_type value = extsw(uint_type(value1) ^ uint_type(value2));
+    ea1.putw(ec, value);
+    ec.regs.sr.set_cc(value);
+    ea1.finishw(ec);
+
+    ec.regs.pc += 2 + 2 + ea1.isize(2);
+  }
+
   void dbf_d(unsigned int op, context &ec)
     {
       int reg = op & 0x7;
@@ -701,9 +721,9 @@ namespace
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
+    sint_type value1 = extsw(ec.regs.d[reg1]);
+    sint_type value = extsw(uint_type(value1) >> count);
     const uint32_type MASK = (uint32_type(1) << 16) - 1;
-    uint_type value1 = ec.regs.d[reg1] & MASK;
-    uint_type value = value1 >> count & MASK;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
     ec.regs.sr.set_cc_lsr(value, value1, count);
 
@@ -723,9 +743,8 @@ namespace
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
-    const uint32_type MASK = (uint32_type(1) << 32) - 1;
-    uint32_type value1 = ec.regs.d[reg1] & MASK;
-    uint32_type value = value1 >> count & MASK;
+    sint32_type value1 = extsl(ec.regs.d[reg1]);
+    sint32_type value = extsl(uint32_type(value1) >> count);
     ec.regs.d[reg1] = value;
     ec.regs.sr.set_cc_lsr(value, value1, count);
 
@@ -1222,6 +1241,12 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x0c10, 0x0007, &cmpib<indirect>);
   eu.set_instruction(0x0c18, 0x0007, &cmpib<postincrement_indirect>);
   eu.set_instruction(0x0c20, 0x0007, &cmpib<predecrement_indirect>);
+  eu.set_instruction(0x0a40, 0x0007, &eoriw<data_register>);
+  eu.set_instruction(0x0a50, 0x0007, &eoriw<indirect>);
+  eu.set_instruction(0x0a58, 0x0007, &eoriw<postinc_indirect>);
+  eu.set_instruction(0x0a60, 0x0007, &eoriw<predec_indirect>);
+  eu.set_instruction(0x0a68, 0x0007, &eoriw<disp_indirect>);
+  eu.set_instruction(0x0a79, 0x0000, &eoriw<absolute_long>);
   eu.set_instruction(0x1000, 0x0e07, &moveb<data_register, data_register>);
   eu.set_instruction(0x1010, 0x0e07, &moveb<indirect, data_register>);
   eu.set_instruction(0x1018, 0x0e07, &moveb<postincrement_indirect, data_register>);

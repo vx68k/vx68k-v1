@@ -40,7 +40,7 @@ namespace vm68k
 	{return 0;}
       // XXX: address is unimplemented.
       int getb(const context &ec) const
-	{return extsl(ec.regs.d[reg]);}
+	{return extsb(ec.regs.d[reg]);}
       int getw(const context &ec) const
 	{return extsw(ec.regs.d[reg]);}
       int32 getl(const context &ec) const

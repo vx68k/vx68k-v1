@@ -1,7 +1,13 @@
 1999-06-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/addressing.h (class data_register): Fix getb wrong
+	size bug.
+
 	* lib/vm68k/execunit.cc (install_instructions): Change the type of
 	argument to reference.  Also change all users.
+	(eoriw): New function.
+	(lsrw_i, lsrl_i): Change code to hold values in signed type.
+	(install_instructions): Add new handlers.
 
 	* lib/vm68k/context.cc (context): Change the type of second
 	argument to const pointer.
