@@ -68,6 +68,8 @@ namespace vm68k
     enum
     {S = 1 << 13};
   private:
+    static const cc_evaluator *const common_cc_eval;
+  private:
     const cc_evaluator *cc_eval;
     sint32_type cc_values[3];
     uint16 value;
@@ -99,7 +101,13 @@ namespace vm68k
     bool le() const
       {return cc_eval->le(cc_values);}
   public:
-    void set_cc(int32);
+    /* Sets the condition codes by a result.  */
+    void set_cc(sint32_type r)
+      {
+	cc_eval = common_cc_eval;
+	cc_values[0] = r;
+      }
+
     void set_cc_cmp(sint32_type, sint32_type, sint32_type);
     void set_cc_sub(sint32_type, sint32_type, sint32_type);
     void set_cc_asr(sint32_type, sint32_type, uint_type);

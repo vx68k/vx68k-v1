@@ -1,5 +1,12 @@
 1999-06-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/statusreg.cc (set_cc): Removed as an out-of-line
+	function.
+
+	* include/vm68k/cpu.h (class status_register): Add static member
+	common_cc_eval.
+	(class status_register): Make set_cc inline.
+
 	* lib/vm68k/execunit.cc (dispatch): Removed as an out-of-line
 	function.
 

@@ -84,14 +84,6 @@ namespace
   const lsl_cc_evaluator lsl_cc_eval;
 } // (unnamed namespace)
 
-/* Sets the condition codes by a result.  */
-void
-status_register::set_cc(int32 r)
-{
-  cc_eval = &common_cc_eval;
-  cc_values[0] = r;
-}
-
 void
 status_register::set_cc_cmp(sint32_type r, sint32_type d, sint32_type s)
 {
@@ -126,8 +118,10 @@ status_register::set_cc_lsl(sint32_type r, sint32_type d, uint_type s)
   cc_values[2] = s;
 }
 
+const cc_evaluator *const status_register::common_cc_eval = &::common_cc_eval;
+
 status_register::status_register()
-  : cc_eval(&common_cc_eval),
+  : cc_eval(common_cc_eval),
     value(S)
 {
 }
