@@ -1,5 +1,7 @@
 2000-07-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* TODO: Updated.
+
 	* libvm68k/execunit.cc (m68k_nop): New function.
 	(initialize_instructions): Add new handler.
 
