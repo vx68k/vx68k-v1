@@ -1,5 +1,11 @@
 2002-05-07  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* libvx68kdos/Makefile.am (SUBDIRS): Add vx68k.
+
+	* configure.in: Add libvx68kdos/vx68k/Makefile to AC_OUTPUT.
+
+	* libvx68kdos/vx68k/Makefile.am: New file.
+
 	* TODO.gtk: Removed.
 
 	* TODO: Copy entries from TODO.gtk.
