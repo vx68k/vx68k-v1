@@ -28,27 +28,111 @@ using namespace vx68k::human;
 using namespace vm68k;
 using namespace std;
 
+void
+memory_allocator::free_block(uint32_type block)
+{
+  uint32_type prev = _as->getl(SUPER_DATA, block + 0);
+  uint32_type next = _as->getl(SUPER_DATA, block + 12);
+
+  _as->putl(SUPER_DATA, prev + 12, next);
+  if (next != 0)
+    _as->putl(SUPER_DATA, next + 0, prev);
+  else
+    last_block = prev;
+}
+
+void
+memory_allocator::free_children(uint32_type parent)
+{
+  uint32_type block = last_block;
+  while (block != 0)
+    {
+      if (_as->getl(SUPER_DATA, block + 4) == parent)
+	{
+	  free_children(block);
+	  free_block(block);
+	}
+
+      block = _as->getl(SUPER_DATA, block + 0);
+    }
+}
+
 sint_type
 memory_allocator::free(uint32_type memptr)
 {
-  return 0;
+  memptr -= 0x10;
+
+  uint32_type block = last_block;
+  while (block != 0)
+    {
+      if (block == memptr)
+	{
+	  free_children(block);
+	  free_block(block);
+	  return 0;
+	}
+
+      block = _as->getl(SUPER_DATA, block + 0);
+    }
+
+  // No matching block.
+  return -9;
 }
 
 sint32_type
 memory_allocator::alloc(uint32_type len, uint32_type parent)
 {
-  return 0;
+  len += 0x10;
+  uint32_type max_free_size = 0;
+
+  uint32_type end = limit;
+  uint32_type block = last_block;
+  while (block != 0)
+    {
+      uint32_type candidate = (_as->getl(SUPER_DATA, block + 8) + 0xf) & ~0xf;
+      uint32_type free_size = end - candidate;
+      if (free_size >= len)
+	{
+	  uint32_type next = _as->getl(SUPER_DATA, block + 12);
+
+	  _as->putl(SUPER_DATA, candidate + 0, block);
+	  _as->putl(SUPER_DATA, candidate + 4, parent);
+	  _as->putl(SUPER_DATA, candidate + 8, candidate + len);
+	  _as->putl(SUPER_DATA, candidate + 12, next);
+
+	  _as->putl(SUPER_DATA, block + 12, candidate);
+	  if (next != 0)
+	    _as->putl(SUPER_DATA, next + 0, candidate);
+	  else
+	    last_block = block;
+
+	  return candidate + 0x10;
+	}
+
+      if (free_size > max_free_size)
+	max_free_size = free_size;
+
+      end = block;
+      block = _as->getl(SUPER_DATA, block + 0);
+    }
+
+  if (max_free_size > 0x10)
+    return 0x81000000 + (max_free_size - 0x10);
+
+  return 0x82000000;
 }
 
 memory_allocator::memory_allocator(address_space *as,
-				   uint32_type address, uint32_type size)
+				   uint32_type address, uint32_type lim)
   : _as(as),
-    first_block(0)
+    limit(lim & ~0xf),
+    last_block(0)
 {
+  address = (address + 0xf) | ~0xf;
   _as->putl(SUPER_DATA, address + 0, 0);
   _as->putl(SUPER_DATA, address + 4, 0);
-  _as->putl(SUPER_DATA, address + 8, address + size);
+  _as->putl(SUPER_DATA, address + 8, address + 0x10);
   _as->putl(SUPER_DATA, address + 12, 0);
-  first_block = address;
+  last_block = address;
 }
 

@@ -32,7 +32,8 @@ namespace vx68k
     {
     private:
       address_space *_as;
-      uint32_type first_block;
+      uint32_type limit;
+      uint32_type last_block;
 
     public:
       memory_allocator(address_space *, uint32_type, uint32_type);
@@ -40,7 +41,11 @@ namespace vx68k
     public:
       sint32_type alloc(uint32_type len, uint32_type parent);
       sint32_type alloc_largest(uint32_type parent);
-      sint_type free(uint32_type);
+      sint_type free(uint32_type memptr);
+      void free_children(uint32_type parent);
+
+    protected:
+      void free_block(uint32_type block);
     };
 
     class file

@@ -1,3 +1,13 @@
+1999-06-28  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/allocator.cc (free_block, free_children): New
+	functions.
+	(free, alloc): Implemented.
+	(memory_allocator): Initialize limit.
+
+	* include/vx68k/human.h (class memory_allocator): Add member
+	limit, and rename first_block to last_block.
+
 1999-06-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add allocator.cc and
