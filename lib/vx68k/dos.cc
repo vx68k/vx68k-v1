@@ -145,6 +145,34 @@ namespace
     }
 
   void
+  dos_getpdb(unsigned int op, context &ec, instruction_data *data)
+  {
+#ifdef L
+    L(" DOS _GETPDB");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    // FIXME.
+    ec.regs.d[0] = 0x8010;
+
+    ec.regs.pc += 2;
+  }
+
+  void
+  dos_intvcs(unsigned int op, context &ec, instruction_data *data)
+  {
+#ifdef L
+    L(" DOS _INTVCS");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    // FIXME.
+    ec.regs.d[0] = 0;
+
+    ec.regs.pc += 2;
+  }
+
+  void
   dos_ioctrl(unsigned int op, context &ec, instruction_data *data)
     {
 #ifdef L
@@ -296,6 +324,7 @@ dos::dos(address_space *m, size_t)
   main_cpu.set_instruction(0xff02, 0, &dos_putchar);
   main_cpu.set_instruction(0xff09, 0, &dos_print);
   main_cpu.set_instruction(0xff1b, 0, &dos_fgetc);
+  main_cpu.set_instruction(0xff25, 0, &dos_intvcs);
   main_cpu.set_instruction(0xff3c, 0, &dos_create);
   main_cpu.set_instruction(0xff3d, 0, &dos_open);
   main_cpu.set_instruction(0xff3e, 0, &dos_close);
@@ -308,8 +337,10 @@ dos::dos(address_space *m, size_t)
   main_cpu.set_instruction(0xff48, 0, &dos_malloc);
   main_cpu.set_instruction(0xff4a, 0, &dos_setblock);
   main_cpu.set_instruction(0xff4c, 0, &dos_exit2);
+  main_cpu.set_instruction(0xff51, 0, &dos_getpdb);
   main_cpu.set_instruction(0xff57, 0, &dos_filedate);
 
+  main_cpu.set_instruction(0xff81, 0, &dos_getpdb);
   main_cpu.set_instruction(0xff87, 0, &dos_filedate);
 }
 

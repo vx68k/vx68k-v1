@@ -2,6 +2,11 @@
 
 	* NEWS: Modified.
 
+	* lib/vx68k/dos.cc (dos_getpdb, dos_intvcs): New functions.
+	(dos): Add new handlers.
+
+	* NEWS: Modified.
+
 	* lib/vm68k/execunit.cc (dispatch): Add the third argumrnt to
 	handlers.
 	(set_instruction): Save handler with instruction data.
