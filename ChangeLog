@@ -1,5 +1,10 @@
 2000-05-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (m68k_bset_d, m68k_db): New function
+	template.
+	(dbf): Disabled.
+	(initialize_instructions): Use the new function.
+
 	* libvx68k/systemrom.cc (iocs_b_drvchk, iocs_b_eject): New
 	function.
 	(initialize_iocs_functions): Use the new functions.

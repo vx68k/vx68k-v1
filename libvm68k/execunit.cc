@@ -594,6 +594,29 @@ namespace
       ec.regs.pc += 2 + disp;
     }
 
+  template <class Size, class Destination> void
+  m68k_bset_d(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    Destination ea1(op & 0x7, 2 + 2);
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef TRACE_INSTRUCTIONS
+    L(" bset%s %%d%u,", Size::suffix(), reg2);
+    L("%s\n", ea1.text(c));
+#endif
+
+    // This instruction affects only the Z bit of the condition codes.
+    uvalue_type mask = uvalue_type(1) << c.regs.d[reg2];
+    uvalue_type value1 = ea1.get(c);
+    bool value = value1 & mask;
+    ea1.put(c, value1 | mask);
+    c.regs.sr.set_cc(value);	// FIXME.
+
+    c.regs.pc += 2 + ea1.extension_size();
+  }
+
   void
   bsetl_i(uint_type op, context &ec, unsigned long data)
   {
@@ -991,6 +1014,30 @@ namespace
     ec.regs.pc += 2 + 2 + ea1.isize(2);
   }
 
+  template <class Condition> void
+  m68k_db(uint_type op, context &c, unsigned long data)
+  {
+    Condition cond;
+    unsigned int reg1 = op & 0x7;
+    sint_type disp = word_size::svalue(c.fetch(word_size(), 2));
+#ifdef TRACE_INSTRUCTIONS
+    L(" db%s %%d%u,", cond.text(), reg1);
+    L("%#lx\n", (unsigned long) (c.regs.pc + 2 + disp));
+#endif
+
+    // This instruction does not affect the condition codes.
+    if (cond(c))
+      c.regs.pc += 2 + 2;
+    else
+      {
+	sint_type value = word_size::svalue(word_size::get(c.regs.d[reg1]));
+	value = word_size::svalue(word_size::get(value - 1));
+	word_size::put(c.regs.d[reg1], value);
+	c.regs.pc += 2 + (value != -1 ? disp : 2);
+      }
+  }
+
+#if 0
   void
   dbf(uint_type op, context &ec, unsigned long data)
   {
@@ -1007,6 +1054,7 @@ namespace
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
     ec.regs.pc += 2 + (value != -1 ? disp : 2);
   }
+#endif
 
   template <class Register2, class Register1> void
   exgl(uint_type op, context &c, unsigned long data)
@@ -2361,6 +2409,21 @@ namespace
     eu.set_instruction(0x00a8, 0x0007, &oril<disp_indirect>);
     eu.set_instruction(0x00b0, 0x0007, &oril<indexed_indirect>);
     eu.set_instruction(0x00b9, 0x0000, &oril<absolute_long>);
+    eu.set_instruction(0x01c0, 0x0e07,
+		       &m68k_bset_d<long_word_size, long_word_d_register>);
+    eu.set_instruction(0x01d0, 0x0e07, &m68k_bset_d<byte_size, byte_indirect>);
+    eu.set_instruction(0x01d8, 0x0e07,
+		       &m68k_bset_d<byte_size, byte_postinc_indirect>);
+    eu.set_instruction(0x01e0, 0x0e07,
+		       &m68k_bset_d<byte_size, byte_predec_indirect>);
+    eu.set_instruction(0x01e8, 0x0e07,
+		       &m68k_bset_d<byte_size, byte_disp_indirect>);
+    eu.set_instruction(0x01f0, 0x0e07,
+		       &m68k_bset_d<byte_size, byte_index_indirect>);
+    eu.set_instruction(0x01f8, 0x0e07,
+		       &m68k_bset_d<byte_size, byte_abs_short>);
+    eu.set_instruction(0x01f9, 0x0e07,
+		       &m68k_bset_d<byte_size, byte_abs_long>);
     eu.set_instruction(0x0200, 0x0007, &andib<data_register>);
     eu.set_instruction(0x0210, 0x0007, &andib<indirect>);
     eu.set_instruction(0x0218, 0x0007, &andib<postinc_indirect>);
@@ -2843,6 +2906,7 @@ namespace
     eu.set_instruction(0x50b9, 0x0e00,
 		       &m68k_addq<long_word_size, long_word_abs_long>);
     eu.set_instruction(0x50c0, 0x0007, &s_b<t, data_register>);
+    eu.set_instruction(0x50c8, 0x0007, &m68k_db<t>);
     eu.set_instruction(0x50d0, 0x0007, &s_b<t, indirect>);
     eu.set_instruction(0x50d8, 0x0007, &s_b<t, postinc_indirect>);
     eu.set_instruction(0x50e0, 0x0007, &s_b<t, predec_indirect>);
@@ -2877,20 +2941,32 @@ namespace
     eu.set_instruction(0x51b0, 0x0e07, &subql<indexed_indirect>);
     eu.set_instruction(0x51b9, 0x0e00, &subql<absolute_long>);
     eu.set_instruction(0x51c0, 0x0007, &s_b<f, data_register>);
-    eu.set_instruction(0x51c8, 0x0007, &dbf);
+    eu.set_instruction(0x51c8, 0x0007, &m68k_db<f>);
     eu.set_instruction(0x51d0, 0x0007, &s_b<f, indirect>);
     eu.set_instruction(0x51d8, 0x0007, &s_b<f, postinc_indirect>);
     eu.set_instruction(0x51e0, 0x0007, &s_b<f, predec_indirect>);
     eu.set_instruction(0x51e8, 0x0007, &s_b<f, disp_indirect>);
     eu.set_instruction(0x51f0, 0x0007, &s_b<f, indexed_indirect>);
     eu.set_instruction(0x51f9, 0x0000, &s_b<f, absolute_long>);
+    eu.set_instruction(0x52c8, 0x0007, &m68k_db<hi>);
+    eu.set_instruction(0x53c8, 0x0007, &m68k_db<ls>);
+    eu.set_instruction(0x54c8, 0x0007, &m68k_db<cc>);
+    eu.set_instruction(0x55c8, 0x0007, &m68k_db<cs>);
     eu.set_instruction(0x56c0, 0x0007, &s_b<eq, data_register>);
+    eu.set_instruction(0x56c8, 0x0007, &m68k_db<ne>);
     eu.set_instruction(0x56d0, 0x0007, &s_b<eq, indirect>);
     eu.set_instruction(0x56d8, 0x0007, &s_b<eq, postinc_indirect>);
     eu.set_instruction(0x56e0, 0x0007, &s_b<eq, predec_indirect>);
     eu.set_instruction(0x56e8, 0x0007, &s_b<eq, disp_indirect>);
     eu.set_instruction(0x56f0, 0x0007, &s_b<eq, indexed_indirect>);
     eu.set_instruction(0x56f9, 0x0000, &s_b<eq, absolute_long>);
+    eu.set_instruction(0x57c8, 0x0007, &m68k_db<eq>);
+    eu.set_instruction(0x5ac8, 0x0007, &m68k_db<pl>);
+    eu.set_instruction(0x5bc8, 0x0007, &m68k_db<mi>);
+    eu.set_instruction(0x5cc8, 0x0007, &m68k_db<ge>);
+    eu.set_instruction(0x5dc8, 0x0007, &m68k_db<lt>);
+    eu.set_instruction(0x5ec8, 0x0007, &m68k_db<gt>);
+    eu.set_instruction(0x5fc8, 0x0007, &m68k_db<le>);
     eu.set_instruction(0x6000, 0x00ff, &bra);
     eu.set_instruction(0x6100, 0x00ff, &bsr);
     eu.set_instruction(0x6200, 0x00ff, &b<hi>);
