@@ -1,3 +1,13 @@
+2000-09-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/cpu.h (struct byte_size): Add members value_type
+	and uget.
+	(struct word_size): Add members value_type, uget, uget_unchecked,
+	and get_unchecked.
+	(struct long_word_size): Likewise.
+	(class context): Add member ufetch.  Make member fetch inline and
+	use Size::get_unchecked.
+
 2000-09-05  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* Version 1.1.3.

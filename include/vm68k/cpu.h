@@ -34,6 +34,7 @@ namespace vm68k
   struct byte_size
   {
     typedef unsigned int uvalue_type;
+    typedef int value_type;
     typedef int svalue_type;
 
     static size_t value_bit() {return 8;}
@@ -44,11 +45,14 @@ namespace vm68k
     static unsigned int uvalue(unsigned int value);
     static int svalue(unsigned int value);
 
-    static int get(uint32_type value);
-    static int get(const memory_address_space &, memory::function_code,
-		   uint32_type address);
+    static unsigned int uget(const uint32_type &reg);
+    static unsigned int uget(const memory_address_space &,
+			     memory::function_code, uint32_type address);
+    static int get(const uint32_type &reg);
+    static int get(const memory_address_space &,
+		   memory::function_code, uint32_type address);
 
-    static void put(uint32_type &dest, unsigned int value);
+    static void put(uint32_type &reg, unsigned int value);
     static void put(memory_address_space &, memory::function_code,
 		    uint32_type address, unsigned int value);
 
@@ -72,23 +76,36 @@ namespace vm68k
       return value;
   }
 
-  inline int
-  byte_size::get(uint32_type value)
+  inline unsigned int
+  byte_size::uget(const uint32_type &reg)
   {
-    return svalue(value & value_mask());
+    return uvalue(reg);
+  }
+
+  inline unsigned int
+  byte_size::uget(const memory_address_space &m,
+		  memory::function_code fc, uint32_type address)
+  {
+    return m.get_8(fc, address);
+  }
+
+  inline int
+  byte_size::get(const uint32_type &reg)
+  {
+    return svalue(uget(reg));
   }
 
   inline int
   byte_size::get(const memory_address_space &m, memory::function_code fc,
 		 uint32_type address)
   {
-    return svalue(m.get_8(fc, address));
+    return svalue(uget(m, fc, address));
   }
 
   inline void
-  byte_size::put(uint32_type &dest, unsigned int value)
+  byte_size::put(uint32_type &reg, unsigned int value)
   {
-    dest = dest & ~uint32_type(value_mask()) | value & value_mask();
+    reg = reg & ~uint32_type(value_mask()) | uvalue(value);
   }
 
   inline void
@@ -102,6 +119,7 @@ namespace vm68k
   struct word_size
   {
     typedef uint_type uvalue_type;
+    typedef sint_type value_type;
     typedef sint_type svalue_type;
 
     static size_t value_bit() {return 16;}
@@ -112,11 +130,19 @@ namespace vm68k
     static uint_type uvalue(uint_type value);
     static sint_type svalue(uint_type value);
 
-    static sint_type get(uint32_type value);
-    static sint_type get(const memory_address_space &, memory::function_code,
-			 uint32_type address);
+    static uint_type uget(const uint32_type &reg);
+    static uint_type uget_unchecked(const memory_address_space &,
+				    memory::function_code,
+				    uint32_type address);
+    static uint_type uget(const memory_address_space &,
+			  memory::function_code, uint32_type address);
+    static sint_type get(const uint32_type &reg);
+    static sint_type get_unchecked(const memory_address_space &,
+				   memory::function_code, uint32_type address);
+    static sint_type get(const memory_address_space &,
+			 memory::function_code, uint32_type address);
 
-    static void put(uint32_type &dest, uint_type value);
+    static void put(uint32_type &reg, uint_type value);
     static void put(memory_address_space &, memory::function_code,
 		    uint32_type address, uint_type value);
 
@@ -140,23 +166,50 @@ namespace vm68k
       return value;
   }
 
-  inline sint_type
-  word_size::get(uint32_type value)
+  inline uint_type
+  word_size::uget(const uint32_type &reg)
   {
-    return svalue(value & value_mask());
+    return uvalue(reg);
+  }
+
+  inline uint_type
+  word_size::uget_unchecked(const memory_address_space &m,
+			    memory::function_code fc, uint32_type address)
+  {
+    return m.get_16_unchecked(fc, address);
+  }
+
+  inline uint_type
+  word_size::uget(const memory_address_space &m,
+		  memory::function_code fc, uint32_type address)
+  {
+    return m.get_16(fc, address);
   }
 
   inline sint_type
-  word_size::get(const memory_address_space &m, memory::function_code fc,
-		 uint32_type address)
+  word_size::get(const uint32_type &reg)
   {
-    return svalue(m.get_16(fc, address));
+    return svalue(uget(reg));
+  }
+
+  inline sint_type
+  word_size::get_unchecked(const memory_address_space &m,
+			   memory::function_code fc, uint32_type address)
+  {
+    return svalue(uget_unchecked(m, fc, address));
+  }
+
+  inline sint_type
+  word_size::get(const memory_address_space &m,
+		 memory::function_code fc, uint32_type address)
+  {
+    return svalue(uget(m, fc, address));
   }
 
   inline void
-  word_size::put(uint32_type &dest, uint_type value)
+  word_size::put(uint32_type &reg, uint_type value)
   {
-    dest = dest & ~uint32_type(value_mask()) | value & value_mask();
+    reg = reg & ~uint32_type(value_mask()) | uvalue(value);
   }
 
   inline void
@@ -170,6 +223,7 @@ namespace vm68k
   struct long_word_size
   {
     typedef uint32_type uvalue_type;
+    typedef sint32_type value_type;
     typedef sint32_type svalue_type;
 
     static size_t value_bit() {return 32;}
@@ -182,11 +236,20 @@ namespace vm68k
     static uint32_type uvalue(uint32_type value);
     static sint32_type svalue(uint32_type value);
 
-    static sint32_type get(uint32_type value);
-    static sint32_type get(const memory_address_space &, memory::function_code,
-			   uint32_type address);
+    static uint32_type uget(const uint32_type &reg);
+    static uint32_type uget_unchecked(const memory_address_space &,
+				      memory::function_code,
+				      uint32_type address);
+    static uint32_type uget(const memory_address_space &,
+			    memory::function_code, uint32_type address);
+    static sint32_type get(const uint32_type &reg);
+    static sint32_type get_unchecked(const memory_address_space &,
+				     memory::function_code,
+				     uint32_type address);
+    static sint32_type get(const memory_address_space &,
+			   memory::function_code, uint32_type address);
 
-    static void put(uint32_type &dest, uint32_type value);
+    static void put(uint32_type &reg, uint32_type value);
     static void put(memory_address_space &, memory::function_code,
 		    uint32_type address, uint32_type value);
 
@@ -210,23 +273,50 @@ namespace vm68k
       return value;
   }
 
-  inline sint32_type
-  long_word_size::get(uint32_type value)
+  inline uint32_type
+  long_word_size::uget(const uint32_type &reg)
   {
-    return svalue(value & value_mask());
+    return uvalue(reg);
+  }
+
+  inline uint32_type
+  long_word_size::uget_unchecked(const memory_address_space &m,
+				 memory::function_code fc, uint32_type address)
+  {
+    return m.get_32(fc, address);
+  }
+
+  inline uint32_type
+  long_word_size::uget(const memory_address_space &m,
+		       memory::function_code fc, uint32_type address)
+  {
+    return m.get_32(fc, address);
+  }
+
+  inline sint32_type
+  long_word_size::get(const uint32_type &reg)
+  {
+    return svalue(uget(reg));
+  }
+
+  inline sint32_type
+  long_word_size::get_unchecked(const memory_address_space &m,
+				memory::function_code fc, uint32_type address)
+  {
+    return svalue(uget_unchecked(m, fc, address));
   }
 
   inline sint32_type
   long_word_size::get(const memory_address_space &m,
 		      memory::function_code fc, uint32_type address)
   {
-    return svalue(m.get_32(fc, address));
+    return svalue(uget(m, fc, address));
   }
 
   inline void
-  long_word_size::put(uint32_type &dest, uint32_type value)
+  long_word_size::put(uint32_type &reg, uint32_type value)
   {
-    dest = dest & ~uint32_type(value_mask()) | value & value_mask();
+    reg = reg & ~uint32_type(value_mask()) | uvalue(value);
   }
 
   inline void
@@ -464,8 +554,10 @@ namespace vm68k
     memory::function_code data_fc() const {return dfc_cache;}
 
   public:
-    template <class Size> typename Size::svalue_type fetch(Size, size_t offset)
-      const;
+    template <class Size>
+    typename Size::uvalue_type ufetch(Size, size_t offset) const;
+    template <class Size>
+    typename Size::svalue_type fetch(Size, size_t offset) const;
 
   public:			// interrupt
     /* Returns true if the thread in this context is interrupted.  */
@@ -479,17 +571,30 @@ namespace vm68k
     void handle_interrupts();
   };
 
-  template <class Size> typename Size::svalue_type
+  template <class Size> inline typename Size::uvalue_type
+  context::ufetch(Size, size_t offset) const
+  {
+    return Size::uget_unchecked(*mem, program_fc(), regs.pc + offset);
+  }
+
+  template <> inline byte_size::uvalue_type
+  context::ufetch(byte_size, size_t offset) const
+  {
+    return byte_size::uvalue(word_size::uget_unchecked(*mem, program_fc(),
+						       regs.pc + offset));
+  }
+
+  template <class Size> inline typename Size::svalue_type
   context::fetch(Size, size_t offset) const
   {
-    return Size::get(*mem, program_fc(), regs.pc + offset);
+    return Size::get_unchecked(*mem, program_fc(), regs.pc + offset);
   }
 
   template <> inline byte_size::svalue_type
   context::fetch(byte_size, size_t offset) const
   {
-    return byte_size::svalue(word_size::get(*mem, program_fc(),
-					    regs.pc + offset));
+    return byte_size::svalue(word_size::uget_unchecked(*mem, program_fc(),
+						       regs.pc + offset));
   }
 
   /* Execution unit.  */
