@@ -1,5 +1,13 @@
 1999-06-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/addressing.h (class disp_indirect): Change member
+	reg to unsigned.
+	(class disp_indirect): Fix textw to use offset.
+	(class indexed_indirect): New class.
+
+	* lib/vm68k/statusreg.cc (struct asr_cc_evaluator): Change the
+	side of shift.
+
 	* lib/vm68k/execunit.cc (subl_r, subqw): New functions.
 	(install_instructions): Add new handlers.
 

@@ -60,8 +60,8 @@ namespace
     bool ls(const sint32_type *values) const
       {return eq(values) || cs(values);}
     bool cs(const sint32_type *values) const
-      {return (values[2] != 0
-	       && (uint32_type(values[1]) >> values[2] - 1 & 1) != 0);}
+      {return (values[2] >= 1
+	       && uint32_type(values[1]) & uint32_type(1) << values[2] - 1);}
   };
 
   const common_cc_evaluator common_cc_eval;

@@ -237,10 +237,10 @@ namespace vm68k
     class disp_indirect
     {
     private:
-      int reg;
+      unsigned int reg;
       int offset;
     public:
-      disp_indirect(int r, int off)
+      disp_indirect(unsigned int r, int off)
 	: reg(r), offset(off) {}
     public:
       size_t isize(size_t) const
@@ -266,8 +266,63 @@ namespace vm68k
 	{return textw(ec);}
       const char *textw(const context &ec) const
 	{
-	  static char buf[16];
-	  sprintf(buf, "%%a%d@(%d)", reg, extsw(ec.fetchw(2)));
+	  static char buf[32];
+	  sprintf(buf, "%%a%d@(%d)", reg, extsw(ec.fetchw(offset)));
+	  return buf;
+	}
+      const char *textl(const context &ec) const
+	{return textw(ec);}
+    };
+
+    class indexed_indirect
+    {
+    private:
+      unsigned int reg;
+      int offset;
+    public:
+      indexed_indirect(unsigned int r, int off)
+	: reg(r), offset(off) {}
+    public:
+      size_t isize(size_t) const
+	{return 2;}
+      uint32_type address(const context &ec) const
+	{
+	  uint_type w = ec.fetchw(offset);
+	  unsigned int r = w >> 12 & 0xf;
+	  uint32_type x = r >= 8 ? ec.regs.a[r - 8] : ec.regs.d[r];
+	  if (w & 0x800)
+	    return ec.regs.a[reg] + extsl(x) + extsb(w);
+	  else
+	    return ec.regs.a[reg] + extsw(x) + extsb(w);
+	}
+      sint_type getb(const context &ec) const
+	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
+      sint_type getw(const context &ec) const
+	{return extsw(ec.mem->getw(ec.data_fc(), address(ec)));}
+      sint32_type getl(const context &ec) const
+	{return extsl(ec.mem->getl(ec.data_fc(), address(ec)));}
+      void putb(context &ec, int value) const
+	{ec.mem->putb(ec.data_fc(), address(ec), value);}
+      void putw(context &ec, int value) const
+	{ec.mem->putw(ec.data_fc(), address(ec), value);}
+      void putl(context &ec, int32 value) const
+	{ec.mem->putl(ec.data_fc(), address(ec), value);}
+      void finishb(context &) const {}
+      void finishw(context &) const {}
+      void finishl(context &) const {}
+      const char *textb(const context &ec) const
+	{return textw(ec);}
+      const char *textw(const context &ec) const
+	{
+	  uint_type w = ec.fetchw(offset);
+	  unsigned int r = w >> 12 & 0xf;
+	  static char buf[32];
+	  if (r >= 8)
+	    sprintf(buf, "%%a%u@(%d,%%a%u%s)", reg, extsb(w), r - 8,
+		    w & 0x800 ? ":l" : ":w");
+	  else
+	    sprintf(buf, "%%a%u@(%d,%%d%u%s)", reg, extsb(w), r,
+		    w & 0x800 ? ":l" : ":w");
 	  return buf;
 	}
       const char *textl(const context &ec) const
