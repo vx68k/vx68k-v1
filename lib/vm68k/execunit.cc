@@ -834,26 +834,6 @@ namespace
       ec->regs.pc += 2 + ea1.isize(2) + ea2.isize(2);
     }
 
-#if 0
-  void movew_d_postinc(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      uint32 d_addr = ec->regs.a[d_reg];
-      VL((" movew %%d%d,%%a%d@+ |*,0x%lx\n",
-	  s_reg, d_reg, (unsigned long) d_addr));
-
-      int fc = ec->data_fc();
-      int val = extsw(ec->regs.d[s_reg]);
-      ec->mem->putw(fc, d_addr, val);
-      ec->regs.a[d_reg] = d_addr + 2;
-      ec->regs.sr.set_cc(val);
-
-      ec->regs.pc += 2;
-    }
-#endif
-
   void movew_d_predec(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -923,126 +903,6 @@ namespace
 
       ec->regs.pc += 2 + ea1.isize(4) + ea2.isize(4);
     }
-
-#if 0
-  void movel_d_postinc(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      uint32 d_addr = ec->regs.a[d_reg];
-      VL((" movel %%d%d,%%a%d@+ |*,0x%lx\n",
-	  s_reg, d_reg, (unsigned long) d_addr));
-
-      int fc = ec->data_fc();
-      int32 value = extsl(ec->regs.d[s_reg]);
-      ec->mem->putl(fc, d_addr, value);
-      ec->regs.a[d_reg] = d_addr + 4;
-      ec->regs.sr.set_cc(value);
-
-      ec->regs.pc += 2;
-    }
-
-  void movel_d_predec(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      uint32 d_addr = ec->regs.a[d_reg] - 4;
-      VL((" movel %%d%d,%%a%d@- |*,0x%lx\n",
-	  s_reg, d_reg, (unsigned long) d_addr));
-
-      int fc = ec->data_fc();
-      int32 value = extsl(ec->regs.d[s_reg]);
-      ec->mem->putl(fc, d_addr, value);
-      ec->regs.a[d_reg] = d_addr;
-      ec->regs.sr.set_cc(value);
-
-      ec->regs.pc += 2;
-    }
-
-  void movel_a_predec(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      int d_reg = op >> 9 & 0x7;
-      uint32 d_addr = ec->regs.a[d_reg] - 4;
-      VL((" movel %%a%d,%%a%d@- |*,0x%lx\n",
-	  s_reg, d_reg, (unsigned long) d_addr));
-
-      int fc = ec->data_fc();
-      int32 value = extsl(ec->regs.a[s_reg]);
-      ec->mem->putl(fc, d_addr, value);
-      ec->regs.a[d_reg] = d_addr;
-      ec->regs.sr.set_cc(value);
-
-      ec->regs.pc += 2;
-    }
-
-  void movel_postinc_a(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      uint32 s_addr = ec->regs.a[s_reg];
-      int d_reg = op >> 9 & 0x7;
-      VL((" movel %%a%d@+,%%a%d |0x%lx,*\n",
-	  s_reg, d_reg, (unsigned long) s_addr));
-
-      // XXX: The condition codes are not affected.
-      int fc = ec->data_fc();
-      ec->regs.a[d_reg] = ec->mem->getl(fc, s_addr);
-      ec->regs.a[s_reg] = s_addr + 4;
-
-      ec->regs.pc += 2;
-    }
-
-  void movel_i_predec(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int d_reg = op >> 9 & 0x7;
-      uint32 d_addr = ec->regs.a[d_reg] - 4;
-      int32 value = extsl(ec->fetchl(2));
-      VL((" movel #%ld,%%a%d@- |*,0x%lx\n",
-	  (long) value, d_reg, (unsigned long) d_addr));
-
-      int fc = ec->data_fc();
-      ec->mem->putl(fc, d_addr, value);
-      ec->regs.a[d_reg] = d_addr;
-      ec->regs.sr.set_cc(value);
-
-      ec->regs.pc += 2 + 4;
-    }
-
-  void movel_d_absl(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      uint32 d_addr = ec->fetchl(2);
-      VL((" movel %%d%d,0x%x\n", s_reg, d_addr));
-
-      int fc = ec->data_fc();
-      int32 value = extsl(ec->regs.d[s_reg]);
-      ec->mem->putl(fc, d_addr, value);
-      ec->regs.sr.set_cc(value);
-
-      ec->regs.pc += 2 + 4;
-    }
-
-  void movel_a_absl(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      uint32 d_addr = ec->fetchl(2);
-      VL((" movel %%a%d,0x%x\n", s_reg, d_addr));
-
-      int fc = ec->data_fc();
-      int32 value = extsl(ec->regs.a[s_reg]);
-      ec->mem->putl(fc, d_addr, value);
-      ec->regs.sr.set_cc(value);
-
-      ec->regs.pc += 2 + 4;
-    }
-#endif
 
   template <class Source>
     void moveal(unsigned int op, execution_context *ec)
@@ -1203,8 +1063,8 @@ namespace
     uint_type value = value2 | value1;
     ec->regs.d[reg2]
       = ec->regs.d[reg2] & ~0xffff | uint32_type(value) & 0xffff;
-    ea1.finishw(ec);
     ec->regs.sr.set_cc(value);
+    ea1.finishw(ec);
 
     ec->regs.pc += 2 + ea1.isize(2);
   }
@@ -1227,22 +1087,6 @@ namespace
 
       ec->regs.pc += 2 + ea1.isize(0);
     }
-
-#if 0
-  void pea_absl(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      uint32 address = ec->fetchl(2);
-      VL((" pea 0x%lx:l\n", (unsigned long) address));
-
-      // XXX: The condition codes are not affected.
-      int fc = ec->data_fc();
-      ec->mem->putl(fc, ec->regs.a[7] - 4, address);
-      ec->regs.a[7] -= 4;
-
-      ec->regs.pc += 2 + 4;
-    }
-#endif
 
   void rts(unsigned int op, execution_context *ec)
     {
@@ -1364,35 +1208,6 @@ namespace
       ec->regs.pc += 2 + ea1.isize(2);
     }
 
-#if 0
-  void tstb_d(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int reg = op & 0x7;
-      VL((" tstb %%d%d\n", reg));
-
-      int val = extsb(ec->regs.d[reg]);
-      ec->regs.sr.set_cc(val);
-
-      ec->regs.pc += 2;
-    }
-
-  void tstb_predec(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int reg = op & 0x7;
-      uint32 addr = ec->regs.a[reg] - 1;
-      VL((" tstb %%a%d@- |0x%lx\n", reg, (unsigned long) addr));
-
-      int fc = ec->data_fc();
-      int val = extsb(ec->mem->getb(fc, addr));
-      ec->regs.a[reg] = addr;
-      ec->regs.sr.set_cc(val);
-
-      ec->regs.pc += 2;
-    }
-#endif
-
   void tstw_d(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -1419,20 +1234,6 @@ namespace
 
       ec->regs.pc += 2 + ea1.isize(4);
     }
-
-#if 0
-  void tstl_d(unsigned int op, execution_context *ec)
-    {
-      I(ec != NULL);
-      int s_reg = op & 0x7;
-      VL((" tstl %%d%d\n", s_reg));
-
-      int value = extsl(ec->regs.d[s_reg]);
-      ec->regs.sr.set_cc(value);
-
-      ec->regs.pc += 2;
-    }
-#endif
 
   void unlk_a(unsigned int op, execution_context *ec)
     {

@@ -1,5 +1,10 @@
 1999-06-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (movew_d_postinc, movel_d_postinc,
+	movel_d_predec, movel_a_predec, movel_postinc_a, movel_i_predec,
+	movel_d_absl, movel_a_absl, pea_absl, tstb_d, tstb_predec,
+	tstl_d): Removed.
+
 	* NEWS: Modified.
 
 	* lib/vm68k/execunit.cc (orw, b): New functions.
