@@ -1,0 +1,57 @@
+#ifndef M68K_CPU_H
+#define M68k_CPU_H
+
+#include <iterator>
+
+typedef unsigned int uint32;
+typedef unsigned short uint16;
+typedef unsigned char uint8;
+
+/* User view of CPU registers.  */
+struct user_cpu_regs
+{
+  uint32 r[16];
+  uint32 pc;
+  uint16 ccr;
+};
+
+/* CPU registers (mc68000).  */
+struct cpu_regs: user_cpu_regs
+{
+  uint32 usp;
+  uint32 ssp;
+  uint16 sr;
+};
+
+class bus_error
+{
+};
+
+struct memory
+{
+  struct iterator: bidirectional_iterator
+  {
+  };
+  virtual ~memory ();
+  virtual uint16 read16 (uint32) throw (bus_error) = 0;
+  virtual uint32 read32 (uint32) throw (bus_error);
+  virtual uint8 read8 (uint32) throw (bus_error) = 0;
+  virtual void write16 (uint32, uint16) throw (bus_error) = 0;
+  virtual void write32 (uint32, uint32) throw (bus_error);
+  virtual void write8 (uint32, uint8) throw (bus_error) = 0;
+};
+
+class cpu
+{
+public:
+  cpu (memory *);
+  void set_pc (uint32);
+  void run ();
+private:
+  cpu_regs regs;
+  memory *mem;
+  void (*insn[0x10000]) (cpu_reg &, memory *);
+};
+
+#endif
+
