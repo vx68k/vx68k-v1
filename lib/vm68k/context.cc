@@ -24,25 +24,33 @@
 
 #include <vm68k/cpu.h>
 
-#include <cstdio>
-
-#include "debug.h"
+#ifdef HAVE_NANA_H
+# include <nana.h>
+# include <cstdio>
+#else
+# include <cassert>
+# define I assert
+#endif
 
 using namespace vm68k;
 using namespace std;
 
 void
-execution_context::run()
+context::step()
 {
-  for (;;)
-    {
-      unsigned int op = fetchw(0);
-      I(eu != NULL);
-      eu->dispatch(op, this);
-    }
+  unsigned int op = fetchw(0);
+  I(eu != NULL);
+  eu->dispatch(op, this);
 }
 
-execution_context::execution_context(address_space *m, exec_unit *e)
+void
+context::run()
+{
+  for (;;)
+    step();
+}
+
+context::context(address_space *m, exec_unit *e)
   : mem(m),
     eu(e)
 {

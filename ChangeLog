@@ -1,5 +1,15 @@
 1999-05-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/context.cc: Rename execution_context to context.
+
+	* include/vm68k/cpu.h (class execution_context): Updated.
+	(class context): Renamed from execution_context.  Add typedef for
+	the old name.
+
+	* lib/vm68k/context.cc: Expand "debug.h".
+	(step): New function.
+	(run): Use step.
+
 	* Makefile.am (EXTRA_DIST): Add MEMO.ja.
 
 	* MEMO.ja: New file.

@@ -98,15 +98,15 @@ struct exception_listener
   virtual void illegal (int, registers *, address_space *) = 0;
 };
 
-  class execution_context;	// Forward declaration.
+  class context;	// Forward declaration.
  
   /* Execution unit.  */
   class exec_unit
   {
   public:
-    typedef void (*insn_handler)(unsigned int, execution_context *);
+    typedef void (*insn_handler)(unsigned int, context *);
   public:
-    static void illegal(unsigned int, execution_context *);
+    static void illegal(unsigned int, context *);
   protected:
     static void install_instructions(exec_unit *);
   private:
@@ -115,10 +115,10 @@ struct exception_listener
     exec_unit();
   public:
     void set_instruction(int op, int mask, insn_handler);
-    void dispatch(unsigned int op, execution_context *) const;
+    void dispatch(unsigned int op, context *) const;
   };
 
-  class execution_context
+  class context
   {
   public:
     registers regs;
@@ -127,7 +127,7 @@ struct exception_listener
   private:
     exec_unit *eu;
   public:
-    execution_context(address_space *, exec_unit *);
+    context(address_space *, exec_unit *);
   public:
     int program_fc() const
       {return regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM;}
@@ -137,8 +137,10 @@ struct exception_listener
       {return mem->getw(program_fc(), regs.pc + disp);}
     uint32 fetchl(int disp) const
       {return mem->getl(program_fc(), regs.pc + disp);}
+    void step();
     void run();
   };
+  typedef context execution_context;
 } // namespace vm68k
 
 #endif
