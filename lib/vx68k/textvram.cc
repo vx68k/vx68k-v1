@@ -67,26 +67,28 @@ text_vram::draw_char(unsigned int c)
       if (curx % 2 != 0)
 	{
 	  for (uint16 *q = p + 0;
-	       q != p + (2 * TEXT_VRAM_PLANE_SIZE >> 1);
+	       q != p + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
 	       q += TEXT_VRAM_PLANE_SIZE >> 1)
 	    {
+	      uint16 *r = q;
 	      for (unsigned char *i = img + 0; i != img + 16; ++i)
 		{
-		  *q = *q & ~0xff | i[0] & 0xff;
-		  advance_row(q);
+		  *r = *r & ~0xff | i[0] & 0xff;
+		  advance_row(r);
 		}
 	    }
 	}
       else
 	{
 	  for (uint16 *q = p + 0;
-	       q != p + (2 * TEXT_VRAM_PLANE_SIZE >> 1);
+	       q != p + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
 	       q += TEXT_VRAM_PLANE_SIZE >> 1)
 	    {
+	      uint16 *r = q;
 	      for (unsigned char *i = img + 0; i != img + 16; ++i)
 		{
-		  *q = i[0] << 8 | *q & 0xff;
-		  advance_row(q);
+		  *r = i[0] << 8 | *r & 0xff;
+		  advance_row(r);
 		}
 	    }
 	}

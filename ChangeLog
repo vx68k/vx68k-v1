@@ -1,5 +1,7 @@
 1999-08-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/textvram.cc (draw_char): Fix pointer arithmetics.
+
 	* lib/vx68k/machine.cc (b_putc, b_print): New functions.
 
 	* include/vx68k/machine.h (class machine): Add member b_putc and
