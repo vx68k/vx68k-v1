@@ -198,13 +198,6 @@ namespace vx68k
     /* Queues a key input.  */
     void queue_key(uint_type key);
 
-    /* Queues a key input without locking.  */
-    void queue_key_unlocked(uint_type key)
-      {
-	key_queue.push(key);
-	pthread_cond_signal(&key_queue_not_empty);
-      }
-
     /* Gets a key input from the queue.  */
     uint_type get_key();
   };

@@ -1,3 +1,10 @@
+1999-12-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/machine.cc (queue_key): Use key_queue directly.
+
+	* include/vx68k/machine.h (class machine): Remove member
+ 	queue_key_unlocked.
+
 1999-12-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* TODO: Modified.

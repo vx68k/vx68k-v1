@@ -124,7 +124,8 @@ machine::queue_key(uint_type key)
 
   try
     {
-      queue_key_unlocked(key);
+      key_queue.push(key);
+      pthread_cond_signal(&key_queue_not_empty);
     }
   catch (...)
     {
