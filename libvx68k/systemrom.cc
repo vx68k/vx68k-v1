@@ -134,7 +134,7 @@ system_rom::detach(exec_unit *eu)
   if (attached_eu != NULL)
     {
 #ifdef HAVE_NANA_H
-      L("system_rom: FIXME: `detach' not implemented\n");
+      L("system_rom: FIXME: `detach' not fully implemented\n");
 #endif
       attached_eu = NULL;
     }
