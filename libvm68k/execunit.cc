@@ -75,6 +75,31 @@ exec_unit::illegal(int op, execution_context *)
 namespace
 {
 
+  void bsr(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+      int len = 2;
+      int32 disp = op & 0xff;
+      if (disp == 0)
+	{
+	  len = 4;
+	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+	  disp = ec->mem->getw(fc, ec->regs.pc + 2);
+	  if (disp >= 0x8000)
+	    disp -= 0x10000;
+	}
+      else if (disp >= 0x80)
+	disp -= 0x100;
+      fprintf(stderr, " bsr .%+ld\n", (long) disp + 2);
+
+      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+      ec->mem->putl(fc, ec->regs.a[7], ec->regs.pc + len);
+      ec->regs.a[7] -= 4;
+      ec->regs.pc += disp + 2;
+
+      // Condition code is not affected.
+    }
+
   void lea_absl_a(int op, execution_context *ec)
     {
       assert(ec != NULL);
@@ -85,6 +110,7 @@ namespace
 
       ec->regs.a[reg] = address;
 
+      // Condition code is not affected.
       ec->regs.pc += 6;
     }
 
@@ -154,5 +180,6 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x41f9, 0x0e00, &lea_absl_a);
   eu->set_instruction(0x48e0, 0x0007, &movem_l_r_predec);
   eu->set_instruction(0x4e50, 0x0007, &link);
+  eu->set_instruction(0x6100, 0x00ff, &bsr);
 }
 

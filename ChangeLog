@@ -1,3 +1,9 @@
+1999-03-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/execunit.cc: Modify comments.
+	(bsr): New function.
+	(install_instructions): Set &bsr.
+
 1999-03-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvm68k/Makefile.am: Add comments.
