@@ -70,6 +70,9 @@ namespace vm68k
     bool ne() const
       {return !eq();}
     bool eq() const;
+    bool pl() const
+      {return !mi();}
+    bool mi() const;
     bool ge() const
       {return !lt();}
     bool lt() const;

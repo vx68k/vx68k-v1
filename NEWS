@@ -1,6 +1,6 @@
 Virtual X68000 User-Visible Changes
 
-$Date: Fri, 04 Jun 1999 20:53:25 +0900 $
+$Date: Fri, 04 Jun 1999 21:22:19 +0900 $
 
 Version 0.33
 
@@ -8,10 +8,10 @@ Version 0.33
 
 * Some instructions are implemented using templates.
 
-* 204 instruction handlers are implemented though some do not update
-the condition codes properly.
+* 205 instructions are implemented though some do not update the
+condition codes properly.
 
-* 7 DOS-call handlers are partially implemented.
+* 8 DOS-calls are partially implemented.
 
 * The HU executables can be loaded on memory from files.
 

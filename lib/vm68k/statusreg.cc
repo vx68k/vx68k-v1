@@ -40,6 +40,12 @@ status_register::eq() const
 }
 
 bool
+status_register::mi() const
+{
+  return result < 0;		// FIXME.
+}
+
+bool
 status_register::lt() const
 {
   return result < 0;		// FIXME.

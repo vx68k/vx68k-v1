@@ -388,6 +388,28 @@ namespace
       ec->regs.pc += ec->regs.sr.ge() ? 2 + disp : len;
     }
 
+  void bmi(unsigned int op,
+	   execution_context *ec)
+    {
+      I(ec != NULL);
+      int len = 2;
+      int disp = op & 0xff;
+      if (disp == 0)
+	{
+	  len = 4;
+	  disp = extsw(ec->fetchw(2));
+	}
+      else
+	disp = extsb(disp);
+#ifdef L
+      L(" bmi 0x%lx", (unsigned long) (ec->regs.pc + 2 + disp));
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
+
+      // XXX: The condition codes are not affected.
+      ec->regs.pc += ec->regs.sr.mi() ? 2 + disp : len;
+    }
+
   void bne(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -1493,6 +1515,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x6400, 0x00ff, &bcc);
   eu->set_instruction(0x6600, 0x00ff, &bne);
   eu->set_instruction(0x6700, 0x00ff, &beq);
+  eu->set_instruction(0x6b00, 0x00ff, &bmi);
   eu->set_instruction(0x6c00, 0x00ff, &bge);
   eu->set_instruction(0x7000, 0x0eff, &moveql_d);
   eu->set_instruction(0x9018, 0x0e07, &subb_postinc_d);
