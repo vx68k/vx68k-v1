@@ -1,5 +1,15 @@
 2000-05-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (configure): Set pages for _sram.
+
+	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Add file sram.cc.
+
+	* libvx68k/sram.cc: New file.
+	(getw, getb, read, putw, putb, write, ~sram, sram): New function.
+
+	* include/vx68k/machine.h (class sram): New class.
+	(class machine): Add new member _sram.
+
 	* libvx68k/systemrom.cc (iocs_b_print, iocs_b_read): Use
 	dynamic_cast for the address space.
 	* libvx68k/dos.cc (dos_super_jsr): Likewise.

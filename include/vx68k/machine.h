@@ -55,6 +55,28 @@ namespace vx68k
     void putw(int, uint32_type, uint_type);
   };
 
+  /* SRAM.  */
+  class sram: public memory
+  {
+  private:
+    unsigned char *buf;
+
+  public:
+    ~sram();
+    sram();
+
+  public:
+    /* Reads data from this object.  */
+    uint_type getw(int, uint32_type) const;
+    uint_type getb(int, uint32_type) const;
+    size_t read(int, uint32_type, void *, size_t) const;
+
+    /* Writes data to this object.  These methods shall always fail.  */
+    void putw(int, uint32_type, uint_type);
+    void putb(int, uint32_type, uint_type);
+    size_t write(int, uint32_type, const void *, size_t);
+  };
+
   /* System ROM.  This object handles the IOCS calls.  */
   class system_rom: public memory
   {
@@ -252,6 +274,7 @@ namespace vx68k
     size_t _memory_size;
     main_memory mem;
     text_vram tvram;
+    sram _sram;
     system_rom rom;
     class exec_unit eu;
 
