@@ -32,10 +32,6 @@ namespace vx68k
   /* Number of FD units.  */
   const size_t NFDS = 2;
 
-  struct iocs_function_data
-  {
-  };
-
   class main_memory
     : public memory
   {
@@ -187,12 +183,10 @@ namespace vx68k
   class machine: public instruction_data
   {
   public:
-    typedef void (*iocs_function_handler)(context &, machine &,
-					  iocs_function_data *);
+    typedef void (*iocs_function_handler)(context &, machine &, unsigned long);
 
   protected:
-    static void invalid_iocs_function(context &, machine &,
-				      iocs_function_data *);
+    static void invalid_iocs_function(context &, machine &, unsigned long);
     static void iocs(uint_type, context &, instruction_data *);
 
   private:
@@ -201,7 +195,7 @@ namespace vx68k
     text_vram tvram;
     class address_space as;
     class exec_unit eu;
-    pair<iocs_function_handler, iocs_function_data *> iocs_functions[0x100];
+    pair<iocs_function_handler, unsigned long> iocs_functions[0x100];
 
     /* Cursor position.  */
     unsigned int curx, cury;
@@ -240,8 +234,7 @@ namespace vx68k
 		   unsigned char *rgb_buf, size_t row_size);
 
   public:
-    void set_iocs_function(unsigned int, iocs_function_handler,
-			   iocs_function_data *);
+    void set_iocs_function(unsigned int, iocs_function_handler, unsigned long);
 
   public:
     void b_putc(uint_type);

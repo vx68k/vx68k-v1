@@ -167,7 +167,7 @@ machine::get_key()
 namespace
 {
   void
-  iocs_b_lpeek(context &c, machine &m, iocs_function_data *data)
+  iocs_b_lpeek(context &c, machine &m, unsigned long data)
   {
     uint32_type address = c.regs.a[1];
 #ifdef L
@@ -181,13 +181,12 @@ namespace
   void
   set_iocs_functions(machine &m)
   {
-    m.set_iocs_function(0x84, &iocs_b_lpeek, NULL);
+    m.set_iocs_function(0x84, &iocs_b_lpeek, 0);
   }
 } // (unnamed namespace)
 
 void
-machine::invalid_iocs_function(context &c, machine &m,
-			       iocs_function_data *data)
+machine::invalid_iocs_function(context &c, machine &m, unsigned long data)
 {
   throw runtime_error("invalid iocs function");	// FIXME
 }
@@ -209,7 +208,7 @@ machine::iocs(uint_type op, context &c, instruction_data *data)
 
 void
 machine::set_iocs_function(unsigned int i, iocs_function_handler handler,
-			   iocs_function_data *data)
+			   unsigned long data)
 {
   if (i > 0xffu)
     throw range_error("iocs function must be between 0 and 0xff");
@@ -252,7 +251,7 @@ machine::machine(size_t memory_size)
   pthread_mutex_init(&key_queue_mutex, NULL);
 
   fill(iocs_functions + 0, iocs_functions + 0x100,
-       make_pair(&invalid_iocs_function, (iocs_function_data *) 0));
+       make_pair(&invalid_iocs_function, 0));
 
   fill(fd + 0, fd + NFDS, (iocs::disk *) NULL);
 

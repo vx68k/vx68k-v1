@@ -1,5 +1,13 @@
 2000-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (iocs_b_lpeek, invalid_iocs_function,
+	set_iocs_function): Change argument type.  Also change all
+	callers.
+
+	* include/vx68k/machine.h (struct iocs_function_data): Removed.
+	(class machine): Replace iocs_function_data * with unsigned long.
+	Also change constructor.
+
 	* libvx68k/machine.cc (machine): Initialize fd's.
 	(~machine): Delete fd's.
 
