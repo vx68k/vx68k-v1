@@ -1,5 +1,7 @@
 2000-09-05  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Updated.
+
 	* doc/vx68k.texi (SCC): New node.
 	(Machine): Add menu.
 
