@@ -1,5 +1,8 @@
 1999-06-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/dos.cc (dos_create, dos_open): Treat any space in file
+	name as the end of string.
+
 	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add process.cc.
 
 	* lib/vx68k/process.cc: New file.

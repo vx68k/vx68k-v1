@@ -97,6 +97,9 @@ namespace
     // FIXME.
     char name[256];
     ec.mem->read(SUPER_DATA, name_address, name, 256);
+    char *c = strpbrk(name, " "); // ???
+    if (c != NULL)
+      *c = '\0';
 
     process *p = static_cast<dos_exec_context &>(ec).current_process();
     ec.regs.d[0] = p->create(name, attr);
@@ -226,6 +229,9 @@ namespace
     // FIXME.
     char name[256];
     ec.mem->read(SUPER_DATA, name_address, name, 256);
+    char *c = strpbrk(name, " "); // ???
+    if (c != NULL)
+      *c = '\0';
 
     process *p = static_cast<dos_exec_context &>(ec).current_process();
     ec.regs.d[0] = p->open(name, flags);
