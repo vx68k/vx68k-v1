@@ -1,9 +1,8 @@
 To-Do List for Virtual X68000
 
-$Date: Thu, 18 Nov 1999 20:32:45 +0900 $
+$Date: Thu, 18 Nov 1999 21:10:00 +0900 $
 
-* Modify vx68k.texi generation as rglclock does.  Include the file in
-the repository.
+* Modify vx68k.texi generation as rglclock does.
 
 * Rename directories for libraries as libXXX?
 
@@ -26,6 +25,9 @@ the repository.
 * Implement minimum FLOAT calls.
 
 * Implement DOS calls _FILES and _NFILES.
+
+* Implement DOS drives.  This will require some run-time
+configuration.
 
 Maybe version 1.1 or later
 
