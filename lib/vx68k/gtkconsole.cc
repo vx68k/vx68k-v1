@@ -24,6 +24,7 @@
 
 #include <vx68k/gtk.h>
 #include <gtk/gtkdrawingarea.h>
+#include <gtk/gtksignal.h>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
@@ -37,11 +38,42 @@ using namespace vx68k::gtk;
 using namespace vx68k;
 using namespace std;
 
+gint
+gtk_console::handle_expose_event(GtkWidget *drawing_area,
+				 GdkEventExpose *event, gpointer data)
+  throw ()
+{
+  gtk_console *con = static_cast<gtk_console *>(data);
+  I(con != NULL);
+
+  GdkGC *gc = gdk_gc_new(drawing_area->window);
+  gdk_draw_rgb_image(drawing_area->window, gc, 0, 0, con->width, con->height,
+		     GDK_RGB_DITHER_NORMAL, con->rgb_buf, con->row_size);
+  gdk_gc_unref(gc);
+
+  return true;
+}
+
 GtkWidget *
 gtk_console::create_widget()
 {
   GtkWidget *drawing_area = gtk_drawing_area_new();
-  gtk_drawing_area_size(GTK_DRAWING_AREA(drawing_area), 768, 512);
+  gtk_signal_connect(GTK_OBJECT(drawing_area), "expose_event",
+		     GTK_SIGNAL_FUNC(&handle_expose_event), this);
+  gtk_drawing_area_size(GTK_DRAWING_AREA(drawing_area), width, height);
   return drawing_area;
+}
+
+gtk_console::~gtk_console()
+{
+  delete [] rgb_buf;
+}
+
+gtk_console::gtk_console()
+  : width(768), height(512),
+    row_size(768 * 3),
+    rgb_buf(NULL)
+{
+  rgb_buf = new guchar [height * row_size];
 }
 

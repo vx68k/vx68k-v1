@@ -1,5 +1,12 @@
 1999-07-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/gtkconsole.cc (handle_expose_event, ~gtk_console,
+	gtk_console): New functions.
+
+	* include/vx68k/gtk.h (class gtk_console): Add data members.
+
+	* bin/main.cc (main): Call gdk_rgb_init.
+
 	* bin/Makefile.am (vx68k_LDADD): Add libvx68kgtk.a.
 
 	* lib/vx68k/Makefile.am (noinst_LIBRARIES): Add libvx68kgtk.a.

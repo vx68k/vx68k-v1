@@ -31,6 +31,19 @@ namespace vx68k
     class gtk_console
       : public virtual console
     {
+    protected:
+      static gint handle_expose_event(GtkWidget *, GdkEventExpose *,
+				      gpointer) throw ();
+
+    private:
+      int width, height;
+      size_t row_size;
+      guchar *rgb_buf;
+
+    public:
+      gtk_console();
+      ~gtk_console();
+
     public:
       GtkWidget *create_widget();
     };

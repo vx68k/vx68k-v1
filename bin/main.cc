@@ -241,6 +241,7 @@ main(int argc, char **argv)
 {
   gtk_set_locale();
   gtk_init(&argc, &argv);
+  gdk_rgb_init();
 
   if (!parse_options(argc, argv))
     {
