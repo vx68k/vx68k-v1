@@ -167,7 +167,7 @@ memory_allocator::memory_allocator(address_space *as,
     limit(lim & ~0xf),
     last_block(0)
 {
-  address = (address + 0xf) | ~0xf;
+  address = (address + 0xf) & ~0xf;
   _as->putl(SUPER_DATA, address + 0, 0);
   _as->putl(SUPER_DATA, address + 4, 0);
   _as->putl(SUPER_DATA, address + 8, address + 0x10);
