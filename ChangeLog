@@ -1,5 +1,8 @@
 1999-03-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/execunit.cc (movem_l_r_postdec): New function.
+	(install_instructions): Set instruction.
+
 	* include/vm68k/cpu.h: Make insn_instruction public.
 
 	* vm68k/execunit.cc (exec_unit): Call install_instructions.

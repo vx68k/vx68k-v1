@@ -25,6 +25,7 @@
 #include <vm68k/cpu.h>
 
 #include <algorithm>
+#include <cstdio>
 #include <cassert>
 
 using namespace vm68k;
@@ -73,11 +74,31 @@ exec_unit::illegal(int op, execution_context *)
 
 namespace
 {
+
+  /* movem regs to EA (postdec).  */
+  void movem_l_r_postdec(int op, execution_context *ec)
+    {
+      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+      unsigned int bitmap = ec->mem->getw(fc, ec->regs.pc + 2);
+      ec->regs.pc += 4;
+      fprintf(stderr, "movem_l_r_pd 0x%x\n", bitmap);
+      for (int i = 0; i != 16; ++i)
+	{
+	  if (bitmap & 1 != 0)
+	    {
+				// FIXME.
+	    }
+	  bitmap >>= 1;
+	}
+    }
+
 } // (unnamed namespace)
 
 /* Installs instructions into the execution unit.  */
 void
 exec_unit::install_instructions(exec_unit *eu)
 {
+  assert(eu != NULL);
+  eu->set_instruction(0x48e0, 0x0007, &movem_l_r_postdec);
 }
 
