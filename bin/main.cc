@@ -1,4 +1,4 @@
-/* vx68k - Virtual X68000
+/* Virtual X68000 - Sharp X68000 emulator
    Copyright (C) 1998, 2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
@@ -59,6 +59,7 @@ using namespace std;
 
 #define COPYRIGHT_YEAR "1998, 2000"
 
+/* Application.  */
 class vx68k_app
 {
 public:
@@ -71,24 +72,39 @@ protected:
   static void *run_machine_thread(void *) throw ();
 
 private:
-  const char *const *args;
   machine vm;
   gtk_console con;
-  int status;
+
+  /* Exit status of the VM.  */
+  int vm_status;
+
+  /* Program arguments for the VM.  */
+  const char *const *vm_args;
+
+  /* Thread that is executing the VM.  This member is set to
+     pthread_self() when no thread is running.  */
+  pthread_t vm_thread;
 
   /* Main window of this application.  */
   GtkWidget *main_window;
 
 public:
-  vx68k_app(const char *const *args);
+  vx68k_app();
 
 protected:
   void run_machine();
 
 public:
-  void run();
-  int exit_status() const
-    {return status;}
+  /* Runs a DOS program on the VM.  */
+  void run(const char *const *args);
+
+  /* Boots the first floppy on the VM.  */
+  void boot();
+
+  /* Waits for the program to exit.  */
+  void join(int *st);
+
+public:
   GtkWidget *create_window();
 
 public:
@@ -110,7 +126,7 @@ vx68k_app::run_machine()
   human::dos_exec_context *c = env.create_context();
   {
     human::shell p(c);
-    status = p.exec(args[0], args + 1, environ);
+    vm_status = p.exec(vm_args[0], vm_args + 1, environ);
   }
   delete c;
 }
@@ -146,27 +162,33 @@ vx68k_app::run_machine_thread(void *data)
 }
 
 void
-vx68k_app::run()
+vx68k_app::run(const char *const *args)
 {
+  vm_args = args;
+
   if (opt_single_threaded)
-    {
-      run_machine();
-
-      gdk_threads_enter();
-      gtk_main();
-      gdk_threads_leave();
-    }
+    run_machine();
   else
+    pthread_create(&vm_thread, NULL, &run_machine_thread, this);
+}
+
+void
+vx68k_app::boot()
+{
+  g_message("`boot' function not implemented yet");
+}
+
+void
+vx68k_app::join(int *status)
+{
+  if (vm_thread != pthread_self())
     {
-      pthread_t vm_thread;
-      pthread_create(&vm_thread, NULL, &run_machine_thread, this);
-
-      gdk_threads_enter();
-      gtk_main();
-      gdk_threads_leave();
-
       pthread_join(vm_thread, NULL);
+      vm_thread = pthread_self();
     }
+
+  if (status != NULL)
+    *status = vm_status;
 }
 
 /* Window management.  */
@@ -418,12 +440,13 @@ vx68k_app::create_window()
 
 const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
 
-vx68k_app::vx68k_app(const char *const *a)
-  : args(a),
-    vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE),
+vx68k_app::vx68k_app()
+  : vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE),
     con(&vm),
+    vm_status(0),
     main_window(NULL)
 {
+  vm_thread = pthread_self();
   gtk_widget_set_default_visual(gdk_rgb_get_visual());
   vm.connect(&con);
 }
@@ -525,22 +548,32 @@ main(int argc, char **argv)
       return EXIT_SUCCESS;
     }
 
+#if 0
   if (argc <= optind)
     {
       fprintf(stderr, _("%s: missing command argument\n"), argv[0]);
       fprintf(stderr, _("Try `%s --help' for more information.\n"), argv[0]);
       return EXIT_FAILURE;
     }
+#endif
 
   try
     {
-      vx68k_app app(argv + optind);
+      vx68k_app app;
 
       GtkWidget *window = app.create_window();
       gtk_widget_show(window);
 
-      app.run();
-      return app.exit_status();
+      if (optind < argc)
+	app.run(argv + optind);
+
+      gdk_threads_enter();
+      gtk_main();
+      gdk_threads_leave();
+
+      int status;
+      app.join(&status);
+      return status;
     }
   catch (exception &x)
     {

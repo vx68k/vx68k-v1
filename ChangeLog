@@ -1,5 +1,14 @@
 2000-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (class vx68k_app): Remove members args and
+	exit_status.  Add new members vm_args, vm_thread, boot, and join.
+	Rename member status to vm_status.
+	(run): Add new argument.  Remove the main loop.
+	(boot, join): New functions.
+	(vx68k_app): Remove the argument.  Modify member initialization.
+	(main): Add the main loop.  Change the use of an application.
+	(main): Make the main window even if no command is specified.
+
 	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Add iocsdisk.cc.
 
 	* libvx68k/iocsdisk.cc: New file.
