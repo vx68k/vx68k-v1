@@ -1,5 +1,5 @@
 /* vx68k - Virtual X68000
-   Copyright (C) 1998 Hypercore Software Design, Ltd.
+   Copyright (C) 1998, 1999 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -51,7 +51,27 @@ uint8
 main_memory_page::getb (int fc, uint32 address) const
   throw (bus_error)
 {
-  abort ();			// FIXME
+  uint16 wvalue = getw(fc, address & ~0x1);
+  return address & 0x1 != 0 ? wvalue : wvalue >> 8;
+}
+
+void
+main_memory_page::putb(int fc, uint32 address, uint8 value)
+  throw (bus_error)
+{
+  // FIXME.  Is it slow?
+  uint16 wvalue = getw(fc, address & ~0x1);
+  if (address & 0x1 != 0)
+    {
+      wvalue &= ~0x00ff;
+      wvalue |= value;
+    }
+  else
+    {
+      wvalue &= ~0xff00;
+      wvalue |= value << 8;
+    }
+  putw(fc, address & ~0x1, wvalue);
 }
 
 uint16
@@ -62,13 +82,6 @@ main_memory_page::getw (int fc, uint32 address) const
   if (address >= end)
     abort ();			// FIXME
   return array[address >> 1];
-}
-
-void
-main_memory_page::putb (int fc, uint32 address, uint8)
-  throw (bus_error)
-{
-  abort ();			// FIXME
 }
 
 void

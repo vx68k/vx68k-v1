@@ -162,6 +162,22 @@ address_space::write (int fc, uint32 address, const void *buf, size_t n)
     }
 }
 
+uint8
+address_space::getb(int fc, uint32 address) const
+  throw (bus_error)
+{
+  uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
+  return page_table[p]->getb(fc, address);
+}
+
+void
+address_space::putb(int fc, uint32 address, uint8 value)
+  throw (bus_error)
+{
+  uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
+  page_table[p]->putb(fc, address, value);
+}
+
 /* Get a word from memory.  */
 uint16
 address_space::getw (int fc, uint32 address) const

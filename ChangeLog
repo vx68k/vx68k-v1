@@ -1,5 +1,14 @@
 1999-03-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/dos.cc: Remove namespace blocks.
+	(print): New function.
+	(dos): Set &print.
+
+	* libvx68k/memory.cc: Modify comments.
+	(getb, putb): Replace abort with real code.
+
+	* libvm68k/memory.cc (getb, putb): New function.
+
 	* libvm68k/execunit.cc: Modify comments.
 	(bsr): New function.
 	(install_instructions): Set &bsr.

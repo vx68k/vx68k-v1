@@ -27,21 +27,12 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <cstdio>
+#include <cassert>
 
-using namespace std;
+using namespace vx68k::human;
 using namespace vm68k;
-
-namespace vx68k
-{
-#if 0
-};
-#endif
-
-namespace human
-{
-#if 0
-};
-#endif
+using namespace std;
 
 uint32
 dos::load_executable (const char *name)
@@ -159,11 +150,32 @@ dos::execute (const char *name, const char *const *argv)
   return start (load_executable (name), argv);
 }
 
+namespace
+{
+
+  void print(int op, execution_context *ec)
+    {
+      assert(ec != NULL);
+
+      uint32 address = ec->mem->getl(SUPER_DATA, ec->regs.a[7]);
+
+      int value;
+      do
+	{
+	  value = ec->mem->getb(SUPER_DATA, address++);
+	  if (value != 0)
+	    putchar(value);
+	}
+      while (value != 0);
+
+      ec->regs.pc += 2;
+    }
+
+} // (unnamed namespace)
+
 dos::dos (address_space *as, size_t)
   : main_ec (as)
 {
+  main_cpu.set_handlers(0xff09, 0, &print);
 }
 
-};				// namespace human
-
-};				// namespace vx68k
