@@ -1,5 +1,10 @@
 1999-11-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/execunit.cc (m68k_add_r): New function.
+	(addw_r, addl_r): Removed.
+	(install_instructions): Replace addw_r and addl_r using
+ 	m68k_add_r.  Also add byte_size version.
+
 	* NEWS: Updated.
 
 	* vm68k/execunit.cc (install_instructions): Replace addw and addl
