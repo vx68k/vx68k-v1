@@ -1,5 +1,7 @@
 1999-05-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* configure.in: Remove PRCS-keyword substitution.
+
 	* Makefile.am (EXTRA_DIST): Add VERSION-ID.
 
 	* VERSION-ID: New file.
