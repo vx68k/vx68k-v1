@@ -1,2 +1,2 @@
 
-SUBDIRS = m68k
+SUBDIRS = m68k x68k

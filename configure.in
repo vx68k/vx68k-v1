@@ -2,5 +2,6 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT(m68k/cpu.h)
 AM_INIT_AUTOMAKE(vx68k, 0.0)
 AM_CONFIG_HEADER(config.h)
+AC_PROG_CXX
 AC_PROG_RANLIB
-AC_OUTPUT(Makefile m68k/Makefile)
+AC_OUTPUT(Makefile m68k/Makefile x68k/Makefile)
