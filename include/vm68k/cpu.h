@@ -191,14 +191,16 @@ namespace vm68k
     uint32_type ssp;
   };
 
-struct exception_listener
-{
-  virtual void bus_error (registers *, address_space *) = 0;
-  virtual void address_error (registers *, address_space *) = 0;
-  virtual void trap (int, registers *, address_space *) = 0;
-  virtual void interrupt (int, registers *, address_space *) = 0;
-  virtual void illegal (int, registers *, address_space *) = 0;
-};
+#if 0
+  struct exception_listener
+  {
+    virtual void bus_error (registers *, address_space *) = 0;
+    virtual void address_error (registers *, address_space *) = 0;
+    virtual void trap (int, registers *, address_space *) = 0;
+    virtual void interrupt (int, registers *, address_space *) = 0;
+    virtual void illegal (int, registers *, address_space *) = 0;
+  };
+#endif
 
   /* Base object that can be passed to instructions.  */
   struct instruction_data
@@ -213,7 +215,7 @@ struct exception_listener
   public:
     registers regs;
     address_space *mem;
-    exception_listener *exception;
+    //exception_listener *exception;
 
   private:
     int pfc_cache, dfc_cache;

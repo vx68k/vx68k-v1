@@ -1,5 +1,8 @@
 1999-10-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/cpu.h (struct exception_listener): #if'd out.
+	(class context): Comment out member exception.
+
 	* vm68k/Makefile.am (libvm68k_la_LDFLAGS): Set version info 1:0:0.
 
 	* include/vm68k/cpu.h (extsb, extsw, extsl): Add function
