@@ -45,7 +45,10 @@ namespace vx68k
       int width, height;
       size_t row_size;
       guchar *rgb_buf;
+
+    private:
       guint timeout;
+      unsigned char *primary_font;
       vector<GtkWidget *> widgets;
 
     public:

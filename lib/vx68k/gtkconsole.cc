@@ -38,7 +38,7 @@ using namespace vx68k::gtk;
 using namespace vx68k;
 using namespace std;
 
-const unsigned int TIMEOUT_INTERVAL = 100;
+const unsigned int TIMEOUT_INTERVAL = 500;
 
 gint
 gtk_console::handle_expose_event(GtkWidget *drawing_area,
@@ -106,8 +106,14 @@ gtk_console::handle_timeout(gpointer data) throw ()
 }
 
 void
-gtk_console::get_b16_image(unsigned int, unsigned char *, size_t) const
+gtk_console::get_b16_image(unsigned int c,
+			   unsigned char *buf, size_t row_size) const
 {
+  if (primary_font != NULL)
+    {
+      for (int i = 0; i != 16; ++i)
+	buf[i * row_size] = primary_font[c * 16 + i];
+    }
 }
 
 void
@@ -125,6 +131,7 @@ gtk_console::~gtk_console()
       gtk_signal_disconnect_by_data(GTK_OBJECT(*i), this);
     }
 
+  delete [] primary_font;
   gtk_timeout_remove(timeout);
   delete [] rgb_buf;
 }
@@ -134,9 +141,50 @@ gtk_console::gtk_console(machine *m)
     width(768), height(512),
     row_size(768 * 3),
     rgb_buf(NULL),
-    timeout(0)
+    timeout(0),
+    primary_font(NULL)
 {
   rgb_buf = new guchar [height * row_size];
   timeout = gtk_timeout_add(TIMEOUT_INTERVAL, &handle_timeout, this);
+
+  /* Retrieve font bitmap in the main thread.  */
+  primary_font = new unsigned char [256 * 16];
+  fill(primary_font + 0, primary_font + 256 * 16, 0);
+
+  GdkPixmap *pixmap = gdk_pixmap_new(NULL, 8, 256 * 16, 1);
+
+  GdkFont *font
+    = gdk_font_load("-*-fixed-medium-r-normal--16-*-*-*-c-*-jisx0201.1976-0");
+  GdkGC *gc = gdk_gc_new(pixmap);
+  GdkColor zero = {0, 0x0000, 0x0000, 0x0000};
+  gdk_gc_set_foreground(gc, &zero);
+  gdk_draw_rectangle(pixmap, gc, true, 0, 0, 8, 256 * 16);
+  GdkColor one = {1, 0xffff, 0xffff, 0xffff};
+  gdk_gc_set_foreground(gc, &one);
+  for (unsigned int c = 0; c != 0x100; ++c)
+    {
+      char str[1];
+      str[0] = c;
+
+      gdk_draw_text(pixmap, font, gc, 0, c * 16 + font->ascent, str, 1);
+    }
+  gdk_gc_unref(gc);
+  gdk_font_unref(font);
+
+  gdk_flush();
+  GdkImage *image = gdk_image_get(pixmap, 0, 0, 8, 256 * 16);
+  for (int i = 0; i != 256 * 16; ++i)
+    {
+      unsigned int d = 0;
+      for (int j = 0; j != 8; ++j)
+	{
+	  if (gdk_image_get_pixel(image, j, i) != 0)
+	    d |= 0x80 >> j;
+	}
+      primary_font[i] = d;
+    }
+  gdk_image_destroy(image);
+
+  gdk_pixmap_unref(pixmap);
 }
 
