@@ -69,19 +69,15 @@ system_rom::read(int, uint32_type, void *, size_t) const
 }
 
 void
-system_rom::putw(int, uint32_type, uint_type)
+system_rom::putw(int fc, uint32_type address, uint_type)
 {
-#ifdef HAVE_NANA_H
-  L("system_rom: FIXME: `putw' not implemented\n");
-#endif
+  throw bus_error(fc, address);
 }
 
 void
-system_rom::putb(int, uint32_type, uint_type)
+system_rom::putb(int fc, uint32_type address, uint_type)
 {
-#ifdef HAVE_NANA_H
-  L("system_rom: FIXME: `putb' not implemented\n");
-#endif
+  throw bus_error(fc, address);
 }
 
 size_t
