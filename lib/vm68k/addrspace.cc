@@ -36,15 +36,21 @@
 using namespace vm68k;
 using namespace std;
 
+namespace
+{
+  no_memory no_mem;
+} // (unnamed namespace)
+
 /* Read a block of data from memory.  */
 void
-address_space::read(int fc, uint32 address, void *data, size_t size) const
+address_space::read(int fc, uint32_type address,
+		    void *data, size_t size) const
 {
   while (size != 0)
     {
-      address &= ((uint32) 1 << ADDRESS_BIT) - 1;
-      uint32 p = address >> PAGE_SHIFT;
-      size_t done = page_table[p]->read(fc, address, data, size);
+      address = canonical_address(address);
+      const memory *p = find_page(address);
+      size_t done = p->read(fc, address, data, size);
       I(done != 0);
       I(done <= size);
       address += done;
@@ -66,8 +72,8 @@ address_space::getl(int fc, uint32_type address) const
   // FIXME: Unaligned address must be handled.
   address = canonical_address(address);
   uint32_type address2 = canonical_address(address + 2);
-  memory_page *p = find_page(address);
-  memory_page *p2 = find_page(address2);
+  const memory *p = find_page(address);
+  const memory *p2 = find_page(address2);
   if (p2 != p)
     return uint32_type(p->getw(fc, address)) << 16 | p2->getw(fc, address2);
   else
@@ -76,13 +82,14 @@ address_space::getl(int fc, uint32_type address) const
 
 /* Write a block of data to memory.  */
 void
-address_space::write(int fc, uint32 address, const void *data, size_t size)
+address_space::write(int fc, uint32_type address,
+		     const void *data, size_t size)
 {
   while (size != 0)
     {
-      address &= ((uint32) 1 << ADDRESS_BIT) - 1;
-      uint32 p = address >> PAGE_SHIFT;
-      size_t done = page_table[p]->write(fc, address, data, size);
+      address = canonical_address(address);
+      memory *p = find_page(address);
+      size_t done = p->write(fc, address, data, size);
       I(done != 0);
       I(done <= size);
       address += done;
@@ -104,8 +111,8 @@ address_space::putl(int fc, uint32_type address, uint32_type value)
   // FIXME: Unaligned address must be handled.
   address = canonical_address(address);
   uint32_type address2 = canonical_address(address + 2);
-  memory_page *p = find_page(address);
-  memory_page *p2 = find_page(address2);
+  memory *p = find_page(address);
+  memory *p2 = find_page(address2);
   if (p2 != p)
     {
       p->putw(fc, address, value >> 16);
@@ -116,15 +123,15 @@ address_space::putl(int fc, uint32_type address, uint32_type value)
 }
 
 void
-address_space::set_pages (size_t first, size_t last, memory_page *p)
+address_space::set_pages(size_t first, size_t last, memory *p)
 {
   I(first <= last);
   I(last <= NPAGES);
-  fill (page_table + first, page_table + last, p);
+  fill(page_table + first, page_table + last, p);
 }
 
-address_space::address_space ()
+address_space::address_space()
 {
-  fill (page_table + 0, page_table + NPAGES, &default_page);
+  fill(page_table + 0, page_table + NPAGES, &no_mem);
 }
 

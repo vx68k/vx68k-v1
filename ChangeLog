@@ -1,5 +1,17 @@
 1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/addrspace.cc (no_mem): New static object.
+	(read, write): Change use of uint32 to uint32_type.
+	(read, write): Use canonical_address and find_page.
+	(set_pages): Reformat spaces.
+	(address_space): Use no_mem.
+	(getl): Add const to memory.
+
+	* include/vm68k/memory.h (class address_space): Move data members
+	and remove default_page.
+	(class address_space): Add const to memory in getb and
+	getw_aligned.
+
 	* lib/vm68k/memory.cc: Remove namespace block.
 	(getw, getl): Change return type and reformat code.
 	(putw, putl): Change argument type and reformat code.
@@ -9,8 +21,9 @@
 	generate_bus_error.
 
 	* include/vm68k/memory.h (class memory): Renamed from memory_page
-	and cleaned.
-	(class no_memory): Renamed from bus_error_page and cleaned.
+	and cleaned.  Also change all referrers.
+	(class no_memory): Renamed from bus_error_page and cleaned.  Also
+	change all referrers.
 
 	* lib/vm68k/Makefile.am (libvm68k_a_SOURCES): Change file order.
 

@@ -26,54 +26,60 @@
 namespace vm68k
 {
 
-enum function_code
-{
-  USER_DATA = 1,
-  USER_PROGRAM = 2,
-  SUPER_DATA = 5,
-  SUPER_PROGRAM = 6
-};
+  enum function_code
+  {
+    USER_DATA = 1,
+    USER_PROGRAM = 2,
+    SUPER_DATA = 5,
+    SUPER_PROGRAM = 6
+  };
 
-const int PAGE_SHIFT = 12;
-const size_t PAGE_SIZE = (size_t) 1 << PAGE_SHIFT;
+  const int PAGE_SHIFT = 12;
+  const size_t PAGE_SIZE = (size_t) 1 << PAGE_SHIFT;
 
   // External mc68000 address is 24-bit size.
   const int ADDRESS_BIT = 24;
   const size_t NPAGES = (size_t) 1 << ADDRESS_BIT - PAGE_SHIFT;
 
-uint16 getw (const void *);
-uint32 getl (const void *);
-void putw (void *, uint16);
-void putl (void *, uint32);
+  uint_type getw(const void *);
+  uint32_type getl(const void *);
+  void putw(void *, uint_type);
+  void putl(void *, uint32_type);
 
-  class memory_page
+  class memory
   {
   public:
-    virtual ~memory_page () {}
-  public:
-    virtual size_t read(int, uint32, void *, size_t) const = 0;
-    virtual size_t write(int, uint32, const void *, size_t) = 0;
-    virtual uint8 getb (int, uint32) const = 0;
-    virtual uint16 getw (int, uint32) const = 0;
-    virtual uint32 getl (int, uint32) const;
-    virtual void putb (int, uint32, uint8) = 0;
-    virtual void putw (int, uint32, uint16) = 0;
-    virtual void putl (int, uint32, uint32);
+    virtual ~memory() {}
+
   protected:
     void generate_bus_error(int, uint32_type) const;
+
+  public:
+    virtual size_t read(int, uint32_type, void *, size_t) const = 0;
+    virtual uint_type getb(int, uint32_type) const = 0;
+    virtual uint_type getw(int, uint32_type) const = 0;
+    virtual uint32_type getl(int, uint32_type) const;
+
+  public:
+    virtual size_t write(int, uint32_type, const void *, size_t) = 0;
+    virtual void putb(int, uint32_type, uint_type) = 0;
+    virtual void putw(int, uint32_type, uint_type) = 0;
+    virtual void putl(int, uint32_type, uint32_type);
   };
 
   /* Memory page that always raises a bus error.  */
-  class bus_error_page
-    : public memory_page
+  class no_memory
+    : public memory
   {
   public:
-    virtual size_t read(int, uint32, void *, size_t) const;
-    virtual size_t write(int, uint32, const void *, size_t);
-    virtual uint8 getb (int, uint32) const;
-    virtual uint16 getw (int, uint32) const;
-    virtual void putb (int, uint32, uint8);
-    virtual void putw (int, uint32, uint16);
+    size_t read(int, uint32_type, void *, size_t) const;
+    uint_type getb(int, uint32_type) const;
+    uint_type getw(int, uint32_type) const;
+
+  public:
+    size_t write(int, uint32_type, const void *, size_t);
+    void putb(int, uint32_type, uint_type);
+    void putw(int, uint32_type, uint_type);
   };
 
   /* Address space.  */
@@ -84,18 +90,21 @@ void putl (void *, uint32);
     static uint32_type canonical_address(uint32_type address)
       {return address & (uint32_type(1) << ADDRESS_BIT) - 1;}
 
+  private:
+    memory *page_table[NPAGES];
+
   public:
 #if 0
     struct iterator: bidirectional_iterator <uint16, int32>
     {
     };
 #endif
-    address_space ();
-    void set_pages (size_t begin, size_t end, memory_page *);
+    address_space();
+    void set_pages(size_t begin, size_t end, memory *);
 
   protected:
     /* Finds a page that contains canonical address ADDRESS.  */
-    memory_page *find_page(uint32_type address) const
+    memory *find_page(uint32_type address) const
       {return page_table[address >> PAGE_SHIFT];}
 
   public:
@@ -103,7 +112,7 @@ void putl (void *, uint32);
     uint_type getb(int fc, uint32_type address) const
       {
 	address = canonical_address(address);
-	memory_page *p = find_page(address);
+	const memory *p = find_page(address);
 	return p->getb(fc, address);
       }
 
@@ -112,7 +121,7 @@ void putl (void *, uint32);
     uint_type getw_aligned(int fc, uint32_type address) const
       {
 	address = canonical_address(address);
-	memory_page *p = find_page(address);
+	const memory *p = find_page(address);
 	return p->getw(fc, address);
       }
 
@@ -131,7 +140,7 @@ void putl (void *, uint32);
     void putb(int fc, uint32_type address, uint_type value)
       {
 	address = canonical_address(address);
-	memory_page *p = find_page(address);
+	memory *p = find_page(address);
 	p->putb(fc, address, value);
       }
 
@@ -140,7 +149,7 @@ void putl (void *, uint32);
     void putw_aligned(int fc, uint32_type address, uint_type value)
       {
 	address = canonical_address(address);
-	memory_page *p = find_page(address);
+	memory *p = find_page(address);
 	p->putw(fc, address, value);
       }
 
@@ -154,10 +163,6 @@ void putl (void *, uint32);
 
     void write (int, uint32, const void *, size_t);
     size_t puts(int, uint32, const char *);
-
-  private:
-    bus_error_page default_page;
-    memory_page *page_table[NPAGES];
   };
 
 };				// namespace vm68k
