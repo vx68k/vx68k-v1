@@ -1,3 +1,7 @@
+2002-04-30  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
+
+	* libvx68k/machine.cc (boot): Use local pc.
+
 2001-11-30  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* Add missing throw specs to functions.

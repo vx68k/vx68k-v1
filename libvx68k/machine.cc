@@ -179,37 +179,37 @@ machine::boot(context &c)
       throw runtime_error("machine");
     }
 
-  c.regs.pc = 0x2000;
+  uint32_type pc = 0x2000;
  rerun:
   try
     {
-      eu.run(c);
+      pc = eu.run(pc, c);
     }
   catch (illegal_instruction_exception &e)
     {
-      uint16_type op = c.mem->get_16(c.regs.pc, memory::SUPER_DATA);
+      pc = e.pc();
+      uint16_type op = c.mem->get_16(pc, memory::SUPER_DATA);
 
       if ((op & 0xf000u) == 0xf000u)
 	{
 	  uint16_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 6;
-	  c.mem->put_32(c.regs.a[7] + 2, c.regs.pc, memory::SUPER_DATA);
+	  c.mem->put_32(c.regs.a[7] + 2, pc, memory::SUPER_DATA);
 	  c.mem->put_16(c.regs.a[7] + 0, oldsr, memory::SUPER_DATA);
-	  c.regs.pc = c.mem->get_32(11u * 4u, memory::SUPER_DATA);
+	  pc = c.mem->get_32(11u * 4u, memory::SUPER_DATA);
 	  goto rerun;
 	}
       else if ((op & 0xfff0u) == 0x4e40)
 	{
-	  c.regs.pc += 2;
+	  pc += 2;
 
 	  uint16_type oldsr = c.sr();
 	  c.set_supervisor_state(true);
 	  c.regs.a[7] -= 6;
-	  c.mem->put_32(c.regs.a[7] + 2, c.regs.pc, memory::SUPER_DATA);
+	  c.mem->put_32(c.regs.a[7] + 2, pc, memory::SUPER_DATA);
 	  c.mem->put_16(c.regs.a[7] + 0, oldsr, memory::SUPER_DATA);
-	  c.regs.pc = c.mem->get_32(((op & 0xfu) + 32) * 4u,
-				    memory::SUPER_DATA);
+	  pc = c.mem->get_32(((op & 0xfu) + 32) * 4u, memory::SUPER_DATA);
 	  goto rerun;
 	}
 
