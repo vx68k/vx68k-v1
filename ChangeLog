@@ -1,3 +1,21 @@
+1998-11-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Version 0.24.
+
+	* vx68k/main.cc: Use namespaces.
+
+	* include/vx68k/memory.h: Make namespace vx68k.
+	(class memory): Renamed from x68k_memory.
+
+	* include/vm68k/cpu.h: Make namespace vm68k.
+	* include/vm68k/memory.h: Likewise.
+	* include/vm68k/types.h: Likewise.
+	* vm68k/cpu.cc: Likewise.
+	* vm68k/memory.cc: Likewise.
+
+	* NEWS: New file.
+	* configure.in: Change version numbering.
+
 1998-10-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* configure.in (AC_TYPE_SIZE_T): Added.
