@@ -1,6 +1,14 @@
-TO DO List for Virtual X68000
+List of things to do in Virtual X68000.  -*-C++-*-
 
-$Date: Sun, 17 Dec 2000 20:00:45 +0900 $
+* To Test Screen Drawing by Mesa
+
+Screen drawing by Mesa should be tested.  Mesa has texture scaling and
+alpha blending that are missing in plain GTK+.  In addition, it could
+potentially take advantage of hardware acceleration on modern video
+cards.
+
+A possible drawback of using Mesa is worse performance on older
+hardware.  Can it be paid for better user interface?
 
 * Implement the DMA controller.
 
