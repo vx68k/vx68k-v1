@@ -142,12 +142,12 @@ namespace
 	{
 	  len = 4;
 	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
-	  disp = ec->mem->getw_signed(fc, ec->regs.pc + 2);
+	  disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
 	}
-      else if (disp >= 0x80)
-	disp -= 0x100;
+      else
+	disp = extsb(disp);
 #ifdef TRACE_STEPS
-      fprintf(stderr, " bne 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
+      fprintf(stderr, " bra 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
 #endif
 
       // XXX: The condition codes are not affected.
@@ -163,10 +163,10 @@ namespace
 	{
 	  len = 4;
 	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
-	  disp = ec->mem->getw_signed(fc, ec->regs.pc + 2);
+	  disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
 	}
-      else if (disp >= 0x80)
-	disp -= 0x100;
+      else
+	disp = extsb(disp);
 #ifdef TRACE_STEPS
       fprintf(stderr, " bsr 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
 #endif

@@ -1,5 +1,9 @@
 1999-03-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (bra, bsr): Use extsw and extsb to make
+	displacements.
+	(bra): Fix debug output.
+
 	* lib/vm68k/statusreg.cc (lt): New function.
 
 	* lib/vm68k/execunit.cc (bge): Do test condition code.
