@@ -35,6 +35,14 @@
 
 #define _(MSG) (MSG)
 
+#ifdef HAVE_NANA_H
+# include <nana.h>
+# include <cstdio>
+#else
+# include <cassert>
+# define I assert
+#endif
+
 using namespace std;
 using namespace vx68k;
 
@@ -105,43 +113,86 @@ namespace
     printf(_("      --help            display this help and exit\n"));
     printf(_("      --version         output version information and exit\n"));
     printf("\n");
-    printf(_("Report bugs to vx68k@lists.hypercore.co.jp\n"));
+    printf(_("Report bugs to <vx68k@lists.hypercore.co.jp>.\n"));
   }
 
-  struct machine_data
+  class vx68k_app
   {
-    machine *vm;
-    const char *const *argv;
+  protected:
+    static void *run_machine_thread(void *) throw ();
+
+  private:
+    const char *const *args;
+    machine vm;
     int status;
+
+  public:
+    vx68k_app(const char *const *args);
+
+  protected:
+    void run_machine();
+
+  public:
+    void run();
+    int exit_status() const
+      {return status;}
   };
-
-  void *
-  run_machine(void *data)
-    throw ()
-  {
-    try
-      {
-	machine_data *md = static_cast<machine_data *>(data);
-
-	human::dos env(md->vm);
-	if (opt_debug)
-	  env.set_debug_level(1);
-
-	human::dos_exec_context *c = env.create_context();
-	{
-	  human::shell p(c);
-	  md->status = p.exec(md->argv[0], md->argv + 1, environ);
-	}
-	delete c;
-      }
-    catch (exception &x)
-      {
-	fprintf(stderr, _("Unhandled exception in thread: %s\n"), x.what());
-      }
-
-    return NULL;
-  }
 } // (unnamed namespace)
+
+void
+vx68k_app::run_machine()
+{
+  human::dos env(&vm);
+  if (opt_debug)
+    env.set_debug_level(1);
+
+  human::dos_exec_context *c = env.create_context();
+  {
+    human::shell p(c);
+    status = p.exec(args[0], args + 1, environ);
+  }
+  delete c;
+}
+
+void *
+vx68k_app::run_machine_thread(void *data)
+  throw ()
+{
+  try
+    {
+      vx68k_app *app = static_cast<vx68k_app *>(data);
+      I(app != NULL);
+      app->run_machine();
+    }
+  catch (exception &x)
+    {
+      fprintf(stderr, _("Unhandled exception in thread: %s\n"), x.what());
+    }
+
+  return NULL;
+}
+
+void
+vx68k_app::run()
+{
+  if (opt_one_thread)
+    run_machine();
+  else
+    {
+      pthread_t vm_thread;
+      pthread_create(&vm_thread, NULL, &run_machine_thread, this);
+
+      pthread_join(vm_thread, NULL);
+    }
+}
+
+const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
+
+vx68k_app::vx68k_app(const char *const *a)
+  : args(a),
+    vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE)
+{
+}
 
 /* vx68k main.  */
 int
@@ -177,38 +228,9 @@ main(int argc, char **argv)
 
   try
     {
-      const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
-      machine vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE);
-
-      int status;
-      if (opt_one_thread)
-	{
-	  human::dos env(&vm);
-	  if (opt_debug)
-	    env.set_debug_level(1);
-
-	  human::dos_exec_context *c = env.create_context();
-	  {
-	    human::shell p(c);
-	    status = p.exec(argv[optind], argv + optind + 1, environ);
-	  }
-	  delete c;
-	}
-      else
-	{
-	  machine_data *md = new machine_data;
-	  md->vm = &vm;
-	  md->argv = argv + optind;
-
-	  pthread_t vm_thread;
-	  pthread_create(&vm_thread, NULL, &run_machine, md);
-
-	  pthread_join(vm_thread, NULL);
-	  status = md->status;
-	  delete md;
-	}
-
-      return status;
+      vx68k_app app(argv + optind);
+      app.run();
+      return app.exit_status();
     }
   catch (exception &x)
     {

@@ -1,3 +1,11 @@
+1999-07-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc: Add Nana support.
+	(display_help): Modify message.
+	(struct machine_data, run_machine): Removed.
+	(class vx68k_app): New class.
+	(main): Use vx68k_app.
+
 1999-07-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* Makefile.am (dist-snapshot distcheck-snapshot): Removed.
