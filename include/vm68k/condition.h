@@ -29,19 +29,19 @@ namespace vm68k
   namespace condition
   {
     struct cc
-      : unary_function<const context *, bool>
+      : unary_function<context, bool>
     {
-      bool operator()(const context *ec) const
-	{return ec->regs.sr.cc();}
+      bool operator()(const context &ec) const
+	{return ec.regs.sr.cc();}
       const char *text() const
 	{return "cc";}
     };
 
     struct cs
-      : unary_function<const context *, bool>
+      : unary_function<context, bool>
     {
-      bool operator()(const context *ec) const
-	{return ec->regs.sr.cs();}
+      bool operator()(const context &ec) const
+	{return ec.regs.sr.cs();}
       const char *text() const
 	{return "cs";}
     };

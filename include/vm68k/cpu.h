@@ -129,18 +129,18 @@ struct exception_listener
   class exec_unit
   {
   public:
-    typedef void (*insn_handler)(unsigned int, context *);
+    typedef void (*instruction_handler)(unsigned int, context &);
   public:
-    static void illegal(unsigned int, context *);
+    static void illegal(unsigned int, context &);
   protected:
     static void install_instructions(exec_unit *);
   private:
-    insn_handler instruction[0x10000];
+    instruction_handler instruction[0x10000];
   public:
     exec_unit();
   public:
-    void set_instruction(int op, int mask, insn_handler);
-    void dispatch(unsigned int op, context *) const;
+    void set_instruction(int op, int mask, instruction_handler);
+    void dispatch(unsigned int op, context &) const;
   };
 
   class context
@@ -165,13 +165,11 @@ struct exception_listener
 
     /* Steps one instruction.  */
     void step()
-      {eu->dispatch(fetchw(0), this);}
+      {eu->dispatch(fetchw(0), *this);}
 
     /* Starts the program.  */
     void run();
   };
-
-  typedef context execution_context;
 } // namespace vm68k
 
 #endif

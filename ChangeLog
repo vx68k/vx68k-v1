@@ -1,5 +1,18 @@
 1999-06-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/condition.h: Change interface to pass context by
+	reference instead of pointer.  Also change all users.
+
+	* include/vm68k/addressing.h: Change interface to pass context by
+	reference instead of pointer.  Also change all users.
+
+	* include/vm68k/types.h: Remove size test for uint_type.
+
+	* include/vm68k/cpu.h: Remove typedef execution_context.  Also
+	change all users.
+	(class exec_unit): Rename insn_handler to instruction_handler and
+	change the second argument to reference.  Also change all users.
+
 	* lib/vm68k/execunit.cc (lsrw_i): Renamed from lsrw_i_d.  Also
 	change all users.
 	(lsrw_i, lsrl_i): Change code to set condition codes properly.

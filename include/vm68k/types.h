@@ -27,11 +27,7 @@ namespace vm68k
 
   namespace types
   {
-#if UINT < 0xffff
-    typedef unsigned long uint_type;
-#else
     typedef unsigned int uint_type;
-#endif
 
 #if UINT_MAX >= 0xffffffff
 typedef int int32;

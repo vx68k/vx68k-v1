@@ -43,137 +43,126 @@ dos::execute (const char *name, const char *const *argv)
 
 namespace
 {
-  void dos_close(unsigned int op, execution_context *ec)
+  void dos_close(unsigned int op, context &ec)
     {
-      I(ec != NULL);
       VL((" DOS _CLOSE\n"));
 
       // FIXME.
-      int fd = extsw(ec->mem->getw(SUPER_DATA, ec->regs.a[7]));
-      ec->regs.d[0] = static_cast<dos_exec_context *>(ec)->close(fd);
+      int fd = extsw(ec.mem->getw(SUPER_DATA, ec.regs.a[7]));
+      ec.regs.d[0] = static_cast<dos_exec_context &>(ec).close(fd);
 
-      ec->regs.pc += 2;
+      ec.regs.pc += 2;
     }
 
-  void dos_exit2(unsigned int op, execution_context *ec)
+  void dos_exit2(unsigned int op, context &ec)
     {
-      I(ec != NULL);
       VL((" DOS _EXIT2\n"));
 
-      uint32 sp = ec->regs.a[7];
-      unsigned int status = ec->mem->getw(SUPER_DATA, sp + 0);
-      static_cast<dos_exec_context *>(ec)->exit(status);
+      uint32 sp = ec.regs.a[7];
+      unsigned int status = ec.mem->getw(SUPER_DATA, sp + 0);
+      static_cast<dos_exec_context &>(ec).exit(status);
     }
 
-  void dos_fgetc(unsigned int op, execution_context *ec)
+  void dos_fgetc(unsigned int op, context &ec)
     {
-      I(ec != NULL);
       VL((" DOS _FGETC\n"));
 
       // FIXME.
-      uint32 sp = ec->regs.a[7];
-      int fd = extsw(ec->mem->getw(SUPER_DATA, sp));
-      ec->regs.d[0] = static_cast<dos_exec_context *>(ec)->fgetc(fd);
+      uint32 sp = ec.regs.a[7];
+      int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
+      ec.regs.d[0] = static_cast<dos_exec_context &>(ec).fgetc(fd);
 
-      ec->regs.pc += 2;
+      ec.regs.pc += 2;
     }
 
-  void dos_ioctrl(unsigned int op,
-		  execution_context *ec)
+  void dos_ioctrl(unsigned int op, context &ec)
     {
-      I(ec != NULL);
 #ifdef L
       L(" DOS _IOCTRL");
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
       // FIXME.
-      ec->regs.d[0] = 0;
+      ec.regs.d[0] = 0;
 
-      ec->regs.pc += 2;
+      ec.regs.pc += 2;
     }
 
-  void dos_open(unsigned int op, execution_context *ec)
+  void dos_open(unsigned int op, context &ec)
     {
-      I(ec != NULL);
       VL((" DOS _OPEN\n"));
 
       // FIXME.
-      uint32 sp = ec->regs.a[7];
-      uint32 name_address = ec->mem->getl(SUPER_DATA, sp + 0);
-      unsigned int flags = ec->mem->getw(SUPER_DATA, sp + 4);
+      uint32 sp = ec.regs.a[7];
+      uint32 name_address = ec.mem->getl(SUPER_DATA, sp + 0);
+      unsigned int flags = ec.mem->getw(SUPER_DATA, sp + 4);
 
       char name[256];
-      ec->mem->read(SUPER_DATA, name_address, name, 256);
-      ec->regs.d[0] = static_cast<dos_exec_context *>(ec)->open(name, flags);
+      ec.mem->read(SUPER_DATA, name_address, name, 256);
+      ec.regs.d[0] = static_cast<dos_exec_context &>(ec).open(name, flags);
 
-      ec->regs.pc += 2;
+      ec.regs.pc += 2;
     }
 
-  void dos_print(unsigned int op, execution_context *ec)
+  void dos_print(unsigned int op, context &ec)
     {
-      I(ec != NULL);
       VL((" DOS _PRINT\n"));
 
-      uint32 address = ec->mem->getl(SUPER_DATA, ec->regs.a[7]);
+      uint32 address = ec.mem->getl(SUPER_DATA, ec.regs.a[7]);
 
       // FIXME.
       unsigned char buf[1];
       do
 	{
-	  buf[0] = ec->mem->getb(SUPER_DATA, address++);
+	  buf[0] = ec.mem->getb(SUPER_DATA, address++);
 	  if (buf[0] != 0)
 	    write(STDOUT_FILENO, buf, 1);
 	}
       while (buf[0] != 0);
 
-      ec->regs.pc += 2;
+      ec.regs.pc += 2;
     }
 
-  void dos_read(unsigned int op, execution_context *ec)
+  void dos_read(unsigned int op, context &ec)
     {
-      I(ec != NULL);
       VL((" DOS _READ\n"));
 
       // FIXME.
-      uint32 sp = ec->regs.a[7];
-      int fd = extsw(ec->mem->getw(SUPER_DATA, sp));
-      uint32 data = ec->mem->getl(SUPER_DATA, sp + 2);
-      uint32 size = ec->mem->getl(SUPER_DATA, sp + 6);
-      ec->regs.d[0] = static_cast<dos_exec_context *>(ec)->read(fd, data, size);
+      uint32 sp = ec.regs.a[7];
+      int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
+      uint32 data = ec.mem->getl(SUPER_DATA, sp + 2);
+      uint32 size = ec.mem->getl(SUPER_DATA, sp + 6);
+      ec.regs.d[0] = static_cast<dos_exec_context &>(ec).read(fd, data, size);
 
-      ec->regs.pc += 2;
+      ec.regs.pc += 2;
     }
 
-  void dos_seek(unsigned int op, execution_context *ec)
+  void dos_seek(unsigned int op, context &ec)
     {
-      I(ec != NULL);
       VL((" DOS _SEEK\n"));
 
       // FIXME.
-      uint32 sp = ec->regs.a[7];
-      int fd = extsw(ec->mem->getw(SUPER_DATA, sp));
-      int32 offset = extsl(ec->mem->getl(SUPER_DATA, sp + 2));
-      unsigned int whence = ec->mem->getw(SUPER_DATA, sp + 6);
-      ec->regs.d[0]
-	= static_cast<dos_exec_context *>(ec)->seek(fd, offset, whence);
+      uint32 sp = ec.regs.a[7];
+      int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
+      int32 offset = extsl(ec.mem->getl(SUPER_DATA, sp + 2));
+      unsigned int whence = ec.mem->getw(SUPER_DATA, sp + 6);
+      ec.regs.d[0]
+	= static_cast<dos_exec_context &>(ec).seek(fd, offset, whence);
 
-      ec->regs.pc += 2;
+      ec.regs.pc += 2;
     }
 
-  void dos_setblock(unsigned int op,
-		    execution_context *ec)
+  void dos_setblock(unsigned int op, context &ec)
     {
-      I(ec != NULL);
 #ifdef L
       L(" DOS _SETBLOCK");
-      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
       // FIXME.
-      ec->regs.d[0] = 0;
+      ec.regs.d[0] = 0;
 
-      ec->regs.pc += 2;
+      ec.regs.pc += 2;
     }
 } // (unnamed namespace)
 

@@ -234,7 +234,7 @@ dos_exec_context::load_executable(const char *name)
 }
 
 dos_exec_context::dos_exec_context(address_space *m, exec_unit *e)
-  : execution_context(m, e)
+  : context(m, e)
 {
 }
 

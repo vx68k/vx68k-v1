@@ -39,36 +39,36 @@ namespace vm68k
       size_t isize(size_t) const
 	{return 0;}
       // XXX: address is unimplemented.
-      int getb(const execution_context *ec) const
-	{return extsl(ec->regs.d[reg]);}
-      int getw(const execution_context *ec) const
-	{return extsw(ec->regs.d[reg]);}
-      int32 getl(const execution_context *ec) const
-	{return extsl(ec->regs.d[reg]);}
-      void putb(execution_context *ec, int value) const
+      int getb(const context &ec) const
+	{return extsl(ec.regs.d[reg]);}
+      int getw(const context &ec) const
+	{return extsw(ec.regs.d[reg]);}
+      int32 getl(const context &ec) const
+	{return extsl(ec.regs.d[reg]);}
+      void putb(context &ec, int value) const
 	{
 	  const uint32 MASK = ((uint32) 1u << 8) - 1;
-	  ec->regs.d[reg] = ec->regs.d[reg] & ~MASK | (uint32) value & MASK;
+	  ec.regs.d[reg] = ec.regs.d[reg] & ~MASK | (uint32) value & MASK;
 	}
-      void putw(execution_context *ec, int value) const
+      void putw(context &ec, int value) const
 	{
 	  const uint32 MASK = ((uint32) 1u << 16) - 1;
-	  ec->regs.d[reg] = ec->regs.d[reg] & ~MASK | (uint32) value & MASK;
+	  ec.regs.d[reg] = ec.regs.d[reg] & ~MASK | (uint32) value & MASK;
 	}
-      void putl(execution_context *ec, int32 value) const
-	{ec->regs.d[reg] = value;}
-      void finishb(execution_context *) const {}
-      void finishw(execution_context *) const {}
-      void finishl(execution_context *) const {}
-      const char *textb(const execution_context *ec) const
+      void putl(context &ec, int32 value) const
+	{ec.regs.d[reg] = value;}
+      void finishb(context &) const {}
+      void finishw(context &) const {}
+      void finishl(context &) const {}
+      const char *textb(const context &ec) const
 	{return textw(ec);}
-      const char *textw(const execution_context *) const
+      const char *textw(const context &) const
 	{
 	  static char buf[8];
 	  sprintf(buf, "%%d%d", reg);
 	  return buf;
 	}
-      const char *textl(const execution_context *ec) const
+      const char *textl(const context &ec) const
 	{return textw(ec);}
     };
 
@@ -84,25 +84,25 @@ namespace vm68k
 	{return 0;}
       // XXX: address is unimplemented.
       // XXX: getb, putb, and finishb are not available.
-      int getw(const execution_context *ec) const
-	{return extsw(ec->regs.a[reg]);}
-      int32 getl(const execution_context *ec) const
-	{return extsl(ec->regs.a[reg]);}
-      void putw(execution_context *ec, int value) const
-	{ec->regs.a[reg] = extsw(value);}
-      void putl(execution_context *ec, int32 value) const
-	{ec->regs.a[reg] = value;}
-      void finishw(execution_context *) const {}
-      void finishl(execution_context *) const {}
-      const char *textb(const execution_context *ec) const
+      int getw(const context &ec) const
+	{return extsw(ec.regs.a[reg]);}
+      int32 getl(const context &ec) const
+	{return extsl(ec.regs.a[reg]);}
+      void putw(context &ec, int value) const
+	{ec.regs.a[reg] = extsw(value);}
+      void putl(context &ec, int32 value) const
+	{ec.regs.a[reg] = value;}
+      void finishw(context &) const {}
+      void finishl(context &) const {}
+      const char *textb(const context &ec) const
 	{return textw(ec);}
-      const char *textw(const execution_context *) const
+      const char *textw(const context &) const
 	{
 	  static char buf[8];
 	  sprintf(buf, "%%a%d", reg);
 	  return buf;
 	}
-      const char *textl(const execution_context *ec) const
+      const char *textl(const context &ec) const
 	{return textw(ec);}
     };
 
@@ -116,32 +116,32 @@ namespace vm68k
     public:
       size_t isize(size_t) const
 	{return 0;}
-      uint32 address(const execution_context *ec) const
-	{return ec->regs.a[reg];}
-      int getb(const execution_context *ec) const
-	{return extsb(ec->mem->getb(ec->data_fc(), address(ec)));}
-      int getw(const execution_context *ec) const
-	{return extsw(ec->mem->getw(ec->data_fc(), address(ec)));}
-      int32 getl(const execution_context *ec) const
-	{return extsl(ec->mem->getl(ec->data_fc(), address(ec)));}
-      void putb(execution_context *ec, int value) const
-	{ec->mem->putb(ec->data_fc(), address(ec), value);}
-      void putw(execution_context *ec, int value) const
-	{ec->mem->putw(ec->data_fc(), address(ec), value);}
-      void putl(execution_context *ec, int32 value) const
-	{ec->mem->putl(ec->data_fc(), address(ec), value);}
-      void finishb(execution_context *) const {}
-      void finishw(execution_context *) const {}
-      void finishl(execution_context *) const {}
-      const char *textb(const execution_context *ec) const
+      uint32 address(const context &ec) const
+	{return ec.regs.a[reg];}
+      int getb(const context &ec) const
+	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
+      int getw(const context &ec) const
+	{return extsw(ec.mem->getw(ec.data_fc(), address(ec)));}
+      int32 getl(const context &ec) const
+	{return extsl(ec.mem->getl(ec.data_fc(), address(ec)));}
+      void putb(context &ec, int value) const
+	{ec.mem->putb(ec.data_fc(), address(ec), value);}
+      void putw(context &ec, int value) const
+	{ec.mem->putw(ec.data_fc(), address(ec), value);}
+      void putl(context &ec, int32 value) const
+	{ec.mem->putl(ec.data_fc(), address(ec), value);}
+      void finishb(context &) const {}
+      void finishw(context &) const {}
+      void finishl(context &) const {}
+      const char *textb(const context &ec) const
 	{return textw(ec);}
-      const char *textw(const execution_context *) const
+      const char *textw(const context &) const
 	{
 	  static char buf[8];
 	  sprintf(buf, "%%a%d@", reg);
 	  return buf;
 	}
-      const char *textl(const execution_context *ec) const
+      const char *textl(const context &ec) const
 	{return textw(ec);}
     };
 
@@ -156,33 +156,33 @@ namespace vm68k
       size_t isize(size_t) const
 	{return 0;}
       // XXX: address is unimplemented.
-      int getb(const execution_context *ec) const
-	{return extsb(ec->mem->getb(ec->data_fc(), ec->regs.a[reg]));}
-      int getw(const execution_context *ec) const
-	{return extsw(ec->mem->getw(ec->data_fc(), ec->regs.a[reg]));}
-      int32 getl(const execution_context *ec) const
-	{return extsl(ec->mem->getl(ec->data_fc(), ec->regs.a[reg]));}
-      void putb(execution_context *ec, int value) const
-	{ec->mem->putb(ec->data_fc(), ec->regs.a[reg], value);}
-      void putw(execution_context *ec, int value) const
-	{ec->mem->putw(ec->data_fc(), ec->regs.a[reg], value);}
-      void putl(execution_context *ec, int32 value) const
-	{ec->mem->putl(ec->data_fc(), ec->regs.a[reg], value);}
-      void finishb(execution_context *ec) const
-	{ec->regs.a[reg] += reg == 7 ? 2 : 1;} // XXX: %a7 is special.
-      void finishw(execution_context *ec) const
-	{ec->regs.a[reg] += 2;}
-      void finishl(execution_context *ec) const
-	{ec->regs.a[reg] += 4;}
-      const char *textb(const execution_context *ec) const
+      int getb(const context &ec) const
+	{return extsb(ec.mem->getb(ec.data_fc(), ec.regs.a[reg]));}
+      int getw(const context &ec) const
+	{return extsw(ec.mem->getw(ec.data_fc(), ec.regs.a[reg]));}
+      int32 getl(const context &ec) const
+	{return extsl(ec.mem->getl(ec.data_fc(), ec.regs.a[reg]));}
+      void putb(context &ec, int value) const
+	{ec.mem->putb(ec.data_fc(), ec.regs.a[reg], value);}
+      void putw(context &ec, int value) const
+	{ec.mem->putw(ec.data_fc(), ec.regs.a[reg], value);}
+      void putl(context &ec, int32 value) const
+	{ec.mem->putl(ec.data_fc(), ec.regs.a[reg], value);}
+      void finishb(context &ec) const
+	{ec.regs.a[reg] += reg == 7 ? 2 : 1;} // XXX: %a7 is special.
+      void finishw(context &ec) const
+	{ec.regs.a[reg] += 2;}
+      void finishl(context &ec) const
+	{ec.regs.a[reg] += 4;}
+      const char *textb(const context &ec) const
 	{return textw(ec);}
-      const char *textw(const execution_context *) const
+      const char *textw(const context &) const
 	{
 	  static char buf[8];
 	  sprintf(buf, "%%a%d@+", reg);
 	  return buf;
 	}
-      const char *textl(const execution_context *ec) const
+      const char *textl(const context &ec) const
 	{return textw(ec);}
     };
 
@@ -197,37 +197,37 @@ namespace vm68k
       size_t isize(size_t) const
 	{return 0;}
       // XXX: address is unimplemented.
-      int getb(const execution_context *ec) const
-	{return extsb(ec->mem->getb(ec->data_fc(),
-				    ec->regs.a[reg] - (reg == 7 ? 2 : 1)));}
+      int getb(const context &ec) const
+	{return extsb(ec.mem->getb(ec.data_fc(),
+				   ec.regs.a[reg] - (reg == 7 ? 2 : 1)));}
 				// XXX: %a7 is special.
-      int getw(const execution_context *ec) const
-	{return extsw(ec->mem->getw(ec->data_fc(), ec->regs.a[reg] - 2));}
-      int32 getl(const execution_context *ec) const
-	{return extsl(ec->mem->getl(ec->data_fc(), ec->regs.a[reg] - 4));}
-      void putb(execution_context *ec, int value) const
-	{ec->mem->putb(ec->data_fc(),
-		       ec->regs.a[reg] - (reg == 7 ? 2 : 1), value);}
+      int getw(const context &ec) const
+	{return extsw(ec.mem->getw(ec.data_fc(), ec.regs.a[reg] - 2));}
+      int32 getl(const context &ec) const
+	{return extsl(ec.mem->getl(ec.data_fc(), ec.regs.a[reg] - 4));}
+      void putb(context &ec, int value) const
+	{ec.mem->putb(ec.data_fc(),
+		      ec.regs.a[reg] - (reg == 7 ? 2 : 1), value);}
 				// XXX: %a7 is special.
-      void putw(execution_context *ec, int value) const
-	{ec->mem->putw(ec->data_fc(), ec->regs.a[reg] - 2, value);}
-      void putl(execution_context *ec, int32 value) const
-	{ec->mem->putl(ec->data_fc(), ec->regs.a[reg] - 4, value);}
-      void finishb(execution_context *ec) const
-	{ec->regs.a[reg] -= reg == 7 ? 2 : 1;} // XXX: %a7 is special.
-      void finishw(execution_context *ec) const
-	{ec->regs.a[reg] -= 2;}
-      void finishl(execution_context *ec) const
-	{ec->regs.a[reg] -= 4;}
-      const char *textb(const execution_context *ec) const
+      void putw(context &ec, int value) const
+	{ec.mem->putw(ec.data_fc(), ec.regs.a[reg] - 2, value);}
+      void putl(context &ec, int32 value) const
+	{ec.mem->putl(ec.data_fc(), ec.regs.a[reg] - 4, value);}
+      void finishb(context &ec) const
+	{ec.regs.a[reg] -= reg == 7 ? 2 : 1;} // XXX: %a7 is special.
+      void finishw(context &ec) const
+	{ec.regs.a[reg] -= 2;}
+      void finishl(context &ec) const
+	{ec.regs.a[reg] -= 4;}
+      const char *textb(const context &ec) const
 	{return textw(ec);}
-      const char *textw(const execution_context *) const
+      const char *textw(const context &) const
 	{
 	  static char buf[8];
 	  sprintf(buf, "%%a%d@-", reg);
 	  return buf;
 	}
-      const char *textl(const execution_context *ec) const
+      const char *textl(const context &ec) const
 	{return textw(ec);}
     };
 
@@ -245,32 +245,32 @@ namespace vm68k
     public:
       size_t isize(size_t) const
 	{return 2;}
-      uint32 address(const execution_context *ec) const
-	{return ec->regs.a[reg] + extsw(ec->fetchw(offset));}
-      int getb(const execution_context *ec) const
-	{return extsb(ec->mem->getb(ec->data_fc(), address(ec)));}
-      int getw(const execution_context *ec) const
-	{return extsw(ec->mem->getw(ec->data_fc(), address(ec)));}
-      int32 getl(const execution_context *ec) const
-	{return extsl(ec->mem->getl(ec->data_fc(), address(ec)));}
-      void putb(execution_context *ec, int value) const
-	{ec->mem->putb(ec->data_fc(), address(ec), value);}
-      void putw(execution_context *ec, int value) const
-	{ec->mem->putw(ec->data_fc(), address(ec), value);}
-      void putl(execution_context *ec, int32 value) const
-	{ec->mem->putl(ec->data_fc(), address(ec), value);}
-      void finishb(execution_context *) const {}
-      void finishw(execution_context *) const {}
-      void finishl(execution_context *) const {}
-      const char *textb(const execution_context *ec) const
+      uint32 address(const context &ec) const
+	{return ec.regs.a[reg] + extsw(ec.fetchw(offset));}
+      int getb(const context &ec) const
+	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
+      int getw(const context &ec) const
+	{return extsw(ec.mem->getw(ec.data_fc(), address(ec)));}
+      int32 getl(const context &ec) const
+	{return extsl(ec.mem->getl(ec.data_fc(), address(ec)));}
+      void putb(context &ec, int value) const
+	{ec.mem->putb(ec.data_fc(), address(ec), value);}
+      void putw(context &ec, int value) const
+	{ec.mem->putw(ec.data_fc(), address(ec), value);}
+      void putl(context &ec, int32 value) const
+	{ec.mem->putl(ec.data_fc(), address(ec), value);}
+      void finishb(context &) const {}
+      void finishw(context &) const {}
+      void finishl(context &) const {}
+      const char *textb(const context &ec) const
 	{return textw(ec);}
-      const char *textw(const execution_context *ec) const
+      const char *textw(const context &ec) const
 	{
 	  static char buf[16];
-	  sprintf(buf, "%%a%d@(%d)", reg, extsw(ec->fetchw(2)));
+	  sprintf(buf, "%%a%d@(%d)", reg, extsw(ec.fetchw(2)));
 	  return buf;
 	}
-      const char *textl(const execution_context *ec) const
+      const char *textl(const context &ec) const
 	{return textw(ec);}
     };
 
@@ -284,32 +284,32 @@ namespace vm68k
     public:
       size_t isize(size_t) const
 	{return 4;}
-      uint32 address(const execution_context *ec) const
-	{return ec->fetchl(offset);}
-      int getb(const execution_context *ec) const
-	{return extsb(ec->mem->getb(ec->data_fc(), address(ec)));}
-      int getw(const execution_context *ec) const
-	{return extsw(ec->mem->getw(ec->data_fc(), address(ec)));}
-      int32 getl(const execution_context *ec) const
-	{return extsl(ec->mem->getl(ec->data_fc(), address(ec)));}
-      void putb(execution_context *ec, int value) const
-	{ec->mem->putb(ec->data_fc(), address(ec), value);}
-      void putw(execution_context *ec, int value) const
-	{ec->mem->putw(ec->data_fc(), address(ec), value);}
-      void putl(execution_context *ec, int32 value) const
-	{ec->mem->putl(ec->data_fc(), address(ec), value);}
-      void finishb(execution_context *) const {}
-      void finishw(execution_context *) const {}
-      void finishl(execution_context *) const {}
-      const char *textb(const execution_context *ec) const
+      uint32 address(const context &ec) const
+	{return ec.fetchl(offset);}
+      int getb(const context &ec) const
+	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
+      int getw(const context &ec) const
+	{return extsw(ec.mem->getw(ec.data_fc(), address(ec)));}
+      int32 getl(const context &ec) const
+	{return extsl(ec.mem->getl(ec.data_fc(), address(ec)));}
+      void putb(context &ec, int value) const
+	{ec.mem->putb(ec.data_fc(), address(ec), value);}
+      void putw(context &ec, int value) const
+	{ec.mem->putw(ec.data_fc(), address(ec), value);}
+      void putl(context &ec, int32 value) const
+	{ec.mem->putl(ec.data_fc(), address(ec), value);}
+      void finishb(context &) const {}
+      void finishw(context &) const {}
+      void finishl(context &) const {}
+      const char *textb(const context &ec) const
 	{return textw(ec);}
-      const char *textw(const execution_context *ec) const
+      const char *textw(const context &ec) const
 	{
 	  static char buf[32];
 	  sprintf(buf, "0x%lx", (unsigned long) address(ec));
 	  return buf;
 	}
-      const char *textl(const execution_context *ec) const
+      const char *textl(const context &ec) const
 	{return textw(ec);}
     };
 
@@ -323,27 +323,27 @@ namespace vm68k
     public:
       size_t isize(size_t size) const
 	{return 2;}
-      uint32 address(const execution_context *ec) const
-	{return ec->regs.pc + extsw(ec->fetchw(offset));}
-      int getb(const execution_context *ec) const
-	{return extsb(ec->mem->getb(ec->data_fc(), address(ec)));}
-      int getw(const execution_context *ec) const
-	{return extsw(ec->mem->getw(ec->data_fc(), address(ec)));}
-      int32 getl(const execution_context *ec) const
-	{return extsl(ec->mem->getl(ec->data_fc(), address(ec)));}
+      uint32 address(const context &ec) const
+	{return ec.regs.pc + extsw(ec.fetchw(offset));}
+      int getb(const context &ec) const
+	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
+      int getw(const context &ec) const
+	{return extsw(ec.mem->getw(ec.data_fc(), address(ec)));}
+      int32 getl(const context &ec) const
+	{return extsl(ec.mem->getl(ec.data_fc(), address(ec)));}
       // XXX: putb, putw, and putl are unimplemented.
-      void finishb(execution_context *ec) const {}
-      void finishw(execution_context *ec) const {}
-      void finishl(execution_context *ec) const {}
-      const char *textb(const execution_context *ec) const
+      void finishb(context &ec) const {}
+      void finishw(context &ec) const {}
+      void finishl(context &ec) const {}
+      const char *textb(const context &ec) const
 	{return textw(ec);}
-      const char *textw(const execution_context *ec) const
+      const char *textw(const context &ec) const
 	{
 	  static char buf[16];
-	  sprintf(buf, "%%pc@(%d)", extsw(ec->fetchw(2)));
+	  sprintf(buf, "%%pc@(%d)", extsw(ec.fetchw(2)));
 	  return buf;
 	}
-      const char *textl(const execution_context *ec) const
+      const char *textl(const context &ec) const
 	{return textw(ec);}
     };
 
@@ -358,29 +358,29 @@ namespace vm68k
       size_t isize(size_t size) const
 	{return size;}
       // XXX: address in unimplemented.
-      int getb(const execution_context *ec) const
-	{return extsb(ec->fetchw(offset));}
-      int getw(const execution_context *ec) const
-	{return extsw(ec->fetchw(offset));}
-      int32 getl(const execution_context *ec) const
-	{return extsl(ec->fetchl(offset));}
+      int getb(const context &ec) const
+	{return extsb(ec.fetchw(offset));}
+      int getw(const context &ec) const
+	{return extsw(ec.fetchw(offset));}
+      int32 getl(const context &ec) const
+	{return extsl(ec.fetchl(offset));}
       // XXX: putb, putw, and putl are unimplemented.
-      void finishb(execution_context *) const {}
-      void finishw(execution_context *) const {}
-      void finishl(execution_context *) const {}
-      const char *textb(const execution_context *ec) const
+      void finishb(context &) const {}
+      void finishw(context &) const {}
+      void finishl(context &) const {}
+      const char *textb(const context &ec) const
 	{
 	  static char buf[32];
 	  sprintf(buf, "#0x%x", (unsigned int) getb(ec));
 	  return buf;
 	}
-      const char *textw(const execution_context *ec) const
+      const char *textw(const context &ec) const
 	{
 	  static char buf[32];
 	  sprintf(buf, "#0x%x", (unsigned int) getw(ec));
 	  return buf;
 	}
-      const char *textl(const execution_context *ec) const
+      const char *textl(const context &ec) const
 	{
 	  static char buf[32];
 	  sprintf(buf, "#0x%lx", (unsigned long) getl(ec));

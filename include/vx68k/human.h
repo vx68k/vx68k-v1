@@ -29,7 +29,7 @@ namespace vx68k
   namespace human
   {
     class dos_exec_context
-      : public execution_context
+      : public context
     {
     public:
       dos_exec_context(address_space *, exec_unit *);
