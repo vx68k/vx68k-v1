@@ -5,6 +5,7 @@
 	(longopts): Add `--one-thread' option.
 	(main): Handle `--one-thread'.
 	(display_help): Describe the new option.
+	(main): Change error message.
 
 	* TODO: Modified.
 

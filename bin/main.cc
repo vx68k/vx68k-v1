@@ -168,7 +168,8 @@ main(int argc, char **argv)
 
   if (argc <= optind)
     {
-      fprintf(stderr, _("Usage: %s FILE.X\n"), argv[0]);
+      fprintf(stderr, _("%s: missing command argument\n"), argv[0]);
+      fprintf(stderr, _("Try `%s --help' for more information.\n"), argv[0]);
       return EXIT_FAILURE;
     }
 
