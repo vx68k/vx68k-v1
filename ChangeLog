@@ -3,6 +3,9 @@
 	* lib/vm68k/execunit.cc (orw): New function.
 	(install_instructions): Add new handlers.
 
+	* include/vm68k/types.h: Add new types: uint_type, uint32_type,
+	sint_type, and sint32_type.
+
 	* configure.in: Move config.h into include.
 
 1999-06-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>

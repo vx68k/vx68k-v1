@@ -1171,10 +1171,11 @@ namespace
     L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
 #endif
 
-    unsigned int value1 = ea1.getw(ec);
-    unsigned int value2 = ec->regs.d[reg2];
-    unsigned int value = value2 | value1;
-    ec->regs.d[reg2] = value;
+    uint_type value1 = ea1.getw(ec);
+    uint_type value2 = ec->regs.d[reg2];
+    uint_type value = value2 | value1;
+    ec->regs.d[reg2]
+      = ec->regs.d[reg2] & ~0xffff | uint32_type(value) & 0xffff;
     ea1.finishw(ec);
     ec->regs.sr.set_cc(value);
 

@@ -23,26 +23,50 @@
 
 namespace vm68k
 {
+  using namespace std;
 
-namespace types
-{
+  namespace types
+  {
+#if UINT < 0xffff
+    typedef unsigned long uint_type;
+#else
+    typedef unsigned int uint_type;
+#endif
 
 #if UINT_MAX >= 0xffffffff
 typedef int int32;
+    typedef unsigned int uint32_type;
 typedef unsigned int uint32;
 #else
 typedef long int32;
+    typedef unsigned long uint32_type;
 typedef unsigned long uint32;
 #endif
 
 typedef unsigned short uint16;
 typedef unsigned char uint8;
 
-};				// namespace types
+#if INT_MIN >= -0x7fff
+    typedef long sint_type;
+#else
+    typedef int sint_type;
+#endif
 
-using namespace types;
+#if LONG_MIN >= -0x7fffffff
+# ifdef __GNUC__
+    typedef long long sint32_type;
+# else
+#  error No type that can hold m68k signed 32-bit number.
+# endif
+#elsif INT_MIN >= -0x7fffffff
+    typedef long sint32_type;
+#else
+    typedef int sint32_type;
+#endif
+  } // types
 
-};				// namespace vm68k
+  using namespace types;
+} // vm68k
 
 #endif
 
