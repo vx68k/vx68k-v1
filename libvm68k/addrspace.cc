@@ -1,4 +1,4 @@
-/* vx68k - Virtual X68000
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
@@ -38,8 +38,8 @@ using namespace std;
 
 namespace
 {
-  no_memory no_mem;
-} // (unnamed namespace)
+  default_memory null_memory;
+} // namespace (unnamed)
 
 /* Read a block of data from memory.  */
 void
@@ -155,6 +155,5 @@ address_space::set_pages(size_t first, size_t last, memory *p)
 
 address_space::address_space()
 {
-  fill(page_table + 0, page_table + NPAGES, &no_mem);
+  fill(page_table + 0, page_table + NPAGES, &null_memory);
 }
-

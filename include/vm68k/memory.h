@@ -1,4 +1,5 @@
-/* vx68k - Virtual X68000 (-*- C++ -*-)
+/* -*- C++ -*- */
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
@@ -67,8 +68,8 @@ namespace vm68k
     virtual void put_32(int, uint32_type, uint32_type);
   };
 
-  /* Memory page that always raises a bus error.  */
-  class no_memory: public memory
+  /* Default memory that always raises a bus error.  */
+  class default_memory: public memory
   {
   public:
     uint_type get_16(int, uint32_type) const;

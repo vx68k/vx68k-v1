@@ -1,3 +1,18 @@
+2000-07-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/addrspace.cc (namespace): Rename no_mem to null_memory.
+	Also change all users.
+
+	* libvm68k/defaultmem.cc (get_8, get_16, put_8, put_16): Moved
+	from memory.cc.  Avoid use of generate_bus_error.
+
+	* include/vm68k/memory.h (class default_memory): Renamed from
+	no_memory.  Also change all method definitions.
+
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Add defaultmem.cc.
+
+	* libvm68k/defaultmem.cc: New file.
+
 2000-07-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/systemrom.cc (iocs_b_sftsns): Get key modifiers.

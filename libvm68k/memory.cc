@@ -1,4 +1,4 @@
-/* vx68k - Virtual X68000
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
@@ -77,32 +77,4 @@ memory::put_32(int fc, uint32_type address, uint32_type value)
 {
   put_16(fc, address + 0, value >> 16);
   put_16(fc, address + 2, value);
-}
-
-uint_type
-no_memory::get_8(int fc, uint32_type address) const
-{
-  generate_bus_error(true, fc, address);
-  abort();
-}
-
-uint_type
-no_memory::get_16(int fc, uint32_type address) const
-{
-  generate_bus_error(true, fc, address);
-  abort();
-}
-
-void
-no_memory::put_8(int fc, uint32_type address, uint_type)
-{
-  generate_bus_error(false, fc, address);
-  abort();
-}
-
-void
-no_memory::put_16(int fc, uint32_type address, uint_type)
-{
-  generate_bus_error(false, fc, address);
-  abort();
 }
