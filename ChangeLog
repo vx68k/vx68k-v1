@@ -1,7 +1,23 @@
+1999-11-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/cpu.h (struct byte_type, struct word_type): Change
+	type of value_mask to uint32_type.  Use value_mask in get.
+	(struct long_word_size): Use constant in value_mask.
+
 1999-10-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* include/vm68k/addressing.h (class basic_d_register, class
 	basic_a_register, class basic_indirect): New class templates.
+	(class basic_a_register): Use long_word_size::put in put.
+	(class basic_postinc_indirect, class basic_predec_indirect, class
+	basic_disp_indirect, class basic_index_indirect, class
+	basic_abs_short, class basic_abs_long, class
+	basic_disp_pc_indirect, class basic_index_pc_indirect, class
+	basic_immediate): New class templates.
+	(class data_register): Fix data types.  Use *_size::get.
+	(class address_register): Likewise.  Use long_word_size::put in
+	putw and putl.
+	(class indirect): Fix data types.  Use *_size::get and put.
 
 	* include/vm68k/cpu.h (struct byte_size): Renamed from
 	byte_size_traits.  Also change all uses.

@@ -82,7 +82,7 @@ namespace vm68k
       svalue_type get(const context &c) const
 	{return Size::svalue(Size::get(c.regs.a[reg]));}
       void put(context &c, svalue_type value) const
-	{c.regs.a[reg] = Size::svalue(value);}
+	{long_word_size::put(c.regs.a[reg], value);}
       void finish(context &c) const {}
 
     public:
@@ -94,6 +94,7 @@ namespace vm68k
 	}
     };
 
+    // XXX Address register direct is not allowed for byte size.
     typedef basic_a_register<word_size> word_a_register;
     typedef basic_a_register<long_word_size> long_word_a_register;
 
@@ -132,6 +133,51 @@ namespace vm68k
     typedef basic_indirect<word_size> word_indirect;
     typedef basic_indirect<long_word_size> long_word_indirect;
 
+    template <class Size> class basic_postinc_indirect
+    {
+      // FIXME
+    };
+
+    template <class Size> class basic_predec_indirect
+    {
+      // FIXME
+    };
+
+    template <class Size> class basic_disp_indirect
+    {
+      // FIXME
+    };
+
+    template <class Size> class basic_index_indirect
+    {
+      // FIXME
+    };
+
+    template <class Size> class basic_abs_short
+    {
+      // FIXME
+    };
+
+    template <class Size> class basic_abs_long
+    {
+      // FIXME
+    };
+
+    template <class Size> class basic_disp_pc_indirect
+    {
+      // FIXME
+    };
+
+    template <class Size> class basic_index_pc_indirect
+    {
+      // FIXME
+    };
+
+    template <class Size> class basic_immediate
+    {
+      // FIXME
+    };
+
     /* --- */
 
     class data_register
@@ -146,16 +192,16 @@ namespace vm68k
 	{return 0;}
       // XXX: address is unimplemented.
       int getb(const context &ec) const
-	{return extsb(ec.regs.d[reg]);}
-      int getw(const context &ec) const
-	{return extsw(ec.regs.d[reg]);}
+	{return byte_size::svalue(byte_size::get(ec.regs.d[reg]));}
+      sint_type getw(const context &ec) const
+	{return word_size::svalue(word_size::get(ec.regs.d[reg]));}
       sint32_type getl(const context &ec) const
-	{return extsl(ec.regs.d[reg]);}
-      void putb(context &ec, uint_type value) const
+	{return long_word_size::svalue(long_word_size::get(ec.regs.d[reg]));}
+      void putb(context &ec, int value) const
 	{byte_size::put(ec.regs.d[reg], value);}
-      void putw(context &ec, uint_type value) const
+      void putw(context &ec, sint_type value) const
 	{word_size::put(ec.regs.d[reg], value);}
-      void putl(context &ec, uint32_type value) const
+      void putl(context &ec, sint32_type value) const
 	{long_word_size::put(ec.regs.d[reg], value);}
       void finishb(context &) const {}
       void finishw(context &) const {}
@@ -184,14 +230,14 @@ namespace vm68k
 	{return 0;}
       // XXX: address is unimplemented.
       // XXX: getb, putb, and finishb are not available.
-      int getw(const context &ec) const
-	{return extsw(ec.regs.a[reg]);}
+      sint_type getw(const context &ec) const
+	{return word_size::svalue(word_size::get(ec.regs.a[reg]));}
       sint32_type getl(const context &ec) const
-	{return extsl(ec.regs.a[reg]);}
-      void putw(context &ec, int value) const
-	{ec.regs.a[reg] = extsw(value);}
+	{return long_word_size::svalue(long_word_size::get(ec.regs.a[reg]));}
+      void putw(context &ec, sint_type value) const
+	{long_word_size::put(ec.regs.a[reg], value);}
       void putl(context &ec, sint32_type value) const
-	{ec.regs.a[reg] = value;}
+	{long_word_size::put(ec.regs.a[reg], value);}
       void finishw(context &) const {}
       void finishl(context &) const {}
       const char *textb(const context &ec) const
@@ -219,17 +265,21 @@ namespace vm68k
       uint32_type address(const context &ec) const
 	{return ec.regs.a[reg];}
       int getb(const context &ec) const
-	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
-      int getw(const context &ec) const
-	{return extsw(ec.mem->getw(ec.data_fc(), address(ec)));}
+	{return byte_size::svalue(byte_size::get(*ec.mem, ec.data_fc(),
+						 address(ec)));}
+      sint_type getw(const context &ec) const
+	{return word_size::svalue(word_size::get(*ec.mem, ec.data_fc(),
+						 address(ec)));}
       sint32_type getl(const context &ec) const
-	{return extsl(ec.mem->getl(ec.data_fc(), address(ec)));}
+	{return long_word_size::svalue(long_word_size::get(*ec.mem,
+							   ec.data_fc(),
+							   address(ec)));}
       void putb(context &ec, int value) const
-	{ec.mem->putb(ec.data_fc(), address(ec), value);}
-      void putw(context &ec, int value) const
-	{ec.mem->putw(ec.data_fc(), address(ec), value);}
+	{byte_size::put(*ec.mem, ec.data_fc(), address(ec), value);}
+      void putw(context &ec, sint_type value) const
+	{word_size::put(*ec.mem, ec.data_fc(), address(ec), value);}
       void putl(context &ec, sint32_type value) const
-	{ec.mem->putl(ec.data_fc(), address(ec), value);}
+	{long_word_size::put(*ec.mem, ec.data_fc(), address(ec), value);}
       void finishb(context &) const {}
       void finishw(context &) const {}
       void finishl(context &) const {}
