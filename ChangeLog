@@ -1,5 +1,8 @@
 1999-03-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (moveml_postinc_r): New function.
+	(install_instructions): Set instructions to the new function.
+
 	* include/debug.h: Include <cstdio>.
 
 	* lib/vm68k/execunit.cc: Use I and VL instead of assert and

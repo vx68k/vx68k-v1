@@ -362,7 +362,37 @@ namespace
 	  bitmap >>= 1;
 	}
 
-      ec->regs.pc += 4;
+      ec->regs.pc += 2 + 2;
+    }
+
+  void moveml_postinc_r(int op, execution_context *ec)
+    {
+      int reg = op & 0x0007;
+      unsigned int bitmap = ec->fetchw(2);
+      VL((" moveml %%a%d@+,#0x%x\n", reg, bitmap));
+
+      // XXX: The condition codes are not affected.
+      int fc = ec->data_fc();
+      for (int i = 0; i != 8; ++i)
+	{
+	  if (bitmap & 1 != 0)
+	    {
+	      ec->regs.d[i] = ec->mem->getl(fc, ec->regs.a[reg]);
+	      ec->regs.a[reg] += 4;
+	    }
+	  bitmap >>= 1;
+	}
+      for (int i = 0; i != 8; ++i)
+	{
+	  if (bitmap & 1 != 0)
+	    {
+	      ec->regs.a[i] = ec->mem->getl(fc, ec->regs.a[reg]);
+	      ec->regs.a[reg] += 4;
+	    }
+	  bitmap >>= 1;
+	}
+
+      ec->regs.pc += 2 + 2;
     }
 
   void moveql_d(int op, execution_context *ec)
@@ -464,6 +494,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x4260, 0x0007, &clrw_predec);
   eu->set_instruction(0x4879, 0x0000, &pea_absl);
   eu->set_instruction(0x48e0, 0x0007, &moveml_r_predec);
+  eu->set_instruction(0x4cd8, 0x0007, &moveml_postinc_r);
   eu->set_instruction(0x4a40, 0x0007, &tstw_d);
   eu->set_instruction(0x4e50, 0x0007, &link_a);
   eu->set_instruction(0x4e58, 0x0007, &unlk_a);
