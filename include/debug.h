@@ -19,6 +19,7 @@
 
 #ifdef HAVE_NANA_H
 
+#include <cstdio>
 #include <nana.h>
 
 #else /* not HAVE_NANA_H */

@@ -1,5 +1,10 @@
 1999-03-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/debug.h: Include <cstdio>.
+
+	* lib/vm68k/execunit.cc: Use I and VL instead of assert and
+	fprintf.
+
 	* README: Modified.
 
 	* include/debug.h (debug_printf): Removed.

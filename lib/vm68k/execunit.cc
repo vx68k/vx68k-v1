@@ -25,8 +25,8 @@
 #include <vm68k/cpu.h>
 
 #include <algorithm>
-#include <cstdio>
-#include <cassert>
+
+#include "debug.h"
 
 using namespace vm68k;
 using namespace std;
@@ -35,11 +35,11 @@ using namespace std;
 void
 exec_unit::execute(execution_context *ec) const
 {
-  assert (ec != NULL);
+  I (ec != NULL);
   for (;;)
     {
       unsigned int op = ec->fetchw(0);
-      assert (op < 0x10000);
+      I (op < 0x10000);
       instruction[op](op, ec);
     }
 }
@@ -48,8 +48,8 @@ exec_unit::execute(execution_context *ec) const
 void
 exec_unit::set_instruction(int code, int mask, insn_handler h)
 {
-  assert (code >= 0);
-  assert (code < 0x10000);
+  I (code >= 0);
+  I (code < 0x10000);
   code &= ~mask;
   for (int i = code; i <= (code | mask); ++i)
     {
@@ -75,14 +75,12 @@ namespace
 {
   void addqw_a(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int value = op >> 9 & 0x7;
       int reg = op & 0x7;
       if (value == 0)
 	value = 8;
-#ifdef TRACE_STEPS
-      fprintf(stderr, " addqw #%d,%%a%d\n", value, reg);
-#endif
+      VL((" addqw #%d,%%a%d\n", value, reg));
 
       // XXX: The condition codes are not affected.
       ec->regs.a[reg] += value;
@@ -92,7 +90,7 @@ namespace
 
   void beq(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int len = 2;
       int disp = op & 0xff;
       if (disp == 0)
@@ -102,9 +100,7 @@ namespace
 	}
       else
 	disp = extsb(disp);
-#ifdef TRACE_STEPS
-      fprintf(stderr, " beq 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
-#endif
+      VL((" beq 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp)));
 
       // XXX: The condition codes are not affected.
       ec->regs.pc += ec->regs.sr.eq() ? 2 + disp : len;
@@ -112,7 +108,7 @@ namespace
 
   void bge(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int len = 2;
       int disp = op & 0xff;
       if (disp == 0)
@@ -122,9 +118,7 @@ namespace
 	}
       else
 	disp = extsb(disp);
-#ifdef TRACE_STEPS
-      fprintf(stderr, " bge 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
-#endif
+      VL((" bge 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp)));
 
       // XXX: The condition codes are not affected.
       ec->regs.pc += ec->regs.sr.ge() ? 2 + disp : len;
@@ -132,7 +126,7 @@ namespace
 
   void bne(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int len = 2;
       int disp = op & 0xff;
       if (disp == 0)
@@ -142,9 +136,7 @@ namespace
 	}
       else
 	disp = extsb(disp);
-#ifdef TRACE_STEPS
-      fprintf(stderr, " bne 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
-#endif
+      VL((" bne 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp)));
 
       // XXX: The condition codes are not affected.
       ec->regs.pc += ec->regs.sr.ne() ? 2 + disp : len;
@@ -152,7 +144,7 @@ namespace
 
   void bra(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int len = 2;
       int disp = op & 0xff;
       if (disp == 0)
@@ -162,9 +154,7 @@ namespace
 	}
       else
 	disp = extsb(disp);
-#ifdef TRACE_STEPS
-      fprintf(stderr, " bra 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
-#endif
+      VL((" bra 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp)));
 
       // XXX: The condition codes are not affected.
       ec->regs.pc += 2 + disp;
@@ -172,7 +162,7 @@ namespace
 
   void bsr(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int len = 2;
       int disp = op & 0xff;
       if (disp == 0)
@@ -182,9 +172,7 @@ namespace
 	}
       else
 	disp = extsb(disp);
-#ifdef TRACE_STEPS
-      fprintf(stderr, " bsr 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp));
-#endif
+      VL((" bsr 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp)));
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
@@ -195,11 +183,9 @@ namespace
 
   void clrw_predec(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int reg = op & 0x7;
-#ifdef TRACE_STEPS
-      fprintf(stderr, " clrw %%a%d@-\n", reg);
-#endif
+      VL((" clrw %%a%d@-\n", reg));
 
       int fc = ec->data_fc();
       ec->mem->putw(fc, ec->regs.a[reg] - 2, 0);
@@ -211,13 +197,11 @@ namespace
 
   void lea_offset_a(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
       int offset = extsw(ec->fetchw(2));
-#ifdef TRACE_STEPS
-      fprintf(stderr, " lea %%a%d@(%ld),%%a%d\n", s_reg, (long) offset, d_reg);
-#endif
+      VL((" lea %%a%d@(%ld),%%a%d\n", s_reg, (long) offset, d_reg));
 
       // XXX: The condition codes are not affected.
       ec->regs.a[d_reg] = ec->regs.a[s_reg] + offset;
@@ -227,12 +211,10 @@ namespace
 
   void lea_absl_a(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int reg = op >> 9 & 0x7;
       uint32 address = ec->fetchl(2);
-#ifdef TRACE_STEPS
-      fprintf(stderr, " lea 0x%lx:l,%%a%d\n", (unsigned long) address, reg);
-#endif
+      VL((" lea 0x%lx:l,%%a%d\n", (unsigned long) address, reg));
 
       // XXX: The condition codes are not affected.
       ec->regs.a[reg] = address;
@@ -244,9 +226,7 @@ namespace
     {
       int reg = op & 0x0007;
       int disp = extsw(ec->fetchw(2));
-#ifdef TRACE_STEPS
-      fprintf(stderr, " link %%a%d,#%d\n", reg, disp);
-#endif
+      VL((" link %%a%d,#%d\n", reg, disp));
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
@@ -260,12 +240,10 @@ namespace
 
   void moveb_postinc_postinc(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
-#ifdef TRACE_STEPS
-      fprintf(stderr, " moveb %%a%d@+,%%a%d@+\n", s_reg, d_reg);
-#endif
+      VL((" moveb %%a%d@+,%%a%d@+\n", s_reg, d_reg));
 
       int fc = ec->data_fc();
       int value = extsb(ec->mem->getb(fc, ec->regs.a[s_reg]));
@@ -279,12 +257,10 @@ namespace
 
   void movew_absl_d(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int reg = op >> 9 & 0x7;
       uint32 address = ec->fetchl(2);
-#ifdef TRACE_STEPS
-      fprintf(stderr, " movew 0x%x,%%d%d\n", address, reg);
-#endif
+      VL((" movew 0x%x,%%d%d\n", address, reg));
 
       int fc = ec->data_fc();
       int value = extsw(ec->mem->getw(fc, address));
@@ -296,12 +272,10 @@ namespace
 
   void movew_d_predec(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
-#ifdef TRACE_STEPS
-      fprintf(stderr, " movew %%d%d,%%a%x@-\n", s_reg, d_reg);
-#endif
+      VL((" movew %%d%d,%%a%x@-\n", s_reg, d_reg));
 
       int fc = ec->data_fc();
       int value = extsw(ec->regs.d[s_reg]);
@@ -314,12 +288,10 @@ namespace
 
   void movew_d_absl(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int reg = op & 0x7;
       uint32 address = ec->fetchl(2);
-#ifdef TRACE_STEPS
-      fprintf(stderr, " movew %%d%d,0x%x\n", reg, address);
-#endif
+      VL((" movew %%d%d,0x%x\n", reg, address));
 
       int fc = ec->data_fc();
       int value = extsw(ec->regs.d[reg]);
@@ -331,12 +303,10 @@ namespace
 
   void movel_a_predec(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
-#ifdef TRACE_STEPS
-      fprintf(stderr, " movel %%a%d,%%a%d@-\n", s_reg, d_reg);
-#endif
+      VL((" movel %%a%d,%%a%d@-\n", s_reg, d_reg));
 
       int fc = ec->data_fc();
       int32 value = ec->regs.a[s_reg];
@@ -349,12 +319,10 @@ namespace
 
   void movel_postinc_a(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
-#ifdef TRACE_STEPS
-      fprintf(stderr, " movel %%a%d@+,%%a%d\n", s_reg, d_reg);
-#endif
+      VL((" movel %%a%d@+,%%a%d\n", s_reg, d_reg));
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
@@ -369,9 +337,7 @@ namespace
     {
       int reg = op & 0x0007;
       unsigned int bitmap = ec->fetchw(2);
-#ifdef TRACE_STEPS
-      fprintf(stderr, " moveml #0x%x,%%a%d@-\n", bitmap, reg);
-#endif
+      VL((" moveml #0x%x,%%a%d@-\n", bitmap, reg));
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
@@ -401,14 +367,12 @@ namespace
 
   void moveql_d(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int value = op & 0xff;
       int reg = op >> 9 & 0x7;
       if (value >= 0x80)
 	value -= 0x100;
-#ifdef TRACE_STEPS
-      fprintf(stderr, " moveql #%d,%%d%d\n", value, reg);
-#endif
+      VL((" moveql #%d,%%d%d\n", value, reg));
       
       ec->regs.d[reg] = value;
       ec->regs.sr.set_cc(value);
@@ -418,11 +382,9 @@ namespace
 
   void pea_absl(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       uint32 address = ec->fetchl(2);
-#ifdef TRACE_STEPS
-      fprintf(stderr, " pea 0x%lx:l\n", (unsigned long) address);
-#endif
+      VL((" pea 0x%lx:l\n", (unsigned long) address));
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
@@ -433,10 +395,8 @@ namespace
 
   void rts(int op, execution_context *ec)
     {
-      assert(ec != NULL);
-#ifdef TRACE_STEPS
-      fprintf(stderr, " rts\n");
-#endif
+      I(ec != NULL);
+      VL((" rts\n"));
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
@@ -447,14 +407,12 @@ namespace
 
   void subql_a(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int value = op >> 9 & 0x7;
       int reg = op & 0x7;
       if (value == 0)
 	value = 8;
-#ifdef TRACE_STEPS
-      fprintf(stderr, " subql #%d,%%a%d\n", value, reg);
-#endif
+      VL((" subql #%d,%%a%d\n", value, reg));
 
       // XXX: The condition codes are not affected.
       ec->regs.a[reg] -= value;
@@ -464,11 +422,9 @@ namespace
 
   void tstw_d(int op, execution_context *ec)
     {
-      assert(ec != NULL);
+      I(ec != NULL);
       int reg = op & 0x7;
-#ifdef TRACE_STEPS
-      fprintf(stderr, " tstw %%d%d\n", reg);
-#endif
+      VL((" tstw %%d%d\n", reg));
 
       int value = extsw(ec->regs.d[reg]);
       ec->regs.sr.set_cc(value);
@@ -479,9 +435,7 @@ namespace
   void unlk_a(int op, execution_context *ec)
     {
       int reg = op & 0x0007;
-#ifdef TRACE_STEPS
-      fprintf(stderr, " unlk %%a%d\n", reg);
-#endif
+      VL((" unlk %%a%d\n", reg));
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
@@ -497,7 +451,7 @@ namespace
 void
 exec_unit::install_instructions(exec_unit *eu)
 {
-  assert(eu != NULL);
+  I(eu != NULL);
 
   eu->set_instruction(0x10d8, 0x0e07, &moveb_postinc_postinc);
   eu->set_instruction(0x2058, 0x0e07, &movel_postinc_a);
