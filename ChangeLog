@@ -1,5 +1,11 @@
 2000-06-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (initialize): Use 0xfe0000 as initial
+	handler base address.
+	(dispatch_iocs_function, iocs_trap): Likewise.
+
+	* libvx68k/machine.cc (boot): Handle bus errors.
+
 	* libvm68k/execunit.cc (m68k_add_m): Renamed from m68k_add_r.
 	Also change all users.
 	(m68k_sub_m): Renamed from m68k_sub_r.  Also change all users.

@@ -107,7 +107,7 @@ system_rom::dispatch_iocs_function(context &c)
 
   uint32_type vecaddr = (funcno + 0x100u) * 4u;
   uint32_type addr = c.mem->getl(SUPER_DATA, vecaddr);
-  if (addr != vecaddr + 0xfc0000)
+  if (addr != vecaddr + 0xfe0000)
     {
 #ifdef HAVE_NANA_H
       L("system_rom: Installed IOCS function handler used\n");
@@ -136,7 +136,7 @@ namespace
   {
     uint32_type vecaddr = (15u + 32u) * 4u;
     uint32_type addr = c.mem->getl(SUPER_DATA, vecaddr);
-    if (addr != vecaddr + 0xfc0000)
+    if (addr != vecaddr + 0xfe0000)
       {
 #ifdef HAVE_NANA_H
 	L("iocs_trap: Installed TRAP handler used\n");
@@ -186,7 +186,7 @@ system_rom::initialize(address_space &as)
   L("system_rom: FIXME: `initialize' not fully implemented\n");
 #endif
 
-  uint32_type f = 0xfc0000;
+  uint32_type f = 0xfe0000;
   for (uint32_type i = 0u; i != 0x800u; i += 4)
     {
       as.putl(SUPER_DATA, i, f);

@@ -212,8 +212,28 @@ machine::boot(context &c)
 	  c.regs.pc = c.mem->getl(SUPER_DATA, ((op & 0xfu) + 32) * 4u);
 	  goto rerun;
 	}
-      else
-	throw;
+
+      throw;
+    }
+  catch (bus_error &e)
+    {
+      uint32_type vecaddr = 2u * 4u;
+      uint32_type addr = c.mem->getl(SUPER_DATA, vecaddr);
+      if (addr != vecaddr + 0xfe0000)
+	{
+#ifdef HAVE_NANA_H
+	  L("machine: Installed bus error handler used\n");
+#endif
+	  uint_type oldsr = c.sr();
+	  c.set_supervisor_state(true);
+	  c.regs.a[7] -= 6;
+	  c.mem->putl(SUPER_DATA, c.regs.a[7] + 2, c.regs.pc);
+	  c.mem->putw(SUPER_DATA, c.regs.a[7] + 0, oldsr);
+	  c.regs.pc = addr;
+	  goto rerun;
+	}
+
+      throw;
     }
 }
 
