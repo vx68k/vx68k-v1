@@ -145,12 +145,12 @@ namespace vm68k
 	{return textw(ec);}
     };
 
-    class postincrement_indirect
+    class postinc_indirect
     {
     private:
       int reg;
     public:
-      postincrement_indirect(int r, int)
+      postinc_indirect(int r, int)
 	: reg(r) {}
     public:
       size_t isize(size_t) const
@@ -186,12 +186,12 @@ namespace vm68k
 	{return textw(ec);}
     };
 
-    class predecrement_indirect
+    class predec_indirect
     {
     private:
       int reg;
     public:
-      predecrement_indirect(int r, int)
+      predec_indirect(int r, int)
 	: reg(r) {}
     public:
       size_t isize(size_t) const
@@ -230,6 +230,9 @@ namespace vm68k
       const char *textl(const execution_context *ec) const
 	{return textw(ec);}
     };
+
+    typedef postinc_indirect postincrement_indirect;
+    typedef predec_indirect predecrement_indirect;
 
     class disp_indirect
     {
