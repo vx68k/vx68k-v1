@@ -406,6 +406,7 @@ machine::configure(memory_address_space &as)
   as.set_pages(0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &tvram);
   as.set_pages(0xe80000 >> PAGE_SHIFT, 0xe82000 >> PAGE_SHIFT, &crtc);
   as.set_pages(0xe82000 >> PAGE_SHIFT, 0xe84000 >> PAGE_SHIFT, &palettes);
+  as.set_pages(0xe84000 >> PAGE_SHIFT, 0xe86000 >> PAGE_SHIFT, &dmac);
   as.set_pages(0xe86000 >> PAGE_SHIFT, 0xe88000 >> PAGE_SHIFT, &_area_set);
   as.set_pages(0xe88000 >> PAGE_SHIFT, 0xe8a000 >> PAGE_SHIFT, &mfp);
   as.set_pages(0xe8e000 >> PAGE_SHIFT, 0xe90000 >> PAGE_SHIFT, &system_ports);
@@ -434,6 +435,7 @@ machine::~machine()
 machine::machine(size_t memory_size)
   : _memory_size(memory_size),
     mem(memory_size),
+    dmac(rom),
     _area_set(&mem),
     scc(rom),
     master_as(new x68k_address_space(this)),

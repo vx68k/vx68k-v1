@@ -322,6 +322,24 @@ namespace vx68k
     void get_text_colors(unsigned int i, unsigned int j, unsigned char *out);
   };
 
+  /* Memory of DMAC input/output ports.  This memory is mapped to the
+     address range from 0xe84000 to 0xe86000 on X68000.  */
+  class dmac_memory: public memory
+  {
+  public:
+    explicit dmac_memory(system_rom &);
+    ~dmac_memory();
+
+  public:
+    /* Reads data from this object.  */
+    uint_type get_16(int, uint32_type) const;
+    unsigned int get_8(int, uint32_type) const;
+
+    /* Writes data to this object.  */
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, unsigned int);
+  };
+
   /* Area set register.  This object is mapped from 0xe86000 to
      0xe88000.  This object has only the area set register, which is
      at 0xe86001(b).  */

@@ -70,6 +70,7 @@ namespace vx68k
     text_video_memory tvram;
     crtc_memory crtc;
     palettes_memory palettes;
+    dmac_memory dmac;
     area_set _area_set;
     mfp_memory mfp;
     system_ports_memory system_ports;

@@ -720,47 +720,6 @@ namespace
     c.regs.d[0] = 0;
   }
 
-  /* Handles a _DMAMOVE call.  */
-  void
-  iocs_dmamove(context &c, unsigned long data)
-  {
-    unsigned int mode = byte_size::get(c.regs.d[1]);
-    uint32_type n = long_word_size::get(c.regs.d[2]);
-    uint32_type i = long_word_size::get(c.regs.a[1]);
-    uint32_type j = long_word_size::get(c.regs.a[2]);
-#ifdef HAVE_NANA_H
-    L("IOCS _DMAMOVE; %%d1:b=0x%02x %%d2=0x%08lx %%a1=0x%08lx %%a2=0x%08lx\n",
-      mode, n + 0UL, i + 0UL, j + 0UL);
-#endif
-
-    static const int increments[4] = {0, 1, -1, 0};
-    int i_inc = increments[mode & 0x3];
-    int j_inc = increments[mode >> 2 & 0x3];
-
-    if (mode >> 7 & 0x1)
-      {
-	// Copy from %a2@ to %a1@.
-	while (n-- > 0)
-	  {
-	    byte_size::put(*c.mem, SUPER_DATA, i,
-			   byte_size::get(*c.mem, SUPER_DATA, j));
-	    j += j_inc;
-	    i += i_inc;
-	  }
-      }
-    else
-      {
-	// Copy from %a1@ to %a2@.
-	while (n-- > 0)
-	  {
-	    byte_size::put(*c.mem, SUPER_DATA, j,
-			   byte_size::get(*c.mem, SUPER_DATA, i));
-	    i += i_inc;
-	    j += j_inc;
-	  }
-      }
-  }
-
   /* Handles a _FNTADR call.  */
   void
   iocs_fntadr(context &c, unsigned long data)
@@ -1406,7 +1365,6 @@ namespace
     rom->set_iocs_function(0x80, iocs_function_type(&iocs_b_intvcs, 0));
     rom->set_iocs_function(0x81, iocs_function_type(&iocs_b_super, 0));
     rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));
-    rom->set_iocs_function(0x8a, iocs_function_type(&iocs_dmamove, 0));
     rom->set_iocs_function(0x8e, iocs_function_type(&iocs_bootinf, 0));
     rom->set_iocs_function(0x8f, iocs_function_type(&iocs_romver, 0));
     rom->set_iocs_function(0x90, iocs_function_type(&iocs_g_clr_on, 0));

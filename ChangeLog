@@ -1,5 +1,25 @@
 2000-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/sccmem.cc (get_16, get_8, put_16, put_8): Use DL
+	instead of L.  Print a FIXME message only once.
+	(get_8, put_8): Change the value type.
+
+	* libvx68k/machine.cc (configure): Map DMAC.
+	(machine): Initialize member dmac.
+
+	* libvx68k/systemrom.cc (iocs_dmamove): Removed.
+	(initialize_iocs_functions): Remove installation of the removed
+	handler.
+
+	* libvx68k/dmacmem.cc: New file.
+	(get_16, get_8, put_16, put_8, ~dmac_memory, dmac_memory): New
+	function.
+	(iocs_dmamove, install_iocs_calls): New function.
+
+	* include/vx68k/machine.h (class machine): Add new member dmac.
+
+	* include/vx68k/memory.h (class dmac_memory): New class.
+
 	* libvx68k/sccmem.cc (install_iocs_calls): Add comments about
 	missing IOCS calls.
 
