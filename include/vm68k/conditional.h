@@ -1,5 +1,5 @@
 /* -*-C++-*- */
-/* vx68k - Virtual X68000
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
@@ -16,8 +16,8 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef _VM68K_CONDITION_H
-#define _VM68K_CONDITION_H 1
+#ifndef _VM68K_CONDITIONAL_H
+#define _VM68K_CONDITIONAL_H 1
 
 #include <vm68k/processor.h>
 
@@ -27,7 +27,7 @@ namespace vm68k
 {
   using namespace std;
 
-  namespace condition
+  namespace conditional
   {
     /* T condition.  */
     struct t: unary_function<context, bool>
@@ -170,7 +170,7 @@ namespace vm68k
       static const char *text()
       {return "le";}
     };
-  } // condition
-} // vm68k
+  }
+}
 
-#endif /* not _VM68K_CONDITION_H */
+#endif /* not _VM68K_CONDITIONAL_H */

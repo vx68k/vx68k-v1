@@ -25,7 +25,7 @@
 #include "instr.h"
 
 #include <vm68k/addressing.h>
-#include <vm68k/condition.h>
+#include <vm68k/conditional.h>
 #include <vm68k/processor.h>
 
 #include <cstdio>
@@ -43,7 +43,7 @@ using vm68k::byte_size;
 using vm68k::word_size;
 using vm68k::long_word_size;
 using namespace vm68k::types;
-using namespace vm68k::condition;
+using namespace vm68k::conditional;
 using namespace vm68k::addressing;
 
 #ifdef HAVE_NANA_H
