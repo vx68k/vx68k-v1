@@ -340,27 +340,27 @@ namespace
       VL((" moveml #0x%x,%%a%d@-\n", bitmap, reg));
 
       // XXX: The condition codes are not affected.
+      uint32 address = ec->regs.a[reg];
       int fc = ec->data_fc();
-      for (int i = 0; i != 8; ++i)
+      for (uint32 *i = ec->regs.a + 8; i != ec->regs.a + 0; --i)
 	{
 	  if (bitmap & 1 != 0)
 	    {
-	      ec->mem->putl(fc, ec->regs.a[reg] - 4,
-			    ec->regs.a[7 - i]);
-	      ec->regs.a[reg] -= 4;
+	      ec->mem->putl(fc, address - 4, *(i - 1));
+	      address -= 4;
 	    }
 	  bitmap >>= 1;
 	}
-      for (int i = 0; i != 8; ++i)
+      for (uint32 *i = ec->regs.d + 8; i != ec->regs.d + 0; --i)
 	{
 	  if (bitmap & 1 != 0)
 	    {
-	      ec->mem->putl(fc, ec->regs.a[reg] - 4,
-			    ec->regs.d[7 - i]);
-	      ec->regs.a[reg] -= 4;
+	      ec->mem->putl(fc, address - 4, *(i - 1));
+	      address -= 4;
 	    }
 	  bitmap >>= 1;
 	}
+      ec->regs.a[reg] = address;
 
       ec->regs.pc += 2 + 2;
     }
@@ -372,25 +372,27 @@ namespace
       VL((" moveml %%a%d@+,#0x%x\n", reg, bitmap));
 
       // XXX: The condition codes are not affected.
+      uint32 address = ec->regs.a[reg];
       int fc = ec->data_fc();
-      for (int i = 0; i != 8; ++i)
+      for (uint32 *i = ec->regs.d + 0; i != ec->regs.d + 8; ++i)
 	{
 	  if (bitmap & 1 != 0)
 	    {
-	      ec->regs.d[i] = ec->mem->getl(fc, ec->regs.a[reg]);
-	      ec->regs.a[reg] += 4;
+	      *i = ec->mem->getl(fc, address);
+	      address += 4;
 	    }
 	  bitmap >>= 1;
 	}
-      for (int i = 0; i != 8; ++i)
+      for (uint32 *i = ec->regs.a + 0; i != ec->regs.a + 8; ++i)
 	{
 	  if (bitmap & 1 != 0)
 	    {
-	      ec->regs.a[i] = ec->mem->getl(fc, ec->regs.a[reg]);
-	      ec->regs.a[reg] += 4;
+	      *i = ec->mem->getl(fc, address);
+	      address += 4;
 	    }
 	  bitmap >>= 1;
 	}
+      ec->regs.a[reg] = address;
 
       ec->regs.pc += 2 + 2;
     }
