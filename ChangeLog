@@ -1,5 +1,11 @@
 1999-05-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/addrspace.cc (read, getb, getw, write, putb, putw):
+	Mask address using ADDRESS_BIT.
+
+	* include/vm68k/memory.h: Rename MEMORY_SHIFT to ADDRESS_BIT.
+	Also update all referrers.
+
 	* lib/vm68k/execunit.cc (movel): Modify the log message.
 	(addl): New function template.
 	(install_instructions): Add new functions.

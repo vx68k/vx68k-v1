@@ -37,9 +37,9 @@ enum function_code
 const int PAGE_SHIFT = 12;
 const size_t PAGE_SIZE = (size_t) 1 << PAGE_SHIFT;
 
-// External mc68000 address is 24-bit size.
-const int MEMORY_SHIFT = 24;
-const size_t NPAGES = (size_t) 1 << MEMORY_SHIFT - PAGE_SHIFT;
+  // External mc68000 address is 24-bit size.
+  const int ADDRESS_BIT = 24;
+  const size_t NPAGES = (size_t) 1 << ADDRESS_BIT - PAGE_SHIFT;
 
 uint16 getw (const void *);
 uint32 getl (const void *);

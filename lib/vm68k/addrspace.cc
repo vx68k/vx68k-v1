@@ -36,7 +36,8 @@ address_space::read(int fc, uint32 address, void *data, size_t size) const
 {
   while (size != 0)
     {
-      uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
+      address &= ((uint32) 1 << ADDRESS_BIT) - 1;
+      uint32 p = address >> PAGE_SHIFT;
       size_t done = page_table[p]->read(fc, address, data, size);
       I(done != 0);
       I(done <= size);
@@ -49,7 +50,8 @@ address_space::read(int fc, uint32 address, void *data, size_t size) const
 unsigned int
 address_space::getb(int fc, uint32 address) const
 {
-  uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
+  address &= ((uint32) 1 << ADDRESS_BIT) - 1;
+  uint32 p = address >> PAGE_SHIFT;
   return page_table[p]->getb(fc, address);
 }
 
@@ -57,7 +59,8 @@ address_space::getb(int fc, uint32 address) const
 unsigned int
 address_space::getw (int fc, uint32 address) const
 {
-  uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
+  address &= ((uint32) 1 << ADDRESS_BIT) - 1;
+  uint32 p = address >> PAGE_SHIFT;
   return page_table[p]->getw (fc, address);
 }
 
@@ -75,7 +78,8 @@ address_space::write(int fc, uint32 address, const void *data, size_t size)
 {
   while (size != 0)
     {
-      uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
+      address &= ((uint32) 1 << ADDRESS_BIT) - 1;
+      uint32 p = address >> PAGE_SHIFT;
       size_t done = page_table[p]->write(fc, address, data, size);
       I(done != 0);
       I(done <= size);
@@ -88,7 +92,8 @@ address_space::write(int fc, uint32 address, const void *data, size_t size)
 void
 address_space::putb(int fc, uint32 address, unsigned int value)
 {
-  uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
+  address &= ((uint32) 1 << ADDRESS_BIT) - 1;
+  uint32 p = address >> PAGE_SHIFT;
   page_table[p]->putb(fc, address, value);
 }
 
@@ -96,7 +101,8 @@ address_space::putb(int fc, uint32 address, unsigned int value)
 void
 address_space::putw (int fc, uint32 address, unsigned int value)
 {
-  uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
+  address &= ((uint32) 1 << ADDRESS_BIT) - 1;
+  uint32 p = address >> PAGE_SHIFT;
   page_table[p]->putw (fc, address, value);
 }
 
