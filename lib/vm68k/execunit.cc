@@ -35,6 +35,7 @@
 # include <cassert>
 # define I assert
 # define VL(EXPR)
+# undef TRACE_INSTRUCTIONS
 #endif
 
 using namespace vm68k;
@@ -85,7 +86,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" addb %s", ea1.textb(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -106,7 +107,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" addw %s", ea1.textw(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -127,7 +128,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" addw %%d%u", reg2);
     L(",%s\n", ea1.textw(ec));
 #endif
@@ -147,7 +148,7 @@ namespace
     {
       Source ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" addl %s", ea1.textl(ec));
       L(",%%d%d\n", reg2);
 #endif
@@ -167,7 +168,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" addl %%d%u", reg2);
     L(",%s\n", ea1.textl(ec));
 #endif
@@ -187,7 +188,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     address_register ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" addaw %s", ea1.textw(c));
     L(",%s\n", ea2.textw(c));
 #endif
@@ -208,7 +209,7 @@ namespace
     {
       Destination ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" addal %s", ea1.textl(ec));
       L(",%%a%d\n", reg2);
 #endif
@@ -228,7 +229,7 @@ namespace
     {
       int32 value2 = extsl(ec.fetchl(2));
       Destination ea1(op & 0x7, 2 + 4);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" addil #%ld", (long) value2);
       L(",%s\n", ea1.textl(ec));
 #endif
@@ -249,7 +250,7 @@ namespace
       int value2 = op >> 9 & 0x7;
       if (value2 == 0)
 	value2 = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" addqb #%d", value2);
       L(",%s\n", ea1.textb(ec));
 #endif
@@ -270,7 +271,7 @@ namespace
       int value2 = op >> 9 & 0x7;
       if (value2 == 0)
 	value2 = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" addqw #%d", value2);
       L(",%s\n", ea1.textw(ec));
 #endif
@@ -291,7 +292,7 @@ namespace
       int value2 = op >> 9 & 0x7;
       if (value2 == 0)
 	value2 = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" addqw #%d", value2);
       L(",%s\n", ea1.textw(ec));
 #endif
@@ -313,7 +314,7 @@ namespace
       int value2 = op >> 9 & 0x7;
       if (value2 == 0)
 	value2 = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" addql #%d", value2);
       L(",%s\n", ea1.textl(ec));
 #endif
@@ -334,7 +335,7 @@ namespace
       int value2 = op >> 9 & 0x7;
       if (value2 == 0)
 	value2 = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" addql #%d", value2);
       L(",%s\n", ea1.textl(ec));
 #endif
@@ -353,7 +354,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" andb %s", ea1.textb(c));
     L(",%%d%u\n", reg2);
 #endif
@@ -374,7 +375,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" andw %s", ea1.textw(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -395,7 +396,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" andl %s", ea1.textl(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -431,7 +432,7 @@ namespace
   {
     sint_type value2 = extsb(c.fetchw(2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" andib #0x%x", uint_type(value2) & 0xffu);
     L(",%s\n", ea1.textb(c));
 #endif
@@ -450,7 +451,7 @@ namespace
   {
     sint_type value2 = extsw(ec.fetchw(2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" andiw #0x%x", uint_type(value2));
     L(",%s\n", ea1.textw(ec));
 #endif
@@ -469,7 +470,7 @@ namespace
   {
     sint32_type value2 = extsl(ec.fetchl(2));
     Destination ea1(op & 0x7, 2 + 4);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" andil #0x%lx", (unsigned long) value2);
     L(",%s\n", ea1.textl(ec));
 #endif
@@ -490,7 +491,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" asll #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -508,7 +509,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" asll %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -529,7 +530,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" asrl #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -547,7 +548,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" asrl %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -577,7 +578,7 @@ namespace
 	disp = extsb(disp);
 	len = 0;
       }
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" b%s 0x%lx\n", cond.text(), (unsigned long) (ec.regs.pc + 2 + disp));
 #endif
 
@@ -615,7 +616,9 @@ namespace
 	}
       else
 	disp = extsb(disp);
+#ifdef TRACE_INSTRUCTIONS
       VL((" beq 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp)));
+#endif
 
       // XXX: The condition codes are not affected.
       ec.regs.pc += ec.regs.sr.eq() ? 2 + disp : len;
@@ -633,7 +636,9 @@ namespace
 	}
       else
 	disp = extsb(disp);
+#ifdef TRACE_INSTRUCTIONS
       VL((" bge 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp)));
+#endif
 
       // XXX: The condition codes are not affected.
       ec.regs.pc += ec.regs.sr.ge() ? 2 + disp : len;
@@ -651,7 +656,7 @@ namespace
 	}
       else
 	disp = extsb(disp);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" bmi 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp));
 #endif
 
@@ -671,7 +676,9 @@ namespace
 	}
       else
 	disp = extsb(disp);
+#ifdef TRACE_INSTRUCTIONS
       VL((" bne 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp)));
+#endif
 
       // XXX: The condition codes are not affected.
       ec.regs.pc += ec.regs.sr.ne() ? 2 + disp : len;
@@ -682,7 +689,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int bit = ec.fetchw(2) & 0x1f;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" bclrl #%u", bit);
     L(",%%d%u\n", reg1);
 #endif
@@ -709,7 +716,9 @@ namespace
 	}
       else
 	disp = extsb(disp);
+#ifdef TRACE_INSTRUCTIONS
       VL((" bra 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp)));
+#endif
 
       // XXX: The condition codes are not affected.
       ec.regs.pc += 2 + disp;
@@ -720,7 +729,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int bit = ec.fetchw(2) & 0x1f;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" bsetl #%u", bit);
     L(",%%d%u\n", reg1);
 #endif
@@ -747,7 +756,9 @@ namespace
 	}
       else
 	disp = extsb(disp);
+#ifdef TRACE_INSTRUCTIONS
       VL((" bsr 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp)));
+#endif
 
       // XXX: The condition codes are not affected.
       int fc = ec.data_fc();
@@ -761,7 +772,7 @@ namespace
   {
     unsigned int bit = c.fetchw(2) & 0x7;
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" btstb #%u", bit);
     L(",%s\n", ea1.textb(c));
 #endif
@@ -778,7 +789,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int bit = ec.fetchw(2) & 0x1f;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" btstl #%u", bit);
     L(",%%d%u\n", reg1);
 #endif
@@ -794,7 +805,9 @@ namespace
   clrb(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
+#ifdef TRACE_INSTRUCTIONS
       VL((" clrb %s\n", ea1.textb(ec)));
+#endif
 
       ea1.putb(ec, 0);
       ea1.finishb(ec);
@@ -807,7 +820,9 @@ namespace
   clrw(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
+#ifdef TRACE_INSTRUCTIONS
       VL((" clrw %s\n", ea1.textw(ec)));
+#endif
 
       ea1.putw(ec, 0);
       ea1.finishw(ec);
@@ -825,7 +840,9 @@ namespace
   clrl(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
+#ifdef TRACE_INSTRUCTIONS
       VL((" clrl %s\n", ea1.textl(ec)));
+#endif
 
       ea1.putl(ec, 0);
       ea1.finishl(ec);
@@ -839,7 +856,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" cmpb %s", ea1.textb(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -858,7 +875,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" cmpw %s", ea1.textw(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -877,7 +894,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" cmpl %s", ea1.textl(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -896,7 +913,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" cmpaw %s", ea1.textw(ec));
     L(",%%a%u\n", reg2);
 #endif
@@ -915,7 +932,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" cmpal %s", ea1.textl(ec));
     L(",%%a%u\n", reg2);
 #endif
@@ -934,7 +951,7 @@ namespace
   {
     sint_type value2 = extsb(ec.fetchw(2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" cmpib #0x%x", uint_type(value2));
     L(",%s\n", ea1.textb(ec));
 #endif
@@ -952,7 +969,7 @@ namespace
   {
     sint_type value2 = extsw(ec.fetchw(2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" cmpiw #0x%x", uint_type(value2));
     L(",%s\n", ea1.textw(ec));
 #endif
@@ -970,7 +987,7 @@ namespace
   {
     sint32_type value2 = extsw(c.fetchl(2));
     Destination ea1(op & 0x7, 2 + 4);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" cmpil #%#lx", (unsigned long) value2);
     L(",%s\n", ea1.textl(c));
 #endif
@@ -988,7 +1005,7 @@ namespace
   {
     postinc_indirect ea1(op & 0x7, 2);
     postinc_indirect ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" cmpb %s", ea1.textb(c));
     L(",%s\n", ea2.textb(c));
 #endif
@@ -1008,7 +1025,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" divuw %s", ea1.textw(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -1029,7 +1046,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" eorb %%d%u", reg2);
     L(",%s\n", ea1.textb(ec));
 #endif
@@ -1049,7 +1066,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" eorw %%d%u", reg2);
     L(",%s\n", ea1.textw(ec));
 #endif
@@ -1069,7 +1086,7 @@ namespace
   {
     data_register ea2(op >> 9 & 0x7, 2);
     Destination ea1(op & 0x7, 2 + ea2.isize(4));
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" eorl %s", ea2.textl(c));
     L(",%s\n", ea1.textl(c));
 #endif
@@ -1090,7 +1107,7 @@ namespace
   {
     sint_type value2 = extsw(ec.fetchw(2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" eoriw #0x%x", uint_type(value2));
     L(",%s\n", ea1.textw(ec));
 #endif
@@ -1109,7 +1126,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     int disp = extsw(ec.fetchw(2));
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" dbf %%d%d", reg1);
     L(",0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp));
 #endif
@@ -1126,7 +1143,7 @@ namespace
   {
     Register1 ea1(op & 0x7, 2);
     Register2 ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" exgl %s", ea2.textl(c));
     L(",%s\n", ea1.textl(c));
 #endif
@@ -1146,7 +1163,7 @@ namespace
   extw(uint_type op, context &c, instruction_data *data)
   {
     data_register ea1(op & 0x7, 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" extw %s\n", ea1.textw(c));
 #endif
 
@@ -1162,7 +1179,7 @@ namespace
   extl(unsigned int op, context &ec, instruction_data *data)
   {
     unsigned int reg1 = op & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" extl %%d%u\n", reg1);
 #endif
 
@@ -1177,7 +1194,7 @@ namespace
   jmp(uint_type op, context &c, instruction_data *data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" jmp %s\n", ea1.textw(c));
 #endif
 
@@ -1191,7 +1208,7 @@ namespace
   jsr(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" jsr %s\n", ea1.textw(ec));
 #endif
 
@@ -1208,7 +1225,7 @@ namespace
     {
       Destination ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" lea %s", ea1.textw(ec));
       L(",%%a%d\n", reg2);
 #endif
@@ -1225,7 +1242,9 @@ namespace
     {
       int reg = op & 0x0007;
       int disp = extsw(ec.fetchw(2));
+#ifdef TRACE_INSTRUCTIONS
       VL((" link %%a%d,#%d\n", reg, disp));
+#endif
 
       // XXX: The condition codes are not affected.
       int fc = ec.data_fc();
@@ -1244,7 +1263,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" lslb #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -1265,7 +1284,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" lslw #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -1284,7 +1303,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" lslw %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -1306,7 +1325,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" lsll #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -1324,7 +1343,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" lsll %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -1345,7 +1364,7 @@ namespace
     if (count == 0)
       count = 8;
     data_register ea1(op & 0x7, 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" lsrb #%u", count);
     L(",%s\n", ea1.textb(c));
 #endif
@@ -1365,7 +1384,7 @@ namespace
     uint_type count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" lsrw #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -1384,7 +1403,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" lsrw %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -1406,7 +1425,7 @@ namespace
     uint_type count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" lsrl #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -1424,7 +1443,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" lsrl %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -1443,7 +1462,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" moveb %s", ea1.textb(ec));
     L(",%s\n", ea2.textb(ec));
 #endif
@@ -1500,7 +1519,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" movew %s", ea1.textw(ec));
     L(",%s\n", ea2.textw(ec));
 #endif
@@ -1569,8 +1588,10 @@ namespace
     {
       Source ea1(op & 0x7, 2);
       Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
+#ifdef TRACE_INSTRUCTIONS
       VL((" movel %s", ea1.textl(ec)));
       VL((",%s\n", ea2.textl(ec)));
+#endif
 
       int32 value = ea1.getl(ec);
       ea2.putl(ec, value);
@@ -1586,7 +1607,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     address_register ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" moveaw %s", ea1.textw(c));
     L(",%s\n", ea2.textw(c));
 #endif
@@ -1605,8 +1626,10 @@ namespace
     {
       Source ea1(op & 0x7, 2);
       address_register ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
+#ifdef TRACE_INSTRUCTIONS
       VL((" moveal %s", ea1.textl(ec)));
       VL((",%s\n", ea2.textl(ec)));
+#endif
 
       // XXX: The condition codes are not affected by this
       // instruction.
@@ -1624,7 +1647,9 @@ namespace
     {
       int reg = op & 0x0007;
       unsigned int bitmap = ec.fetchw(2);
+#ifdef TRACE_INSTRUCTIONS
       VL((" moveml #0x%x,%%a%d@-\n", bitmap, reg));
+#endif
 
       // XXX: The condition codes are not affected.
       uint32 address = ec.regs.a[reg];
@@ -1658,7 +1683,7 @@ namespace
     {
       Source ea1(op & 0x7, 4);
       unsigned int bitmap = ec.fetchw(2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" moveml %s", ea1.textl(ec));
       L(",#0x%04x\n", bitmap);
 #endif
@@ -1695,7 +1720,7 @@ namespace
     {
       int reg1 = op & 0x7;
       unsigned int bitmap = ec.fetchw(2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" moveml %%a%d@+", reg1);
       L(",#0x%04x\n", bitmap);
 #endif
@@ -1731,7 +1756,9 @@ namespace
     {
       int value = extsb(op & 0xff);
       int reg = op >> 9 & 0x7;
+#ifdef TRACE_INSTRUCTIONS
       VL((" moveql #%d,%%d%d\n", value, reg));
+#endif
       
       ec.regs.d[reg] = value;
       ec.regs.sr.set_cc(value);
@@ -1744,7 +1771,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" mulsw %s", ea1.textw(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -1764,7 +1791,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" muluw %s", ea1.textw(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -1784,7 +1811,7 @@ namespace
   negw(uint_type op, context &ec, instruction_data *data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" negw %s\n", ea1.textw(ec));
 #endif
 
@@ -1801,7 +1828,7 @@ namespace
   negl(unsigned int op, context &ec, instruction_data *data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" negl %s\n", ea1.textl(ec));
 #endif
 
@@ -1819,7 +1846,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" orb %s", ea1.textb(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -1840,7 +1867,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" orw %s", ea1.textw(ec));
     L(",%%d%d\n", reg2);
 #endif
@@ -1861,7 +1888,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" orl %s", ea1.textl(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -1881,7 +1908,7 @@ namespace
   {
     sint_type value2 = extsb(ec.fetchw(2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" orib #0x%x", uint_type(value2) & 0xff);
     L(",%s\n", ea1.textb(ec));
 #endif
@@ -1900,7 +1927,7 @@ namespace
   {
     sint_type value2 = extsw(c.fetchw(2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" oriw #0x%x", uint_type(value2) & 0xffffu);
     L(",%s\n", ea1.textw(c));
 #endif
@@ -1919,7 +1946,7 @@ namespace
   {
     sint32_type value2 = extsl(c.fetchl(2));
     Destination ea1(op & 0x7, 2 + 4);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" oril #0x%lx", (unsigned long) value2);
     L(",%s\n", ea1.textl(c));
 #endif
@@ -1937,7 +1964,7 @@ namespace
   pea(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" pea %s\n", ea1.textw(ec));
 #endif
 
@@ -1955,7 +1982,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" rolb %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -1978,7 +2005,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" rolw #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -2000,7 +2027,7 @@ namespace
     if (count == 0)
       count = 8;
     data_register ea1(op & 0x7, 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" roll #%u", count);
     L(",%s\n", ea1.textl(c));
 #endif
@@ -2023,7 +2050,7 @@ namespace
     if (count == 0)
       count = 8;
     data_register ea1(op & 0x7, 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" rorw #%u", count);
     L(",%s\n", ea1.textw(c));
 #endif
@@ -2045,7 +2072,7 @@ namespace
     if (count == 0)
       count = 8;
     data_register ea1(op & 0x7, 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" roxrw #%u", count);
     L(",%s\n", ea1.textw(c));
 #endif
@@ -2068,7 +2095,7 @@ namespace
     if (count == 0)
       count = 8;
     data_register ea1(op & 0x7, 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" roxrl #%u", count);
     L(",%s\n", ea1.textl(c));
 #endif
@@ -2087,7 +2114,9 @@ namespace
   void
   rts(unsigned int op, context &ec, instruction_data *data)
     {
+#ifdef TRACE_INSTRUCTIONS
       VL((" rts\n"));
+#endif
 
       // XXX: The condition codes are not affected.
       int fc = ec.data_fc();
@@ -2101,7 +2130,7 @@ namespace
   {
     Condition cond;
     Destination ea1(op & 0x7, 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" s%sb %s\n", cond.text(), ea1.textb(ec));
 #endif
 
@@ -2117,7 +2146,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" subb %s", ea1.textb(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -2160,7 +2189,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" subw %s", ea1.textw(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -2181,8 +2210,10 @@ namespace
     {
       Destination ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
+#ifdef TRACE_INSTRUCTIONS
       VL((" subl %s", ea1.textl(ec)));
       VL((",%%d%d\n", reg2));
+#endif
 
       int32 value1 = ea1.getl(ec);
       int32 value2 = extsl(ec.regs.d[reg2]);
@@ -2199,7 +2230,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" subl %%d%u", reg2);
     L(",%s\n", ea1.textl(ec));
 #endif
@@ -2219,7 +2250,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" subal %s", ea1.textl(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -2239,7 +2270,7 @@ namespace
     {
       int value2 = extsb(ec.fetchw(2));
       Destination ea1(op & 0x7, 2 + 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
       L(" subib #%d", value2);
       L(",%s\n", ea1.textb(ec));
 #endif
@@ -2258,7 +2289,7 @@ namespace
   {
     sint32_type value2 = extsl(ec.fetchl(2));
     Destination ea1(op & 0x7, 2 + 4);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" subil #%ld", (long) value2);
     L(",%s\n", ea1.textl(ec));
 #endif
@@ -2279,7 +2310,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" subqw #%d", value2);
     L(",%s\n", ea1.textw(ec));
 #endif
@@ -2300,7 +2331,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" subqw #%d", value2);
     L(",%s\n", ea1.textw(ec));
 #endif
@@ -2321,7 +2352,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" subql #%d", value2);
     L(",%s\n", ea1.textl(ec));
 #endif
@@ -2342,7 +2373,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" subql #%d", value2);
     L(",%s\n", ea1.textl(ec));
 #endif
@@ -2394,7 +2425,7 @@ namespace
   swapw(unsigned int op, context &ec, instruction_data *data)
   {
     unsigned int reg1 = op & 0x7;
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" swapw %%d%u\n", reg1);
 #endif
 
@@ -2411,7 +2442,9 @@ namespace
   tstb(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
+#ifdef TRACE_INSTRUCTIONS
       VL((" tstb %s\n", ea1.textb(ec)));
+#endif
 
       int value = ea1.getb(ec);
       ec.regs.sr.set_cc(value);
@@ -2424,7 +2457,7 @@ namespace
   tstw(unsigned int op, context &ec, instruction_data *data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef L
+#ifdef TRACE_INSTRUCTIONS
     L(" tstw %s\n", ea1.textw(ec));
 #endif
 
@@ -2452,7 +2485,9 @@ namespace
   tstl(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
+#ifdef TRACE_INSTRUCTIONS
       VL((" tstl %s\n", ea1.textl(ec)));
+#endif
 
       int32 value = ea1.getl(ec);
       ec.regs.sr.set_cc(value);
@@ -2465,7 +2500,9 @@ namespace
   unlk_a(unsigned int op, context &ec, instruction_data *data)
     {
       int reg = op & 0x0007;
+#ifdef TRACE_INSTRUCTIONS
       VL((" unlk %%a%d\n", reg));
+#endif
 
       // XXX: The condition codes are not affected.
       int fc = ec.data_fc();

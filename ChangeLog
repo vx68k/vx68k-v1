@@ -1,5 +1,8 @@
 1999-09-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc: Enable instruction trace only if
+	TRACE_INSTRUCTIONS is defined.
+
 	* lib/vx68k/gtkconsole.cc (update_area): New function.
 	(~gtk_console): Put gtk & gdk calls into thread lock.  Destroy
 	update_region.
