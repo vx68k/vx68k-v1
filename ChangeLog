@@ -1,3 +1,26 @@
+1999-06-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (main): Use machine instead of removed
+	x68k_address_space.
+
+	* lib/vx68k/dos.cc (execute): Construct ec using vm.
+	(dos): Change arguments to machine *, and rewrite function body
+	for changed members.
+
+	* lib/vx68k/memory.cc (x68k_address_space): Removed.
+
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add machine.cc.
+
+	* lib/vx68k/machine.cc: New file.
+
+	* include/vx68k/human.h (class dos): Replace members with vm.
+
+	* include/vx68k/memory.h (class x68k_address_space): Removed.
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Add machine.h.
+
+	* include/vx68k/machine.h: New file.
+
 1999-06-28  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vx68k/process.cc (~process): New function.

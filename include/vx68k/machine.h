@@ -16,35 +16,35 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef _VX68K_MEMORY_H
-#define _VX68K_MEMORY_H 1
+#ifndef _VX68K_MACHINE_H
+#define _VX68K_MACHINE_H 1
 
-#include "vm68k/memory.h"
+#include <vx68k/memory.h>
+#include <vm68k/cpu.h>
 
 namespace vx68k
 {
-  using namespace vm68k::types;
+  using namespace vm68k;
   using namespace std;
 
-  class main_memory_page
-    : public vm68k::memory_page
+  class machine
   {
-  public:
-    explicit main_memory_page (size_t);
-    ~main_memory_page ();
-  public:
-    size_t read(int, uint32, void *, size_t) const;
-    size_t write(int, uint32, const void *, size_t);
-    uint8 getb (int, uint32) const;
-    uint16 getw (int, uint32) const;
-    uint32 getl(int fc, uint32 address) const;
-    void putb (int, uint32, uint8);
-    void putw (int, uint32, uint16);
   private:
-    size_t end;
-    uint16 *array;
+    size_t _memory_size;
+    main_memory_page main_memory;
+    class address_space as;
+    class exec_unit eu;
+  public:
+    explicit machine(size_t);
+  public:
+    size_t memory_size() const
+      {return _memory_size;}
+    class address_space *address_space()
+      {return &as;}
+    class exec_unit *exec_unit()
+      {return &eu;}
   };
 } // vx68k
 
-#endif /* not _VX68K_MEMORY_H */
+#endif /* not _VX68K_MACHINE_H */
 

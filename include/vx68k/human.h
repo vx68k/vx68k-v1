@@ -19,8 +19,7 @@
 #ifndef VX68K_HUMAN_H
 #define VX68K_HUMAN_H 1
 
-#include "vm68k/cpu.h"
-#include "vx68k/memory.h"
+#include <vx68k/machine.h>
 
 namespace vx68k
 {
@@ -132,8 +131,7 @@ namespace vx68k
     class dos
     {
     private:
-      vm68k::exec_unit main_cpu;
-      address_space *mem;
+      machine *vm;
       memory_allocator allocator;
       file_system fs;
 
@@ -141,7 +139,7 @@ namespace vx68k
       int debug_level;
 
     public:
-      dos (address_space *, size_t);
+      dos(machine *);
 
     public:
       uint16 execute (const char *, const char *const *);

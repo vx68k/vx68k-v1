@@ -100,9 +100,9 @@ main (int argc, char **argv)
   try
     {
       const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
-      x68k_address_space mem(MEMSIZE);
+      machine vm(MEMSIZE);
+      human::dos env(&vm);
 
-      human::dos env(&mem, MEMSIZE);
       if (opt_debug)
 	env.set_debug_level(1);
       return env.execute(argv[1], argv + 2); // FIXME

@@ -47,7 +47,7 @@ uint16
 dos::execute (const char *name, const char *const *argv)
 {
   process p(&allocator, &fs);
-  dos_exec_context ec(&main_cpu, mem, &p);
+  dos_exec_context ec(vm->exec_unit(), vm->address_space(), &p);
   ec.set_debug_level(debug_level);
   return ec.start(ec.load_executable(name), argv);
 }
@@ -463,37 +463,39 @@ namespace
   }
 } // (unnamed namespace)
 
-dos::dos(address_space *m, size_t size)
-  : mem(m),
-    allocator(mem, 0x8000u, size),
+dos::dos(machine *m)
+  : vm(m),
+    allocator(vm->address_space(), 0x8000u, vm->memory_size()),
     debug_level(0)
 {
-  main_cpu.set_instruction(0xff02, 0, &dos_putchar);
-  main_cpu.set_instruction(0xff09, 0, &dos_print);
-  main_cpu.set_instruction(0xff1b, 0, &dos_fgetc);
-  main_cpu.set_instruction(0xff1e, 0, &dos_fputs);
-  main_cpu.set_instruction(0xff25, 0, &dos_intvcs);
-  main_cpu.set_instruction(0xff27, 0, &dos_gettim2);
-  main_cpu.set_instruction(0xff2a, 0, &dos_getdate);
-  main_cpu.set_instruction(0xff30, 0, &dos_vernum);
-  main_cpu.set_instruction(0xff3c, 0, &dos_create);
-  main_cpu.set_instruction(0xff3d, 0, &dos_open);
-  main_cpu.set_instruction(0xff3e, 0, &dos_close);
-  main_cpu.set_instruction(0xff3f, 0, &dos_read);
-  main_cpu.set_instruction(0xff40, 0, &dos_write);
-  main_cpu.set_instruction(0xff41, 0, &dos_delete);
-  main_cpu.set_instruction(0xff42, 0, &dos_seek);
-  main_cpu.set_instruction(0xff43, 0, &dos_chmod);
-  main_cpu.set_instruction(0xff44, 0, &dos_ioctrl);
-  main_cpu.set_instruction(0xff48, 0, &dos_malloc);
-  main_cpu.set_instruction(0xff4a, 0, &dos_setblock);
-  main_cpu.set_instruction(0xff4c, 0, &dos_exit2);
-  main_cpu.set_instruction(0xff51, 0, &dos_getpdb);
-  main_cpu.set_instruction(0xff53, 0, &dos_getenv);
-  main_cpu.set_instruction(0xff57, 0, &dos_filedate);
+  exec_unit *eu = vm->exec_unit();
 
-  main_cpu.set_instruction(0xff81, 0, &dos_getpdb);
-  main_cpu.set_instruction(0xff83, 0, &dos_getenv);
-  main_cpu.set_instruction(0xff87, 0, &dos_filedate);
+  eu->set_instruction(0xff02, 0, &dos_putchar);
+  eu->set_instruction(0xff09, 0, &dos_print);
+  eu->set_instruction(0xff1b, 0, &dos_fgetc);
+  eu->set_instruction(0xff1e, 0, &dos_fputs);
+  eu->set_instruction(0xff25, 0, &dos_intvcs);
+  eu->set_instruction(0xff27, 0, &dos_gettim2);
+  eu->set_instruction(0xff2a, 0, &dos_getdate);
+  eu->set_instruction(0xff30, 0, &dos_vernum);
+  eu->set_instruction(0xff3c, 0, &dos_create);
+  eu->set_instruction(0xff3d, 0, &dos_open);
+  eu->set_instruction(0xff3e, 0, &dos_close);
+  eu->set_instruction(0xff3f, 0, &dos_read);
+  eu->set_instruction(0xff40, 0, &dos_write);
+  eu->set_instruction(0xff41, 0, &dos_delete);
+  eu->set_instruction(0xff42, 0, &dos_seek);
+  eu->set_instruction(0xff43, 0, &dos_chmod);
+  eu->set_instruction(0xff44, 0, &dos_ioctrl);
+  eu->set_instruction(0xff48, 0, &dos_malloc);
+  eu->set_instruction(0xff4a, 0, &dos_setblock);
+  eu->set_instruction(0xff4c, 0, &dos_exit2);
+  eu->set_instruction(0xff51, 0, &dos_getpdb);
+  eu->set_instruction(0xff53, 0, &dos_getenv);
+  eu->set_instruction(0xff57, 0, &dos_filedate);
+
+  eu->set_instruction(0xff81, 0, &dos_getpdb);
+  eu->set_instruction(0xff83, 0, &dos_getenv);
+  eu->set_instruction(0xff87, 0, &dos_filedate);
 }
 
