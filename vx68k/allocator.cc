@@ -145,9 +145,9 @@ memory_allocator::resize(uint32_type memptr, uint32_type newlen)
 #endif
 	      uint32_type max_newlen = next - block;
 	      if (max_newlen == 0x10)
-		return extsl(0x82000000);
+		return long_word_size::svalue(0x82000000);
 
-	      return extsl(0x81000000 + (max_newlen - 0x10));
+	      return long_word_size::svalue(0x81000000 + (max_newlen - 0x10));
 	    }
 
 	  _as->putl(SUPER_DATA, block + 8, new_brk);
@@ -194,7 +194,7 @@ memory_allocator::alloc(uint32_type len, uint32_type parent)
 	  L("memory_allocator: success, returning %#lx\n",
 	    (unsigned long) candidate + 0x10);
 #endif
-	  return extsl(candidate + 0x10);
+	  return long_word_size::svalue(candidate + 0x10);
 	}
 
       if (free_len > max_free_len)
@@ -208,9 +208,9 @@ memory_allocator::alloc(uint32_type len, uint32_type parent)
   L("memory_allocator: failure\n");
 #endif
   if (max_free_len == 0x10)
-    return extsl(0x82000000);
+    return long_word_size::svalue(0x82000000);
 
-  return extsl(0x81000000 + (max_free_len - 0x10));
+  return long_word_size::svalue(0x81000000 + (max_free_len - 0x10));
 }
 
 sint32_type
@@ -244,14 +244,14 @@ memory_allocator::alloc_largest(uint32_type parent)
     }
 
   if (max_free_len == 0x10)
-    return extsl(0x82000000);
+    return long_word_size::svalue(0x82000000);
 
   make_block(best_candidate, max_free_len, best_block, parent - 0x10);
 #ifdef L
   L("memory_allocator: success, returning %#lx\n",
     (unsigned long) best_candidate + 0x10);
 #endif
-  return extsl(best_candidate + 0x10);
+  return long_word_size::svalue(best_candidate + 0x10);
 }
 
 memory_allocator::memory_allocator(address_space *as,

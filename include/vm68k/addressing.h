@@ -289,12 +289,12 @@ namespace vm68k
 	  uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
 	  if (w & 0x800 != 0)
 	    return (c.regs.a[reg]
-		    + byte_size::svalue(w & byte_size::value_mask())
-		    + long_word_size::svalue(x & long_word_size::value_mask()));
+		    + byte_size::svalue(byte_size::get(w))
+		    + long_word_size::svalue(long_word_size::get(x)));
 	  else
 	    return (c.regs.a[reg]
-		    + byte_size::svalue(w & byte_size::value_mask())
-		    + word_size::svalue(x & word_size::value_mask()));
+		    + byte_size::svalue(byte_size::get(w))
+		    + word_size::svalue(word_size::get(x)));
 	}
       svalue_type get(const context &c) const
 	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
@@ -310,11 +310,11 @@ namespace vm68k
 	  static char buf[32];
 	  if (r >= 8)
 	    sprintf(buf, "%%a%u@(%d,%%a%u%s)", reg,
-		    byte_size::svalue(w & byte_size::value_mask()), r - 8,
+		    byte_size::svalue(byte_size::get(w)), r - 8,
 		    w & 0x800 ? ":l" : ":w");
 	  else
 	    sprintf(buf, "%%a%u@(%d,%%d%u%s)", reg,
-		    byte_size::svalue(w & byte_size::value_mask()), r,
+		    byte_size::svalue(byte_size::get(w)), r,
 		    w & 0x800 ? ":l" : ":w");
 	  return buf;
 	}
@@ -453,12 +453,12 @@ namespace vm68k
 	  uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
 	  if (w & 0x800 != 0)
 	    return (c.regs.pc + offset
-		    + byte_size::svalue(w & byte_size::value_mask())
-		    + long_word_size::svalue(x & long_word_size::value_mask()));
+		    + byte_size::svalue(byte_size::get(w))
+		    + long_word_size::svalue(long_word_size::get(x)));
 	  else
 	    return (c.regs.pc + offset
-		    + byte_size::svalue(w & byte_size::value_mask())
-		    + word_size::svalue(x & word_size::value_mask()));
+		    + byte_size::svalue(byte_size::get(w))
+		    + word_size::svalue(word_size::get(x)));
 	}
       svalue_type get(const context &c) const
 	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
@@ -474,11 +474,11 @@ namespace vm68k
 	  static char buf[32];
 	  if (r >= 8)
 	    sprintf(buf, "%%pc@(%d,%%a%u%s)",
-		    byte_size::svalue(w & byte_size::value_mask()), r - 8,
+		    byte_size::svalue(byte_size::get(w)), r - 8,
 		    w & 0x800 ? ":l" : ":w");
 	  else
 	    sprintf(buf, "%%a%u@(%d,%%d%u%s)", reg,
-		    byte_size::svalue(w & byte_size::value_mask()), r,
+		    byte_size::svalue(byte_size::get(w)), r,
 		    w & 0x800 ? ":l" : ":w");
 	  return buf;
 	}
@@ -521,8 +521,7 @@ namespace vm68k
     template <> inline byte_size::svalue_type
     basic_immediate<byte_size>::get(const context &c) const
     {
-      return byte_size::svalue(c.fetchw(offset)
-			       & byte_size::value_mask());
+      return byte_size::svalue(byte_size::get(c.fetchw(offset)));
     }
 
     template <> inline word_size::svalue_type
@@ -541,7 +540,7 @@ namespace vm68k
     typedef basic_immediate<word_size> word_immediate;
     typedef basic_immediate<long_word_size> long_word_immediate;
 
-    /* --- */
+#ifdef VM68K_ENABLE_DEPRECATED
 
     class data_register
     {
@@ -1040,6 +1039,8 @@ namespace vm68k
 	  return buf;
 	}
     };
+
+#endif /* VM68K_ENABLE_DEPRECATED */
   } // addressing
 } // vm68k
 

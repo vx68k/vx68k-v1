@@ -1,5 +1,29 @@
 1999-11-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/addressing.h (class basic_index_indirect,
+ 	basic_index_pc_indirect): Avoid use of value_mask.
+	(basic_immediate<byte_size>::get): Likewise.
+
+	* vm68k/execunit.cc (m68k_add, m68k_add_r, m68k_adda): Avoid use
+ 	of value_mask.
+
+	* vx68k/dos.cc: Substitute extsl with long_word_size::svalue and
+ 	extsw with word_size::svalue.
+
+	* vx68k/allocator.cc: Substitute extsl with
+ 	long_word_size::svalue.
+
+	* vm68k/Makefile.am (INCLUDES): Define VM68K_ENABLE_DEPRECATED.
+
+	* include/vm68k/addressing.h (class data_register,
+ 	address_register, indirect, postinc_indirect, predec_indirect,
+ 	disp_indirect, indexed_indirect, absolute_short, absolute_long,
+ 	disp_pc, indexed_pc_indirect, immediate): Disabled unless
+ 	VM68K_ENABLE_DEPRECATED defined.
+
+	* include/vm68k/cpu.h (extsb, extsw, extsl): Disabled unless
+ 	VM68K_ENABLE_DEPRECATED defined.
+
 	* include/vm68k/cpu.h (struct byte_size, word_size,
  	long_word_size): Add asserts in svalue.  Mask values in put.
 

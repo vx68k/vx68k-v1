@@ -27,10 +27,12 @@ namespace vm68k
 {
   using namespace std;
 
+  /* Access methods for byte data.  */
   struct byte_size
   {
     typedef unsigned int uvalue_type;
     typedef int svalue_type;
+
     static size_t value_bit() {return 8;}
     static uint32_type value_mask()
       {return (uint32_type(1) << value_bit()) - 1;}
@@ -59,10 +61,12 @@ namespace vm68k
     static const char *suffix() {return "b";}
   };
 
+  /* Access methods for word data.  */
   struct word_size
   {
     typedef uint_type uvalue_type;
     typedef sint_type svalue_type;
+
     static size_t value_bit() {return 16;}
     static uint32_type value_mask()
       {return (uint32_type(1) << value_bit()) - 1;}
@@ -91,10 +95,12 @@ namespace vm68k
     static const char *suffix() {return "w";}
   };
 
+  /* Access methods for long word data.  */
   struct long_word_size
   {
     typedef uint32_type uvalue_type;
     typedef sint32_type svalue_type;
+
     static size_t value_bit() {return 32;}
     static uint32_type value_mask()
       //{return (uint32_type(1) << value_bit()) - 1;}
@@ -123,6 +129,8 @@ namespace vm68k
 
     static const char *suffix() {return "l";}
   };
+
+#ifdef VM68K_ENABLE_DEPRECATED
 
   /* Returns the signed 8-bit value that is equivalent to unsigned
      value VALUE.  */
@@ -156,6 +164,8 @@ namespace vm68k
     value &= M;
     return value >= N ? -sint32_type(M - value) - 1 : sint32_type(value);
   }
+
+#endif /* VM68K_ENABLE_DEPRECATED */
 
   /* Condition code evaluator (abstract base class).  */
   struct cc_evaluator

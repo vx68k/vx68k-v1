@@ -116,8 +116,7 @@ namespace
 
     svalue_type value1 = ea1.get(c);
     svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
-    svalue_type value
-      = Size::svalue(uvalue_type(value2 + value1) & Size::value_mask());
+    svalue_type value = Size::svalue(Size::get(value2 + value1));
     Size::put(c.regs.d[reg2], value);
     c.regs.sr.set_cc(value);	// FIXME.
     ea1.finish(c);
@@ -141,8 +140,7 @@ namespace
 
     svalue_type value2 = Size::svalue(Size::get(c.regs.d[reg2]));
     svalue_type value1 = ea1.get(c);
-    svalue_type value
-      = Size::svalue(uvalue_type(value1 + value2) & Size::value_mask());
+    svalue_type value = Size::svalue(Size::get(value1 + value2));
     ea1.put(c, value);
     c.regs.sr.set_cc(value);	// FIXME.
     ea1.finish(c);
@@ -168,8 +166,7 @@ namespace
     svalue_type value1 = ea1.get(c);
     svalue_type value2 = long_word_size::get(c.regs.a[reg2]);
     svalue_type value
-      = long_word_size::svalue(uvalue_type(value2 + value1)
-			       & long_word_size::value_mask());
+      = long_word_size::svalue(long_word_size::get(value2 + value1));
     long_word_size::put(c.regs.a[reg2], value);
     ea1.finish(c);
 

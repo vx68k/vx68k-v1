@@ -46,7 +46,7 @@ namespace
   {
     uint32_type sp = c.regs.a[7];
     uint32_type nameptr = c.mem->getl(SUPER_DATA, sp + 0);
-    sint_type atr = extsw(c.mem->getw(SUPER_DATA, sp + 4));
+    sint_type atr = word_size::svalue(c.mem->getw(SUPER_DATA, sp + 4));
 #ifdef L
     L(" DOS _CHMOD\n");
 #endif
@@ -62,7 +62,7 @@ namespace
   dos_close(unsigned int op, context &ec, instruction_data *data)
   {
     uint32_type sp = ec.regs.a[7];
-    sint_type fd = extsw(ec.mem->getw(SUPER_DATA, sp));
+    sint_type fd = word_size::svalue(ec.mem->getw(SUPER_DATA, sp));
 #ifdef L
     L(" DOS _CLOSE\n");
 #endif
@@ -157,7 +157,7 @@ namespace
   dos_fgetc(unsigned int op, context &ec, instruction_data *data)
   {
     uint32_type sp = ec.regs.a[7];
-    int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
+    int fd = word_size::svalue(ec.mem->getw(SUPER_DATA, sp));
 #ifdef L
     L(" DOS _FGETC\n");
 #endif
@@ -172,7 +172,7 @@ namespace
   {
     uint32_type sp = ec.regs.a[7];
     uint32_type mesptr = ec.mem->getl(SUPER_DATA, sp + 0);
-    sint_type filno = extsw(ec.mem->getw(SUPER_DATA, sp + 4));
+    sint_type filno = word_size::svalue(ec.mem->getw(SUPER_DATA, sp + 4));
 #ifdef L
     L(" DOS _FPUTS\n");
 #endif
@@ -377,7 +377,7 @@ namespace
   dos_putchar(unsigned int op, context &ec, instruction_data *data)
   {
     uint32_type sp = ec.regs.a[7];
-    sint_type code = extsw(ec.mem->getw(SUPER_DATA, sp + 0));
+    sint_type code = word_size::svalue(ec.mem->getw(SUPER_DATA, sp + 0));
 #ifdef L
     L(" DOS _PUTCHAR\n");
 #endif
@@ -392,7 +392,7 @@ namespace
   dos_read(unsigned int op, context &ec, instruction_data *data)
   {
     uint32_type sp = ec.regs.a[7];
-    sint_type fd = extsw(ec.mem->getw(SUPER_DATA, sp));
+    sint_type fd = word_size::svalue(ec.mem->getw(SUPER_DATA, sp));
     uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
     uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
 #ifdef L
@@ -408,8 +408,8 @@ namespace
   dos_seek(unsigned int op, context &ec, instruction_data *data)
   {
     uint32_type sp = ec.regs.a[7];
-    int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
-    sint32_type offset = extsl(ec.mem->getl(SUPER_DATA, sp + 2));
+    int fd = word_size::svalue(ec.mem->getw(SUPER_DATA, sp));
+    sint32_type offset = long_word_size::svalue(ec.mem->getl(SUPER_DATA, sp + 2));
     unsigned int whence = ec.mem->getw(SUPER_DATA, sp + 6);
 #ifdef L
     L(" DOS _SEEK\n");
@@ -488,7 +488,7 @@ namespace
   dos_write(unsigned int op, context &ec, instruction_data *data)
   {
     uint32_type sp = ec.regs.a[7];
-    int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
+    int fd = word_size::svalue(ec.mem->getw(SUPER_DATA, sp));
     uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
     uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
 #ifdef L
