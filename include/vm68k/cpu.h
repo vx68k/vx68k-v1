@@ -52,10 +52,12 @@ namespace vm68k
   private:
     int32 result;
   public:
-    bool eq() const;
+    bool cc() const {return !cs();}
+    bool cs() const;
     bool ne() const {return !eq();}
-    bool lt() const;
+    bool eq() const;
     bool ge() const {return !lt();}
+    bool lt() const;
     void set_cc(int32);
     bool supervisor_state() const;
   };

@@ -1,5 +1,12 @@
 1999-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (bcc, dbf_d): New functions.
+	(install_instructions): Set instructions.
+
+	* lib/vm68k/statusreg.cc (cs): New function.
+	* include/vm68k/cpu.h (class status_register): Add members cc and
+	cs.
+
 	* lib/vm68k/execunit.cc (addil_d, movel_a_d): Remove fc.
 	(lslw_i_d, movel_d_d, tstl_d): New functions.
 	(install_instructions): Set instructions.

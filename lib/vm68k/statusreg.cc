@@ -26,6 +26,13 @@
 
 using namespace vm68k;
 
+/* Tests if carry set is true.  */
+bool
+status_register::cs() const
+{
+  return false;			// FIXME.
+}
+
 bool
 status_register::eq() const
 {

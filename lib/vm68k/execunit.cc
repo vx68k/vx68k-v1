@@ -119,6 +119,24 @@ namespace
       ec->regs.pc += 2;
     }
 
+  void bcc(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int len = 2;
+      int disp = op & 0xff;
+      if (disp == 0)
+	{
+	  len = 4;
+	  disp = extsw(ec->fetchw(2));
+	}
+      else
+	disp = extsb(disp);
+      VL((" bcc 0x%lx\n", (unsigned long) (ec->regs.pc + 2 + disp)));
+
+      // XXX: The condition codes are not affected.
+      ec->regs.pc += ec->regs.sr.cc() ? 2 + disp : len;
+    }
+
   void beq(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -225,6 +243,20 @@ namespace
       ec->regs.sr.set_cc(0);
 
       ec->regs.pc += 2;
+    }
+
+  void dbf_d(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int reg = op & 0x7;
+      int disp = extsw(ec->fetchw(2));
+      VL((" dbf %%d%d,0x%lx\n",
+	  reg, (unsigned long) (ec->regs.pc + 2 + disp)));
+
+      // XXX: The condition codes are not affected.
+      int32 value = extsl(ec->regs.d[reg]) - 1;
+      ec->regs.d[reg] = value;
+      ec->regs.pc += value != -1 ? 2 + disp : 2 + 2;
     }
 
   void lea_offset_a(int op, execution_context *ec)
@@ -732,8 +764,10 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x4e75, 0x0000, &rts);
   eu->set_instruction(0x5048, 0x0e07, &addqw_a);
   eu->set_instruction(0x5188, 0x0e07, &subql_a);
+  eu->set_instruction(0x51c8, 0x0007, &dbf_d);
   eu->set_instruction(0x6000, 0x00ff, &bra);
   eu->set_instruction(0x6100, 0x00ff, &bsr);
+  eu->set_instruction(0x6400, 0x00ff, &bcc);
   eu->set_instruction(0x6600, 0x00ff, &bne);
   eu->set_instruction(0x6700, 0x00ff, &beq);
   eu->set_instruction(0x6c00, 0x00ff, &bge);
