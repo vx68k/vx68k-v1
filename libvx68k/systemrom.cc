@@ -157,9 +157,9 @@ system_rom::initialize(address_space &as)
 #endif
 
   uint32_type f = 0xfc0000;
-  for (uint32_type i = 0x400; i != 0x800; i += 4)
+  for (uint32_type i = 0; i != 0x200; ++i)
     {
-      as.putl(SUPER_DATA, i, f);
+      as.putl(SUPER_DATA, i * 4u, f);
       f += 4;
     }
 }
@@ -262,6 +262,16 @@ namespace
     long_word_size::put(c.regs.d[0], oaddr);
   }
 
+  /* Handles a _B_KEYSNS call.  */
+  void
+  iocs_b_keysns(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _B_KEYSNS\n");
+#endif
+    long_word_size::put(c.regs.d[0], 0);
+  }
+
   /* Handles a _B_LPEEK call.  */
   void
   iocs_b_lpeek(context &c, unsigned long data)
@@ -286,6 +296,19 @@ namespace
 
     x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
     as->machine()->b_print(c.mem, address);
+  }
+
+  /* Handles a _B_PUTC call.  */
+  void
+  iocs_b_putc(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _B_PUTC %%d1=%#010x\n", c.regs.d[1]);
+#endif
+    uint_type ch = word_size::get(c.regs.d[1]);
+
+    x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
+    as->machine()->b_putc(ch);
   }
 
   /* Handles a _B_PUTMES call.  */
@@ -582,6 +605,7 @@ namespace
   {
     typedef system_rom::iocs_function_type iocs_function_type;
 
+    rom->set_iocs_function(0x01, iocs_function_type(&iocs_b_keysns, 0));
     rom->set_iocs_function(0x02, iocs_function_type(&iocs_b_sftsns, 0));
     rom->set_iocs_function(0x0f, iocs_function_type(&iocs_defchr, 0));
     rom->set_iocs_function(0x10, iocs_function_type(&iocs_crtmod, 0));
@@ -590,6 +614,7 @@ namespace
     rom->set_iocs_function(0x1b, iocs_function_type(&iocs_textput, 0));
     rom->set_iocs_function(0x1e, iocs_function_type(&iocs_b_curon, 0));
     rom->set_iocs_function(0x1f, iocs_function_type(&iocs_b_curoff, 0));
+    rom->set_iocs_function(0x20, iocs_function_type(&iocs_b_putc, 0));
     rom->set_iocs_function(0x21, iocs_function_type(&iocs_b_print, 0));
     rom->set_iocs_function(0x22, iocs_function_type(&iocs_b_color, 0));
     rom->set_iocs_function(0x2e, iocs_function_type(&iocs_b_consol, 0));

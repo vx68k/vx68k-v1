@@ -903,7 +903,7 @@ namespace
   template <class Destination> void
   cmpil(uint_type op, context &c, unsigned long data)
   {
-    sint32_type value2 = extsw(c.fetch(long_word_size(), 2));
+    sint32_type value2 = extsl(c.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
 #ifdef TRACE_INSTRUCTIONS
     L(" cmpil #%#lx", (unsigned long) value2);

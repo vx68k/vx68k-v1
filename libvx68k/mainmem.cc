@@ -162,5 +162,9 @@ main_memory::main_memory(size_t n)
     array(NULL)
 {
   array = new unsigned short [end >> 1];
+#ifndef NDEBUG
+  // These ILLEGAL instructions makes the debug easy.
+  fill(array + 0, array + (end >> 1), 0x4afc);
+#endif
 }
 

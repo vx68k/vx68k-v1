@@ -1,7 +1,16 @@
 2000-05-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (initialize): Initialize the interrupt
+	vector table, too.
+	(iocs_b_keysns, iocs_b_putc): New function.
+	(initialize_iocs_functions): Add new handlers.
+
+	* libvx68k/mainmem.cc (main_memory): Fill memory with the ILLEGAL
+	instructions.
+
 	* libvm68k/execunit.cc (m68k_ori_to_ccr): New function.
 	(initialize_instructions): Add new handlers.
+	(cmpil): Fix the size of immediate value.
 
 	* libvx68k/systemrom.cc (iocs_b_intvcs): New function.
 	(initialize_iocs_functions): Use the new handler.
