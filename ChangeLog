@@ -1,5 +1,7 @@
 2002-05-12  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* Makefile.am (SUBDIRS): Add programs.
+
 	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Remove version.cc.
 	(INCLUDES): Add libvx68kdos.
 
