@@ -1,5 +1,10 @@
 1999-03-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* README: Modified.
+
+	* include/debug.h (debug_printf): Removed.
+	(VL): Change to empty.
+
 	* lib/vm68k/execunit.cc (moveml_r_predec): Divide a loop to two
 	register groups.
 

@@ -23,22 +23,10 @@
 
 #else /* not HAVE_NANA_H */
 
-#include <cstdio>
-#include <cstdarg>
 #include <cassert>
 
-inline int debug_printf(const char *fmt,...)
-{
-  using namespace std;
-  va_list va;
-  va_start(va, fmt);
-  int r = vfprintf(stderr, fmt, va);
-  va_end(va);
-  return r;
-}
-
 #define I(EXPR) (assert(EXPR))
-#define VL(L) (debug_printf L)
+#define VL(ARG)
 
 #endif /* not HAVE_NANA_H */
 

@@ -1,6 +1,6 @@
 READ ME
 
-$Date: Mon, 15 Mar 1999 22:25:12 +0900 $
+$Date: Fri, 19 Mar 1999 20:09:39 +0900 $
 
 >> DESCRIPTION
 
@@ -22,6 +22,8 @@ This program is written in C++ with exception handling and namespaces.
 This program will use POSIX threads.
 
 This program will use GTK+ for GUI.
+
+To get diagnostic log output, GNU Nana is also required.
 
 >> INSTALLATION
 
