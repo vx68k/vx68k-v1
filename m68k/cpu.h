@@ -2,8 +2,16 @@
 #define M68k_CPU_H
 
 #include <iterator>
+#include <climits>
 
+#if INT_MAX >= 0x7fffffff
+typedef int int32;
 typedef unsigned int uint32;
+#else
+typedef long int32;
+typedef unsigned long uint32;
+#endif
+
 typedef unsigned short uint16;
 typedef unsigned char uint8;
 
@@ -29,7 +37,7 @@ class bus_error
 
 struct memory
 {
-  struct iterator: bidirectional_iterator
+  struct iterator: bidirectional_iterator <uint16, int32>
   {
   };
   virtual ~memory ();
@@ -50,7 +58,7 @@ public:
 private:
   cpu_regs regs;
   memory *mem;
-  void (*insn[0x10000]) (cpu_reg &, memory *);
+  void (*insn[0x10000]) (cpu_regs *, memory *);
 };
 
 #endif
