@@ -1,0 +1,3 @@
+
+SUBDIRS = vm68k
+
