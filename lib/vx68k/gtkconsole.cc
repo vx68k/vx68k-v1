@@ -23,8 +23,8 @@
 #undef inline
 
 #include <vx68k/gtk.h>
-#include <gtk/gtkdrawingarea.h>
-#include <gtk/gtksignal.h>
+#include <gtk/gtk.h>
+#include <algorithm>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
@@ -37,6 +37,8 @@
 using namespace vx68k::gtk;
 using namespace vx68k;
 using namespace std;
+
+const unsigned int TIMEOUT_INTERVAL = 100;
 
 gint
 gtk_console::handle_expose_event(GtkWidget *drawing_area,
@@ -54,11 +56,25 @@ gtk_console::handle_expose_event(GtkWidget *drawing_area,
   return true;
 }
 
+void
+gtk_console::handle_destroy(GtkObject *o, gpointer data) throw ()
+{
+  I(o != NULL);
+  GtkWidget *w = GTK_WIDGET(o);
+  gtk_console *c = static_cast<gtk_console *>(data);
+
+  vector<GtkWidget *>::iterator i
+    = remove(c->widgets.begin(), c->widgets.end(), w);
+  c->widgets.erase(i, c->widgets.end());
+}
+
 GtkWidget *
 gtk_console::create_widget()
 {
   GtkWidget *drawing_area = gtk_drawing_area_new();
   gtk_drawing_area_size(GTK_DRAWING_AREA(drawing_area), width, height);
+  gtk_signal_connect(GTK_OBJECT(drawing_area), "destroy",
+		     GTK_SIGNAL_FUNC(&handle_destroy), this);
   gtk_signal_connect(GTK_OBJECT(drawing_area), "expose_event",
 		     GTK_SIGNAL_FUNC(&handle_expose_event), this);
 
@@ -66,7 +82,25 @@ gtk_console::create_widget()
   style->bg[0] = style->black;
   gtk_widget_set_style(drawing_area, style);
 
+  widgets.push_back(drawing_area);
   return drawing_area;
+}
+
+gint
+gtk_console::handle_timeout(gpointer data) throw ()
+{
+  gtk_console *c = static_cast<gtk_console *>(data);
+  I(c != NULL);
+
+  for (vector<GtkWidget *>::const_iterator i = c->widgets.begin();
+       i != c->widgets.end();
+       ++i)
+    {
+      I(*i != NULL);
+      gtk_widget_queue_draw(*i);
+    }
+
+  return true;
 }
 
 void
@@ -81,14 +115,25 @@ gtk_console::get_k16_image(unsigned int, unsigned char *, size_t) const
 
 gtk_console::~gtk_console()
 {
+  for (vector<GtkWidget *>::iterator i = widgets.begin();
+       i != widgets.end();
+       ++i)
+    {
+      I(*i != NULL);
+      gtk_signal_disconnect_by_data(GTK_OBJECT(*i), this);
+    }
+
+  gtk_timeout_remove(timeout);
   delete [] rgb_buf;
 }
 
 gtk_console::gtk_console()
   : width(768), height(512),
     row_size(768 * 3),
-    rgb_buf(NULL)
+    rgb_buf(NULL),
+    timeout(0)
 {
   rgb_buf = new guchar [height * row_size];
+  timeout = gtk_timeout_add(TIMEOUT_INTERVAL, &handle_timeout, this);
 }
 

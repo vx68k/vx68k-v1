@@ -21,6 +21,7 @@
 
 #include <vx68k/machine.h>
 #include <gtk/gtkwidget.h>
+#include <vector>
 
 namespace vx68k
 {
@@ -32,6 +33,10 @@ namespace vx68k
       : public virtual console
     {
     protected:
+      static gint handle_timeout(gpointer) throw ();
+
+    protected:
+      static void handle_destroy(GtkObject *, gpointer) throw ();
       static gint handle_expose_event(GtkWidget *, GdkEventExpose *,
 				      gpointer) throw ();
 
@@ -39,6 +44,8 @@ namespace vx68k
       int width, height;
       size_t row_size;
       guchar *rgb_buf;
+      guint timeout;
+      vector<GtkWidget *> widgets;
 
     public:
       gtk_console();
