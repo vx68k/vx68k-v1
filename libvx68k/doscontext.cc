@@ -196,7 +196,7 @@ dos_exec_context::start(uint32_type address, const char *const *argv)
   catch (illegal_instruction_exception &e)
     {
       uint_type op = mem->getw(SUPER_DATA, regs.pc);
-      fprintf(stderr, "vm68k illegal instruction (op = %#04x)\n", op);
+      fprintf(stderr, "vm68k illegal instruction (op = %#06x)\n", op);
       status = 0xff;
     }
   catch (special_exception &x)

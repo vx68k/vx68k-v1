@@ -251,23 +251,6 @@ namespace vx68k
 		   unsigned char *rgb_buf, size_t row_size);
   };
 
-  class machine;
-
-  /* Address space of X68000.  */
-  class x68k_address_space: public address_space
-  {
-  private:
-    class machine *_m;
-
-  public:
-    x68k_address_space(class machine *m);
-
-  public:
-    /* Shortcut for the emulated machine.  */
-    class machine *machine() const
-    {return _m;}
-  };
-
   /* Machine of X68000.  */
   class machine
   {
@@ -275,7 +258,10 @@ namespace vx68k
     size_t _memory_size;
     main_memory mem;
     text_vram tvram;
+    crtc_memory crtc;
     area_set _area_set;
+    scc_memory scc;
+    ppi_memory ppi;
     sram _sram;
     system_rom rom;
     class exec_unit eu;
@@ -349,6 +335,22 @@ namespace vx68k
 
     /* Boots up this machine.  */
     void boot();
+  };
+
+  /* X68000-specific address space.  This object acts as a program
+     interface to the machine.  */
+  class x68k_address_space: public address_space
+  {
+  private:
+    class machine *_m;
+
+  public:
+    x68k_address_space(class machine *m);
+
+  public:
+    /* Shortcut for the emulated machine.  */
+    class machine *machine() const
+    {return _m;}
   };
 } // vx68k
 

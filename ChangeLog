@@ -1,3 +1,29 @@
+2000-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/machine.cc (configure): Set maps for crtc, scc, and
+	ppi.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add crtcmem.cc,
+	sccmem.cc, and ppimem.cc.
+
+	* libvx68k/ppimem.cc: New file.
+	(getw, getb, read, putw, putb, write): New function.
+
+	* libvx68k/sccmem.cc: New file.
+	(getw, getb, read, putw, putb, write): New function.
+
+	* libvx68k/crtcmem.cc: New file.
+	(getw, getb, read, putw, putb, write): New function.
+
+	* include/vx68k/machine.h (class x68k_address_space): Moved.
+	(class machine): Add new members crtc, scc, and ppi.
+
+	* include/vx68k/memory.h (class crtc_memory, class scc_memory,
+	class ppi_memory): New class.
+
+	* bin/main.cc (run_boot): Fix a width of a printf format.
+	* libvx68k/doscontext.cc (start): Likewise.
+
 2000-07-02  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* doc/vx68k.xml: Updated.

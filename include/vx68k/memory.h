@@ -29,7 +29,22 @@ namespace vx68k
 
   class main_memory;
 
-  /* Area set interface.  This object is mapped from 0xe86000 to
+  /* CRTC registers memory.  */
+  class crtc_memory: public memory
+  {
+  public:
+    /* Reads data from this object.  */
+    uint_type getw(int, uint32_type) const;
+    uint_type getb(int, uint32_type) const;
+    size_t read(int, uint32_type, void *, size_t) const;
+
+    /* Writes data to this object.  */
+    void putw(int, uint32_type, uint_type);
+    void putb(int, uint32_type, uint_type);
+    size_t write(int, uint32_type, const void *, size_t);
+  };
+
+  /* Area set register.  This object is mapped from 0xe86000 to
      0xe88000.  This object has only the area set register, which is
      at 0xe86001(b).  */
   class area_set: public memory
@@ -41,6 +56,37 @@ namespace vx68k
   public:
     explicit area_set(main_memory *);
 
+  public:
+    /* Reads data from this object.  */
+    uint_type getw(int, uint32_type) const;
+    uint_type getb(int, uint32_type) const;
+    size_t read(int, uint32_type, void *, size_t) const;
+
+    /* Writes data to this object.  */
+    void putw(int, uint32_type, uint_type);
+    void putb(int, uint32_type, uint_type);
+    size_t write(int, uint32_type, const void *, size_t);
+  };
+
+  /* SCC registers memory.  */
+  class scc_memory: public memory
+  {
+  public:
+    /* Reads data from this object.  */
+    uint_type getw(int, uint32_type) const;
+    uint_type getb(int, uint32_type) const;
+    size_t read(int, uint32_type, void *, size_t) const;
+
+    /* Writes data to this object.  */
+    void putw(int, uint32_type, uint_type);
+    void putb(int, uint32_type, uint_type);
+    size_t write(int, uint32_type, const void *, size_t);
+  };
+
+  /* PPI (a.k.a 8255A) registers memory.  On X68000, a PPI is used for
+     joypad interface and ADPCM contorl.  */
+  class ppi_memory: public memory
+  {
   public:
     /* Reads data from this object.  */
     uint_type getw(int, uint32_type) const;

@@ -143,7 +143,7 @@ gtk_app::run_boot() throw ()
     {
       /* NOTE: This exception should have the address information.  */
       uint_type op = as.getw(SUPER_DATA, c.regs.pc);
-      fprintf(stderr, "vm68k illegal instruction %%pc=%#010x (%#04x)\n",
+      fprintf(stderr, "vm68k illegal instruction %%pc=%#010x (%#06x)\n",
 	      c.regs.pc, op);
     }
   catch (special_exception &x)
