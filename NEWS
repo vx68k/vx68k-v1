@@ -1,7 +1,19 @@
 News and History of User-Visible Changes in Virtual X68000
 
-$Date: Fri, 11 Aug 2000 23:51:21 +0900 $
+$Date: Tue, 05 Sep 2000 21:00:50 +0900 $
 
+Version 1.1.3
+
+* New instruction handlers have been added.
+
+* New IOCS call handlers have been added.
+
+* Mouse now works.
+
+* VDISP counter has been implemented.
+
+* Many bugs have been fixed.
+
 Version 1.1.2
 
 * New instruction handlers.
@@ -20,7 +32,7 @@ are implemented.
 * Reimplemented GUI.
 
 * NLS by GNU gettext.
-
+
 Version 1.1.1
 
 * First release.
