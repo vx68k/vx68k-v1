@@ -34,8 +34,7 @@ namespace vm68k
     typedef int svalue_type;
 
     static size_t value_bit() {return 8;}
-    static uint32_type value_mask()
-      {return (uint32_type(1) << value_bit()) - 1;}
+    static unsigned int value_mask() {return (1u << value_bit()) - 1;}
     static size_t value_size() {return 1;}
     static size_t aligned_value_size() {return 2;}
     static int svalue(unsigned int value)
@@ -53,7 +52,7 @@ namespace vm68k
 			    uint32_type address)
       {return a.getb(fc, address);}
     static void put(uint32_type &dest, unsigned int value)
-      {dest = dest & ~value_mask() | value & value_mask();}
+      {dest = dest & ~uint32_type(value_mask()) | value & value_mask();}
     static void put(address_space &a, int fc,
 		    uint32_type address, unsigned int value)
       {a.putb(fc, address, value & value_mask());}
@@ -68,8 +67,7 @@ namespace vm68k
     typedef sint_type svalue_type;
 
     static size_t value_bit() {return 16;}
-    static uint32_type value_mask()
-      {return (uint32_type(1) << value_bit()) - 1;}
+    static uint_type value_mask() {return (uint_type(1) << value_bit()) - 1;}
     static size_t value_size() {return 2;}
     static size_t aligned_value_size() {return value_size();}
     static sint_type svalue(uint_type value)
@@ -83,11 +81,10 @@ namespace vm68k
       }
 
     static uint_type get(uint32_type value) {return value & value_mask();}
-    static uint_type get(const address_space &a, int fc,
-			 uint32_type address)
+    static uint_type get(const address_space &a, int fc, uint32_type address)
       {return a.getw(fc, address);}
     static void put(uint32_type &dest, uint_type value)
-      {dest = dest & ~value_mask() | value & value_mask();}
+      {dest = dest & ~uint32_type(value_mask()) | value & value_mask();}
     static void put(address_space &a, int fc,
 		    uint32_type address, uint_type value)
       {a.putw(fc, address, value & value_mask());}

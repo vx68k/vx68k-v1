@@ -1,5 +1,8 @@
 1999-11-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/cpu.h (class byte_size, word_size): Truncate
+ 	the return types.
+
 	* include/vm68k/cpu.h (class context): Remove methods fetchw and
  	fetchl.
 	* vm68k/execunit.cc: Replace fetchw and fetchl using fetch.
