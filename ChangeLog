@@ -1,5 +1,7 @@
 1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* configure.in: Add check for GTK+.
+
 	* include/vx68k/human.h: Add using namespace std.  Prefix
 	include-once macro with _.
 
