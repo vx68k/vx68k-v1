@@ -1,5 +1,7 @@
 1999-03-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/cpu.h (user_cpu_regs): Rename members.
+
 	* vm68k/execunit.cc (movem_l_r_postdec): New function.
 	(install_instructions): Set instruction.
 

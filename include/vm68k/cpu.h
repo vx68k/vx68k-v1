@@ -26,13 +26,14 @@
 namespace vm68k
 {
 
-/* User view of CPU registers.  */
-struct user_cpu_regs
-{
-  uint32 gr[16];		// d0-d7/a0-a7
-  uint32 pc;
-  uint16 ccr;
-};
+  /* User view of CPU registers.  */
+  struct user_cpu_regs
+  {
+    uint32 d[8];		// d0-d7
+    uint32 a[8];		// a0-a7
+    uint32 pc;
+    uint16 ccr;
+  };
 
 /* CPU registers (mc68000).  */
 struct cpu_regs
