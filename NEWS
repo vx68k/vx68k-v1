@@ -1,15 +1,17 @@
 Virtual X68000 User-Visible Changes
 
-$Date: Tue, 13 Jul 1999 23:05:25 +0900 $
+$Date: Wed, 14 Jul 1999 22:58:36 +0900 $
 
 Version 0.36
 
 * Changes in M68000 core
 
-** Some of condition codes are implemented.
+** Common condition codes are implemented.
 
-** 626 instruction handlers are implemented though some do not update
+** 691 instruction handlers are implemented though some do not update
 the condition codes properly.
+
+** It is close to run DIS source code generator for itself.
 
 * Changes in X68000 machine layer
 

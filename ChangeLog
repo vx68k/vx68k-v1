@@ -1,5 +1,7 @@
 1999-07-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Modified.
+
 	* lib/vm68k/execunit.cc (install_instructions): Add new handlers.
 
 	* include/vm68k/condition.h (struct ne, struct eq): New class.
