@@ -327,6 +327,7 @@ vx68k_app::create_window()
 	  GtkItemFactoryEntry entries[]
 	    = {{_("/_File/_Run..."), NULL,
 		ITEM_FACTORY_CALLBACK(&handle_run_command), 0, "<Item>"},
+	       {_("/_File/"), NULL, NULL, 0, "<Separator>"},
 	       {_("/_File/FD _0/_Load..."), NULL,
 		ITEM_FACTORY_CALLBACK(&handle_fd_load_command), 0, "<Item>"},
 	       {_("/_File/FD _0/_Eject"), NULL,
