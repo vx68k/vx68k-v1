@@ -993,67 +993,6 @@ namespace
     fprintf(stderr, "iocs_ledmod: FIXME: not implemented\n");
   }
 
-  /* Handles a _MS_CURGT IOCS call.  */
-  void
-  iocs_ms_curgt(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _MS_CURGT\n");
-#endif
-
-    static bool once;
-    if (!once++)
-      fprintf(stderr, "iocs_ms_curgt: FIXME: not implemented\n");
-    long_word_size::put(c.regs.d[0], 0);
-  }
-
-  /* Handles a _MS_CURST call.  */
-  void
-  iocs_ms_curst(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _MS_CURST; %%d1=0x%08lx\n",
-      (unsigned long) long_word_size::get(c.regs.d[1]));
-#endif
-    fprintf(stderr, "iocs_ms_curst: FIXME: not implemented\n");
-  }
-
-  /* Handles a _MS_GETDT IOCS call.  */
-  void
-  iocs_ms_getdt(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _MS_GETDT\n");
-#endif
-
-    static bool once;
-    if (!once++)
-      fprintf(stderr, "iocs_ms_getdt: FIXME: not implemented\n");
-    long_word_size::put(c.regs.d[0], 0);
-  }
-
-  /* Handles a _MS_INIT call.  */
-  void
-  iocs_ms_init(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _MS_INIT\n");
-#endif
-    fprintf(stderr, "iocs_ms_init: FIXME: not implemented\n");
-  }
-
-  /* Handles a _MS_LIMIT call.  */
-  void
-  iocs_ms_limit(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _MS_LIMIT; %%d1=0x%08lx %%d2=0x%08lx\n",
-      (unsigned long) long_word_size::get(c.regs.d[1]),
-      (unsigned long) long_word_size::get(c.regs.d[2]));
-#endif
-    fprintf(stderr, "iocs_ms_limit: FIXME: not implemented\n");
-  }
-
   /* Handles a _ONTIME call.  */
   void
   iocs_ontime(context &c, unsigned long data)
@@ -1154,17 +1093,6 @@ namespace
       word_size::get(c.regs.d[3]));
 #endif
     fprintf(stderr, "iocs_scroll: FIXME: not implemented\n");
-  }
-
-  /* Handles a _SET232C call.  */
-  void
-  iocs_set232c(context &c, unsigned long data)
-  {
-#ifdef HAVE_NANA_H
-    L("IOCS _SET232C; %%d1:w=0x%04x\n", word_size::get(c.regs.d[1]));
-#endif
-    fprintf(stderr, "iocs_set232c: FIXME: not implemented\n");
-    c.regs.d[0] = 0;
   }
 
   /* Handles a _SKEY_MOD call.  */
@@ -1451,7 +1379,6 @@ namespace
     rom->set_iocs_function(0x2a, iocs_function_type(&iocs_b_clr_st, 0));
     rom->set_iocs_function(0x2e, iocs_function_type(&iocs_b_consol, 0));
     rom->set_iocs_function(0x2f, iocs_function_type(&iocs_b_putmes, 0));
-    rom->set_iocs_function(0x30, iocs_function_type(&iocs_set232c, 0));
     rom->set_iocs_function(0x37, iocs_function_type(&iocs_x37, 0));
     rom->set_iocs_function(0x38, iocs_function_type(&iocs_x38, 0));
     rom->set_iocs_function(0x39, iocs_function_type(&iocs_x39, 0));
@@ -1474,11 +1401,6 @@ namespace
     rom->set_iocs_function(0x6a, iocs_function_type(&iocs_opmintst, 0));
     rom->set_iocs_function(0x6b, iocs_function_type(&iocs_timerdst, 0));
     rom->set_iocs_function(0x6c, iocs_function_type(&iocs_vdispst, 0));
-    rom->set_iocs_function(0x70, iocs_function_type(&iocs_ms_init, 0));
-    rom->set_iocs_function(0x74, iocs_function_type(&iocs_ms_getdt, 0));
-    rom->set_iocs_function(0x75, iocs_function_type(&iocs_ms_curgt, 0));
-    rom->set_iocs_function(0x76, iocs_function_type(&iocs_ms_curst, 0));
-    rom->set_iocs_function(0x77, iocs_function_type(&iocs_ms_limit, 0));
     rom->set_iocs_function(0x7d, iocs_function_type(&iocs_skey_mod, 0));
     rom->set_iocs_function(0x7f, iocs_function_type(&iocs_ontime, 0));
     rom->set_iocs_function(0x80, iocs_function_type(&iocs_b_intvcs, 0));

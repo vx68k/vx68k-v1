@@ -435,6 +435,7 @@ machine::machine(size_t memory_size)
   : _memory_size(memory_size),
     mem(memory_size),
     _area_set(&mem),
+    scc(rom),
     master_as(new x68k_address_space(this)),
     _master_context(new context(master_as.get())),
     _key_modifiers(0),

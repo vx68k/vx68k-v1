@@ -29,7 +29,9 @@
 namespace vx68k
 {
   using vm68k::memory;
+  using vm68k::memory_address_space;
   using vm68k::context;
+  using vm68k::exec_unit;
   using namespace vm68k::types;
   using namespace std;
 
@@ -418,9 +420,13 @@ namespace vx68k
     void check_timeouts(console::time_type t, context &c);
   };
 
-  /* SCC registers memory.  */
+  /* SCC input/output ports memory.  */
   class scc_memory: public memory
   {
+  public:
+    explicit scc_memory(system_rom &);
+    ~scc_memory();
+
   public:
     /* Reads data from this object.  */
     uint_type get_16(int, uint32_type) const;

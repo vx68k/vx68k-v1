@@ -63,6 +63,8 @@ namespace vx68k
   private:
     size_t _memory_size;
 
+    system_rom rom;
+
     main_memory mem;
     graphics_video_memory gv;
     text_video_memory tvram;
@@ -77,7 +79,6 @@ namespace vx68k
     sprites_memory sprites;
     sram _sram;
     font_rom font;
-    system_rom rom;
 
     class exec_unit eu;
 

@@ -1,7 +1,24 @@
 2000-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (machine): Add initialization of member scc.
+
+	* libvx68k/systemrom.cc (iocs_ms_curgt, iocs_ms_curst,
+	iocs_ms_getdt, iocs_ms_init, iocs_ms_limit, iocs_set232c):
+	Removed.
+	(initialize_iocs_functions): Remove installation of removed
+	handlers.
+
+	* libvx68k/sccmem.cc (~scc_memory, scc_memory): New function.
+	(install_iocs_calls): New function.
+	(iocs_ms_curgt, iocs_ms_curst, iocs_ms_getdt, iocs_ms_init,
+	iocs_ms_limit, iocs_set232c): Moved from systemrom.cc
+
+	* include/vx68k/machine.h (class machine): Move member rom before
+	other components.
+
 	* include/vx68k/memory.h (class sram): Moved from machine.h.
 	(class system_rom): Likewise.
+	(class scc_memory): Add constructor and destructor.
 
 	* include/vx68k/machine.h (class graphics_vram): Removed.
 	(class sram): Removed.
@@ -906,7 +923,7 @@
 
 	* libvm68k/execunit.cc (m68k_bclr_i): Fix the instruction size.
 	(m68k_move_to_usp): New function.
-	(install_instrcutions): Add new handler.
+	(install_instructions): Add new handler.
 
 2000-06-29  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
@@ -1207,7 +1224,7 @@
 	tstw_d): Removed.
 	(add_instructions): Use b<ne> and b<eq>.
 	(exec_unit): Change initialization of member instructions.
-	(install_instrcutions): Removed.
+	(install_instructions): Removed.
 
 	* include/vm68k/cpu.h (struct instruction_data): Removed.  Also
 	replace all use of instruction_data * to unsigned long.

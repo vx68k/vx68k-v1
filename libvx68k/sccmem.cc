@@ -35,6 +35,10 @@ using vx68k::scc_memory;
 using namespace vm68k::types;
 using namespace std;
 
+#ifdef HAVE_NANA_H
+extern bool nana_iocs_call_trace;
+#endif
+
 uint_type
 scc_memory::get_16(int fc, uint32_type address) const
 {
@@ -71,4 +75,115 @@ scc_memory::put_8(int, uint32_type, uint_type)
 #ifdef HAVE_NANA_H
   L("class scc_memory: FIXME: `put_8' not implemented\n");
 #endif
+}
+
+namespace
+{
+  using vm68k::word_size;
+  using vm68k::long_word_size;
+  using vm68k::context;
+  using vx68k::system_rom;
+
+  /* Handles a _MS_CURGT IOCS call.  */
+  void
+  iocs_ms_curgt(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace,
+       "IOCS _MS_CURGT\n");
+#endif
+
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_ms_curgt: FIXME: not implemented\n");
+    long_word_size::put(c.regs.d[0], 0);
+  }
+
+  /* Handles a _MS_CURST IOCS call.  */
+  void
+  iocs_ms_curst(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace,
+       "IOCS _MS_CURST; %%d1=0x%08lx\n",
+       long_word_size::get(c.regs.d[1]) + 0UL);
+#endif
+
+    fprintf(stderr, "iocs_ms_curst: FIXME: not implemented\n");
+  }
+
+  /* Handles a _MS_GETDT IOCS call.  */
+  void
+  iocs_ms_getdt(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace,
+       "IOCS _MS_GETDT\n");
+#endif
+
+    static bool once;
+    if (!once++)
+      fprintf(stderr, "iocs_ms_getdt: FIXME: not implemented\n");
+    long_word_size::put(c.regs.d[0], 0);
+  }
+
+  /* Handles a _MS_INIT IOCS call.  */
+  void
+  iocs_ms_init(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace,
+       "IOCS _MS_INIT\n");
+#endif
+
+    fprintf(stderr, "iocs_ms_init: FIXME: not implemented\n");
+  }
+
+  /* Handles a _MS_LIMIT IOCS call.  */
+  void
+  iocs_ms_limit(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace,
+       "IOCS _MS_LIMIT; %%d1=0x%08lx %%d2=0x%08lx\n",
+       long_word_size::get(c.regs.d[1]) + 0UL,
+       long_word_size::get(c.regs.d[2]) + 0UL);
+#endif
+
+    fprintf(stderr, "iocs_ms_limit: FIXME: not implemented\n");
+  }
+
+  /* Handles a _SET232C IOCS call.  */
+  void
+  iocs_set232c(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    LG(nana_iocs_call_trace,
+       "IOCS _SET232C; %%d1:w=0x%04x\n", word_size::get(c.regs.d[1]));
+#endif
+
+    fprintf(stderr, "iocs_set232c: FIXME: not implemented\n");
+    c.regs.d[0] = 0;
+  }
+
+  /* Installs serial and mouse IOCS calls to the BIOS ROM.  */
+  void
+  install_iocs_calls(system_rom &bios, unsigned long data)
+  {
+    bios.set_iocs_function(0x30, make_pair(&iocs_set232c, data));
+    bios.set_iocs_function(0x70, make_pair(&iocs_ms_init, data));
+    bios.set_iocs_function(0x74, make_pair(&iocs_ms_getdt, data));
+    bios.set_iocs_function(0x75, make_pair(&iocs_ms_curgt, data));
+    bios.set_iocs_function(0x76, make_pair(&iocs_ms_curst, data));
+    bios.set_iocs_function(0x77, make_pair(&iocs_ms_limit, data));
+  }
+}
+
+scc_memory::~scc_memory()
+{
+}
+
+scc_memory::scc_memory(system_rom &bios)
+{
+  install_iocs_calls(bios, reinterpret_cast<unsigned long>(this));
 }
