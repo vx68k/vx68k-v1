@@ -1,5 +1,17 @@
 1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/memory.cc (set_memory_pages): Defined.
+
+	* vx68k/Makefile.am (libvx68k_a_SOURCES): Add memory.cc.
+	* vx68k/memory.cc: New file.
+
+	* include/vm68k/types.h (namespace types): New namespace
+	containing intX and uintX typedefs.
+
+	* vx68k/main.cc (main): Add constructor argument for mem.
+	* include/vx68k/memory.h (memory): Add member main_memory.
+	(class main_memory_page): New class.
+
 	* vx68k/main.cc (main): Set PC.
 
 	* include/vm68k/cpu.h (struct user_cpu_regs): Rename member r to

@@ -32,7 +32,7 @@ using vm68k::cpu;
 int
 main (int argc, char **argv)
 {
-  memory mem;
+  memory mem (4 * 1024 * 1024);	// FIXME
   execution_context ec (&mem);
   ec.regs.pc = 0x8100;		// FIXME
   cpu main_cpu;

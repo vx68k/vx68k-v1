@@ -24,6 +24,7 @@
 #include "vm68k/memory.h"
 
 #include <algorithm>
+#include <cassert>
 
 using namespace std;
 
@@ -106,6 +107,15 @@ memory::getw (int fc, uint32 address) const
 {
   uint32 p = address >> PAGE_SHIFT & NPAGES - 1;
   return page_table[p]->getw (fc, address);
+}
+
+void
+memory::set_memory_pages (int first, int last, memory_page *p)
+{
+  assert (first >= 0);
+  assert (first <= last);
+  assert (last <= NPAGES);
+  fill (page_table + first, page_table + last, p);
 }
 
 memory::memory ()

@@ -24,6 +24,9 @@
 namespace vm68k
 {
 
+namespace types
+{
+
 #if UINT_MAX >= 0xffffffff
 typedef int int32;
 typedef unsigned int uint32;
@@ -34,6 +37,10 @@ typedef unsigned long uint32;
 
 typedef unsigned short uint16;
 typedef unsigned char uint8;
+
+};				// namespace types
+
+using namespace types;
 
 struct exception
 {
