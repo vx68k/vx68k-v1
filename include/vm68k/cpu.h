@@ -26,23 +26,46 @@ namespace vm68k
 {
   using namespace std;
 
-  inline uint_type
-  extract_ub(uint32_type value)
+  struct byte_size_traits
   {
-    return value & 0xffu;
-  }
+    typedef unsigned int uvalue_type;
+    typedef int svalue_type;
+    static size_t value_size() {return 1;}
+    static unsigned int value_mask() {return (1u << value_size() * 8) - 1;}
+    static size_t immediate_operand_size() {return 2;}
 
-  inline uint_type
-  extract_uw(uint32_type value)
-  {
-    return value & 0xffffu;
-  }
+    static unsigned int get(uint32_type value) {return value & 0xffu;}
+    static void set(uint32_type &dest, unsigned int value)
+      {dest = dest & ~value_mask() | value & value_mask();}
+  };
 
-  inline uint32_type
-  extract_ul(uint32_type value)
+  struct word_size_traits
   {
-    return value;
-  }
+    typedef uint_type uvalue_type;
+    typedef sint_type svalue_type;
+    static size_t value_size() {return 2;}
+    static uint_type value_mask()
+      {return (uint_type(1) << value_size() * 8) - 1;}
+    static size_t immediate_operand_size() {return value_size();}
+
+    static uint_type get(uint32_type value) {return value & 0xffffu;}
+    static void set(uint32_type &dest, uint_type value)
+      {dest = dest & ~value_mask() | value & value_mask();}
+  };
+
+  struct long_word_size_traits
+  {
+    typedef uint32_type uvalue_type;
+    typedef sint32_type svalue_type;
+    static size_t value_size() {return 4;}
+    static uint32_type value_mask()
+      {return (uint32_type(1) << value_size() * 8) - 1;}
+    static size_t immediate_operand_size() {return value_size();}
+
+    static uint32_type get(uint32_type value) {return value;}
+    static void set(uint32_type &dest, uint32_type value)
+      {dest = value & value_mask();}
+  };
 
   /* Returns the signed 8-bit value that is equivalent to unsigned
      value VALUE.  */
@@ -75,27 +98,6 @@ namespace vm68k
     const uint32_type M = (N << 1) - 1;
     value &= M;
     return value >= N ? -sint32_type(M - value) - 1 : sint32_type(value);
-  }
-
-  inline void
-  modify_b(uint32_type &dest, uint_type value)
-  {
-    const uint32_type MASK = 0xffu;
-    dest = dest & ~MASK | value & MASK;
-  }
-
-  inline void
-  modify_w(uint32_type &dest, uint_type value)
-  {
-    const uint32_type MASK = 0xffffu;
-    dest = dest & ~MASK | value & MASK;
-  }
-
-  inline void
-  modify_l(uint32_type &dest, uint32_type value)
-  {
-    const uint32_type MASK = 0xffffffffu;
-    dest = value & MASK;
   }
 
   /* Condition code evaluator (abstract base class).  */

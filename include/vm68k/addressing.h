@@ -46,11 +46,11 @@ namespace vm68k
       sint32_type getl(const context &ec) const
 	{return extsl(ec.regs.d[reg]);}
       void putb(context &ec, uint_type value) const
-	{modify_b(ec.regs.d[reg], value);}
+	{byte_size_traits::set(ec.regs.d[reg], value);}
       void putw(context &ec, uint_type value) const
-	{modify_w(ec.regs.d[reg], value);}
+	{word_size_traits::set(ec.regs.d[reg], value);}
       void putl(context &ec, uint32_type value) const
-	{modify_l(ec.regs.d[reg], value);}
+	{long_word_size_traits::set(ec.regs.d[reg], value);}
       void finishb(context &) const {}
       void finishw(context &) const {}
       void finishl(context &) const {}

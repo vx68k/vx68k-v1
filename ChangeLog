@@ -2,6 +2,10 @@
 
 	* include/vm68k/cpu.h (struct exception_listener): #if'd out.
 	(class context): Comment out member exception.
+	(struct byte_size_traits, struct word_size_traits, struct
+	long_word_size_traits): New structs.
+	(extract_ub, extract_uw, extract_ul): Removed.
+	(modify_b, modify_w, modify_l): Removed.  Also change all uses.
 
 	* vm68k/Makefile.am (libvm68k_la_LDFLAGS): Set version info 1:0:0.
 
