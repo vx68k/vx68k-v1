@@ -554,6 +554,30 @@ namespace
     }
 #endif
 
+  /* Handles a BCLR instruction (register).  */
+  template <class Size, class Destination> void
+  m68k_bclr_r(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    Destination ea1(op & 0x7, 2 + 2);
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef TRACE_INSTRUCTIONS
+    L(" bclr%s %%d%u,", Size::suffix(), reg2);
+    L("%s\n", ea1.text(c));
+#endif
+
+    // This instruction affects only the Z bit of the condition codes.
+    uvalue_type mask = uvalue_type(1) << c.regs.d[reg2] % Size::value_bit();
+    uvalue_type value1 = ea1.get(c);
+    bool value = value1 & mask;
+    ea1.put(c, value1 & ~mask);
+    c.regs.sr.set_cc(value);	// FIXME.
+
+    c.regs.pc += 2 + ea1.extension_size();
+  }
+
   void
   bclrl_i(uint_type op, context &ec, unsigned long data)
   {
@@ -594,29 +618,6 @@ namespace
       ec.regs.pc += 2 + disp;
     }
 
-  template <class Size, class Destination> void
-  m68k_bset_d(uint_type op, context &c, unsigned long data)
-  {
-    typedef typename Size::uvalue_type uvalue_type;
-    typedef typename Size::svalue_type svalue_type;
-
-    Destination ea1(op & 0x7, 2 + 2);
-    unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
-    L(" bset%s %%d%u,", Size::suffix(), reg2);
-    L("%s\n", ea1.text(c));
-#endif
-
-    // This instruction affects only the Z bit of the condition codes.
-    uvalue_type mask = uvalue_type(1) << c.regs.d[reg2];
-    uvalue_type value1 = ea1.get(c);
-    bool value = value1 & mask;
-    ea1.put(c, value1 | mask);
-    c.regs.sr.set_cc(value);	// FIXME.
-
-    c.regs.pc += 2 + ea1.extension_size();
-  }
-
   void
   bsetl_i(uint_type op, context &ec, unsigned long data)
   {
@@ -635,6 +636,30 @@ namespace
     ec.regs.sr.set_cc(value);	// FIXME.
 
     ec.regs.pc += 2 + 2;
+  }
+
+  /* Handles a BSET instruction (register).  */
+  template <class Size, class Destination> void
+  m68k_bset_r(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    Destination ea1(op & 0x7, 2 + 2);
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef TRACE_INSTRUCTIONS
+    L(" bset%s %%d%u,", Size::suffix(), reg2);
+    L("%s\n", ea1.text(c));
+#endif
+
+    // This instruction affects only the Z bit of the condition codes.
+    uvalue_type mask = uvalue_type(1) << c.regs.d[reg2] % Size::value_bit();
+    uvalue_type value1 = ea1.get(c);
+    bool value = value1 & mask;
+    ea1.put(c, value1 | mask);
+    c.regs.sr.set_cc(value);	// FIXME.
+
+    c.regs.pc += 2 + ea1.extension_size();
   }
 
   void
@@ -1936,6 +1961,32 @@ namespace
     c.regs.pc += 2 + ea1.isize(4);
   }
 
+  template <class Size> void
+  m68k_ror_i(uint_type op, context &c, unsigned long data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    unsigned int reg1 = op & 0x7;
+    unsigned int count = op >> 9 & 0x7;
+    if (count == 0)
+      count = 8;
+#ifdef TRACE_INSTRUCTIONS
+    L(" ror%s #%u,", Size::suffix(), count);
+    L("%%d%u\n", reg1);
+#endif
+
+    svalue_type value1 = Size::svalue(Size::get(c.regs.d[reg1]));
+    svalue_type value
+      = Size::svalue((uvalue_type(value1) & Size::value_mask()) >> count
+		     | uvalue_type(value1) << Size::value_bit() - count);
+    Size::put(c.regs.d[reg1], value);
+    c.regs.sr.set_cc(value);	// FIXME.
+
+    c.regs.pc += 2;
+  }
+
+#if 0
   void
   rorw_i(uint_type op, context &c, unsigned long data)
   {
@@ -1957,6 +2008,7 @@ namespace
 
     c.regs.pc += 2 + ea1.isize(2);
   }
+#endif
 
   void
   roxrw_i(uint_type op, context &c, unsigned long data)
@@ -2221,6 +2273,32 @@ namespace
     c.regs.pc += 2 + ea1.extension_size();
   }
 
+  /* Handles an SUBQ instruction (address register).  */
+  template <class Size> void
+  m68k_subq_a(uint_type op, context &c, unsigned long data)
+  {
+    typedef long_word_size::uvalue_type uvalue_type;
+    typedef long_word_size::svalue_type svalue_type;
+
+    unsigned int reg1 = op & 0x7;
+    int value2 = op >> 9 & 0x7;
+    if (value2 == 0)
+      value2 = 8;
+#ifdef TRACE_INSTRUCTIONS
+    L(" subq%s #%d,", Size::suffix(), value2);
+    L("%%a%u\n", reg1);
+#endif
+
+    // This instruction does not affect the condition codes.
+    svalue_type value1 = long_word_size::get(c.regs.a[reg1]);
+    svalue_type value
+      = long_word_size::svalue(long_word_size::get(value1 - value2));
+    long_word_size::put(c.regs.a[reg1], value);
+
+    c.regs.pc += 2;
+  }
+
+#if 0
   template <class Destination> void
   subqw(uint_type op, context &ec, unsigned long data)
   {
@@ -2304,6 +2382,7 @@ namespace
 
     ec.regs.pc += 2 + ea1.isize(4);
   }
+#endif
 
   void
   swapw(uint_type op, context &ec, unsigned long data)
@@ -2409,21 +2488,36 @@ namespace
     eu.set_instruction(0x00a8, 0x0007, &oril<disp_indirect>);
     eu.set_instruction(0x00b0, 0x0007, &oril<indexed_indirect>);
     eu.set_instruction(0x00b9, 0x0000, &oril<absolute_long>);
+    eu.set_instruction(0x0180, 0x0e07,
+		       &m68k_bclr_r<long_word_size, long_word_d_register>);
+    eu.set_instruction(0x0190, 0x0e07, &m68k_bclr_r<byte_size, byte_indirect>);
+    eu.set_instruction(0x0198, 0x0e07,
+		       &m68k_bclr_r<byte_size, byte_postinc_indirect>);
+    eu.set_instruction(0x01a0, 0x0e07,
+		       &m68k_bclr_r<byte_size, byte_predec_indirect>);
+    eu.set_instruction(0x01a8, 0x0e07,
+		       &m68k_bclr_r<byte_size, byte_disp_indirect>);
+    eu.set_instruction(0x01b0, 0x0e07,
+		       &m68k_bclr_r<byte_size, byte_index_indirect>);
+    eu.set_instruction(0x01b8, 0x0e00,
+		       &m68k_bclr_r<byte_size, byte_abs_short>);
+    eu.set_instruction(0x01b9, 0x0e00,
+		       &m68k_bclr_r<byte_size, byte_abs_long>);
     eu.set_instruction(0x01c0, 0x0e07,
-		       &m68k_bset_d<long_word_size, long_word_d_register>);
-    eu.set_instruction(0x01d0, 0x0e07, &m68k_bset_d<byte_size, byte_indirect>);
+		       &m68k_bset_r<long_word_size, long_word_d_register>);
+    eu.set_instruction(0x01d0, 0x0e07, &m68k_bset_r<byte_size, byte_indirect>);
     eu.set_instruction(0x01d8, 0x0e07,
-		       &m68k_bset_d<byte_size, byte_postinc_indirect>);
+		       &m68k_bset_r<byte_size, byte_postinc_indirect>);
     eu.set_instruction(0x01e0, 0x0e07,
-		       &m68k_bset_d<byte_size, byte_predec_indirect>);
+		       &m68k_bset_r<byte_size, byte_predec_indirect>);
     eu.set_instruction(0x01e8, 0x0e07,
-		       &m68k_bset_d<byte_size, byte_disp_indirect>);
+		       &m68k_bset_r<byte_size, byte_disp_indirect>);
     eu.set_instruction(0x01f0, 0x0e07,
-		       &m68k_bset_d<byte_size, byte_index_indirect>);
+		       &m68k_bset_r<byte_size, byte_index_indirect>);
     eu.set_instruction(0x01f8, 0x0e00,
-		       &m68k_bset_d<byte_size, byte_abs_short>);
+		       &m68k_bset_r<byte_size, byte_abs_short>);
     eu.set_instruction(0x01f9, 0x0e00,
-		       &m68k_bset_d<byte_size, byte_abs_long>);
+		       &m68k_bset_r<byte_size, byte_abs_long>);
     eu.set_instruction(0x0200, 0x0007, &andib<data_register>);
     eu.set_instruction(0x0210, 0x0007, &andib<indirect>);
     eu.set_instruction(0x0218, 0x0007, &andib<postinc_indirect>);
@@ -2925,21 +3019,36 @@ namespace
 		       &m68k_subq<byte_size, byte_index_indirect>);
     eu.set_instruction(0x5138, 0x0e00, &m68k_subq<byte_size, byte_abs_short>);
     eu.set_instruction(0x5139, 0x0e00, &m68k_subq<byte_size, byte_abs_long>);
-    eu.set_instruction(0x5140, 0x0e07, &subqw<data_register>);
-    eu.set_instruction(0x5148, 0x0e07, &subqw<address_register>);
-    eu.set_instruction(0x5150, 0x0e07, &subqw<indirect>);
-    eu.set_instruction(0x5158, 0x0e07, &subqw<postinc_indirect>);
-    eu.set_instruction(0x5160, 0x0e07, &subqw<predec_indirect>);
-    eu.set_instruction(0x5168, 0x0e07, &subqw<disp_indirect>);
-    eu.set_instruction(0x5179, 0x0e00, &subqw<absolute_long>);
-    eu.set_instruction(0x5180, 0x0e07, &subql<data_register>);
-    eu.set_instruction(0x5188, 0x0e07, &subql<address_register>);
-    eu.set_instruction(0x5190, 0x0e07, &subql<indirect>);
-    eu.set_instruction(0x5198, 0x0e07, &subql<postinc_indirect>);
-    eu.set_instruction(0x51a0, 0x0e07, &subql<predec_indirect>);
-    eu.set_instruction(0x51a8, 0x0e07, &subql<disp_indirect>);
-    eu.set_instruction(0x51b0, 0x0e07, &subql<indexed_indirect>);
-    eu.set_instruction(0x51b9, 0x0e00, &subql<absolute_long>);
+    eu.set_instruction(0x5140, 0x0e07, &m68k_subq<word_size, word_d_register>);
+    eu.set_instruction(0x5148, 0x0e07, &m68k_subq_a<word_size>);
+    eu.set_instruction(0x5150, 0x0e07, &m68k_subq<word_size, word_indirect>);
+    eu.set_instruction(0x5158, 0x0e07,
+		       &m68k_subq<word_size, word_postinc_indirect>);
+    eu.set_instruction(0x5160, 0x0e07,
+		       &m68k_subq<word_size, word_predec_indirect>);
+    eu.set_instruction(0x5168, 0x0e07,
+		       &m68k_subq<word_size, word_disp_indirect>);
+    eu.set_instruction(0x5168, 0x0e07,
+		       &m68k_subq<word_size, word_disp_indirect>);
+    eu.set_instruction(0x5178, 0x0e00, &m68k_subq<word_size, word_abs_short>);
+    eu.set_instruction(0x5179, 0x0e00, &m68k_subq<word_size, word_abs_long>);
+    eu.set_instruction(0x5180, 0x0e07,
+		       &m68k_subq<long_word_size, long_word_d_register>);
+    eu.set_instruction(0x5188, 0x0e07, &m68k_subq_a<long_word_size>);
+    eu.set_instruction(0x5190, 0x0e07,
+		       &m68k_subq<long_word_size, long_word_indirect>);
+    eu.set_instruction(0x5198, 0x0e07,
+		       &m68k_subq<long_word_size, long_word_postinc_indirect>);
+    eu.set_instruction(0x51a0, 0x0e07,
+		       &m68k_subq<long_word_size, long_word_predec_indirect>);
+    eu.set_instruction(0x51a8, 0x0e07,
+		       &m68k_subq<long_word_size, long_word_disp_indirect>);
+    eu.set_instruction(0x51b0, 0x0e07,
+		       &m68k_subq<long_word_size, long_word_index_indirect>);
+    eu.set_instruction(0x51b8, 0x0e00,
+		       &m68k_subq<long_word_size, long_word_abs_short>);
+    eu.set_instruction(0x51b9, 0x0e00,
+		       &m68k_subq<long_word_size, long_word_abs_long>);
     eu.set_instruction(0x51c0, 0x0007, &s_b<f, data_register>);
     eu.set_instruction(0x51c8, 0x0007, &m68k_db<f>);
     eu.set_instruction(0x51d0, 0x0007, &s_b<f, indirect>);
@@ -3335,13 +3444,15 @@ namespace
     eu.set_instruction(0xd1fc, 0x0e00,
 		       &m68k_adda<long_word_size, long_word_immediate>);
     eu.set_instruction(0xe008, 0x0e07, &lsrb_i);
+    eu.set_instruction(0xe018, 0x0e07, &m68k_ror_i<byte_size>);
     eu.set_instruction(0xe048, 0x0e07, &lsrw_i);
     eu.set_instruction(0xe050, 0x0e07, &roxrw_i);
-    eu.set_instruction(0xe058, 0x0e07, &rorw_i);
+    eu.set_instruction(0xe058, 0x0e07, &m68k_ror_i<word_size>);
     eu.set_instruction(0xe068, 0x0e07, &lsrw_r);
     eu.set_instruction(0xe080, 0x0e07, &asrl_i);
     eu.set_instruction(0xe088, 0x0e07, &lsrl_i);
     eu.set_instruction(0xe090, 0x0e07, &roxrl_i);
+    eu.set_instruction(0xe098, 0x0e07, &m68k_ror_i<long_word_size>);
     eu.set_instruction(0xe0a0, 0x0e07, &asrl_r);
     eu.set_instruction(0xe0a8, 0x0e07, &lsrl_r);
     eu.set_instruction(0xe100, 0x0e07, &m68k_asl_i<byte_size>);

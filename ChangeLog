@@ -1,5 +1,12 @@
 2000-05-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (m68k_bclr_r, m68k_ror_i, m68k_subq_a): New
+	function template.
+	(m68k_bset_r): Renamed from m68k_bset_d.  Get modulo for the bit
+	number.
+	(rorw_i, subqw, subql): Disabled in #if-#endif.
+	(initialize_instructions): Update the instruction table.
+
 	* libvx68k/systemrom.cc (iocs_datebin, iocs_dateget,
 	iocs_timebin): New function.
 	(iocs_timeget): Rewrite using local variables.
