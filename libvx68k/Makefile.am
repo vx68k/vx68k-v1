@@ -17,3 +17,7 @@ spritemem.cc sram.cc fontrom.cc \
 iocsdisk.cc systemrom.cc machine.cc x68kaddr.cc \
 allocator.cc filesystem.cc doscontext.cc shell.cc dos.cc
 
+CLEANFILES = *.gdb
+
+libvx68k.gdb: $(libvx68k_la_SOURCES)
+	nana $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libvx68k_la_SOURCES) > $@

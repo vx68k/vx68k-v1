@@ -1,5 +1,14 @@
 2000-08-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc: Use DL instead of L.  Modify debug
+	strings.
+
+	* libvx68k/iocsdisk.cc (image_file_floppy_disk): Use I instead of
+	DI.
+
+	* libvx68k/Makefile.am (CLEANFILES): New macro.
+	(libvx68k.gdb): New target.
+
 	* TODO: Modified.
 
 	* libvx68k/textvram.cc (scroll): Scroll the second plane too.

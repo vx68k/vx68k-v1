@@ -173,9 +173,7 @@ image_file_floppy_disk::~image_file_floppy_disk()
 image_file_floppy_disk::image_file_floppy_disk(int fildes)
   : image_fildes(fildes)
 {
-#ifdef HAVE_NANA_H
-  DI(image_fildes >= 0);
-#endif
+  I(image_fildes >= 0);
   if (image_fildes < 0)
     throw invalid_argument("image_file_floppy_disk");
 }
