@@ -1,6 +1,25 @@
 News and History of User-Visible Changes in Virtual X68000
 
-$Date: Wed, 19 Jul 2000 22:54:14 +0900 $
+$Date: Fri, 11 Aug 2000 23:51:21 +0900 $
+
+Version 1.1.2
+
+* New instruction handlers.
+
+* New memory components.
+
+* New IOCS call handlers.
+
+* Preliminary interrupt support.  Currently, VDISP and OPM interrupts
+are implemented.
+
+* Text palette support.
+
+* Improved key input handling.
+
+* Reimplemented GUI.
+
+* NLS by GNU gettext.
 
 Version 1.1.1
 

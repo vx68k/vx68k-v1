@@ -1,6 +1,6 @@
 TO DO List for Virtual X68000
 
-$Date: Fri, 11 Aug 2000 00:12:14 +0900 $
+$Date: Fri, 11 Aug 2000 23:51:21 +0900 $
 
 * Implement text cursor.
 
@@ -9,10 +9,6 @@ $Date: Fri, 11 Aug 2000 00:12:14 +0900 $
 * Update the status bar when the process exits.
 
 * Better text VRAM emulation.
-
-** Use byte array for simplicity.
-
-** Implement the text color map.
 
 ** Optimize the text VRAM drawing.
 

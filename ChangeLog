@@ -1,5 +1,13 @@
 2000-08-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* Version 1.1.2.
+
+	* configure.in: Set VERSION to 1.1.2.
+
+	* NEWS: Updated.
+
+	* TODO: Updated.
+
 	* libvx68k/systemrom.cc (invalid_iocs_function): Use fprintf for
 	debug output.
 
