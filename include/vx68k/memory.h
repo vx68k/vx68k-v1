@@ -144,16 +144,18 @@ namespace vx68k
   class crtc_memory: public memory
   {
   private:
-    console *_console;
+    /* True if VDISP interrupts are enabled.  */
     bool _vdisp_interrupt_enabled;
 
+    /* Time interval between VDISP interrupts in milliseconds.  */
     console::time_type vdisp_interval;
 
+    /* Start time of the current interval for the next VDISP
+       interrupt.  */
     console::time_type vdisp_start_time;
 
   public:
     crtc_memory();
-    explicit crtc_memory(console *);
     ~crtc_memory();
 
   public:
@@ -166,13 +168,15 @@ namespace vx68k
     void put_8(int, uint32_type, uint_type);
 
   public:
-    void add_console(console *);
-
-  public:
     bool vdisp_interrupt_enabled() const {return _vdisp_interrupt_enabled;}
     void set_vdisp_interrupt_enabled(bool);
 
-    void check_timeout(context &c);
+  public:
+    /* Resets internal timestamps.  */
+    void reset(console::time_type t);
+
+    /* Checks timeouts for interrupts.  */
+    void check_timeouts(console::time_type t, context &c);
   };
 
   /* Palettes and video controller registers memory.  */
@@ -219,22 +223,22 @@ namespace vx68k
   class opm_memory: public memory
   {
   private:
-    console *_console;
     unsigned int _status;
     vector<unsigned char> _regs;
     bool _interrupt_enabled;
 
     unsigned int reg_index;
 
+    console::time_type last_check_time;
+
     /* Intervals for timers A and B.  */
     console::time_type timer_a_interval, timer_b_interval;
 
     /* Reset times for timers A and B.  */
-    console::time_type timer_a_reset_time, timer_b_reset_time;
+    console::time_type timer_a_start_time, timer_b_start_time;
 
   public:
     opm_memory();
-    explicit opm_memory(console *);
     ~opm_memory();
 
   public:
@@ -247,15 +251,17 @@ namespace vx68k
     void put_8(int, uint32_type, uint_type);
 
   public:
-    void add_console(console *);
-
-  public:
     unsigned int status() const {return _status;}
     void set_reg(unsigned int, unsigned int);
     bool interrupt_enabled() const {return _interrupt_enabled;}
     void set_interrupt_enabled(bool);
 
-    void check_timeout(context &c);
+  public:
+    /* Resets times.  */
+    void reset(console::time_type t);
+
+    /* Checks timeouts for interrupts.  */
+    void check_timeouts(console::time_type t, context &c);
   };
 
   /* SCC registers memory.  */

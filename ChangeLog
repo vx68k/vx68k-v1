@@ -2,6 +2,31 @@
 
 	* TODO: Modified.
 
+	* libvx68k/machine.cc (check_timers): Use new check_timeouts'.
+	(connect): Call reset's.
+
+	* libvx68k/opmmem.cc (reset): New function.
+	(check_timeout): Changed from check_timeout, adding argument t.
+	(check_timeout): Change use of renamed members.
+	(add_console, opm_memory(console *)): Removed.
+	(opm_memory): Change member initializations.
+
+	* libvx68k/crtcmem.cc (reset): New function.
+	(check_timeout): Changed from check_timeout, adding argument t.
+	(add_console, crtc_memory(console *)): Removed.
+	(crtc_memory): Change member initializations.
+
+	* include/vx68k/memory.h (class crtc_memory): Remove member
+	_console, crtc_memory(console *), and add_console.  Add member
+	reset.  Change member check_timeout to check_timeouts.
+	(class opm_memory): Remove member _console, opm_memory(console *),
+	add_console.  Add member last_check_time, and reset.  Change
+	member check_timeout to check_timeouts.  Rename members
+	timer_a_reset_time and timer_b_reset_time to timer_a_start_time
+	and timer_b_start_time.
+
+	* TODO: Modified.
+
 	* libvx68kgtk/gtkconsole.cc (update_area): Removed.
 	(~gtk_console, gtk_console): Remove use of update_area.
 

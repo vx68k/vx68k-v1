@@ -36,12 +36,14 @@ using namespace vm68k::types;
 using namespace std;
 
 void
-crtc_memory::check_timeout(context &c)
+crtc_memory::reset(console::time_type t)
 {
-  if (_console == NULL)
-    return;
+  vdisp_start_time = t;
+}
 
-  console::time_type t = _console->current_time();
+void
+crtc_memory::check_timeout(console::time_type t, context &c)
+{
   if (t - vdisp_start_time >= vdisp_interval)
     {
       vdisp_start_time += vdisp_interval;
@@ -51,13 +53,6 @@ crtc_memory::check_timeout(context &c)
     }
 }
 
-void
-crtc_memory::add_console(console *c)
-{
-  _console = c;
-  vdisp_start_time = _console->current_time();
-}
-
 void
 crtc_memory::set_vdisp_interrupt_enabled(bool value)
 {
@@ -113,16 +108,7 @@ crtc_memory::~crtc_memory()
 }
 
 crtc_memory::crtc_memory()
-  : _console(NULL),
-    _vdisp_interrupt_enabled(false),
+  : _vdisp_interrupt_enabled(false),
     vdisp_interval(1000 / 55)
 {
-}
-
-crtc_memory::crtc_memory(console *c)
-  : _console(c),
-    _vdisp_interrupt_enabled(false),
-    vdisp_interval(1000 / 55)
-{
-  vdisp_start_time = _console->current_time();
 }

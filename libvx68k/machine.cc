@@ -384,16 +384,17 @@ machine::update_image(unsigned char *rgb_buf, size_t row_size,
 void
 machine::check_timers(uint32_type t)
 {
-  crtc.check_timeout(*master_context());
-  opm.check_timeout(*master_context());
+  crtc.check_timeouts(t, *master_context());
+  opm.check_timeouts(t, *master_context());
   last_check_time = t;
 }
 
 void
 machine::connect(console *c)
 {
-  crtc.add_console(c);
-  opm.add_console(c);
+  console::time_type t = c->current_time();
+  crtc.reset(t);
+  opm.reset(t);
   tvram.connect(c);
   font.copy_data(c);
 }

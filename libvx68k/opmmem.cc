@@ -37,6 +37,42 @@ using namespace vm68k::types;
 using namespace std;
 
 void
+opm_memory::reset(console::time_type t)
+{
+  last_check_time = t;
+}
+
+void
+opm_memory::check_timeout(console::time_type t, context &c)
+{
+  last_check_time = t;
+
+  unsigned int old_status = status();
+  unsigned int tcr = _regs[0x14];
+
+  if ((tcr & 0x1) == 0x1 && (t - timer_a_start_time) >= timer_a_interval)
+    {
+      _status |= 0x2;
+      timer_a_start_time += timer_a_interval;
+    }
+  if ((tcr & 0x2) == 0x2 && (t - timer_b_start_time) >= timer_b_interval)
+    {
+      _status |= 0x1;
+      timer_a_start_time += timer_b_interval;
+    }
+
+  if (_interrupt_enabled)
+    {
+      unsigned int set_status = status() - ~old_status;
+      if ((tcr & 0x4) == 0x4 && (set_status & 0x2) == 0x2
+	  || (tcr & 0x8) == 0x8 && (set_status & 0x1) == 0x1)
+	{
+	  c.interrupt(6, 0x43);
+	}
+    }
+}
+
+void
 opm_memory::set_reg(unsigned int regno, unsigned int value)
 {
   regno &= 0xffu;
@@ -50,7 +86,7 @@ opm_memory::set_reg(unsigned int regno, unsigned int value)
       {
 	unsigned int k = _regs[0x10] << 2 | _regs[0x11] & 0x3;
 	timer_a_interval = (0x400 - k) * 64 / 4000;
-	timer_a_reset_time = _console->current_time();
+	timer_a_start_time = last_check_time;
       }
       break;
 
@@ -58,7 +94,7 @@ opm_memory::set_reg(unsigned int regno, unsigned int value)
       {
 	unsigned int k = _regs[0x12];
 	timer_b_interval = (0x100 - k) * 1024 / 4000;
-	timer_b_reset_time = _console->current_time();
+	timer_b_start_time = last_check_time;
       }
       break;
 
@@ -75,45 +111,7 @@ opm_memory::set_reg(unsigned int regno, unsigned int value)
       break;
     }
 }
-
-void
-opm_memory::check_timeout(context &c)
-{
-  if (_console == NULL)
-    return;
-
-  unsigned int old_status = status();
-  unsigned int tcr = _regs[0x14];
-
-  console::time_type t = _console->current_time();
-  if ((tcr & 0x1) == 0x1 && (t - timer_a_reset_time) >= timer_a_interval)
-    {
-      _status |= 0x2;
-      timer_a_reset_time += timer_a_interval;
-    }
-  if ((tcr & 0x2) == 0x2 && (t - timer_b_reset_time) >= timer_b_interval)
-    {
-      _status |= 0x1;
-      timer_a_reset_time += timer_b_interval;
-    }
-
-  if (_interrupt_enabled)
-    {
-      unsigned int set_status = status() - ~old_status;
-      if ((tcr & 0x4) == 0x4 && (set_status & 0x2) == 0x2
-	  || (tcr & 0x8) == 0x8 && (set_status & 0x1) == 0x1)
-	{
-	  c.interrupt(6, 0x43);
-	}
-    }
-}
 
-void
-opm_memory::add_console(console *c)
-{
-  _console = c;
-}
-
 void
 opm_memory::set_interrupt_enabled(bool value)
 {
@@ -204,17 +202,7 @@ opm_memory::~opm_memory()
 }
 
 opm_memory::opm_memory()
-  : _console(NULL),
-    _status(0),
-    _regs(0x100, 0),
-    _interrupt_enabled(false)
-{
-  reg_index = 0;
-}
-
-opm_memory::opm_memory(console *c)
-  : _console(c),
-    _status(0),
+  : _status(0),
     _regs(0x100, 0),
     _interrupt_enabled(false)
 {
