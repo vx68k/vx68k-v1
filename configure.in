@@ -36,10 +36,11 @@ AC_CXX_NAMESPACES
 AC_CHECK_FUNCS(localtime_r)
 ALL_LINGUAS="ja"
 AM_GNU_GETTEXT
-AC_OUTPUT(Makefile intl/Makefile include/Makefile include/vx68k/Makefile \
-libvx68kdos/Makefile libvx68kdos/vx68k/Makefile libvx68k/Makefile \
+AC_OUTPUT(Makefile intl/Makefile \
+libvx68kdos/Makefile libvx68kdos/vx68k/Makefile \
+include/Makefile include/vx68k/Makefile libvx68k/Makefile \
 libvx68k-gtk/Makefile libvx68k-gtk/vx68k/Makefile \
-programs/Makefile doc/Makefile testsuite/Makefile po/Makefile.in)
+programs/Makefile po/Makefile.in doc/Makefile testsuite/Makefile)
 if test "$ac_cv_cxx_exceptions" != yes; then
   AC_MSG_WARN([the C++ compiler does not support exceptions])
   AC_MSG_WARN([this program cannot be built without exceptions])

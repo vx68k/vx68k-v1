@@ -1,11 +1,18 @@
 2002-09-19  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* configure: Regenerated.
+	* Makefile.in: Regenerated.
+
+	* Makefile.am (SUBDIRS): Reorder directories.
+
+	* configure.in: Reorder AC_OUTPUT arguments.
+
 	* Makefile.am (SUBDIRS): Add @subdirs@.
 
 	* configure.in: Add AC_CONFIG_SUBDIRS.
 	Remove check for -lvm68k.
 
-	* Include libvm68k.
+	* Include libvm68k in the distribution.
 
 2002-05-12  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 

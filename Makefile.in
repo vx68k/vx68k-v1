@@ -101,7 +101,7 @@ USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 
-SUBDIRS = @subdirs@ intl include libvx68kdos libvx68k libvx68k-gtk programs po doc testsuite
+SUBDIRS = @subdirs@ intl libvx68kdos include libvx68k libvx68k-gtk programs po doc testsuite
 
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
