@@ -1,9 +1,22 @@
 2002-05-12  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Remove mainmem.cc.
+
+	* libvx68kdos/Makefile.am (libvx68kdos_la_SOURCES): Add
+	main_memory.cc.
+
+	* libvx68kdos/main_memory.cc: Moved from libvx68k/mainmem.cc.  Put
+	definitions in namespace vx68k.
+	(main_memory): Use malloc instead of calloc.
+	(set_protected_size): Renamed from set_super_area.
+	(get_8, get_16): Reorganized code.
+
 	* libvx68kdos/vx68k/dos (class main_memory): Moved from
 	include/vx68k/memory.h
 	(class main_memory): Add method size and protected_size.  Rename
 	method set_super_area to set_protected_size.
+	(class main_memory): Rename members end, super_area and data to
+	_size, _protected_size and content.
 
 	* Makefile.am (SUBDIRS): Add programs.
 
