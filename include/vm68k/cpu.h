@@ -69,13 +69,20 @@ struct exception_listener
   virtual void illegal (int, registers *, address_space *) = 0;
 };
 
-struct execution_context
-{
-  registers regs;
-  address_space *mem;
-  exception_listener *exception;
-  explicit execution_context (address_space *);
-};
+  class execution_context
+  {
+  public:
+    registers regs;
+    address_space *mem;
+    exception_listener *exception;
+  public:
+    explicit execution_context (address_space *);
+  public:
+    int program_fc() const
+      {return regs.sr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM;}
+    int data_fc() const
+      {return regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA;}
+  };
 
   /* Execution unit.  */
   class exec_unit

@@ -38,7 +38,7 @@ exec_unit::execute(execution_context *ec) const
   assert (ec != NULL);
   for (;;)
     {
-      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+      int fc = ec->program_fc();
       unsigned int op = ec->mem->getw (fc, ec->regs.pc);
       assert (op < 0x10000);
       instruction[op](op, ec);
@@ -99,7 +99,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+	  int fc = ec->program_fc();
 	  disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
 	}
       else
@@ -120,7 +120,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+	  int fc = ec->program_fc();
 	  disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
 	}
       else
@@ -141,7 +141,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+	  int fc = ec->program_fc();
 	  disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
 	}
       else
@@ -162,7 +162,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+	  int fc = ec->program_fc();
 	  disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
 	}
       else
@@ -172,7 +172,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+      int fc = ec->data_fc();
       ec->mem->putl(fc, ec->regs.a7 - 4, ec->regs.pc + len);
       ec->regs.a7 -= 4;
       ec->regs.pc += 2 + disp;
@@ -186,7 +186,7 @@ namespace
       fprintf(stderr, " clrw %%a%d@-\n", reg);
 #endif
 
-      int fc = ec->regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA;
+      int fc = ec->data_fc();
       int value = 0;
       ec->mem->putw(fc, (&ec->regs.a0)[reg] - 2, value);
       // FIXME: The condition codes must be set.
@@ -200,7 +200,7 @@ namespace
       assert(ec != NULL);
       int s_reg = op & 0x7;
       int d_reg = op >> 9 & 0x7;
-      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+      int fc = ec->program_fc();
       int offset = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
 #ifdef TRACE_STEPS
       fprintf(stderr, " lea %%a%d@(%ld),%%a%d\n", s_reg, (long) offset, d_reg);
@@ -216,7 +216,7 @@ namespace
     {
       assert(ec != NULL);
       int reg = op >> 9 & 0x7;
-      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+      int fc = ec->program_fc();
       uint32 address = ec->mem->getl(fc, ec->regs.pc + 2);
 #ifdef TRACE_STEPS
       fprintf(stderr, " lea 0x%lx:l,%%a%d\n", (unsigned long) address, reg);
@@ -231,13 +231,14 @@ namespace
   void link_a(int op, execution_context *ec)
     {
       int reg = op & 0x0007;
-      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+      int fc = ec->program_fc();
       int disp = extsw(ec->mem->getw(fc, ec->regs.pc + 2));
 #ifdef TRACE_STEPS
       fprintf(stderr, " link %%a%d,#%d\n", reg, disp);
 #endif
 
       // FIXME.
+      fc = ec->data_fc();
       ec->mem->putl(fc, ec->regs.a7 - 4, (&ec->regs.a0)[reg]);
       ec->regs.a7 -= 4;
       (&ec->regs.a0)[reg] = ec->regs.a7;
@@ -256,7 +257,7 @@ namespace
 #endif
 
       // FIXME.
-      int fc = 1 ? SUPER_DATA : USER_DATA; // FIXME.
+      int fc = ec->data_fc();
       int value = ec->mem->getb(fc, (&ec->regs.a0)[s_reg]);
       ec->mem->putb(fc, (&ec->regs.a0)[d_reg], value);
 
@@ -267,14 +268,13 @@ namespace
     {
       assert(ec != NULL);
       int reg = op & 0x7;
-      int fc = (ec->regs.sr.supervisor_state()
-		? SUPER_PROGRAM : USER_PROGRAM);
+      int fc = ec->program_fc();
       uint32 address = ec->mem->getl(fc, ec->regs.pc + 2);
 #ifdef TRACE_STEPS
       fprintf(stderr, " moveb %%d%d,0x%x\n", reg, address);
 #endif
 
-      fc = ec->regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA;
+      fc = ec->data_fc();
       ec->mem->putw(fc, address, (&ec->regs.d0)[reg]);
       // FIXME: The condition codes must be set.
 
@@ -291,7 +291,7 @@ namespace
 #endif
 
       // FIXME.
-      int fc = 1 ? SUPER_DATA : USER_DATA; // FIXME.
+      int fc = ec->data_fc();
       ec->mem->putl(fc, (&ec->regs.a0)[d_reg] - 4, (&ec->regs.a0)[s_reg]);
       (&ec->regs.a0)[d_reg] -= 4;
 
@@ -308,7 +308,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      int fc = 1 ? SUPER_DATA : USER_DATA; // FIXME.
+      int fc = ec->data_fc();
       (&ec->regs.a0)[d_reg] = ec->mem->getl(fc, (&ec->regs.a0)[s_reg]);
       (&ec->regs.a0)[s_reg] += 4;
 
@@ -319,12 +319,13 @@ namespace
   void moveml_r_predec(int op, execution_context *ec)
     {
       int reg = op & 0x0007;
-      int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM; // FIXME.
+      int fc = ec->program_fc();
       unsigned int bitmap = ec->mem->getw(fc, ec->regs.pc + 2);
 #ifdef TRACE_STEPS
       fprintf(stderr, " moveml #0x%x,%%a%d@-\n", bitmap, reg);
 #endif
 
+      fc = ec->data_fc();
       for (int i = 0; i != 16; ++i)
 	{
 	  if (bitmap & 1 != 0)
@@ -360,15 +361,14 @@ namespace
   void pea_absl(int op, execution_context *ec)
     {
       assert(ec != NULL);
-      int fc = (ec->regs.sr.supervisor_state()
-		? SUPER_PROGRAM : USER_PROGRAM);
+      int fc = ec->program_fc();
       uint32 address = ec->mem->getl(fc, ec->regs.pc + 2);
 #ifdef TRACE_STEPS
       fprintf(stderr, " pea 0x%lx:l\n", (unsigned long) address);
 #endif
 
       // XXX: The condition codes are not affected.
-      fc = ec->regs.sr.supervisor_state() ? SUPER_DATA : USER_DATA;
+      fc = ec->data_fc();
       ec->mem->putl(fc, ec->regs.a7 - 4, address);
 
       ec->regs.pc += 6;
@@ -382,7 +382,7 @@ namespace
 #endif
 
       // XXX: The condition codes are not affected.
-      int fc = 1 ? SUPER_DATA : USER_PROGRAM; // FIXME.
+      int fc = ec->data_fc();
       uint32 value = ec->mem->getl(fc, ec->regs.a7);
       ec->regs.a7 += 4;
       ec->regs.pc = value;

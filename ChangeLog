@@ -1,5 +1,14 @@
 1999-03-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (execute, bge, bne, bra, bsr, clrw_predec,
+	lea_offset_a, lea_absl_a, link_a, moveb_postinc_postinc,
+	movew_a_absl, movel_a_predec, movel_postinc_a, moveml_r_predec,
+	pea_absl, rts): Use execution_context::program_fc/data_fc.
+
+	* include/vm68k/cpu.h (class execution_context): Changed from
+	struct.
+	(class execution_context): Add program_fc and data_fc().
+
 	* lib/vm68k/addrspace.cc: Modify comments.
 	(getb_signed, getw_signed, getl_signed): Removed.
 
