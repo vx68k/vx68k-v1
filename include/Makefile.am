@@ -1,3 +1,3 @@
 
-SUBDIRS = vm68k
+SUBDIRS = vm68k vx68k
 
