@@ -50,13 +50,13 @@ namespace vx68k
   private:
     unsigned char *buf;
     unsigned int pos;
+    unsigned char packs[4];
 
   public:
     text_video_raster_iterator()
       : buf(NULL), pos(0) {}
 
-    text_video_raster_iterator(unsigned char *b, unsigned int p)
-      : buf(b), pos(p) {}
+    text_video_raster_iterator(unsigned char *b, unsigned int p);
 
   public:
     bool operator==(const text_video_raster_iterator &another) const
@@ -120,6 +120,8 @@ namespace vx68k
        bytes.  ROW_SIZE is the row size of RGB_BUF.  */
     void get_image(int x, int y, int width, int height,
 		   unsigned char *rgb_buf, size_t row_size);
+
+    raster_iterator raster(unsigned int, unsigned int);
   };
 
   /* CRTC registers memory.  */

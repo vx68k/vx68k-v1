@@ -362,10 +362,6 @@ gtk_console::handle_timeout()
       update_region = gdk_region_new();
       gdk_threads_leave();
 
-      // FIXME: This adjustment is temporary.
-      bounds.width += bounds.x;
-      bounds.x = 0;
-
       _m->get_image(bounds.x, bounds.y, bounds.width, bounds.height,
 		    rgb_buf + bounds.y * row_size + bounds.x * 3, row_size);
 

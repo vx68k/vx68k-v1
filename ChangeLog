@@ -1,5 +1,20 @@
 2000-08-02  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68kgtk/gtkconsole.cc (handle_timeout): Remove temporary
+	code.
+
+	* libvx68k/machine.cc (get_image): Use
+	text_video_memory::raster_iterator.
+
+	* libvx68k/textvram.cc (operator*, operator++,
+	text_video_raster_iterator): New function.
+	(raster): New function.
+	(put_16, put_8): Remove log output.
+
+	* include/vx68k/memory.h (class text_video_raster_iterator): Make
+	a constructor out-of-line.  Add new member packs.
+	(class text_video_memory): Add new member raster.
+
 	* bin/main.cc: Gettextize.
 	(main): Set text domain.
 

@@ -327,15 +327,29 @@ machine::get_image(int x, int y, int width, int height,
 		   unsigned char *rgb_buf, size_t row_size)
 {
   for (int i = 0; i != height; ++i)
-    for (int j = 0; j != width; ++j)
-      {
-	unsigned char *p = rgb_buf + i * row_size + j * 3;
-	p[0] = 0;
-	p[1] = 0;
-	p[2] = 0;
-      }
+    {
+      for (int j = 0; j != width; ++j)
+	{
+	  unsigned char *p = rgb_buf + i * row_size + j * 3;
+	  p[0] = 0;
+	  p[1] = 0;
+	  p[2] = 0;
+	}
 
-  tvram.get_image(x, y, width, height, rgb_buf, row_size);
+      text_video_memory::raster_iterator q = tvram.raster(x, y + i);
+      for (int j = 0; j != width; ++j)
+	{
+	  static const unsigned char vv[16 * 3] = {0, 0, 0,
+						   0, 255, 255,
+						   255, 255, 0,
+						   255, 255, 255};
+	  uint_type v = 3 * *q++;
+	  unsigned char *p = rgb_buf + i * row_size + j * 3;
+	  p[0] = vv[v];
+	  p[1] = vv[v + 1];
+	  p[2] = vv[v + 2];
+	}
+    }
 }
 
 void

@@ -33,6 +33,7 @@
 # define I assert
 #endif
 
+using vx68k::text_video_raster_iterator;
 using vx68k::text_video_memory;
 using vm68k::bus_error_exception;
 using vm68k::SUPER_DATA;
@@ -49,6 +50,51 @@ advance_row(unsigned char *&ptr)
   ptr += ROW_SIZE;
 }
 
+uint_type
+text_video_raster_iterator::operator*() const
+{
+  unsigned char mask = 0x80 >> (pos % 8u);
+  uint_type bit = 1u;
+  uint_type value = 0;
+  for (const unsigned char *i = packs + 0; i != packs + 4; ++i)
+    {
+      if (*i & mask)
+	value |= bit;
+
+      bit <<= 1;
+    }
+
+  return value;
+}
+
+text_video_raster_iterator &
+text_video_raster_iterator::operator++()
+{
+  unsigned int tmp = pos;
+  ++pos;
+  if (pos / 8u != tmp / 8u)
+    {
+      unsigned char *p = buf + (pos / 8u) % ROW_SIZE;
+      packs[0] = p[0 * PLANE_SIZE];
+      packs[1] = p[1 * PLANE_SIZE];
+      packs[2] = p[2 * PLANE_SIZE];
+      packs[3] = p[3 * PLANE_SIZE];
+    }
+
+  return *this;
+}
+
+text_video_raster_iterator::text_video_raster_iterator(unsigned char *base,
+						       unsigned int x)
+  : buf(base), pos(x)
+{
+  unsigned char *p = buf + (pos / 8u) % ROW_SIZE;
+  packs[0] = p[0 * PLANE_SIZE];
+  packs[1] = p[1 * PLANE_SIZE];
+  packs[2] = p[2 * PLANE_SIZE];
+  packs[3] = p[3 * PLANE_SIZE];
+}
+
 void
 text_video_memory::scroll()
 {
@@ -150,6 +196,12 @@ text_video_memory::get_image(int x, int y, int width, int height,
     }
 }
 
+text_video_memory::raster_iterator
+text_video_memory::raster(unsigned int x, unsigned int y)
+{
+  return raster_iterator(buf + y * ROW_SIZE, x);
+}
+
 uint_type
 text_video_memory::get_16(int fc, uint32_type address) const
 {
@@ -183,10 +235,6 @@ text_video_memory::get_8(int fc, uint32_type address) const
 void
 text_video_memory::put_16(int fc, uint32_type address, uint_type value)
 {
-#ifdef HAVE_NANA_H
-  L("class text_video_memory: put_16 fc=%d address=%#010lx\n",
-    fc, (unsigned long) address);
-#endif
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);
 
@@ -204,10 +252,6 @@ text_video_memory::put_16(int fc, uint32_type address, uint_type value)
 void
 text_video_memory::put_8(int fc, uint32_type address, uint_type value)
 {
-#ifdef HAVE_NANA_H
-  L("class text_video_memory: put_16 fc=%d address=%#010lx\n",
-    fc, (unsigned long) address);
-#endif
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);
 
