@@ -2748,6 +2748,7 @@ namespace
     eu.set_instruction(0x0c18, 0x0007, &cmpib<postinc_indirect>);
     eu.set_instruction(0x0c20, 0x0007, &cmpib<predec_indirect>);
     eu.set_instruction(0x0c28, 0x0007, &cmpib<disp_indirect>);
+    eu.set_instruction(0x0c38, 0x0000, &cmpib<absolute_short>);
     eu.set_instruction(0x0c39, 0x0000, &cmpib<absolute_long>);
     eu.set_instruction(0x0c40, 0x0007, &cmpiw<data_register>);
     eu.set_instruction(0x0c50, 0x0007, &cmpiw<indirect>);
@@ -2770,6 +2771,7 @@ namespace
     eu.set_instruction(0x1020, 0x0e07, &moveb<predec_indirect, data_register>);
     eu.set_instruction(0x1028, 0x0e07, &moveb<disp_indirect, data_register>);
     eu.set_instruction(0x1030, 0x0e07, &moveb<indexed_indirect, data_register>);
+    eu.set_instruction(0x1038, 0x0e00, &moveb<absolute_short, data_register>);
     eu.set_instruction(0x1039, 0x0e00, &moveb<absolute_long, data_register>);
     eu.set_instruction(0x103a, 0x0e00, &moveb<disp_pc, data_register>);
     eu.set_instruction(0x103b, 0x0e00, &moveb<indexed_pc_indirect, data_register>);
@@ -2797,6 +2799,7 @@ namespace
     eu.set_instruction(0x1118, 0x0e07, &moveb<postinc_indirect, predec_indirect>);
     eu.set_instruction(0x1120, 0x0e07, &moveb<predec_indirect, predec_indirect>);
     eu.set_instruction(0x1128, 0x0e07, &moveb<disp_indirect, predec_indirect>);
+    eu.set_instruction(0x1138, 0x0e00, &moveb<absolute_short, predec_indirect>);
     eu.set_instruction(0x1139, 0x0e00, &moveb<absolute_long, predec_indirect>);
     eu.set_instruction(0x113a, 0x0e00, &moveb<disp_pc, predec_indirect>);
     eu.set_instruction(0x113c, 0x0e00, &moveb<immediate, predec_indirect>);
@@ -2818,6 +2821,9 @@ namespace
     eu.set_instruction(0x11b9, 0x0e00, &moveb<absolute_long, indexed_indirect>);
     eu.set_instruction(0x11ba, 0x0e00, &moveb<disp_pc, indexed_indirect>);
     eu.set_instruction(0x11bc, 0x0e00, &moveb<immediate, indexed_indirect>);
+    eu.set_instruction(0x11c0, 0x0007, &moveb<data_register, absolute_short>);
+    eu.set_instruction(0x11f9, 0x0000, &moveb<absolute_long, absolute_short>);
+    eu.set_instruction(0x11fc, 0x0000, &moveb<immediate, absolute_short>);
     eu.set_instruction(0x13c0, 0x0007, &moveb<data_register, absolute_long>);
     eu.set_instruction(0x13d0, 0x0007, &moveb<indirect, absolute_long>);
     eu.set_instruction(0x13d8, 0x0007, &moveb<postinc_indirect, absolute_long>);
@@ -2877,6 +2883,7 @@ namespace
     eu.set_instruction(0x20d8, 0x0e07, &movel<postinc_indirect, postinc_indirect>);
     eu.set_instruction(0x20e0, 0x0e07, &movel<predec_indirect, postinc_indirect>);
     eu.set_instruction(0x20e8, 0x0e07, &movel<disp_indirect, postinc_indirect>);
+    eu.set_instruction(0x20f8, 0x0e00, &movel<absolute_short, postinc_indirect>);
     eu.set_instruction(0x20f9, 0x0e00, &movel<absolute_long, postinc_indirect>);
     eu.set_instruction(0x20fc, 0x0e00, &movel<immediate, postinc_indirect>);
     eu.set_instruction(0x2100, 0x0e07, &movel<data_register, predec_indirect>);
@@ -2907,6 +2914,8 @@ namespace
     eu.set_instruction(0x21b9, 0x0e00, &movel<absolute_long, indexed_indirect>);
     eu.set_instruction(0x21bc, 0x0e00, &movel<immediate, indexed_indirect>);
     eu.set_instruction(0x21c8, 0x0007, &movel<address_register, absolute_short>);
+    eu.set_instruction(0x21d0, 0x0007, &movel<indirect, absolute_short>);
+    eu.set_instruction(0x21fc, 0x0000, &movel<immediate, absolute_short>);
     eu.set_instruction(0x23c0, 0x0007, &movel<data_register, absolute_long>);
     eu.set_instruction(0x23c8, 0x0007, &movel<address_register, absolute_long>);
     eu.set_instruction(0x23d0, 0x0007, &movel<indirect, absolute_long>);
@@ -2961,6 +2970,7 @@ namespace
     eu.set_instruction(0x30d8, 0x0e07, &movew<postinc_indirect, postinc_indirect>);
     eu.set_instruction(0x30e0, 0x0e07, &movew<predec_indirect, postinc_indirect>);
     eu.set_instruction(0x30e8, 0x0e07, &movew<disp_indirect, postinc_indirect>);
+    eu.set_instruction(0x30f8, 0x0e00, &movew<absolute_short, postinc_indirect>);
     eu.set_instruction(0x30f9, 0x0e00, &movew<absolute_long, postinc_indirect>);
     eu.set_instruction(0x30fc, 0x0e00, &movew<immediate, postinc_indirect>);
     eu.set_instruction(0x3100, 0x0e07, &movew<data_register, predec_indirect>);
@@ -2990,6 +3000,9 @@ namespace
     eu.set_instruction(0x31b0, 0x0e07, &movew<indexed_indirect, indexed_indirect>);
     eu.set_instruction(0x31b9, 0x0e00, &movew<absolute_long, indexed_indirect>);
     eu.set_instruction(0x31bc, 0x0e00, &movew<immediate, indexed_indirect>);
+    eu.set_instruction(0x31c0, 0x0007, &movew<data_register, absolute_short>);
+    eu.set_instruction(0x31f9, 0x0000, &movew<absolute_long, absolute_short>);
+    eu.set_instruction(0x31fc, 0x0000, &movew<immediate, absolute_short>);
     eu.set_instruction(0x33c0, 0x0007, &movew<data_register, absolute_long>);
     eu.set_instruction(0x33c8, 0x0007, &movew<address_register, absolute_long>);
     eu.set_instruction(0x33d0, 0x0007, &movew<indirect, absolute_long>);
@@ -3002,6 +3015,7 @@ namespace
     eu.set_instruction(0x41d0, 0x0e07, &lea<indirect>);
     eu.set_instruction(0x41e8, 0x0e07, &lea<disp_indirect>);
     eu.set_instruction(0x41f0, 0x0e07, &lea<indexed_indirect>);
+    eu.set_instruction(0x41f8, 0x0e00, &lea<absolute_short>);
     eu.set_instruction(0x41f9, 0x0e00, &lea<absolute_long>);
     eu.set_instruction(0x41fa, 0x0e00, &lea<disp_pc>);
     eu.set_instruction(0x41fb, 0x0e00, &lea<indexed_pc_indirect>);
@@ -3011,6 +3025,7 @@ namespace
     eu.set_instruction(0x4220, 0x0007, &clrb<predec_indirect>);
     eu.set_instruction(0x4228, 0x0007, &clrb<disp_indirect>);
     eu.set_instruction(0x4230, 0x0007, &clrb<indexed_indirect>);
+    eu.set_instruction(0x4238, 0x0000, &clrb<absolute_short>);
     eu.set_instruction(0x4239, 0x0000, &clrb<absolute_long>);
     eu.set_instruction(0x4240, 0x0007, &clrw<data_register>);
     eu.set_instruction(0x4250, 0x0007, &clrw<indirect>);
@@ -3024,6 +3039,7 @@ namespace
     eu.set_instruction(0x4298, 0x0007, &clrl<postinc_indirect>);
     eu.set_instruction(0x42a0, 0x0007, &clrl<predec_indirect>);
     eu.set_instruction(0x42a8, 0x0007, &clrl<disp_indirect>);
+    eu.set_instruction(0x42b8, 0x0000, &clrl<absolute_short>);
     eu.set_instruction(0x42b9, 0x0000, &clrl<absolute_long>);
     eu.set_instruction(0x4400, 0x0007, &negb<data_register>);
     eu.set_instruction(0x4410, 0x0007, &negb<indirect>);
@@ -3078,11 +3094,6 @@ namespace
 		       &m68k_movem_r_m<long_word_size, long_word_abs_short>);
     eu.set_instruction(0x48f9, 0x0000,
 		       &m68k_movem_r_m<long_word_size, long_word_abs_long>);
-    eu.set_instruction(0x4cd0, 0x0007, &moveml_mr<indirect>);
-    eu.set_instruction(0x4cd8, 0x0007, &moveml_mr<postinc_indirect>);
-    eu.set_instruction(0x4ce8, 0x0007, &moveml_mr<disp_indirect>);
-    eu.set_instruction(0x4cf9, 0x0000, &moveml_mr<absolute_long>);
-    eu.set_instruction(0x4cfa, 0x0000, &moveml_mr<disp_pc>);
     eu.set_instruction(0x4a00, 0x0007, &tstb<data_register>);
     eu.set_instruction(0x4a10, 0x0007, &tstb<indirect>);
     eu.set_instruction(0x4a18, 0x0007, &tstb<postinc_indirect>);
@@ -3096,6 +3107,7 @@ namespace
     eu.set_instruction(0x4a60, 0x0007, &tstw<predec_indirect>);
     eu.set_instruction(0x4a68, 0x0007, &tstw<disp_indirect>);
     eu.set_instruction(0x4a70, 0x0007, &tstw<indexed_indirect>);
+    eu.set_instruction(0x4a78, 0x0000, &tstw<absolute_short>);
     eu.set_instruction(0x4a79, 0x0000, &tstw<absolute_long>);
     eu.set_instruction(0x4a80, 0x0007, &tstl<data_register>);
     eu.set_instruction(0x4a90, 0x0007, &tstl<indirect>);
@@ -3103,6 +3115,11 @@ namespace
     eu.set_instruction(0x4aa0, 0x0007, &tstl<predec_indirect>);
     eu.set_instruction(0x4aa8, 0x0007, &tstl<disp_indirect>);
     eu.set_instruction(0x4ab9, 0x0000, &tstl<absolute_long>);
+    eu.set_instruction(0x4cd0, 0x0007, &moveml_mr<indirect>);
+    eu.set_instruction(0x4cd8, 0x0007, &moveml_mr<postinc_indirect>);
+    eu.set_instruction(0x4ce8, 0x0007, &moveml_mr<disp_indirect>);
+    eu.set_instruction(0x4cf9, 0x0000, &moveml_mr<absolute_long>);
+    eu.set_instruction(0x4cfa, 0x0000, &moveml_mr<disp_pc>);
     eu.set_instruction(0x4e50, 0x0007, &link_a);
     eu.set_instruction(0x4e58, 0x0007, &unlk_a);
     eu.set_instruction(0x4e68, 0x0007, &m68k_move_from_usp);
@@ -3284,6 +3301,7 @@ namespace
     eu.set_instruction(0x80e8, 0x0e07, &divuw<disp_indirect>);
     eu.set_instruction(0x80f0, 0x0e07, &divuw<indexed_indirect>);
     eu.set_instruction(0x80f9, 0x0e00, &divuw<absolute_long>);
+    eu.set_instruction(0x80fa, 0x0e00, &divuw<disp_pc>);
     eu.set_instruction(0x80fc, 0x0e00, &divuw<immediate>);
     eu.set_instruction(0x9000, 0x0e07, &subb<data_register>);
     eu.set_instruction(0x9010, 0x0e07, &subb<indirect>);
