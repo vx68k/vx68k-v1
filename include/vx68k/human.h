@@ -111,6 +111,22 @@ namespace vx68k
 	{debug_level = lev;}
     };
 
+    /* Dummy process for interface from POSIX to DOS.  */
+    class shell
+    {
+    private:
+      dos_exec_context *_ec;
+      uint32_type pdb;
+
+    public:
+      shell(dos_exec_context *);
+      ~shell();
+
+    public:
+      sint_type exec(const char *name, const char *const *argv,
+		     const char *const *envp);
+    };
+
     class dos
       : public virtual instruction_data
     {
