@@ -43,6 +43,20 @@ dos::execute (const char *name, const char *const *argv)
 
 namespace
 {
+  void
+  dos_chmod(unsigned int op, context &ec)
+  {
+#ifdef L
+    L(" DOS _CHMOD");
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    // FIXME.
+    ec.regs.d[0] = -1;
+
+    ec.regs.pc += 2;
+  }
+
   void dos_close(unsigned int op, context &ec)
     {
       VL((" DOS _CLOSE\n"));
@@ -175,6 +189,7 @@ dos::dos(address_space *m, size_t)
   main_cpu.set_instruction(0xff3e, 0, &dos_close);
   main_cpu.set_instruction(0xff3f, 0, &dos_read);
   main_cpu.set_instruction(0xff42, 0, &dos_seek);
+  main_cpu.set_instruction(0xff43, 0, &dos_chmod);
   main_cpu.set_instruction(0xff44, 0, &dos_ioctrl);
   main_cpu.set_instruction(0xff4a, 0, &dos_setblock);
   main_cpu.set_instruction(0xff4c, 0, &dos_exit2);

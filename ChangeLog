@@ -1,5 +1,8 @@
 1999-06-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/dos.cc (dos_chmod): New function.
+	(dos): Add new handler.
+
 	* lib/vm68k/execunit.cc (cmpb, cmpw, cmpl, cmpib): Change code to
 	set condition codes properly.
 	(install_instructions): Fix subib code.
