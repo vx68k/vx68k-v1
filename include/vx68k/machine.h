@@ -143,6 +143,7 @@ namespace vx68k
     size_t _memory_size;
 
     main_memory mem;
+    graphics_video_memory gv;
     text_video_memory tvram;
     crtc_memory crtc;
     palettes_memory palettes;

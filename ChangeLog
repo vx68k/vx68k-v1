@@ -1,5 +1,16 @@
 2000-08-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add gvideomem.cc.
+
+	* libvx68k/gvideomem.cc: New file.
+	(get_16, get_8, put_16, put_8): New function.
+
+	* libvx68k/machine.cc (configure): Map gv.
+
+	* include/vx68k/machine.h (class machine): Add new member gv.
+
+	* include/vx68k/memory.h (class graphics_video_memory): New class.
+
 	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add mfpmem.cc.
 
 	* libvx68k/mfpmem.cc: New file.

@@ -404,9 +404,7 @@ void
 machine::configure(memory_address_space &as)
 {
   as.set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &mem);
-#if 0
-  as.set_pages(0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &graphic_vram);
-#endif
+  as.set_pages(0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &gv);
   as.set_pages(0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &tvram);
   as.set_pages(0xe80000 >> PAGE_SHIFT, 0xe82000 >> PAGE_SHIFT, &crtc);
   as.set_pages(0xe82000 >> PAGE_SHIFT, 0xe84000 >> PAGE_SHIFT, &palettes);

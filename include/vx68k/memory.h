@@ -76,6 +76,20 @@ namespace vx68k
     void set_super_area(size_t n);
   };
 
+  /* Graphics video memory.  This memory is mapped to the address
+     range from 0xc00000 to 0xe00000 on X68000.  */
+  class graphics_video_memory: public memory
+  {
+  public:
+    /* Reads data from this object.  */
+    uint_type get_16(int, uint32_type) const;
+    unsigned int get_8(int, uint32_type) const;
+
+    /* Writes data to this object.  */
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, unsigned int);
+  };
+
   /* Raster iterator for the text VRAM.  This class is used by the
      video system to scan pixels on the text VRAM, and must be
      efficient for a forward sequential access.
@@ -258,11 +272,11 @@ namespace vx68k
   public:
     /* Reads data from this object.  */
     uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
+    unsigned int get_8(int, uint32_type) const;
 
     /* Writes data to this object.  */
     void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, unsigned int);
   };
 
   /* System ports memory.  This memory is mapped to the address range
