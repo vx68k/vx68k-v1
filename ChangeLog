@@ -1,5 +1,20 @@
 1999-07-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/doscontext.cc (mfree): Fix code to return a value.
+	(getenv): New function.
+
+	* lib/vx68k/dos.cc (dos_chmod): Changed to use file_system::chmod.
+	(dos_getenv): Changed to use dos_exec_context::getenv.
+
+	* include/vx68k/human.h (class file_system): Add member functions:
+	chmod, create, open, ref, and unref.
+	(class file): Add virtual functions and friends.
+	(class regular_file): New class.
+	(class dos_exec_context): Add members: _fs, std_files, files, and
+	getenv.
+	(class dos): Rename member fs to _fs, and add new member function
+	fs.
+
 	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add filesystem.cc.
 
 	* lib/vx68k/filesystem.cc: New file.

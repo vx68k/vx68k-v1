@@ -43,17 +43,20 @@ using namespace std;
 namespace
 {
   void
-  dos_chmod(unsigned int op, context &ec, instruction_data *data)
+  dos_chmod(uint_type op, context &c, instruction_data *data)
   {
+    uint32_type sp = c.regs.a[7];
+    uint32_type nameptr = c.mem->getl(SUPER_DATA, sp + 0);
+    sint_type atr = extsw(c.mem->getw(SUPER_DATA, sp + 4));
 #ifdef L
-    L(" DOS _CHMOD");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _CHMOD\n");
 #endif
 
-    // FIXME.
-    ec.regs.d[0] = -1;
+    dos *d = dynamic_cast<dos *>(data);
+    I(d != NULL);
+    c.regs.d[0] = d->fs()->chmod(c.mem, nameptr, atr);
 
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void
@@ -188,31 +191,20 @@ namespace
   }
 
   void
-  dos_getenv(uint_type op, context &ec, instruction_data *data)
+  dos_getenv(uint_type op, context &c, instruction_data *data)
   {
+    uint32_type sp = c.regs.a[7];
+    uint32_type getname = c.mem->getw(SUPER_DATA, sp + 0);
+    uint32_type env = c.mem->getw(SUPER_DATA, sp + 4);
+    uint32_type getbuf = c.mem->getw(SUPER_DATA, sp + 8);
 #ifdef L
-    L(" DOS _GETENV");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _GETENV\n");
 #endif
 
-    uint32_type sp = ec.regs.a[7];
-    uint32_type getname = ec.mem->getw(SUPER_DATA, sp + 0);
-    uint32_type env = ec.mem->getw(SUPER_DATA, sp + 4);
-    uint32_type getbuf = ec.mem->getw(SUPER_DATA, sp + 8);
+    c.regs.d[0]
+      = static_cast<dos_exec_context &>(c).getenv(getname, env, getbuf);
 
-    // FIXME.
-    char name[256];
-    ec.mem->read(SUPER_DATA, getname, name, 256);
-
-    const char *value = getenv(name);
-    if (value == NULL)
-      value = "";
-
-    // FIXME
-    ec.mem->write(SUPER_DATA, getbuf, value, 256);
-    ec.regs.d[0] = 0;
-
-    ec.regs.pc += 2;
+    c.regs.pc += 2;
   }
 
   void

@@ -56,22 +56,57 @@ namespace vx68k
 
     class file;
 
+    /* File system.  */
     class file_system
     {
+    public:
+      sint_type chmod(const address_space *, uint32_type, sint_type);
+    public:
+      sint_type create(file *&, const char *, sint_type);
+      sint_type open(file *&, const char *, sint_type);
+      file *ref(file *);
+      void unref(file *);
     };
 
+    /* Abstract file.  */
     class file
     {
-    public:
+      friend void file_system::unref(file *);
+    protected:
       virtual ~file() {}
+    public:
+      virtual sint32_type read(address_space *, uint32_type, uint32_type) = 0;
+      virtual sint32_type write(const address_space *,
+				uint32_type, uint32_type) = 0;
     };
+
+    /* Regular file that maps onto a POSIX file.  */
+    class regular_file
+      : public file
+    {
+    private:
+      int fd;
+    public:
+      regular_file(int f)
+	: fd(f) {}
+    protected:
+      ~regular_file();
+    public:
+      sint32_type read(address_space *, uint32_type, uint32_type);
+      sint32_type write(const address_space *, uint32_type, uint32_type);
+    };
+
+    const size_t NFILES = 96;
 
     class dos_exec_context
       : public context
     {
     private:
       memory_allocator *_allocator;
+      file_system *_fs;
       uint32_type current_pdb;
+      file *std_files[5];
+      file *files[NFILES];
 
     private:
       int debug_level;
@@ -84,6 +119,7 @@ namespace vx68k
 	{return current_pdb;}
       void setpdb(uint32_type pdb)
 	{current_pdb = pdb;}
+      sint_type getenv(uint32_type, uint32_type, uint32_type);
 
       uint32_type load(const char *name, uint32_type arg, uint32_type env);
       void exit(unsigned int);
@@ -141,7 +177,7 @@ namespace vx68k
     private:
       machine *vm;
       memory_allocator allocator;
-      file_system fs;
+      file_system _fs;
 
     private:
       int debug_level;
@@ -150,6 +186,8 @@ namespace vx68k
       dos(machine *);
 
     public:
+      file_system *fs()
+	{return &_fs;}
       dos_exec_context *create_context();
 
     public:

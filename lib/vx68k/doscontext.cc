@@ -175,9 +175,12 @@ sint_type
 dos_exec_context::mfree(uint32_type memptr)
 {
   if (memptr == 0)
-    _allocator->free_by_parent(current_pdb);
-  else
-    _allocator->free(memptr);
+    {
+      _allocator->free_by_parent(current_pdb);
+      return 0;
+    }
+
+  return _allocator->free(memptr);
 }
 
 namespace
@@ -333,6 +336,24 @@ dos_exec_context::load(const char *name, uint32_type arg, uint32_type env)
   regs.a[4] = start;
 
   return pdb;
+}
+
+sint_type
+dos_exec_context::getenv(uint32_type getname, uint32_type env,
+			 uint32_type getbuf)
+{
+  // FIXME.
+  char name[256];
+  mem->read(SUPER_DATA, getname, name, 256);
+
+  const char *value = ::getenv(name);
+  if (value == NULL)
+    value = "";
+
+  // FIXME
+  mem->write(SUPER_DATA, getbuf, value, strlen(value) + 1);
+
+  return 0;
 }
 
 dos_exec_context::dos_exec_context(address_space *m, exec_unit *eu,
