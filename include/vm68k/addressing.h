@@ -161,7 +161,7 @@ namespace vm68k
       svalue_type get(const context &c) const
 	{return Size::svalue(Size::get(*c.mem, c.data_fc(), c.regs.a[reg]));}
       void put(context &c, svalue_type value) const
-	{Size::put(*c.mem, ec.data_fc(), ec.regs.a[reg], value);}
+	{Size::put(*c.mem, c.data_fc(), c.regs.a[reg], value);}
       void finish(context &c) const
         {c.regs.a[reg] += advance_size();}
 
@@ -207,8 +207,8 @@ namespace vm68k
 	{return Size::svalue(Size::get(*c.mem, c.data_fc(),
 				       c.regs.a[reg] - advance_size()));}
       void put(context &c, svalue_type value) const
-	{Size::put(*c.mem, ec.data_fc(),
-		   ec.regs.a[reg] - advance_size(), value);}
+	{Size::put(*c.mem, c.data_fc(),
+		   c.regs.a[reg] - advance_size(), value);}
       void finish(context &c) const
         {c.regs.a[reg] -= advance_size();}
 
@@ -376,7 +376,7 @@ namespace vm68k
     public:
       size_t extension_size() const {return 4;}
       uint32_type address(const context &c) const
-	{return long_word_size::svalue(ec.fetchl(offset));}
+	{return long_word_size::svalue(c.fetchl(offset));}
       svalue_type get(const context &c) const
 	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
       void put(context &c, svalue_type value) const

@@ -100,6 +100,31 @@ namespace
   using namespace condition;
   using namespace addressing;
 
+  /* Handles M68000 ADD instruction.  */
+  template <class Size, class Source> void
+  m68k_add(uint_type op, context &c, instruction_data *data)
+  {
+    typedef typename Size::uvalue_type uvalue_type;
+    typedef typename Size::svalue_type svalue_type;
+
+    Source ea1(op & 0x7, 2);
+    unsigned int reg2 = op >> 9 & 0x7;
+#ifdef TRACE_INSTRUCTIONS
+    L(" add%s %s", Size::suffix(), ea1.text(c));
+    L(",%%d%u\n", reg2);
+#endif
+
+    svalue_type value1 = ea1.get(c);
+    svalue_type value2 = Size::get(c.regs.d[reg2]);
+    svalue_type value
+      = Size::svalue(uvalue_type(value2 + value1) & Size::value_mask());
+    Size::put(c.regs.d[reg2], value);
+    c.regs.sr.set_cc(value);	// FIXME.
+    ea1.finish(c);
+
+    c.regs.pc += 2 + ea1.extension_size();
+  }
+
   template <class Source> void
   addb(unsigned int op, context &ec, instruction_data *data)
   {
@@ -3203,14 +3228,17 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0xc1f0, 0x0e07, &mulsw<indexed_indirect>);
   eu.set_instruction(0xc1f9, 0x0e00, &mulsw<absolute_long>);
   eu.set_instruction(0xc1fc, 0x0e00, &mulsw<immediate>);
-  eu.set_instruction(0xd000, 0x0e07, &addb<data_register>);
-  eu.set_instruction(0xd010, 0x0e07, &addb<indirect>);
-  eu.set_instruction(0xd018, 0x0e07, &addb<postinc_indirect>);
-  eu.set_instruction(0xd020, 0x0e07, &addb<predec_indirect>);
-  eu.set_instruction(0xd028, 0x0e07, &addb<disp_indirect>);
-  eu.set_instruction(0xd039, 0x0e00, &addb<absolute_long>);
-  eu.set_instruction(0xd03a, 0x0e00, &addb<disp_pc>);
-  eu.set_instruction(0xd03c, 0x0e00, &addb<immediate>);
+  eu.set_instruction(0xd000, 0x0e07, &m68k_add<byte_size, byte_d_register>);
+  eu.set_instruction(0xd010, 0x0e07, &m68k_add<byte_size, byte_indirect>);
+  eu.set_instruction(0xd018, 0x0e07, &m68k_add<byte_size, byte_postinc_indirect>);
+  eu.set_instruction(0xd020, 0x0e07, &m68k_add<byte_size, byte_predec_indirect>);
+  eu.set_instruction(0xd028, 0x0e07, &m68k_add<byte_size, byte_disp_indirect>);
+  eu.set_instruction(0xd030, 0x0e07, &m68k_add<byte_size, byte_index_indirect>);
+  eu.set_instruction(0xd038, 0x0e00, &m68k_add<byte_size, byte_abs_short>);
+  eu.set_instruction(0xd039, 0x0e00, &m68k_add<byte_size, byte_abs_long>);
+  eu.set_instruction(0xd03a, 0x0e00, &m68k_add<byte_size, byte_disp_pc_indirect>);
+  eu.set_instruction(0xd03b, 0x0e00, &m68k_add<byte_size, byte_index_pc_indirect>);
+  eu.set_instruction(0xd03c, 0x0e00, &m68k_add<byte_size, byte_immediate>);
   eu.set_instruction(0xd040, 0x0e07, &addw<data_register>);
   eu.set_instruction(0xd048, 0x0e07, &addw<address_register>);
   eu.set_instruction(0xd050, 0x0e07, &addw<indirect>);
