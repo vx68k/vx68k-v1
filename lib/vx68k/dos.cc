@@ -145,6 +145,20 @@ namespace
 
       ec->regs.pc += 2;
     }
+
+  void dos_setblock(unsigned int op,
+		    execution_context *ec)
+    {
+      I(ec != NULL);
+#ifdef L
+      L(" DOS _SETBLOCK");
+      L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc);
+#endif
+
+      // FIXME.
+
+      ec->regs.pc += 2;
+    }
 } // (unnamed namespace)
 
 dos::dos(address_space *m, size_t)
@@ -156,6 +170,7 @@ dos::dos(address_space *m, size_t)
   main_cpu.set_instruction(0xff3e, 0, &dos_close);
   main_cpu.set_instruction(0xff3f, 0, &dos_read);
   main_cpu.set_instruction(0xff42, 0, &dos_seek);
+  main_cpu.set_instruction(0xff4a, 0, &dos_setblock);
   main_cpu.set_instruction(0xff4c, 0, &dos_exit2);
 }
 
