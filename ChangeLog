@@ -11,6 +11,7 @@
 
 	* ChangeLog.gtk: Moved from gtkvx68k/ChangeLog.
 	* NEWS.gtk: Moved from gtkvx68k/NEWS.
+	* TODO.gtk: Moved from gtkvx68k/TODO.
 
 	* programs: Moved from gtkvx68k/bin.
 	* intl: Moved from gtkvx68k/intl.
