@@ -4,6 +4,8 @@
 	(m68k_movea): New function template.
 	[0] (moveaw, moveal): Disabled.
 	(install_instructions): Use the new template.
+	(add_instructions): New function.
+	(install_instructions): Use add_instruction.
 
 	* libvx68k/iocsdisk.cc (read): Round up NBYTES.
 
