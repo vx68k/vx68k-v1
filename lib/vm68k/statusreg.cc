@@ -87,6 +87,13 @@ status_register::set_cc_cmp(sint32_type r, sint32_type d, sint32_type s)
 }
 
 void
+status_register::set_cc_sub(sint32_type r, sint32_type d, sint32_type s)
+{
+  // FIXME: The X bit must change.
+  set_cc_cmp(r, d, s);
+}
+
+void
 status_register::set_cc_asr(sint32_type r, sint32_type d, uint_type s)
 {
   cc_eval = &asr_cc_eval;

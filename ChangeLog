@@ -1,5 +1,8 @@
 1999-06-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/statusreg.cc (set_cc_sub): New function.  Also add to
+	the class definition.
+
 	* lib/vm68k/execunit.cc (cmpiw): New function.
 	(install_instructions): Add new handlers.
 
