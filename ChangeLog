@@ -1,5 +1,7 @@
 1999-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* NEWS: Modified.
+
 	* lib/vx68k/gtkconsole.cc (create_widget): Set style to black
 	background.
 
