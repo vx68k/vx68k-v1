@@ -1,6 +1,9 @@
 1999-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* lib/vm68k/execunit.cc (andib): New function.
+	* lib/vx68k/doscontext.cc (start): Add catch for bus_error.
+
+	* lib/vm68k/execunit.cc (andib, oril): New function.
+	(subqw<address_error>): Fix data size.
 	(install_instructions): Add new handlers.
 
 	* lib/vx68k/dos.cc (dos_getc): New function.

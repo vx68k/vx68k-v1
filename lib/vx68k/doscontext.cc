@@ -194,6 +194,13 @@ dos_exec_context::start(uint32 address, const char *const *argv)
       fprintf(stderr, "vm68k illegal instruction (op = 0x%x)\n", op);
       status = 0xff;
     }
+  catch (bus_error &x)
+    {
+      uint_type op = mem->getw(SUPER_DATA, regs.pc);
+      fprintf(stderr, "vm68k bus error (fc = %#x, address = %#lx, op = %#x)\n",
+	      x.status, (unsigned long) x.address, op);
+      status = 0xff;
+    }
 
   return status;
 }

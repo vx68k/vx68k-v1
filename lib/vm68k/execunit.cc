@@ -1911,6 +1911,25 @@ namespace
   }
 
   template <class Destination> void
+  oril(uint_type op, context &c, instruction_data *data)
+  {
+    sint32_type value2 = extsl(c.fetchl(2));
+    Destination ea1(op & 0x7, 2 + 4);
+#ifdef L
+    L(" oril #0x%x", (unsigned long) value2);
+    L(",%s\n", ea1.textl(c));
+#endif
+
+    sint32_type value1 = ea1.getl(c);
+    sint32_type value = extsl(uint32_type(value1) | uint32_type(value2));
+    ea1.putl(c, value);
+    c.regs.sr.set_cc(value);
+    ea1.finishl(c);
+
+    c.regs.pc += 2 + 4 + ea1.isize(4);
+  }
+
+  template <class Destination> void
   pea(unsigned int op, context &ec, instruction_data *data)
     {
       Destination ea1(op & 0x7, 2);
@@ -2231,10 +2250,10 @@ namespace
 #endif
 
     // Condition codes are not affected by this instruction.
-    sint_type value1 = ea1.getw(ec);
-    sint_type value = extsw(value1 - value2);
-    ea1.putw(ec, value);
-    ea1.finishw(ec);
+    sint_type value1 = ea1.getl(ec);
+    sint_type value = extsl(value1 - value2);
+    ea1.putl(ec, value);
+    ea1.finishl(ec);
 
     ec.regs.pc += 2 + ea1.isize(2);
   }
@@ -2420,6 +2439,13 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x0068, 0x0007, &oriw<disp_indirect>);
   eu.set_instruction(0x0070, 0x0007, &oriw<indexed_indirect>);
   eu.set_instruction(0x0079, 0x0000, &oriw<absolute_long>);
+  eu.set_instruction(0x0080, 0x0007, &oril<data_register>);
+  eu.set_instruction(0x0090, 0x0007, &oril<indirect>);
+  eu.set_instruction(0x0098, 0x0007, &oril<postinc_indirect>);
+  eu.set_instruction(0x00a0, 0x0007, &oril<predec_indirect>);
+  eu.set_instruction(0x00a8, 0x0007, &oril<disp_indirect>);
+  eu.set_instruction(0x00b0, 0x0007, &oril<indexed_indirect>);
+  eu.set_instruction(0x00b9, 0x0000, &oril<absolute_long>);
   eu.set_instruction(0x0200, 0x0007, &andib<data_register>);
   eu.set_instruction(0x0210, 0x0007, &andib<indirect>);
   eu.set_instruction(0x0218, 0x0007, &andib<postinc_indirect>);
@@ -2508,6 +2534,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x1098, 0x0e07, &moveb<postinc_indirect, indirect>);
   eu.set_instruction(0x10a0, 0x0e07, &moveb<predec_indirect, indirect>);
   eu.set_instruction(0x10a8, 0x0e07, &moveb<disp_indirect, indirect>);
+  eu.set_instruction(0x10b0, 0x0e07, &moveb<indexed_indirect, indirect>);
   eu.set_instruction(0x10b9, 0x0e00, &moveb<absolute_long, indirect>);
   eu.set_instruction(0x10ba, 0x0e00, &moveb<disp_pc, indirect>);
   eu.set_instruction(0x10bc, 0x0e00, &moveb<immediate, indirect>);
