@@ -1,4 +1,4 @@
-/* Virtual X68000 - Sharp X68000 emulator
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
@@ -29,6 +29,7 @@
 #include <vx68k/version.h>
 
 #include <gtk/gtk.h>
+#include <libintl.h>
 #include <pthread.h>
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
@@ -44,8 +45,6 @@
 #include <cstdlib>
 #include <cstdio>
 
-#define _(MSG) (MSG)
-
 #ifdef HAVE_NANA_H
 # include <nana.h>
 # include <cstdio>
@@ -53,6 +52,8 @@
 # include <cassert>
 # define I assert
 #endif
+
+#define _(MSG) gettext(MSG)
 
 extern char **environ;
 
@@ -626,6 +627,11 @@ main(int argc, char **argv)
   gtk_set_locale();
   gtk_init(&argc, &argv);
 
+#ifdef LOCALEDIR
+  bindtextdomain(PACKAGE, LOCALEDIR);
+#endif
+  textdomain(PACKAGE);
+    
   if (!parse_options(argc, argv))
     {
       fprintf(stderr, _("Try `%s --help' for more information.\n"), argv[0]);

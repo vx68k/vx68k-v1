@@ -1,5 +1,17 @@
 2000-08-02  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc: Gettextize.
+	(main): Set text domain.
+
+	* bin/Makefile.am (INCLUDES): Define LOCALEDIR.
+
+	* Makefile.am (SUBDIRS): Add intl and po.
+
+	* configure.in: Comment out AC_PROG_CPP.  Add AC_ISC_POSIX and
+	AM_GNU_GETTEXT.  Add more Makefiles.
+
+	* acconfig.h: Add #undef's for GNU gettext.
+
 	* libvx68k/systemrom.cc (iocs_b_super): New function.
 	(initialize_iocs_functions): Use new handler.
 

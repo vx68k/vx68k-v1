@@ -6,8 +6,9 @@ AC_DEFINE(_GNU_SOURCE,, [Define for GNU extensions. ])
 dnl AC_DEFINE(_REENTRANT)
 AC_PROG_CC
 AC_PROG_CXX
-AC_PROG_CPP
+dnl AC_PROG_CPP
 AM_PROG_LIBTOOL
+AC_ISC_POSIX
 dnl AC_SEARCH_LIBS(pthread_create, pthread)
 AM_PATH_GTK(1.2.0,,, gthread)
 AC_CHECK_HEADERS(fcntl.h unistd.h)
@@ -27,7 +28,10 @@ if test "$hs_cv_cplusplus_exceptions" = no; then
 fi
 
 AC_CHECK_FUNCS(localtime_r)
+ALL_LINGUAS=""
+AM_GNU_GETTEXT
 AC_OUTPUT(Makefile \
 include/Makefile include/vm68k/Makefile include/vx68k/Makefile \
-libvm68k/Makefile libvx68k/Makefile libvx68kgtk/Makefile bin/Makefile \
+libvm68k/Makefile libvx68k/Makefile libvx68kgtk/Makefile \
+intl/Makefile bin/Makefile po/Makefile.in \
 doc/Makefile testsuite/Makefile)

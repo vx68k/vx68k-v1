@@ -1,6 +1,7 @@
 ## Process this file with automake to produce a Makefile.in.
 
 INCLUDES = -I${top_srcdir}/include \
+-DLOCALEDIR=\"$(datadir)/locale\" \
 ${GTK_CFLAGS}
 
 noinst_LIBRARIES = libmisc.a

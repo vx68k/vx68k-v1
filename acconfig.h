@@ -10,3 +10,9 @@
 /* Define if you want step trace.  */
 #undef TRACE_STEPS
 
+/* Define as GNU gettext requires.  */
+#undef ENABLE_NLS
+#undef HAVE_CATGETS
+#undef HAVE_GETTEXT
+#undef HAVE_LC_MESSAGES
+#undef HAVE_STPCPY
