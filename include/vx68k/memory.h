@@ -39,6 +39,9 @@ public:
   uint16 getw (int, uint32) const throw (bus_error);
   void putb (int, uint32, uint8) throw (bus_error);
   void putw (int, uint32, uint16) throw (bus_error);
+private:
+  size_t end;
+  uint16 *array;
 };
 
 class address_space

@@ -1,5 +1,14 @@
 1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/cpu.cc (illegal_insn): Output message.
+
+	* vx68k/memory.cc (main_memory_page): Allocate array.
+	(~main_memory_page): Deallocate array.
+	(getw): Return value.
+
+	* include/vx68k/memory.h (memory_page): Add members: end and
+	array.
+
 	* include/vx68k/memory.h (class address_space): Renamed from
 	memory.  All references changed.
 	* include/vm68k/memory.h (class address_space): Likewise.

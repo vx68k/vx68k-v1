@@ -23,6 +23,10 @@
 
 #include "vx68k/memory.h"
 
+#include <cstdlib>
+
+using namespace std;
+
 namespace vx68k
 {
 #if 0
@@ -54,7 +58,10 @@ uint16
 main_memory_page::getw (int fc, uint32 address) const
   throw (bus_error)
 {
-  abort ();			// FIXME
+  // Address error?
+  if (address > end)
+    abort ();			// FIXME
+  return array[address >> 1];
 }
 
 void
@@ -72,11 +79,15 @@ main_memory_page::putw (int fc, uint32 address, uint16)
 }
 
 main_memory_page::~main_memory_page ()
-{				// FIXME
+{
+  free (array);
 }
 
 main_memory_page::main_memory_page (size_t n)
-{				// FIXME
+  : end (n),
+    array (NULL)
+{
+  array = static_cast <uint16 *> (malloc (n));
 }
 
 address_space::address_space (size_t n)

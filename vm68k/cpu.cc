@@ -71,9 +71,9 @@ cpu::run (execution_context *ec)
       int fc = 1 ? SUPER_PROGRAM : USER_PROGRAM;
       try
 	{
-	  unsigned int w = ec->mem->getw (fc, ec->regs.pc);
-	  assert (w < 0x10000);
-	  insn[w] (w, ec);
+	  unsigned int op = ec->mem->getw (fc, ec->regs.pc);
+	  assert (op < 0x10000);
+	  insn[op] (op, ec);
 	}
       catch (bus_error &e)
 	{
@@ -99,9 +99,10 @@ cpu::set_handlers (int code, int mask, insn_handler h)
 
 /* Execute an illegal instruction.  */
 void
-cpu::illegal_insn (int, execution_context *)
+cpu::illegal_insn (int op, execution_context *)
 {
   // Notify listener.  The listener must handle this case.
+  cerr << hex << "vm68k illegal instruction (op = 0x" << op << ")\n" << dec;
   abort ();			// FIXME
 }
 
