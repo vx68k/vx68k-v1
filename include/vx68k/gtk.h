@@ -33,12 +33,6 @@ namespace vx68k
       : public virtual console
     {
     protected:
-      static gint handle_timeout(gpointer) throw ();
-
-    protected:
-      static void handle_destroy(GtkObject *, gpointer) throw ();
-      static gint handle_expose_event(GtkWidget *, GdkEventExpose *,
-				      gpointer) throw ();
 
     private:
       machine *_m;
@@ -60,7 +54,16 @@ namespace vx68k
       void get_k16_image(unsigned int, unsigned char *, size_t) const;
 
     public:
+      /* Handles a timeout.  */
+      bool handle_timeout();
+
       GtkWidget *create_widget();
+
+      /* Handles a destroy signal on widget W.  */
+      void handle_destroy(GtkWidget *W);
+
+      /* Handles a GDK expose event E on widget W.  */
+      bool handle_expose_event(GtkWidget *w, GdkEventExpose *e);
     };
   } // gtk
 } // vx68k

@@ -40,33 +40,54 @@ using namespace std;
 
 const unsigned int TIMEOUT_INTERVAL = 500;
 
-gint
+bool
 gtk_console::handle_expose_event(GtkWidget *drawing_area,
-				 GdkEventExpose *event, gpointer data)
-  throw ()
+				 GdkEventExpose *e)
 {
-  gtk_console *con = static_cast<gtk_console *>(data);
-  I(con != NULL);
-
   GdkGC *gc = gdk_gc_new(drawing_area->window);
-  gdk_draw_rgb_image(drawing_area->window, gc, 0, 0, con->width, con->height,
-		     GDK_RGB_DITHER_NORMAL, con->rgb_buf, con->row_size);
+  gdk_gc_set_clip_rectangle(gc, &e->area);
+
+  guchar *p = rgb_buf + e->area.y * row_size + e->area.x * 3;
+  gdk_draw_rgb_image(drawing_area->window, gc,
+		     e->area.x, e->area.y, e->area.width, e->area.height,
+		     GDK_RGB_DITHER_NORMAL, p, row_size);
+
   gdk_gc_unref(gc);
 
   return true;
 }
 
 void
-gtk_console::handle_destroy(GtkObject *o, gpointer data) throw ()
+gtk_console::handle_destroy(GtkWidget *w)
 {
-  I(o != NULL);
-  GtkWidget *w = GTK_WIDGET(o);
-  gtk_console *c = static_cast<gtk_console *>(data);
-
   vector<GtkWidget *>::iterator i
-    = remove(c->widgets.begin(), c->widgets.end(), w);
-  c->widgets.erase(i, c->widgets.end());
+    = remove(widgets.begin(), widgets.end(), w);
+  widgets.erase(i, widgets.end());
 }
+
+namespace
+{
+  /* Handles a GDK expose event E.  This function is a glue for GTK.  */
+  gint
+  handle_expose_event(GtkWidget *w, GdkEventExpose *e,
+		      gpointer data) throw ()
+  {
+    gtk_console *c = static_cast<gtk_console *>(data);
+    I(c != NULL);
+
+    return c->handle_expose_event(w, e);
+  }
+
+  /* Handles a destroy signal.  This function is a glue for GTK.  */
+  void
+  handle_destroy(GtkWidget *w, gpointer data) throw ()
+  {
+    gtk_console *c = static_cast<gtk_console *>(data);
+    I(c != NULL);
+
+    c->handle_destroy(w);
+  }
+} // (unnamed namespace)
 
 GtkWidget *
 gtk_console::create_widget()
@@ -74,9 +95,9 @@ gtk_console::create_widget()
   GtkWidget *drawing_area = gtk_drawing_area_new();
   gtk_drawing_area_size(GTK_DRAWING_AREA(drawing_area), width, height);
   gtk_signal_connect(GTK_OBJECT(drawing_area), "destroy",
-		     GTK_SIGNAL_FUNC(&handle_destroy), this);
+		     GTK_SIGNAL_FUNC(&::handle_destroy), this);
   gtk_signal_connect(GTK_OBJECT(drawing_area), "expose_event",
-		     GTK_SIGNAL_FUNC(&handle_expose_event), this);
+		     GTK_SIGNAL_FUNC(&::handle_expose_event), this);
 
   GtkStyle *style = gtk_widget_get_style(drawing_area);
   style->bg[0] = style->black;
@@ -86,16 +107,13 @@ gtk_console::create_widget()
   return drawing_area;
 }
 
-gint
-gtk_console::handle_timeout(gpointer data) throw ()
+bool
+gtk_console::handle_timeout()
 {
-  gtk_console *c = static_cast<gtk_console *>(data);
-  I(c != NULL);
+  _m->get_image(0, 0, width, height, rgb_buf, row_size);
 
-  c->_m->get_image(0, 0, c->width, c->height, c->rgb_buf, c->row_size);
-
-  for (vector<GtkWidget *>::const_iterator i = c->widgets.begin();
-       i != c->widgets.end();
+  for (vector<GtkWidget *>::const_iterator i = widgets.begin();
+       i != widgets.end();
        ++i)
     {
       I(*i != NULL);
@@ -104,6 +122,19 @@ gtk_console::handle_timeout(gpointer data) throw ()
 
   return true;
 }
+
+namespace
+{
+  /* Handles a timeout.  This function is a glue for GTK.  */
+  gint
+  handle_timeout(gpointer data) throw ()
+  {
+    gtk_console *c = static_cast<gtk_console *>(data);
+    I(c != NULL);
+
+    return c->handle_timeout();
+  }
+} // (unnamed namespace)
 
 void
 gtk_console::get_b16_image(unsigned int c,
@@ -145,7 +176,7 @@ gtk_console::gtk_console(machine *m)
     primary_font(NULL)
 {
   rgb_buf = new guchar [height * row_size];
-  timeout = gtk_timeout_add(TIMEOUT_INTERVAL, &handle_timeout, this);
+  timeout = gtk_timeout_add(TIMEOUT_INTERVAL, &::handle_timeout, this);
 
   /* Retrieve font bitmap in the main thread.  */
   primary_font = new unsigned char [256 * 16];

@@ -1,5 +1,14 @@
 1999-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/gtkconsole.cc [gtk_console] (handle_expose_event,
+	handle_destroy, handle_timeout): Changed to non-static.
+	(handle_expose_event, handle_destroy, handle_timeout): New
+	functions in namespace.
+	(create_widget, gtk_console): Use new glue functions.
+
+	* include/vx68k/gtk.h (class gtk_console): Change handle_timeout,
+	handle_destroy and handle_expose_event to non-static.
+
 	* lib/vx68k/machine.cc (b_putc): Remove write to stdout.
 
 	* NEWS: Modified.
