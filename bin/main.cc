@@ -45,6 +45,8 @@
 # define I assert
 #endif
 
+extern char **environ;
+
 using namespace vx68k::gtk;
 using namespace vx68k;
 using namespace std;
