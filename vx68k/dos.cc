@@ -24,6 +24,8 @@
 #include "vx68k/human.h"
 
 #include <iostream>
+#include <fstream>
+#include <cstdlib>
 
 using namespace std;
 using namespace vm68k;
@@ -41,9 +43,37 @@ namespace human
 #endif
 
 uint32
-dos::load_executable (const char *)
+dos::load_executable (const char *name)
 {
-  main_ec.mem->putw (SUPER_DATA, 0x8100, 0xff00);
+  ifstream is (name, ios::in | ios::binary);
+  if (!is)
+    abort ();			// FIXME
+  char head[64];
+  is.read (head, 64);
+  if (!is)
+    abort ();			// FIXME
+  if (head[0] != 'H' || head[1] != 'U')
+    abort ();			// FIXME
+  cerr << "Code size: " << getl (head + 12) << "\n";
+  cerr << "Data size: " << getl (head + 16) << "\n";
+
+  size_t load_size = getl (head + 12) + getl (head + 16);
+  char *buf = static_cast <char *> (malloc (load_size));
+  try
+    {
+      is.read (buf, load_size);
+      if (!is)
+	abort ();		// FIXME
+      main_ec.mem->write (SUPER_DATA, 0x8100, buf, load_size);
+    }
+  catch (...)
+    {
+      free (buf);
+    }
+  free (buf);
+
+  // Fix relocations here.
+
   return 0x8100;		// FIXME
 }
 

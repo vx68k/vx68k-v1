@@ -1,6 +1,11 @@
 1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vm68k/memory.cc (write): Defined.
+	(read): Defined.
+
 	* vx68k/dos.cc (start): Catch an illegal_instruction.
+	(load_executable): Try to load executable.
+
 	* vm68k/cpu.cc (illegal_insn): Throw an illegal_instruction.
 
 	* include/vm68k/except.h (struct illegal_instruction): New class.

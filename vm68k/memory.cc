@@ -128,6 +128,40 @@ bus_error_page::putw (int fc, uint32 address, uint16)
   throw bus_error (fc + bus_error::WRITE, address);
 }
 
+/* Read a block of data from memory.  */
+void
+address_space::read (int fc, uint32 address, void *buf, size_t n) const
+  throw (bus_error)
+{
+  // This code is slow!
+  uint8 *p = static_cast <uint8 *> (buf);
+  assert ((n & 1) == 0);
+  while (n != 0)
+    {
+      vm68k::putw (p, getw (fc, address));
+      address += 2;
+      p += 2;
+      n -= 2;
+    }
+}
+
+/* Write a block of data to memory.  */
+void
+address_space::write (int fc, uint32 address, const void *buf, size_t n)
+  throw (bus_error)
+{
+  // This code is slow!
+  const uint8 *p = static_cast <const uint8 *> (buf);
+  assert ((n & 1) == 0);
+  while (n != 0)
+    {
+      putw (fc, address, vm68k::getw (p));
+      p += 2;
+      address += 2;
+      n -= 2;
+    }
+}
+
 /* Get a word from memory.  */
 uint16
 address_space::getw (int fc, uint32 address) const
@@ -137,6 +171,7 @@ address_space::getw (int fc, uint32 address) const
   return page_table[p]->getw (fc, address);
 }
 
+/* Put a word to memory.  */
 void
 address_space::putw (int fc, uint32 address, uint16 value)
   throw (bus_error)
