@@ -24,6 +24,7 @@
 
 #include <vx68k/human.h>
 
+#include <sys/stat.h>
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
 #endif
@@ -145,6 +146,16 @@ regular_file::regular_file(int f)
 {
 }
 
+string
+file_system::export_file_name(const string &dos_name)
+{
+  // FIXME
+  string name(dos_name);
+  string::size_type c = name.find_last_not_of(' '); // ???
+  name.erase(c + 1);
+  return name;
+}
+
 void
 file_system::unref(file *f)
 {
@@ -189,21 +200,22 @@ sint_type
 file_system::open(file *&ret, const address_space *as, uint32_type nameptr,
 		  sint_type mode)
 {
-  // FIXME.
-  static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
-
-  // FIXME.
-  string name = as->gets(SUPER_DATA, nameptr);
-  string::size_type c = name.find_last_not_of(' '); // ???
-  name.erase(c + 1);
-
   if ((mode & 0xf) > 2)
     return -12;			// FIXME.
+
+  string name = export_file_name(as->gets(SUPER_DATA, nameptr));
+
+  // FIXME.
+  static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
 
   int fd = ::open(name.c_str(), uflag[mode & 0xf]);
   if (fd == -1)
     switch (errno)
       {
+#ifdef EPERM
+      case EPERM:
+	return -19;
+#endif
 #ifdef ENOENT
       case ENOENT:
 	return -2;
@@ -220,16 +232,17 @@ sint_type
 file_system::create(file *&ret, const address_space *as, uint32_type nameptr,
 		    sint_type atr)
 {
-  // FIXME.
-  string name = as->gets(SUPER_DATA, nameptr);
-  string::size_type c = name.find_last_not_of(' '); // ???
-  name.erase(c + 1);
+  string name = export_file_name(as->gets(SUPER_DATA, nameptr));
 
   // FIXME.
   int fd = ::open(name.c_str(), O_RDWR | O_CREAT | O_TRUNC, 0666);
   if (fd == -1)
     switch (errno)
       {
+#ifdef EPERM
+      case EPERM:
+	return -19;
+#endif
       default:
 	return -2;		// FIXME: errno test.
       }
@@ -241,11 +254,34 @@ file_system::create(file *&ret, const address_space *as, uint32_type nameptr,
 sint_type
 file_system::chmod(const address_space *as, uint32_type nameptr, sint_type atr)
 {
-  // FIXME.
-  string name = as->gets(SUPER_DATA, nameptr);
-  string::size_type c = name.find_last_not_of(' '); // ???
-  name.erase(c + 1);
+  string name = export_file_name(as->gets(SUPER_DATA, nameptr));
 
-  return -1;
+  struct stat stbuf;
+  if (stat(name.c_str(), &stbuf) == -1)
+    switch (errno)
+      {
+#ifdef EPERM
+      case EPERM:
+	return -19;
+#endif
+#ifdef ENOENT
+      case ENOENT:
+	return -2;
+#endif
+      default:
+	return -2;		// FIXME: errno test.
+      }
+
+  // FIXME.
+  sint_type a = 0;
+  if (S_ISDIR(stbuf.st_mode))
+    a |= 0x10;
+  else
+    a |= 0x20;
+
+  if (access(name.c_str(), W_OK) == -1)
+    a |= 0x01;
+
+  return a;
 }
 

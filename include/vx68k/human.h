@@ -63,8 +63,11 @@ namespace vx68k
     {
     private:
       map<file *, int> files;
+
     public:
+      string export_file_name(const string &);
       sint_type chmod(const address_space *, uint32_type, sint_type);
+
     public:
       sint_type create(file *&, const address_space *, uint32_type, sint_type);
       void open(file *&, int);

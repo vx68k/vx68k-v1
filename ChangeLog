@@ -1,5 +1,10 @@
 1999-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/filesystem.cc (export_file_name): New function.
+	(open, create, chmod): Use export_file_name.
+	(open, create): Add case for errno.
+	(chmod): Write code.
+
 	* lib/vx68k/dos.cc (dos_nameck): Use address_space::gets and puts.
 
 	* lib/vx68k/doscontext.cc (read, write, fgetc, fputc, fputs, seek,
