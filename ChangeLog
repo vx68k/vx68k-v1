@@ -1,5 +1,11 @@
 2001-07-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* libvx68k/Makefile.am (INCLUDES): Remove `-I$(prefix)/include'.
+	* libvx68kdos/Makefile.am (INCLUDES): Likewise.
+
+	* configure.in (LTLIBRELEASE): Add support for `--with-includes'
+	and `--with-libraries'.  Reorder some tests.
+
 	* Makefile.am (SUBDIRS): Remove vx68kui, intl, po, and bin.  Add
 	@subdirs@.
 

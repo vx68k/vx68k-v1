@@ -1,5 +1,18 @@
 2001-07-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* bin/Makefile.am (INCLUDES): Remove `-I$(prefix)/include'.
+	(noinst_LIBRARIES): Removed.
+	(libmisc_a_SOURCES): Removed.
+	(vx68k_SOURCES): Add getopt.c and getopt1.c.
+	(vx68k_LDADD): Use `$(LIBVM68K)'.  Remove libmisc.a.
+
+	* libvx68k-gtk/Makefile.am (INCLUDES): Remove
+	`-I$(prefix)/include'.
+
+	* configure.in: Remove `AC_DEFINE(_GNU_SOURCE)'.  Add support for
+	`--with-includes' and `--with-libraries'.  Reorder some tests.
+	Remove LTLIBRELEASE.  Add test for `-lvm68k'.
+
 	* acinclude.m4: Copied from ../acinclude.m4.
 
 	* AUTHORS: New file.
