@@ -123,12 +123,15 @@ dos_exec_context::load_executable(const char *name)
   size_t data_size = getl (head + 16);
   size_t bss_size = getl (head + 20);
   size_t reloc_size = getl (head + 24);
-  fprintf(stderr, "Base : 0x%lx\n", (unsigned long) base);
-  fprintf(stderr, "Start: 0x%lx\n", (unsigned long) start_offset);
-  fprintf(stderr, "Text : %lu\n", (unsigned long) text_size);
-  fprintf(stderr, "Data : %lu\n", (unsigned long) data_size);
-  fprintf(stderr, "BSS  : %lu\n", (unsigned long) bss_size);
-  fprintf(stderr, "Fixup: %lu\n", (unsigned long) reloc_size);
+  if (debug_level >= 1)
+    {
+      fprintf(stderr, "Base : 0x%lx\n", (unsigned long) base);
+      fprintf(stderr, "Start: 0x%lx\n", (unsigned long) start_offset);
+      fprintf(stderr, "Text : %lu\n", (unsigned long) text_size);
+      fprintf(stderr, "Data : %lu\n", (unsigned long) data_size);
+      fprintf(stderr, "BSS  : %lu\n", (unsigned long) bss_size);
+      fprintf(stderr, "Fixup: %lu\n", (unsigned long) reloc_size);
+    }
 
   uint32 load_address = 0x8100;	// FIXME.
 
@@ -201,7 +204,8 @@ dos_exec_context::load_executable(const char *name)
 
 dos_exec_context::dos_exec_context(exec_unit *e, address_space *m, process *p)
   : context(m, e),
-    _process(p)
+    _process(p),
+    debug_level(0)
 {
 }
 

@@ -36,11 +36,13 @@ using namespace vx68k;
 
 namespace
 {
+  int opt_debug = 0;
   int opt_help = false;
   int opt_version = false;
 
   const struct option longopts[] =
   {
+    {"debug", no_argument, &opt_debug, 1},
     {"help", no_argument, &opt_help, true},
     {"version", no_argument, &opt_version, true},
     {NULL, 0, NULL, 0}
@@ -101,6 +103,8 @@ main (int argc, char **argv)
       x68k_address_space mem(MEMSIZE);
 
       human::dos env(&mem, MEMSIZE);
+      if (opt_debug)
+	env.set_debug_level(1);
       return env.execute(argv[1], argv + 2); // FIXME
     }
   catch (exception &x)

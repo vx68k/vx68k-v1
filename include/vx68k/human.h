@@ -74,6 +74,9 @@ namespace vx68k
     private:
       process *_process;
 
+    private:
+      int debug_level;
+
     public:
       dos_exec_context(exec_unit *, address_space *, process *);
 
@@ -90,6 +93,10 @@ namespace vx68k
       int fgetc(int);
       uint32 load_executable(const char *);
       uint16 start(uint32, const char *const *);
+
+    public:
+      void set_debug_level(int lev)
+	{debug_level = lev;}
     };
 
     class dos
@@ -98,10 +105,19 @@ namespace vx68k
       address_space *mem;
       vm68k::exec_unit main_cpu;
       file_system fs;
+
+    private:
+      int debug_level;
+
     public:
       dos (address_space *, size_t);
+
     public:
       uint16 execute (const char *, const char *const *);
+
+    public:
+      void set_debug_level(int lev)
+	{debug_level = lev;}
     };
   } // human
 } // vx68k
