@@ -24,14 +24,10 @@
 
 #include <vx68k/human.h>
 
-#ifdef HAVE_FCNTL_H
-# include <fcntl.h>
-#endif
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 #include <fstream>
-#include <cstdlib>
 #include <cstdio>
 
 #ifdef HAVE_NANA_H
@@ -57,39 +53,6 @@ dos_exec_context::fgetc(int fd)
   return data_buf[0];
 }
 
-/* Reads data from the file with a DOS file descriptor.  */
-int32
-dos_exec_context::read(int fd, uint32 data, uint32 size)
-{
-  // FIXME.
-  unsigned char *data_buf = static_cast<unsigned char *>(malloc(size));
-  ssize_t done = ::read(fd, data_buf, size);
-  if (done == -1)
-    {
-      free(data_buf);
-      return -6;			// FIXME.
-    }
-  mem->write(SUPER_DATA, data, data_buf, done);
-  free(data_buf);
-  return done;
-}
-
-sint32_type
-dos_exec_context::write(int fd, uint32_type data, uint32_type size)
-{
-  // FIXME.
-  unsigned char *data_buf = static_cast<unsigned char *>(malloc(size));
-  mem->read(SUPER_DATA, data, data_buf, size);
-  ssize_t done = ::write(fd, data_buf, size);
-  if (done == -1)
-    {
-      free(data_buf);
-      return -6;			// FIXME.
-    }
-  free(data_buf);
-  return done;
-}
-
 int32
 dos_exec_context::seek(int fd, int32 offset, unsigned int whence)
 {
@@ -98,31 +61,6 @@ dos_exec_context::seek(int fd, int32 offset, unsigned int whence)
   if (pos == -1)
     return -6;			// FIXME.
   return pos;
-}
-
-/* Closes a DOS file descriptor.  */
-int
-dos_exec_context::close(int fd)
-{
-  // FIXME.
-  if (::close(fd) == -1)
-    return -6;			// FIXME.
-  return 0;
-}
-
-/* Opens a file.  */
-int
-dos_exec_context::open(const char *name, unsigned int flag)
-{
-  // FIXME.
-  static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
-  if ((flag & 0xf) > 2)
-    return -12;			// FIXME.
-  VL(("Opening %s\n", name));
-  int fd = ::open(name, uflag[flag & 0xf]);
-  if (fd == -1)
-    return -2;			// FIXME: errno test.
-  return fd;
 }
 
 namespace
