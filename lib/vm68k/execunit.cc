@@ -2444,7 +2444,7 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0x33f0, 0x0007, &movew<indexed_indirect, absolute_long>);
   eu.set_instruction(0x33f9, 0x0000, &movew<absolute_long, absolute_long>);
   eu.set_instruction(0x33fc, 0x0000, &movew<immediate, absolute_long>);
-  eu.set_instruction(0x4190, 0x0e07, &lea<indirect>);
+  eu.set_instruction(0x41d0, 0x0e07, &lea<indirect>);
   eu.set_instruction(0x41e8, 0x0e07, &lea<disp_indirect>);
   eu.set_instruction(0x41f0, 0x0e07, &lea<indexed_indirect>);
   eu.set_instruction(0x41f9, 0x0e00, &lea<absolute_long>);

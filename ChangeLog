@@ -1,5 +1,10 @@
 1999-07-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/machine.cc (iocs_b_lpeek): Print address for debug.
+
+	* lib/vm68k/execunit.cc (install_instructions): Fix wrong
+	operation word for lea.
+
 	* lib/vx68k/machine.cc (iocs): Pass machine to handler.
 
 	* include/vx68k/machine.h (class machine): Add machine * argument

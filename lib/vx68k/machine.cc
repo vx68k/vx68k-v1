@@ -44,6 +44,9 @@ namespace
   iocs_b_lpeek(context &c, machine &m, iocs_function_data *data)
   {
     uint32_type address = c.regs.a[1];
+#ifdef L
+    L("| address = %#10x\n", address);
+#endif
 
     c.regs.d[0] = m.address_space()->getl(SUPER_DATA, address);
     c.regs.a[1] = address + 4;
