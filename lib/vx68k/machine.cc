@@ -44,6 +44,8 @@ machine::b_putc(uint_type code)
   /* FIXME.  This function must handle double-byte character.  */
   if (code <= 0x1f || code == 0x7f)
     {
+      saved_byte1 = 0;
+
       switch (code)
 	{
 	case 0x09:		// HT
@@ -66,33 +68,38 @@ machine::b_putc(uint_type code)
     }
   else
     {
-      if (0)			// test saved first byte.
+      if (saved_byte1 != 0)
 	{
+	  if (code <= 0xff)
+	    code |= saved_byte1 << 8;
+
+	  saved_byte1 = 0;
 	}
+
+      if (code >= 0x100 && curx + 1 == 96)
+	++curx;
+
+      if (curx == 96)
+	{
+	  curx = 0;
+	  ++cury;
+
+	  if (cury == 31)
+	    {
+	      --cury;
+	      tvram.scroll();
+	    }
+	}
+
+      if ((code >= 0x80 && code <= 0x9f)
+	  || (code >= 0xe0 && code <= 0xff))
+	saved_byte1 = code;
       else
 	{
-	  if (curx == 96)
-	    {
-	      curx = 0;
-	      ++cury;
-
-	      if (cury == 31)
-		{
-		  --cury;
-		  tvram.scroll();
-		}
-	    }
-
-	  if ((code >= 0x81 && code <= 0x9f)
-	      || (code >= 0xe0 && code <= 0xff))
-	    {
-	      // FIXME
-	      tvram.draw_char(curx, cury, code);
-	    }
-	  else
-	    tvram.draw_char(curx, cury, code);
-
+	  tvram.draw_char(curx, cury, code);
 	  ++curx;
+	  if (code >= 0x100)
+	    ++curx;
 	}
     }
 }
@@ -182,7 +189,8 @@ machine::get_image(int x, int y, int width, int height,
 machine::machine(size_t memory_size)
   : _memory_size(memory_size),
     mem(memory_size),
-    curx(0), cury(0)
+    curx(0), cury(0),
+    saved_byte1(0)
 {
   fill(iocs_functions + 0, iocs_functions + 0x100,
        make_pair(&invalid_iocs_function, (iocs_function_data *) 0));

@@ -152,6 +152,9 @@ namespace vx68k
     /* Cursor position.  */
     unsigned int curx, cury;
 
+    /* Saved byte 1 of double-byte character.  */
+    unsigned char saved_byte1;
+
   public:
     explicit machine(size_t);
 

@@ -1,5 +1,11 @@
 1999-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/machine.cc (b_putc): Handle double-byte characters.
+	(machine): Initialize saved_byte1.
+
+	* include/vx68k/machine.h (class machine): Add new member
+	saved_byte1.
+
 	* lib/vx68k/gtkconsole.cc (base16_font_array, kanji16_font_array):
 	New functions.
 	(get_k16_image): Add code.
