@@ -53,7 +53,7 @@ namespace vx68k
     const char *const KANJI16_FONT_NAME
     = "-*-fixed-medium-r-normal--16-*-*-*-c-*-jisx0208.1983-0";
 
-    const unsigned int TIMEOUT_INTERVAL = 20;
+    const unsigned int TIMEOUT_INTERVAL = 40;
     const unsigned int SCREEN_CHECK_INTERVAL = 25;
 
     namespace
@@ -127,6 +127,37 @@ namespace vx68k
     gtk_console::handle_expose_event(GtkWidget *drawing_area,
 				     GdkEventExpose *e)
     {
+      if (_context == 0)
+	{
+	  _context = gl::create_context(gl::best_visual());
+	  gl::make_current(_context, drawing_area->window);
+
+	  glEnable(GL_CULL_FACE);
+	  //glFrontFace(GL_CW);
+	  glCullFace(GL_BACK);
+
+	  //glEnable(GL_BLEND);
+
+	  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1024, 1024, 0,
+		       GL_RGB, GL_UNSIGNED_BYTE, 0);
+	  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	  glMatrixMode(GL_PROJECTION);
+	  glLoadIdentity();
+	  gluOrtho2D(0., 768., 0., 512.);
+	  glMatrixMode(GL_MODELVIEW);
+	  glLoadIdentity();
+	  glScalef(1., -1., -1.); // Reverses the y- and z-axes.
+	  glTranslatef(0., -512., 0);
+
+	  GLenum gl_error = glGetError();
+	  if (gl_error != GL_NO_ERROR)
+	    g_error("OpenGL error: %s\n", gluErrorString(gl_error));
+	}
+
+#if 0
       GdkGC *gc = gdk_gc_new(drawing_area->window);
       gdk_gc_set_clip_rectangle(gc, &e->area);
 
@@ -147,6 +178,41 @@ namespace vx68k
 	}
 
       gdk_gc_unref(gc);
+#endif
+
+      gl::make_current(_context, drawing_area->window);
+      int width, height;
+      gdk_window_get_size(drawing_area->window, &width, &height);
+      glViewport(0, 0, width, height);
+
+      guchar *p = rgb_buf + e->area.y * row_size;
+      glTexSubImage2D(GL_TEXTURE_2D, 0, 0, e->area.y, 768, e->area.height,
+      		      GL_RGB, GL_UNSIGNED_BYTE, p);
+
+      glClear(GL_COLOR_BUFFER_BIT);
+
+      glEnable(GL_TEXTURE_2D);
+      glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+      glBegin(GL_QUADS);
+      glTexCoord2f(0., 0.);
+      glVertex2i(0, 0);
+      glTexCoord2f(0., 512. / 1024.);
+      glVertex2i(0, 512);
+      glTexCoord2f(768. / 1024., 512. / 1024.);
+      glVertex2i(768, 512);
+      glTexCoord2f(768. / 1024., 0.);
+      glVertex2i(768, 0);
+      glEnd();
+
+      glDisable(GL_TEXTURE_2D);
+
+      GLenum gl_error = glGetError();
+      if (gl_error != GL_NO_ERROR)
+	g_error("OpenGL error: %s\n", gluErrorString(gl_error));
+
+      gl::swap_buffers(drawing_area->window);
+      gl::make_current(0, 0);
 
       return true;
     }
@@ -247,6 +313,8 @@ namespace vx68k
     GtkWidget *
     gtk_console::create_widget()
     {
+      gtk_widget_push_visual(gl::best_visual());
+
       GtkWidget *drawing_area = gtk_drawing_area_new();
       gtk_signal_connect(GTK_OBJECT(drawing_area), "destroy",
 			 GTK_SIGNAL_FUNC(&call_destroy_handler), this);
@@ -273,6 +341,8 @@ namespace vx68k
 	gtk_widget_set_style(drawing_area, style);
       }
       gtk_drawing_area_size(GTK_DRAWING_AREA(drawing_area), width, height);
+
+      gtk_widget_pop_visual();
 
       widgets.push_back(drawing_area);
       return drawing_area;
@@ -594,6 +664,8 @@ namespace vx68k
       delete [] kanji16_font;
       delete [] primary_font;
 
+      gl::destroy_context(_context);
+
       gdk_threads_enter();
 
       for (vector<GtkWidget *>::iterator i = widgets.begin();
@@ -610,7 +682,6 @@ namespace vx68k
       gdk_threads_leave();
 
       delete [] rgb_buf;
-      gl::destroy_context(_context);
     }
 
     gtk_console::gtk_console(machine *m)
@@ -634,14 +705,6 @@ namespace vx68k
 	      rgb_table[i * 3 + 2] = (i & 0x3f) * 0xff / 0x3f;
 	    }
 	}
-
-      _context = gl::create_context(gl::best_visual());
-      gl::make_current(_context, 0);
-      glMatrixMode(GL_PROJECTION);
-      gluOrtho2D(0e0, 768e0, -512e0, 0e0);
-      glMatrixMode(GL_MODELVIEW);
-      glScaled(1e0, -1e0, -1e0); // Reverses the y- and z-axes.
-      gl::make_current(0, 0);
 
       rgb_buf = new guchar [height * row_size];
 

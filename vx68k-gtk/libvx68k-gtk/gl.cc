@@ -143,5 +143,14 @@ namespace vx68k
       if (!glXMakeCurrent(dd, dw, reinterpret_cast<GLXContext>(c)))
 	throw runtime_error("glXMakeCurrent");
     }
+
+    void
+    gl::swap_buffers(GdkDrawable *d)
+    {
+      Display *dd = GDK_WINDOW_XDISPLAY(d);
+      Drawable dw = GDK_WINDOW_XWINDOW(d);
+
+      glXSwapBuffers(dd, dw);
+    }
   }
 }

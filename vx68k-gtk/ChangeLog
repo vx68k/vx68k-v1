@@ -1,3 +1,13 @@
+2001-07-19  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* libvx68k-gtk/gtkconsole.cc: Change TIMEOUT_INTERVAL to 40.
+	(gtk_console): Remove creation of _context.
+	(~gtk_console): Destroy _context before widgets.
+	(create_widget): Use the best visual for OpenGL.
+	(handle_expose_event): Use OpenGL.
+
+	* libvx68k-gtk/gl.cc (swap_buffers): New function.
+
 2001-07-15  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* libvx68k-gtk/gtkconsole.cc: Remove all GDK_IMAGE code.
