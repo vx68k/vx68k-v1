@@ -18,6 +18,8 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+#undef const
+#undef inline
 
 #include "vm68k/cpu.h"
 #include "vx68k/memory.h"

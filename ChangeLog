@@ -1,5 +1,7 @@
 1998-10-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* vx68k/main.cc: Undef const and inline.
+
 	* COPYING: New file.
 	* INSTALL: New file.
 
