@@ -1,5 +1,8 @@
 2000-08-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vm68k/cpu.h (class status_register): Set member value on
+	assignment.
+
 	* libvx68k/systemrom.cc (get_16): Returns 0xf84f for IOCS area.
 	(call_iocs): New function.
 	(dispatch_iocs_function): Removed.

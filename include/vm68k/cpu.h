@@ -217,6 +217,7 @@ namespace vm68k
     operator uint_type() const;
     status_register &operator=(uint_type v)
     {
+      value = v & 0xff00;
       x_eval = cc_eval = &bitset_tester;
       x_values[0] = cc_values[0] = v;
       return *this;
