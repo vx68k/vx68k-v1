@@ -41,6 +41,7 @@ AC_CHECK_FUNCS(localtime_r)
 AC_CONFIG_SUBDIRS(gtkvx68k)
 AC_OUTPUT(Makefile include/Makefile include/vx68k/Makefile \
 libvx68k/Makefile libvx68kdos/Makefile \
+libvx68k-gtk/Makefile libvx68k-gtk/vx68k/Makefile \
 doc/Makefile testsuite/Makefile)
 if test "$ac_cv_cxx_exceptions" != yes; then
   AC_MSG_WARN([the C++ compiler does not support exceptions])

@@ -82,7 +82,7 @@ STRIP = @STRIP@
 TEMPLATE_OBJS = @TEMPLATE_OBJS@
 VERSION = @VERSION@
 
-SUBDIRS = include libvx68k libvx68kdos doc testsuite @subdirs@
+SUBDIRS = @subdirs@ include libvx68k libvx68kdos libvx68k-gtk doc testsuite
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h

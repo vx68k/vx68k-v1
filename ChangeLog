@@ -1,3 +1,16 @@
+2002-05-07  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
+
+	* Makefile.am (SUBDIRS): Add libvx68k-gtk.  Move @subdirs@ to the
+	beginning.
+
+	* configure.in: Add libvx68k-gtk/Makefile and libvx68k-gtk/vx68k
+	to AC_OUTPUT.
+
+	* Move gtkvx68k/libvx68k-gtk to libvx68k-gtk.
+
+	* configure.in: Reorder macros.  Use $includedir and $libdir for
+	extra libraries by default.
+
 2002-04-30  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* Rename vx68k-gtk to gtkvx68k.

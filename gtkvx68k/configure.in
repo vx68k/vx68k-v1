@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(libvx68k-gtk/gtkconsole.cc)
+AC_INIT(bin/main.cc)
 AM_INIT_AUTOMAKE(vx68k-gtk, 1.1.10)
 AC_ARG_WITH(includes,
 [  --with-includes=DIR     use extra include files in DIR],
@@ -54,4 +54,4 @@ fi
 
 AM_CONFIG_HEADER(config.h)
 AC_OUTPUT(Makefile intl/Makefile po/Makefile.in \
-libvx68k-gtk/Makefile libvx68k-gtk/vx68k/Makefile bin/Makefile)
+bin/Makefile)

@@ -1,3 +1,11 @@
+2002-05-07  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
+
+	* Makefile.am (SUBDIRS): Remove libvx68k-gtk.
+
+	* configure.in: Change the file for AC_INIT.  Remove
+	libgtk-vx68k/Makefile and libgtk-vx68k/vx68k/Makefile from
+	AC_OUTPUT.
+
 2001-07-19  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* TODO: New file.
