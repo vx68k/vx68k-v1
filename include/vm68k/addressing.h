@@ -135,48 +135,411 @@ namespace vm68k
 
     template <class Size> class basic_postinc_indirect
     {
-      // FIXME
+    public:
+      typedef Size size_type;
+      typedef typename Size::uvalue_type uvalue_type;
+      typedef typename Size::svalue_type svalue_type;
+
+    private:
+      unsigned int reg;
+
+    public:
+      basic_postinc_indirect(unsigned int r, size_t off): reg(r) {}
+
+    protected:
+      size_t advance_size() const
+	{
+	  if (reg == 7)		// XXX: %a7 is special.
+	    return Size::aligned_value_size();
+	  else
+	    return Size::value_size();
+	}
+
+    public:
+      size_t extension_size() const {return 0;}
+      // XXX: address is left unimplemented.
+      svalue_type get(const context &c) const
+	{return Size::svalue(Size::get(*c.mem, c.data_fc(), c.regs.a[reg]));}
+      void put(context &c, svalue_type value) const
+	{Size::put(*c.mem, ec.data_fc(), ec.regs.a[reg], value);}
+      void finish(context &c) const
+        {c.regs.a[reg] += advance_size();}
+
+    public:
+      const char *text(const context &c) const
+	{
+	  static char buf[8];
+	  sprintf(buf, "%%a%u@+", reg);
+	  return buf;
+	}
     };
+
+    typedef basic_postinc_indirect<byte_size> byte_postinc_indirect;
+    typedef basic_postinc_indirect<word_size> word_postinc_indirect;
+    typedef basic_postinc_indirect<long_word_size> long_word_postinc_indirect;
 
     template <class Size> class basic_predec_indirect
     {
-      // FIXME
+    public:
+      typedef Size size_type;
+      typedef typename Size::uvalue_type uvalue_type;
+      typedef typename Size::svalue_type svalue_type;
+
+    private:
+      unsigned int reg;
+
+    public:
+      basic_predec_indirect(unsigned int r, size_t off): reg(r) {}
+
+    protected:
+      size_t advance_size() const
+	{
+	  if (reg == 7)		// XXX: %a7 is special.
+	    return Size::aligned_value_size();
+	  else
+	    return Size::value_size();
+	}
+
+    public:
+      size_t extension_size() const {return 0;}
+      // XXX: address is left unimplemented.
+      svalue_type get(const context &c) const
+	{return Size::svalue(Size::get(*c.mem, c.data_fc(),
+				       c.regs.a[reg] - advance_size()));}
+      void put(context &c, svalue_type value) const
+	{Size::put(*c.mem, ec.data_fc(),
+		   ec.regs.a[reg] - advance_size(), value);}
+      void finish(context &c) const
+        {c.regs.a[reg] -= advance_size();}
+
+    public:
+      const char *text(const context &c) const
+	{
+	  static char buf[8];
+	  sprintf(buf, "%%a%u@-", reg);
+	  return buf;
+	}
     };
+
+    typedef basic_predec_indirect<byte_size> byte_predec_indirect;
+    typedef basic_predec_indirect<word_size> word_predec_indirect;
+    typedef basic_predec_indirect<long_word_size> long_word_predec_indirect;
 
     template <class Size> class basic_disp_indirect
     {
-      // FIXME
+    public:
+      typedef Size size_type;
+      typedef typename Size::uvalue_type uvalue_type;
+      typedef typename Size::svalue_type svalue_type;
+
+    private:
+      unsigned int reg;
+
+    private:
+      size_t offset;
+
+    public:
+      basic_disp_indirect(unsigned int r, size_t off): reg(r), offset(off) {}
+
+    public:
+      size_t extension_size() const {return 2;}
+      uint32_type address(const context &c) const
+	{return c.regs.a[reg] + word_size::svalue(c.fetchw(offset));}
+      svalue_type get(const context &c) const
+	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
+      void put(context &c, svalue_type value) const
+	{Size::put(*c.mem, c.data_fc(), address(c), value);}
+      void finish(context &c) const {}
+
+    public:
+      const char *text(const context &c) const
+	{
+	  static char buf[32];
+	  sprintf(buf, "%%a%u@(%d)", reg, word_size::svalue(c.fetchw(offset)));
+	  return buf;
+	}
     };
+
+    typedef basic_disp_indirect<byte_size> byte_disp_indirect;
+    typedef basic_disp_indirect<word_size> word_disp_indirect;
+    typedef basic_disp_indirect<long_word_size> long_word_disp_indirect;
 
     template <class Size> class basic_index_indirect
     {
-      // FIXME
+    public:
+      typedef Size size_type;
+      typedef typename Size::uvalue_type uvalue_type;
+      typedef typename Size::svalue_type svalue_type;
+
+    private:
+      unsigned int reg;
+
+    private:
+      size_t offset;
+
+    public:
+      basic_index_indirect(unsigned int r, size_t off): reg(r), offset(off) {}
+
+    public:
+      size_t extension_size() const {return 2;}
+      uint32_type address(const context &c) const
+	{
+	  uint_type w = c.fetchw(offset);
+	  unsigned int r = w >> 12 & 0xf;
+	  uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
+	  if (w & 0x800 != 0)
+	    return (c.regs.a[reg]
+		    + byte_size::svalue(w & byte_size::value_mask())
+		    + long_word_size::svalue(x & long_word_size::value_mask()));
+	  else
+	    return (c.regs.a[reg]
+		    + byte_size::svalue(w & byte_size::value_mask())
+		    + word_size::svalue(x & word_size::value_mask()));
+	}
+      svalue_type get(const context &c) const
+	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
+      void put(context &c, svalue_type value) const
+	{Size::put(*c.mem, c.data_fc(), address(c), value);}
+      void finish(context &c) const {}
+
+    public:
+      const char *text(const context &c) const
+	{
+	  uint_type w = c.fetchw(offset);
+	  unsigned int r = w >> 12 & 0xf;
+	  static char buf[32];
+	  if (r >= 8)
+	    sprintf(buf, "%%a%u@(%d,%%a%u%s)", reg,
+		    byte_size::svalue(w & byte_size::value_mask()), r - 8,
+		    w & 0x800 ? ":l" : ":w");
+	  else
+	    sprintf(buf, "%%a%u@(%d,%%d%u%s)", reg,
+		    byte_size::svalue(w & byte_size::value_mask()), r,
+		    w & 0x800 ? ":l" : ":w");
+	  return buf;
+	}
     };
+
+    typedef basic_index_indirect<byte_size> byte_index_indirect;
+    typedef basic_index_indirect<word_size> word_index_indirect;
+    typedef basic_index_indirect<long_word_size> long_word_index_indirect;
 
     template <class Size> class basic_abs_short
     {
-      // FIXME
+    public:
+      typedef Size size_type;
+      typedef typename Size::uvalue_type uvalue_type;
+      typedef typename Size::svalue_type svalue_type;
+
+    private:
+      size_t offset;
+
+    public:
+      basic_abs_short(unsigned int r, size_t off): offset(off) {}
+
+    public:
+      size_t extension_size() const {return 2;}
+      uint32_type address(const context &c) const
+	{return word_size::svalue(c.fetchw(offset));}
+      svalue_type get(const context &c) const
+	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
+      void put(context &c, svalue_type value) const
+	{Size::put(*c.mem, c.data_fc(), address(c), value);}
+      void finish(context &c) const {}
+
+    public:
+      const char *text(const context &c) const
+	{
+	  static char buf[32];
+	  sprintf(buf, "%#lx:s", (unsigned long) address(c));
+	  return buf;
+	}
     };
+
+    typedef basic_abs_short<byte_size> byte_abs_short;
+    typedef basic_abs_short<word_size> word_abs_short;
+    typedef basic_abs_short<long_word_size> long_word_abs_short;
 
     template <class Size> class basic_abs_long
     {
-      // FIXME
+    public:
+      typedef Size size_type;
+      typedef typename Size::uvalue_type uvalue_type;
+      typedef typename Size::svalue_type svalue_type;
+
+    private:
+      size_t offset;
+
+    public:
+      basic_abs_long(unsigned int r, size_t off): offset(off) {}
+
+    public:
+      size_t extension_size() const {return 4;}
+      uint32_type address(const context &c) const
+	{return long_word_size::svalue(ec.fetchl(offset));}
+      svalue_type get(const context &c) const
+	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
+      void put(context &c, svalue_type value) const
+	{Size::put(*c.mem, c.data_fc(), address(c), value);}
+      void finish(context &c) const {}
+
+    public:
+      const char *text(const context &c) const
+	{
+	  static char buf[32];
+	  sprintf(buf, "%#lx", (unsigned long) address(c));
+	  return buf;
+	}
     };
+
+    typedef basic_abs_long<byte_size> byte_abs_long;
+    typedef basic_abs_long<word_size> word_abs_long;
+    typedef basic_abs_long<long_word_size> long_word_abs_long;
 
     template <class Size> class basic_disp_pc_indirect
     {
-      // FIXME
+    public:
+      typedef Size size_type;
+      typedef typename Size::uvalue_type uvalue_type;
+      typedef typename Size::svalue_type svalue_type;
+
+    private:
+      size_t offset;
+
+    public:
+      basic_disp_pc_indirect(unsigned int r, size_t off): offset(off) {}
+
+    public:
+      size_t extension_size() const {return 2;}
+      uint32_type address(const context &c) const
+	{return c.regs.pc + offset + word_size::svalue(c.fetchw(offset));}
+      svalue_type get(const context &c) const
+	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
+      // XXX put is left unimplemented.
+      void finish(context &c) const {}
+
+    public:
+      const char *text(const context &c) const
+	{
+	  static char buf[16];
+	  sprintf(buf, "%%pc@(%d)", word_size::svalue(c.fetchw(offset)));
+	  return buf;
+	}
     };
+
+    typedef basic_disp_pc_indirect<byte_size> byte_disp_pc_indirect;
+    typedef basic_disp_pc_indirect<word_size> word_disp_pc_indirect;
+    typedef basic_disp_pc_indirect<long_word_size> long_word_disp_pc_indirect;
 
     template <class Size> class basic_index_pc_indirect
     {
-      // FIXME
+    public:
+      typedef Size size_type;
+      typedef typename Size::uvalue_type uvalue_type;
+      typedef typename Size::svalue_type svalue_type;
+
+    private:
+      size_t offset;
+
+    public:
+      basic_index_pc_indirect(unsigned int r, size_t off): offset(off) {}
+
+    public:
+      size_t extension_size() const {return 2;}
+      uint32_type address(const context &c) const
+	{
+	  uint_type w = c.fetchw(offset);
+	  unsigned int r = w >> 12 & 0xf;
+	  uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
+	  if (w & 0x800 != 0)
+	    return (c.regs.pc + offset
+		    + byte_size::svalue(w & byte_size::value_mask())
+		    + long_word_size::svalue(x & long_word_size::value_mask()));
+	  else
+	    return (c.regs.pc + offset
+		    + byte_size::svalue(w & byte_size::value_mask())
+		    + word_size::svalue(x & word_size::value_mask()));
+	}
+      svalue_type get(const context &c) const
+	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
+      void put(context &c, svalue_type value) const
+	{Size::put(*c.mem, c.data_fc(), address(c), value);}
+      void finish(context &c) const {}
+
+    public:
+      const char *text(const context &c) const
+	{
+	  uint_type w = c.fetchw(offset);
+	  unsigned int r = w >> 12 & 0xf;
+	  static char buf[32];
+	  if (r >= 8)
+	    sprintf(buf, "%%pc@(%d,%%a%u%s)",
+		    byte_size::svalue(w & byte_size::value_mask()), r - 8,
+		    w & 0x800 ? ":l" : ":w");
+	  else
+	    sprintf(buf, "%%a%u@(%d,%%d%u%s)", reg,
+		    byte_size::svalue(w & byte_size::value_mask()), r,
+		    w & 0x800 ? ":l" : ":w");
+	  return buf;
+	}
     };
+
+    typedef basic_index_pc_indirect<byte_size> byte_index_pc_indirect;
+    typedef basic_index_pc_indirect<word_size> word_index_pc_indirect;
+    typedef basic_index_pc_indirect<long_word_size> long_word_index_pc_indirect;
 
     template <class Size> class basic_immediate
     {
-      // FIXME
+    public:
+      typedef Size size_type;
+      typedef typename Size::uvalue_type uvalue_type;
+      typedef typename Size::svalue_type svalue_type;
+
+    private:
+      size_t offset;
+
+    public:
+      basic_immediate(unsigned int r, size_t off): offset(off) {}
+
+    public:
+      size_t extension_size() const
+	{return Size::aligned_value_size();}
+      // XXX address is left unimplemented.
+      svalue_type get(const context &c) const;
+      // XXX put is left unimplemented.
+      void finish(context &c) const {}
+
+    public:
+      const char *text(const context &c) const
+	{
+	  static char buf[32];
+	  sprintf(buf, "#%#lx", (unsigned long) get(c));
+	  return buf;
+	}
     };
+
+    template <> inline byte_size::svalue_type
+    basic_immediate<byte_size>::get(const context &c) const
+    {
+      return byte_size::svalue(c.fetchw(offset)
+			       & byte_size::value_mask());
+    }
+
+    template <> inline word_size::svalue_type
+    basic_immediate<word_size>::get(const context &c) const
+    {
+      return word_size::svalue(c.fetchw(offset));
+    }
+
+    template <> inline long_word_size::svalue_type
+    basic_immediate<long_word_size>::get(const context &c) const
+    {
+      return long_word_size::svalue(c.fetchl(offset));
+    }
+
+    typedef basic_immediate<byte_size> byte_immediate;
+    typedef basic_immediate<word_size> word_immediate;
+    typedef basic_immediate<long_word_size> long_word_immediate;
 
     /* --- */
 
