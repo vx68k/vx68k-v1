@@ -35,7 +35,6 @@
 # include <cassert>
 # define I assert
 # define VL(EXPR)
-# undef TRACE_INSTRUCTIONS
 #endif
 
 using vm68k::exec_unit;
@@ -47,6 +46,13 @@ using vm68k::privilege_violation_exception;
 using namespace vm68k::types;
 using namespace std;
 
+#ifdef HAVE_NANA_H
+namespace nana
+{
+  bool instruction_trace = false;
+}
+#endif
+
 void
 exec_unit::run(context &c) const
 {
@@ -56,17 +62,19 @@ exec_unit::run(context &c) const
 	c.handle_interrupts();
       else
 	{
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
 # ifdef DUMP_REGISTERS
 	  for (unsigned int i = 0; i != 8; ++i)
 	    {
-	      L("| %%d%u = 0x%08lx, %%a%u = 0x%08lx\n",
-		i, (unsigned long) c.regs.d[i],
-		i, (unsigned long) c.regs.a[i]);
+	      LG(nana::instruction_trace,
+		 "| %%d%u = 0x%08lx, %%a%u = 0x%08lx\n",
+		 i, (unsigned long) c.regs.d[i],
+		 i, (unsigned long) c.regs.a[i]);
 	    }
 # endif
-	  L("| %#lx: %#06x\n", (unsigned long) c.regs.pc,
-	    c.fetch(word_size(), 0));
+	  LG(nana::instruction_trace, "| 0x%08lx (0x%04x)\n",
+	     (unsigned long) long_word_size::get(c.regs.pc),
+	     c.fetch(word_size(), 0));
 #endif
 	  step(c);
 	}
@@ -131,6 +139,11 @@ namespace
     return value >= N ? -sint32_type(M - value) - 1 : sint32_type(value);
   }
 
+#ifdef HAVE_NANA_H
+# undef L_DEFAULT_GUARD
+# define L_DEFAULT_GUARD nana::instruction_trace
+#endif
+
   /* Handles an ADD instruction.  */
   template <class Size, class Source> void
   m68k_add(uint_type op, context &c, unsigned long data)
@@ -140,7 +153,7 @@ namespace
 
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" add%s %s", Size::suffix(), ea1.text(c));
     L(",%%d%u\n", reg2);
 #endif
@@ -164,7 +177,7 @@ namespace
 
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" add%s %%d%u,", Size::suffix(), reg2);
     L("%s\n", ea1.text(c));
 #endif
@@ -188,7 +201,7 @@ namespace
 
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" adda%s %s", Size::suffix(), ea1.text(c));
     L(",%%a%u\n", reg2);
 #endif
@@ -214,7 +227,7 @@ namespace
 
     svalue_type value2 = Size::svalue(c.fetch(Size(), 2));
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" addi%s #%#lx", Size::suffix(), (unsigned long) value2);
     L(",%s\n", ea1.text(c));
 #endif
@@ -239,7 +252,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" addq%s #%d", Size::suffix(), value2);
     L(",%s\n", ea1.text(c));
 #endif
@@ -264,7 +277,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" addq%s #%d", Size::suffix(), value2);
     L(",%%a%u\n", reg1);
 #endif
@@ -288,7 +301,7 @@ namespace
 
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" addx%s %%d%u,", Size::suffix(), reg1);
     L("%%d%u\n", reg2);
 #endif
@@ -312,7 +325,7 @@ namespace
 
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" and%s %s", Size::suffix(), ea1.text(c));
     L(",%%d%u\n", reg2);
 #endif
@@ -337,7 +350,7 @@ namespace
 
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tand%s\t", Size::suffix());
     L("%%d%u,", reg2);
     L("%s\n", ea1.text(c));
@@ -362,7 +375,7 @@ namespace
 
     svalue_type value2 = Size::svalue(c.fetch(Size(), 2));
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tandi%s\t", Size::suffix());
     L("#%#lx,", (unsigned long) Size::get(value2));
     L("%s\n", ea1.text(c));
@@ -384,7 +397,7 @@ namespace
   {
     sint_type value2 = extsb(c.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" andib #0x%x", uint_type(value2) & 0xffu);
     L(",%s\n", ea1.textb(c));
 #endif
@@ -403,7 +416,7 @@ namespace
   {
     sint_type value2 = extsw(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" andiw #0x%x", uint_type(value2));
     L(",%s\n", ea1.textw(ec));
 #endif
@@ -422,7 +435,7 @@ namespace
   {
     sint32_type value2 = extsl(ec.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" andil #0x%lx", (unsigned long) value2);
     L(",%s\n", ea1.textl(ec));
 #endif
@@ -445,7 +458,7 @@ namespace
     typedef byte_size::svalue_type svalue_type;
 
     uvalue_type value2 = c.fetch(byte_size(), 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tandi%s\t", byte_size::suffix());
     L("#%#x,", value2);
     L("%%ccr\n");
@@ -469,7 +482,7 @@ namespace
     unsigned int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" asl%s #%u", Size::suffix(), value2);
     L(",%%d%u\n", reg1);
 #endif
@@ -490,7 +503,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" asll #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -513,7 +526,7 @@ namespace
 
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tasl%s\t", Size::suffix());
     L("%%d%u,", reg2);
     L("%%d%u\n", reg1);
@@ -534,7 +547,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" asll %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -560,7 +573,7 @@ namespace
     unsigned int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tasr%s\t", Size::suffix());
     L("#%u,", value2);
     L("%%d%u\n", reg1);
@@ -582,7 +595,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" asrl #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -601,7 +614,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" asrl %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -631,7 +644,7 @@ namespace
 	disp = byte_size::svalue(disp);
 	extsize = 0;
       }
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tb%s\t", Condition::text());
     L("%#lx\n", (unsigned long) (c.regs.pc + 2 + disp));
 #endif
@@ -670,7 +683,7 @@ namespace
 	}
       else
 	disp = extsb(disp);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" beq 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp)));
 #endif
 
@@ -689,7 +702,7 @@ namespace
 	}
       else
 	disp = extsb(disp);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" bge 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp)));
 #endif
 
@@ -708,7 +721,7 @@ namespace
 	}
       else
 	disp = extsb(disp);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       L(" bmi 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp));
 #endif
 
@@ -727,7 +740,7 @@ namespace
 	}
       else
 	disp = extsb(disp);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" bne 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp)));
 #endif
 
@@ -745,7 +758,7 @@ namespace
 
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tbclr%s\t", Size::suffix());
     L("%%d%u,", reg2);
     L("%s\n", ea1.text(c));
@@ -772,7 +785,7 @@ namespace
 
     Destination ea1(op & 0x7, 2 + 2);
     unsigned int value2 = c.fetch(word_size(), 2) % Size::value_bit();
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tbclr%s\t", Size::suffix());
     L("#%u,", value2);
     L("%s\n", ea1.text(c));
@@ -795,7 +808,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int bit = ec.fetch(word_size(), 2) & 0x1f;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" bclrl #%u", bit);
     L(",%%d%u\n", reg1);
 #endif
@@ -823,7 +836,7 @@ namespace
 	}
       else
 	disp = extsb(disp);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" bra 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp)));
 #endif
 
@@ -836,7 +849,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int bit = ec.fetch(word_size(), 2) & 0x1f;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" bsetl #%u", bit);
     L(",%%d%u\n", reg1);
 #endif
@@ -860,7 +873,7 @@ namespace
 
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" bset%s %%d%u,", Size::suffix(), reg2);
     L("%s\n", ea1.text(c));
 #endif
@@ -887,7 +900,7 @@ namespace
 	}
       else
 	disp = extsb(disp);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" bsr 0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp)));
 #endif
 
@@ -907,7 +920,7 @@ namespace
 
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tbtst%s\t", Size::suffix());
     L("%%d%u,", reg2);
     L("%s\n", ea1.text(c));
@@ -929,7 +942,7 @@ namespace
   {
     unsigned int bit = c.fetch(word_size(), 2) & 0x7;
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" btstb #%u", bit);
     L(",%s\n", ea1.textb(c));
 #endif
@@ -946,7 +959,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int bit = ec.fetch(word_size(), 2) & 0x1f;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" btstl #%u", bit);
     L(",%%d%u\n", reg1);
 #endif
@@ -962,7 +975,7 @@ namespace
   clrb(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" clrb %s\n", ea1.textb(ec)));
 #endif
 
@@ -977,7 +990,7 @@ namespace
   clrw(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" clrw %s\n", ea1.textw(ec)));
 #endif
 
@@ -997,7 +1010,7 @@ namespace
   clrl(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" clrl %s\n", ea1.textl(ec)));
 #endif
 
@@ -1017,7 +1030,7 @@ namespace
 
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tcmp%s\t", Size::suffix());
     L("%s,", ea1.text(c));
     L("%%d%u\n", reg2);
@@ -1038,7 +1051,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" cmpb %s", ea1.textb(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -1057,7 +1070,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" cmpw %s", ea1.textw(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -1076,7 +1089,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" cmpl %s", ea1.textl(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -1096,7 +1109,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" cmpaw %s", ea1.textw(ec));
     L(",%%a%u\n", reg2);
 #endif
@@ -1115,7 +1128,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" cmpal %s", ea1.textl(ec));
     L(",%%a%u\n", reg2);
 #endif
@@ -1134,7 +1147,7 @@ namespace
   {
     sint_type value2 = extsb(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" cmpib #0x%x", uint_type(value2));
     L(",%s\n", ea1.textb(ec));
 #endif
@@ -1152,7 +1165,7 @@ namespace
   {
     sint_type value2 = extsw(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" cmpiw #0x%x", uint_type(value2));
     L(",%s\n", ea1.textw(ec));
 #endif
@@ -1170,7 +1183,7 @@ namespace
   {
     sint32_type value2 = extsl(c.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" cmpil #%#lx", (unsigned long) value2);
     L(",%s\n", ea1.textl(c));
 #endif
@@ -1188,7 +1201,7 @@ namespace
   {
     postinc_indirect ea1(op & 0x7, 2);
     postinc_indirect ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" cmpb %s", ea1.textb(c));
     L(",%s\n", ea2.textb(c));
 #endif
@@ -1208,7 +1221,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" divuw %s", ea1.textw(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -1229,7 +1242,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" eorb %%d%u", reg2);
     L(",%s\n", ea1.textb(ec));
 #endif
@@ -1249,7 +1262,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" eorw %%d%u", reg2);
     L(",%s\n", ea1.textw(ec));
 #endif
@@ -1269,7 +1282,7 @@ namespace
   {
     data_register ea2(op >> 9 & 0x7, 2);
     Destination ea1(op & 0x7, 2 + ea2.isize(4));
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" eorl %s", ea2.textl(c));
     L(",%s\n", ea1.textl(c));
 #endif
@@ -1294,7 +1307,7 @@ namespace
 
     svalue_type value2 = Size::svalue(c.fetch(Size(), 2));
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\teori%s\t", Size::suffix());
     L("#%#lx,", (unsigned long) Size::get(value2));
     L("%s\n", ea1.text(c));
@@ -1315,7 +1328,7 @@ namespace
   {
     sint_type value2 = extsw(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" eoriw #0x%x", uint_type(value2));
     L(",%s\n", ea1.textw(ec));
 #endif
@@ -1337,7 +1350,7 @@ namespace
     Condition cond;
     unsigned int reg1 = op & 0x7;
     sint_type disp = word_size::svalue(c.fetch(word_size(), 2));
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" db%s %%d%u,", cond.text(), reg1);
     L("%#lx\n", (unsigned long) (c.regs.pc + 2 + disp));
 #endif
@@ -1360,7 +1373,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     int disp = extsw(ec.fetch(word_size(), 2));
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" dbf %%d%d", reg1);
     L(",0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp));
 #endif
@@ -1378,7 +1391,7 @@ namespace
   {
     Register1 ea1(op & 0x7, 2);
     Register2 ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" exgl %s", ea2.textl(c));
     L(",%s\n", ea1.textl(c));
 #endif
@@ -1398,7 +1411,7 @@ namespace
   extw(uint_type op, context &c, unsigned long data)
   {
     data_register ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" extw %s\n", ea1.textw(c));
 #endif
 
@@ -1414,7 +1427,7 @@ namespace
   extl(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" extl %%d%u\n", reg1);
 #endif
 
@@ -1429,7 +1442,7 @@ namespace
   jmp(uint_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" jmp %s\n", ea1.textw(c));
 #endif
 
@@ -1443,7 +1456,7 @@ namespace
   jsr(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       L(" jsr %s\n", ea1.textw(ec));
 #endif
 
@@ -1460,7 +1473,7 @@ namespace
     {
       Destination ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       L(" lea %s", ea1.textw(ec));
       L(",%%a%d\n", reg2);
 #endif
@@ -1477,7 +1490,7 @@ namespace
     {
       int reg = op & 0x0007;
       int disp = extsw(ec.fetch(word_size(), 2));
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" link %%a%d,#%d\n", reg, disp));
 #endif
 
@@ -1498,7 +1511,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" lslb #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -1519,7 +1532,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" lslw #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -1538,7 +1551,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" lslw %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -1560,7 +1573,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" lsll #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -1578,7 +1591,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" lsll %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -1599,7 +1612,7 @@ namespace
     if (count == 0)
       count = 8;
     data_register ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" lsrb #%u", count);
     L(",%s\n", ea1.textb(c));
 #endif
@@ -1619,7 +1632,7 @@ namespace
     uint_type count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" lsrw #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -1638,7 +1651,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" lsrw %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -1660,7 +1673,7 @@ namespace
     uint_type count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" lsrl #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -1678,7 +1691,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" lsrl %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -1700,7 +1713,7 @@ namespace
 
     Source ea1(op & 0x7, 2);
     Destination ea2(op >> 9 & 0x7, 2 + ea1.extension_size());
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tmove%s\t", Size::suffix());
     L("%s,", ea1.text(c));
     L("%s\n", ea2.text(c));
@@ -1721,7 +1734,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" moveb %s", ea1.textb(ec));
     L(",%s\n", ea2.textb(ec));
 #endif
@@ -1740,7 +1753,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" movew %s", ea1.textw(ec));
     L(",%s\n", ea2.textw(ec));
 #endif
@@ -1759,7 +1772,7 @@ namespace
     {
       Source ea1(op & 0x7, 2);
       Destination ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" movel %s", ea1.textl(ec)));
       VL((",%s\n", ea2.textl(ec)));
 #endif
@@ -1782,7 +1795,7 @@ namespace
     typedef word_size::svalue_type svalue_type;
 
     Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tmove%s\t", word_size::suffix());
     L("%%sr,");
     L("%s\n", ea1.text(c));
@@ -1805,7 +1818,7 @@ namespace
     typedef word_size::svalue_type svalue_type;
 
     Source ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tmove%s\t", word_size::suffix());
     L("%s,", ea1.text(c));
     L("%%sr\n");
@@ -1828,7 +1841,7 @@ namespace
   m68k_move_from_usp(uint_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" movel %%usp,");
     L("%%a%u\n", reg1);
 #endif
@@ -1848,7 +1861,7 @@ namespace
   m68k_move_to_usp(uint_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tmove%s\t", long_word_size::suffix());
     L("%%a%u,", reg1);
     L("%%usp\n");
@@ -1873,7 +1886,7 @@ namespace
 
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" movea%s %s", Size::suffix(), ea1.text(c));
     L(",%%a%u\n", reg2);
 #endif
@@ -1892,7 +1905,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     address_register ea2(op >> 9 & 0x7, 2 + ea1.isize(2));
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" moveaw %s", ea1.textw(c));
     L(",%s\n", ea2.textw(c));
 #endif
@@ -1911,7 +1924,7 @@ namespace
     {
       Source ea1(op & 0x7, 2);
       address_register ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" moveal %s", ea1.textl(ec)));
       VL((",%s\n", ea2.textl(ec)));
 #endif
@@ -1933,7 +1946,7 @@ namespace
   {
     uint_type mask = c.fetch(word_size(), 2);
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" movem%s %#06x,", Size::suffix(), mask);
     L("%s\n", ea1.text(c));
 #endif
@@ -1973,10 +1986,10 @@ namespace
 
     unsigned int reg1 = op & 0x7;
     uint_type mask = c.fetch(word_size(), 2);
-#ifdef TRACE_INSTRUCTIONS
-    DL("\tmovem%s\t", Size::suffix());
-    DL("#0x%04x,", mask);
-    DL("%%a%u@-\n", reg1);
+#ifdef HAVE_NANA_H
+    L("\tmovem%s\t", Size::suffix());
+    L("#0x%04x,", mask);
+    L("%%a%u@-\n", reg1);
 #endif
 
     // This instruction does not affect the condition codes.
@@ -2016,7 +2029,7 @@ namespace
     {
       Source ea1(op & 0x7, 4);
       unsigned int bitmap = ec.fetch(word_size(), 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       L(" moveml %s", ea1.textl(ec));
       L(",#0x%04x\n", bitmap);
 #endif
@@ -2055,10 +2068,10 @@ namespace
 
     unsigned int reg1 = op & 0x7;
     uint_type mask = c.fetch(word_size(), 2);
-#ifdef TRACE_INSTRUCTIONS
-    DL("\tmovem%s\t", Size::suffix());
-    DL("%%a%u@+,", reg1);
-    DL("#0x%04x\n", mask);
+#ifdef HAVE_NANA_H
+    L("\tmovem%s\t", Size::suffix());
+    L("%%a%u@+,", reg1);
+    L("#0x%04x\n", mask);
 #endif
 
     // This instruction does not affect the condition codes.
@@ -2097,7 +2110,7 @@ namespace
     {
       int value = extsb(op & 0xff);
       int reg = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" moveql #%d,%%d%d\n", value, reg));
 #endif
       
@@ -2112,7 +2125,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" mulsw %s", ea1.textw(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -2132,7 +2145,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" muluw %s", ea1.textw(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -2152,7 +2165,7 @@ namespace
   negb(uint_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" negb %s\n", ea1.textb(c));
 #endif
 
@@ -2169,7 +2182,7 @@ namespace
   negw(uint_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" negw %s\n", ea1.textw(ec));
 #endif
 
@@ -2186,7 +2199,7 @@ namespace
   negl(uint_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" negl %s\n", ea1.textl(ec));
 #endif
 
@@ -2207,7 +2220,7 @@ namespace
     typedef typename Size::svalue_type svalue_type;
 
     Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tnot%s\t", Size::suffix());
     L("%s\n", ea1.text(c));
 #endif
@@ -2225,7 +2238,7 @@ namespace
   void
   m68k_nop(uint_type op, context &c, unsigned long data)
   {
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tnop\n");
 #endif
 
@@ -2237,7 +2250,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" orb %s", ea1.textb(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -2258,7 +2271,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" orw %s", ea1.textw(ec));
     L(",%%d%d\n", reg2);
 #endif
@@ -2279,7 +2292,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" orl %s", ea1.textl(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -2303,7 +2316,7 @@ namespace
 
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tor%s\t", Size::suffix());
     L("%%d%u,", reg2);
     L("%s\n", ea1.text(c));
@@ -2327,7 +2340,7 @@ namespace
     typedef byte_size::svalue_type svalue_type;
 
     uvalue_type value2 = c.fetch(byte_size(), 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tori%s\t", byte_size::suffix());
     L("#%#x,", value2);
     L("%%ccr\n");
@@ -2348,7 +2361,7 @@ namespace
     typedef word_size::svalue_type svalue_type;
 
     uvalue_type value2 = c.fetch(word_size(), 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tori%s\t", word_size::suffix());
     L("#%#x,", value2);
     L("%%sr\n");
@@ -2370,7 +2383,7 @@ namespace
   {
     sint_type value2 = extsb(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" orib #0x%x", uint_type(value2) & 0xff);
     L(",%s\n", ea1.textb(ec));
 #endif
@@ -2389,7 +2402,7 @@ namespace
   {
     sint_type value2 = extsw(c.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" oriw #0x%x", uint_type(value2) & 0xffffu);
     L(",%s\n", ea1.textw(c));
 #endif
@@ -2408,7 +2421,7 @@ namespace
   {
     sint32_type value2 = extsl(c.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" oril #0x%lx", (unsigned long) value2);
     L(",%s\n", ea1.textl(c));
 #endif
@@ -2426,7 +2439,7 @@ namespace
   pea(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       L(" pea %s\n", ea1.textw(ec));
 #endif
 
@@ -2448,7 +2461,7 @@ namespace
 
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\trol%s\t", Size::suffix());
     L("%%d%u,", reg2);
     L("%%d%u\n", reg1);
@@ -2472,7 +2485,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" rolb %%d%u", reg2);
     L(",%%d%u\n", reg1);
 #endif
@@ -2496,7 +2509,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" rolw #%u", count);
     L(",%%d%u\n", reg1);
 #endif
@@ -2518,7 +2531,7 @@ namespace
     if (count == 0)
       count = 8;
     data_register ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" roll #%u", count);
     L(",%s\n", ea1.textl(c));
 #endif
@@ -2545,7 +2558,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" ror%s #%u,", Size::suffix(), count);
     L("%%d%u\n", reg1);
 #endif
@@ -2570,7 +2583,7 @@ namespace
     if (count == 0)
       count = 8;
     data_register ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" rorw #%u", count);
     L(",%s\n", ea1.textw(c));
 #endif
@@ -2593,7 +2606,7 @@ namespace
     if (count == 0)
       count = 8;
     data_register ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" roxrw #%u", count);
     L(",%s\n", ea1.textw(c));
 #endif
@@ -2616,7 +2629,7 @@ namespace
     if (count == 0)
       count = 8;
     data_register ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" roxrl #%u", count);
     L(",%s\n", ea1.textl(c));
 #endif
@@ -2636,7 +2649,7 @@ namespace
   void
   m68k_rte(uint_type op, context &c, unsigned long data)
   {
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" rte\n");
 #endif
 
@@ -2654,7 +2667,7 @@ namespace
   void
   rts(uint_type op, context &ec, unsigned long data)
     {
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" rts\n"));
 #endif
 
@@ -2670,7 +2683,7 @@ namespace
   {
     Condition cond;
     Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" s%sb %s\n", cond.text(), ea1.textb(ec));
 #endif
 
@@ -2690,7 +2703,7 @@ namespace
 
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" sub%s %%d%u,", Size::suffix(), reg2);
     L("%s\n", ea1.text(c));
 #endif
@@ -2710,7 +2723,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" subb %s", ea1.textb(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -2731,7 +2744,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" subw %s", ea1.textw(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -2752,7 +2765,7 @@ namespace
     {
       Destination ea1(op & 0x7, 2);
       int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" subl %s", ea1.textl(ec)));
       VL((",%%d%d\n", reg2));
 #endif
@@ -2773,7 +2786,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" subl %%d%u", reg2);
     L(",%s\n", ea1.textl(ec));
 #endif
@@ -2798,7 +2811,7 @@ namespace
 
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L("\tsuba%s\t", Size::suffix());
     L("%s,", ea1.text(c));
     L("%%a%u\n", reg2);
@@ -2822,7 +2835,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" subal %s", ea1.textl(ec));
     L(",%%d%u\n", reg2);
 #endif
@@ -2843,7 +2856,7 @@ namespace
     {
       int value2 = extsb(ec.fetch(word_size(), 2));
       Destination ea1(op & 0x7, 2 + 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       L(" subib #%d", value2);
       L(",%s\n", ea1.textb(ec));
 #endif
@@ -2862,7 +2875,7 @@ namespace
   {
     sint32_type value2 = extsl(ec.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" subil #%ld", (long) value2);
     L(",%s\n", ea1.textl(ec));
 #endif
@@ -2887,7 +2900,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" subq%s #%d,", Size::suffix(), value2);
     L("%s\n", ea1.text(c));
 #endif
@@ -2912,7 +2925,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" subq%s #%d,", Size::suffix(), value2);
     L("%%a%u\n", reg1);
 #endif
@@ -2935,7 +2948,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" subqw #%d", value2);
     L(",%s\n", ea1.textw(ec));
 #endif
@@ -2956,7 +2969,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" subqw #%d", value2);
     L(",%s\n", ea1.textw(ec));
 #endif
@@ -2977,7 +2990,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" subql #%d", value2);
     L(",%s\n", ea1.textl(ec));
 #endif
@@ -2998,7 +3011,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" subql #%d", value2);
     L(",%s\n", ea1.textl(ec));
 #endif
@@ -3017,7 +3030,7 @@ namespace
   swapw(uint_type op, context &ec, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" swapw %%d%u\n", reg1);
 #endif
 
@@ -3034,7 +3047,7 @@ namespace
   tstb(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" tstb %s\n", ea1.textb(ec)));
 #endif
 
@@ -3049,7 +3062,7 @@ namespace
   tstw(uint_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
     L(" tstw %s\n", ea1.textw(ec));
 #endif
 
@@ -3064,7 +3077,7 @@ namespace
   tstl(uint_type op, context &ec, unsigned long data)
     {
       Destination ea1(op & 0x7, 2);
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" tstl %s\n", ea1.textl(ec)));
 #endif
 
@@ -3079,7 +3092,7 @@ namespace
   unlk_a(uint_type op, context &ec, unsigned long data)
     {
       int reg = op & 0x0007;
-#ifdef TRACE_INSTRUCTIONS
+#ifdef HAVE_NANA_H
       VL((" unlk %%a%d\n", reg));
 #endif
 
@@ -3091,6 +3104,11 @@ namespace
 
       ec.regs.pc += 2;
     }
+
+#ifdef HAVE_NANA_H
+# undef L_DEFAULT_GUARD
+# define L_DEFAULT_GUARD true
+#endif
 
   /* Initializes the machine instructions of execution unit EU.  */
   void

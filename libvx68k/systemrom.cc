@@ -45,7 +45,7 @@ system_rom::get_16(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   DL("class system_rom: get_16: fc=%d address=0x%08lx\n",
-     fc, unsigned long(address));
+     fc, (unsigned long) address);
 #endif
 #if 0
   if (fc == USER_DATA || fc == USER_PROGRAM)
@@ -61,7 +61,7 @@ system_rom::get_8(int fc, uint32_type address) const
 {
 #ifdef HAVE_NANA_H
   DL("class system_rom: get_8: fc=%d address=0x%08lx\n",
-     fc, unsigned long(address));
+     fc, (unsigned long) address);
 #endif
   // A program access generates a bus error to detect emulation bugs
   // easily.
@@ -77,7 +77,7 @@ system_rom::put_16(int fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class system_rom: put_16: fc=%d address=0x%08lx value=0x%04x\n",
-     fc, unsigned long(address), value & 0xffffu);
+     fc, (unsigned long) address, value & 0xffffu);
 #endif
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);
@@ -90,7 +90,7 @@ system_rom::put_8(int fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
   DL("class system_rom: put_8: fc=%d address=0x%08lx value=0x%02x\n",
-     fc, unsigned long(address), value & 0xffu);
+     fc, (unsigned long) address, value & 0xffu);
 #endif
   if (fc != SUPER_DATA)
     throw bus_error_exception(false, fc, address);
@@ -239,8 +239,8 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _B_CONSOL; %%d1=0x%08lx %%d2=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.d[1])),
-       unsigned long(long_word_size::get(c.regs.d[2])));
+       (unsigned long) long_word_size::get(c.regs.d[1]),
+       (unsigned long) long_word_size::get(c.regs.d[2]));
 #endif
     fprintf(stderr, "iocs_b_consol: FIXME: not implemented\n");
   }
@@ -301,7 +301,7 @@ namespace
 #ifdef HAVE_NANA_H
     DL("IOCS _B_INTVCS; %%d1:w=0x%04x %%a1=0x%08lx\n",
        word_size::get(c.regs.d[1]),
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     uint_type vecno = word_size::get(c.regs.d[1]);
     uint32_type addr = long_word_size::get(c.regs.a[1]);
@@ -369,7 +369,7 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _B_LPEEK; %%a1=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     uint32_type address = c.regs.a[1];
 
@@ -383,7 +383,7 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _B_PRINT; %%a1=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     uint32_type address = c.regs.a[1];
 
@@ -413,7 +413,7 @@ namespace
        "%%d4:w=0x%04x %%a1=0x%08lx\n",
        byte_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]),
        word_size::get(c.regs.d[3]), word_size::get(c.regs.d[4]),
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     fprintf(stderr, "iocs_b_putmes: FIXME: not implemented\n");
   }
@@ -425,9 +425,9 @@ namespace
 #ifdef HAVE_NANA_H
     DL("IOCS _B_READ; %%d1:w=0x%04x %%d2=0x%08lx %%d3=0x%08lx %%a1=0x%08lx\n",
        word_size::get(c.regs.d[1]),
-       unsigned long(long_word_size::get(c.regs.d[2])),
-       unsigned long(long_word_size::get(c.regs.d[3])),
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.d[2]),
+       (unsigned long) long_word_size::get(c.regs.d[3]),
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
 
     x68k_address_space *as = dynamic_cast<x68k_address_space *>(c.mem);
@@ -444,9 +444,9 @@ namespace
 #ifdef HAVE_NANA_H
     DL("IOCS _B_READID; %%d1:w=0x%04x %%d2=0x%08lx %%d3=0x%08lx %%a1=0x%08lx\n",
        word_size::get(c.regs.d[1]),
-       unsigned long(long_word_size::get(c.regs.d[2])),
-       unsigned long(long_word_size::get(c.regs.d[3])),
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.d[2]),
+       (unsigned long) long_word_size::get(c.regs.d[3]),
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     uint_type pda_mode = word_size::get(c.regs.d[1]);
 
@@ -492,7 +492,7 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _B_SUPER; %%a1=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     uint32_type ssp = long_word_size::get(c.regs.a[1]);
 
@@ -527,9 +527,9 @@ namespace
 #ifdef HAVE_NANA_H
     DL("IOCS _B_WRITE; %%d1:w=0x%04x %%d2=0x%08lx %%d3=0x%08lx %%a1=0x%08lx\n",
        word_size::get(c.regs.d[1]),
-       unsigned long(long_word_size::get(c.regs.d[2])),
-       unsigned long(long_word_size::get(c.regs.d[3])),
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.d[2]),
+       (unsigned long) long_word_size::get(c.regs.d[3]),
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     fprintf(stderr, "iocs_b_write: FIXME: not implemented\n");
   }
@@ -561,8 +561,8 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _DATEASC; %%d1=0x%08lx %%a1=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.d[1])),
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.d[1]),
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     long_word_size::uvalue_type value = long_word_size::get(c.regs.d[1]);
     long_word_size::uvalue_type address = long_word_size::get(c.regs.a[1]);
@@ -610,7 +610,7 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _DATEBIN; %%d1=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.d[1])));
+       (unsigned long) long_word_size::get(c.regs.d[1]));
 #endif
     uint32_type bcd = long_word_size::get(c.regs.d[1]);
     unsigned int mday = bcd & 0xffu;
@@ -653,8 +653,8 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _DEFCHR; %%d1=0x%08lx %%a1=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.d[1])),
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.d[1]),
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     fprintf(stderr, "iocs_defchr: FIXME: not implemented\n");
     c.regs.d[0] = 0;
@@ -687,7 +687,7 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _LEDMOD; %%d1=0x%08lx %%d2:b=0x%02x\n",
-       unsigned long(long_word_size::get(c.regs.d[1])),
+       (unsigned long) long_word_size::get(c.regs.d[1]),
        byte_size::get(c.regs.d[2]));
 #endif
     fprintf(stderr, "iocs_ledmod: FIXME: not implemented\n");
@@ -699,7 +699,7 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _MS_CURST; %%d1=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.d[1])));
+       (unsigned long) long_word_size::get(c.regs.d[1]));
 #endif
     fprintf(stderr, "iocs_ms_curst: FIXME: not implemented\n");
   }
@@ -720,8 +720,8 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _MS_LIMIT; %%d1=0x%08lx %%d2=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.d[1])),
-       unsigned long(long_word_size::get(c.regs.d[2])));
+       (unsigned long) long_word_size::get(c.regs.d[1]),
+       (unsigned long) long_word_size::get(c.regs.d[2]));
 #endif
     fprintf(stderr, "iocs_ms_limit: FIXME: not implemented\n");
   }
@@ -744,7 +744,7 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _OPMINTST; %%a1=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     uint32_type address = long_word_size::get(c.regs.a[1]);
 
@@ -845,8 +845,8 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _SKEY_MOD; %%d1=0x%08lx %%d2=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.d[1])),
-       unsigned long(long_word_size::get(c.regs.d[2])));
+       (unsigned long) long_word_size::get(c.regs.d[1]),
+       (unsigned long) long_word_size::get(c.regs.d[2]));
 #endif
     fprintf(stderr, "iocs_skey_mod: FIXME: not implemented\n");
     long_word_size::put(c.regs.d[0], 0);
@@ -858,8 +858,8 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _SYS_STAT; %%d1=0x%08lx %%d2=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.d[1])),
-       unsigned long(long_word_size::get(c.regs.d[2])));
+       (unsigned long) long_word_size::get(c.regs.d[1]),
+       (unsigned long) long_word_size::get(c.regs.d[2]));
 #endif
     uint32_type mode = long_word_size::get(c.regs.d[1]);
     switch (mode)
@@ -894,7 +894,7 @@ namespace
 #ifdef HAVE_NANA_H
     DL("IOCS _TEXTPUT; %%d1:w=0x%04x %%d2:w=0x%04x %%a1=0x%08lx\n",
        word_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]),
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     fprintf(stderr, "iocs_textput: FIXME: not implemented\n");
   }
@@ -917,8 +917,8 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _TIMEASC; %%d1=0x%08lx %%a1=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.d[1])),
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.d[1]),
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     long_word_size::uvalue_type value = long_word_size::get(c.regs.d[1]);
     long_word_size::uvalue_type address = long_word_size::get(c.regs.a[1]);
@@ -948,7 +948,7 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS _TIMEBIN; %%d1=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.d[1])));
+       (unsigned long) long_word_size::get(c.regs.d[1]));
 #endif
     uint32_type bcd = long_word_size::get(c.regs.d[1]);
     unsigned int sec = bcd & 0xffu;
@@ -988,7 +988,7 @@ namespace
 #ifdef HAVE_NANA_H
     DL("IOCS _TIMERDST; %%d1:w=0x%04x %%a1=0x%08lx\n",
        word_size::get(c.regs.d[1]),
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     fprintf(stderr, "iocs_timerdst: FIXME: not implemented\n");
     long_word_size::put(c.regs.d[0], 0);
@@ -1001,7 +1001,7 @@ namespace
 #ifdef HAVE_NANA_H
     DL("IOCS _TPALET; %%d1:b=0x%02x %%d2=0x%08lx\n",
        byte_size::get(c.regs.d[1]),
-       unsigned long(long_word_size::get(c.regs.d[2])));
+       (unsigned long) long_word_size::get(c.regs.d[2]));
 #endif
     fprintf(stderr, "iocs_tpalet: FIXME: not implemented\n");
   }
@@ -1013,7 +1013,7 @@ namespace
 #ifdef HAVE_NANA_H
     DL("IOCS _VDISPST; %%d1:w=0x%04x %%a1=0x%08lx\n",
        word_size::get(c.regs.d[1]),
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     uint32_type address = long_word_size::get(c.regs.a[1]);
 
@@ -1047,7 +1047,7 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS 0x37; %%d1=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.d[1])));
+       (unsigned long) long_word_size::get(c.regs.d[1]));
 #endif
     fprintf(stderr, "iocs_x37: FIXME: not implemented\n");
   }
@@ -1058,8 +1058,8 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS 0x38; %%d1=0x%08lx %%d2=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.d[1])),
-       unsigned long(long_word_size::get(c.regs.d[2])));
+       (unsigned long) long_word_size::get(c.regs.d[1]),
+       (unsigned long) long_word_size::get(c.regs.d[2]));
 #endif
     fprintf(stderr, "iocs_x38: FIXME: not implemented\n");
   }
@@ -1070,7 +1070,7 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS 0x39; %%d1=0x%08lx %%d2:w=0x%04x\n",
-       unsigned long(long_word_size::get(c.regs.d[1])),
+       (unsigned long) long_word_size::get(c.regs.d[1]),
        word_size::get(c.regs.d[2]));
 #endif
     fprintf(stderr, "iocs_x39: FIXME: not implemented\n");
@@ -1084,7 +1084,7 @@ namespace
   {
 #ifdef HAVE_NANA_H
     DL("IOCS 0x3a; %%a1=0x%08lx\n",
-       unsigned long(long_word_size::get(c.regs.a[1])));
+       (unsigned long) long_word_size::get(c.regs.a[1]));
 #endif
     fprintf(stderr, "iocs_x3a: FIXME: not implemented\n");
   }
