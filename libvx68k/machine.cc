@@ -237,6 +237,8 @@ machine::~machine()
   for (iocs::disk **i = fd + 0; i != fd + NFDS; ++i)
     delete *i;
 
+  rom.detach(&eu);
+
   pthread_mutex_destroy(&key_queue_mutex);
   pthread_cond_destroy(&key_queue_not_empty);
 }
@@ -260,7 +262,11 @@ machine::machine(size_t memory_size)
   as.set_pages(0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &graphic_vram);
 #endif
   as.set_pages(0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &tvram);
+  as.set_pages(0xfc0000 >> PAGE_SHIFT, 0x1000000 >> PAGE_SHIFT, &rom);
 
+  rom.initialize(as);
+
+  rom.attach(&eu);
   eu.set_instruction(0x4e4f, 0, &iocs, this);
 
   set_iocs_functions(*this);

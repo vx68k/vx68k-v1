@@ -55,6 +55,50 @@ namespace vx68k
     void putw(int, uint32_type, uint_type);
   };
 
+  class machine;
+
+  /* System ROM.  This object handles the IOCS calls.  */
+  class system_rom: public memory
+  {
+  public:
+    typedef void (*iocs_function_handler)(context &, machine &, unsigned long);
+    typedef pair<iocs_function_handler, unsigned long> iocs_function_type;
+
+  protected:
+    static void invalid_iocs_function(context &, machine &, unsigned long);
+
+  private:
+    /* Table of the IOCS functions.  */
+    vector<iocs_function_type> iocs_functions;
+
+    /* Attached execution unit.  */
+    exec_unit *attached_eu;
+
+  public:
+    system_rom();
+    ~system_rom();
+
+  public:
+    /* Attaches or detaches an execution unit.  */
+    void attach(exec_unit *);
+    void detach(exec_unit *);
+
+    /* Initializes memory in an address space.  */
+    void initialize(address_space &);
+
+  public:
+    /* Reads data from this object.  */
+    uint_type getw(int, uint32_type) const;
+    uint_type getb(int, uint32_type) const;
+    size_t read(int, uint32_type, void *, size_t) const;
+
+    /* Writes data to this object.  These methods shall always fail.  */
+    void putw(int, uint32_type, uint_type);
+    void putb(int, uint32_type, uint_type);
+    size_t write(int, uint32_type, const void *, size_t);
+  };
+
+
   const size_t GRAPHICS_VRAM_SIZE = 2 * 1024 * 1024;
   const size_t TEXT_VRAM_PLANE_SIZE = 128 * 1024;
   const size_t TEXT_VRAM_SIZE = 4 * TEXT_VRAM_PLANE_SIZE;
@@ -193,6 +237,7 @@ namespace vx68k
     size_t _memory_size;
     main_memory mem;
     text_vram tvram;
+    system_rom rom;
     class address_space as;
     class exec_unit eu;
     pair<iocs_function_handler, unsigned long> iocs_functions[0x100];

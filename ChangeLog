@@ -1,3 +1,19 @@
+2000-05-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/machine.cc (~machine): Clean up about rom.
+	(machine): Initialize about rom.
+
+	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Add systemrom.cc.
+
+	* libvx68k/systemrom.cc: New file.
+	(iocs_dispatch): New function.
+	(getw, getb, read, putw, putb, write, attach, detach, initialize,
+	invalid_iocs_function, ~system_rom, system_rom): New member
+	functions.
+
+	* include/vx68k/machine.h (class system_rom): New class.
+	(class machine): Add new member rom.
+
 2000-04-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/iocsdisk.cc (class disk_error): New class.
