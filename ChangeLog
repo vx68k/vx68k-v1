@@ -1,5 +1,16 @@
 1999-06-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (dispatch): Add the third argumrnt to
+	handlers.
+	(set_instruction): Save handler with instruction data.
+	(exec_unit): Likewise.
+
+	* include/vm68k/cpu.h (struct install_data): New class.
+	(class exec_unit): Add instruction_data * to instruction_handler's
+	argument.  Also change all handler functions.
+	(class exec_unit): Change data members to keep instruction_data
+	pointers.
+
 	* lib/vx68k/dos.cc (dos_malloc): New function.
 	(dos): Add new handlers.
 

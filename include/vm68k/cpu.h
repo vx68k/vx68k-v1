@@ -19,12 +19,12 @@
 #ifndef VM68K_CPU_H
 #define VM68K_CPU_H 1
 
-#include <iterator>
-#include "vm68k/types.h"
 #include "vm68k/memory.h"
+#include <utility>
 
 namespace vm68k
 {
+  using namespace std;
 
   inline int extsb(unsigned int value)
     {
@@ -131,23 +131,32 @@ struct exception_listener
   virtual void illegal (int, registers *, address_space *) = 0;
 };
 
+  struct instruction_data
+  {
+    virtual ~instruction_data() {}
+  }; 
+
   class context;	// Forward declaration.
- 
+
   /* Execution unit.  */
   class exec_unit
   {
   public:
-    typedef void (*instruction_handler)(unsigned int, context &);
+    typedef void (*instruction_handler)(unsigned int, context &,
+					instruction_data *);
   public:
-    static void illegal(unsigned int, context &);
+    static void illegal(unsigned int, context &, instruction_data *);
   protected:
     static void install_instructions(exec_unit &);
   private:
-    instruction_handler instruction[0x10000];
+    pair<instruction_handler, instruction_data *> instructions[0x10000];
   public:
     exec_unit();
   public:
-    void set_instruction(int op, int mask, instruction_handler);
+    void set_instruction(int op, int mask, instruction_handler,
+			 instruction_data *);
+    void set_instruction(int op, int mask, instruction_handler h)
+      {set_instruction(op, mask, h, NULL);}
     void dispatch(unsigned int op, context &) const;
   };
 

@@ -54,7 +54,7 @@ dos::execute (const char *name, const char *const *argv)
 namespace
 {
   void
-  dos_chmod(unsigned int op, context &ec)
+  dos_chmod(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
     L(" DOS _CHMOD");
@@ -67,7 +67,8 @@ namespace
     ec.regs.pc += 2;
   }
 
-  void dos_close(unsigned int op, context &ec)
+  void
+  dos_close(unsigned int op, context &ec, instruction_data *data)
     {
       VL((" DOS _CLOSE\n"));
 
@@ -79,7 +80,7 @@ namespace
     }
 
   void
-  dos_create(unsigned int op, context &ec)
+  dos_create(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
     L(" DOS _CREATE");
@@ -93,7 +94,7 @@ namespace
   }
 
   void
-  dos_delete(unsigned int op, context &ec)
+  dos_delete(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
     L(" DOS _DELETE");
@@ -106,7 +107,8 @@ namespace
     ec.regs.pc += 2;
   }
 
-  void dos_exit2(unsigned int op, context &ec)
+  void
+  dos_exit2(unsigned int op, context &ec, instruction_data *data)
     {
       VL((" DOS _EXIT2\n"));
 
@@ -116,7 +118,7 @@ namespace
     }
 
   void
-  dos_filedate(unsigned int op, context &ec)
+  dos_filedate(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
     L(" DOS _FILEDATE");
@@ -129,7 +131,8 @@ namespace
     ec.regs.pc += 2;
   }
 
-  void dos_fgetc(unsigned int op, context &ec)
+  void
+  dos_fgetc(unsigned int op, context &ec, instruction_data *data)
     {
       VL((" DOS _FGETC\n"));
 
@@ -141,7 +144,8 @@ namespace
       ec.regs.pc += 2;
     }
 
-  void dos_ioctrl(unsigned int op, context &ec)
+  void
+  dos_ioctrl(unsigned int op, context &ec, instruction_data *data)
     {
 #ifdef L
       L(" DOS _IOCTRL");
@@ -155,7 +159,7 @@ namespace
     }
 
   void
-  dos_malloc(unsigned int op, context &ec)
+  dos_malloc(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
     L(" DOS _MALLOC");
@@ -168,7 +172,8 @@ namespace
     ec.regs.pc += 2;
   }
 
-  void dos_open(unsigned int op, context &ec)
+  void
+  dos_open(unsigned int op, context &ec, instruction_data *data)
     {
       VL((" DOS _OPEN\n"));
 
@@ -184,7 +189,8 @@ namespace
       ec.regs.pc += 2;
     }
 
-  void dos_print(unsigned int op, context &ec)
+  void
+  dos_print(unsigned int op, context &ec, instruction_data *data)
     {
       VL((" DOS _PRINT\n"));
 
@@ -204,7 +210,7 @@ namespace
     }
 
   void
-  dos_putchar(unsigned int op, context &ec)
+  dos_putchar(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
     L(" DOS _PUTCHAR");
@@ -220,21 +226,23 @@ namespace
     ec.regs.pc += 2;
   }
 
-  void dos_read(unsigned int op, context &ec)
+  void
+  dos_read(unsigned int op, context &ec, instruction_data *data)
     {
       VL((" DOS _READ\n"));
 
       // FIXME.
       uint32 sp = ec.regs.a[7];
       int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
-      uint32 data = ec.mem->getl(SUPER_DATA, sp + 2);
+      uint32 buf = ec.mem->getl(SUPER_DATA, sp + 2);
       uint32 size = ec.mem->getl(SUPER_DATA, sp + 6);
-      ec.regs.d[0] = static_cast<dos_exec_context &>(ec).read(fd, data, size);
+      ec.regs.d[0] = static_cast<dos_exec_context &>(ec).read(fd, buf, size);
 
       ec.regs.pc += 2;
     }
 
-  void dos_seek(unsigned int op, context &ec)
+  void
+  dos_seek(unsigned int op, context &ec, instruction_data *data)
     {
       VL((" DOS _SEEK\n"));
 
@@ -249,7 +257,8 @@ namespace
       ec.regs.pc += 2;
     }
 
-  void dos_setblock(unsigned int op, context &ec)
+  void
+  dos_setblock(unsigned int op, context &ec, instruction_data *data)
     {
 #ifdef L
       L(" DOS _SETBLOCK");
@@ -263,7 +272,7 @@ namespace
     }
 
   void
-  dos_write(unsigned int op, context &ec)
+  dos_write(unsigned int op, context &ec, instruction_data *data)
   {
 #ifdef L
     L(" DOS _WRITE");
@@ -273,9 +282,9 @@ namespace
     // FIXME.
     uint32_type sp = ec.regs.a[7];
     int fd = extsw(ec.mem->getw(SUPER_DATA, sp));
-    uint32_type data = ec.mem->getl(SUPER_DATA, sp + 2);
+    uint32_type buf = ec.mem->getl(SUPER_DATA, sp + 2);
     uint32_type size = ec.mem->getl(SUPER_DATA, sp + 6);
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).write(fd, data, size);
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).write(fd, buf, size);
 
     ec.regs.pc += 2;
   }
