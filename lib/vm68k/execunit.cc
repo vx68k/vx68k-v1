@@ -375,12 +375,22 @@ namespace
 
       // XXX: The condition codes are not affected.
       int fc = ec->data_fc();
-      for (int i = 0; i != 16; ++i)
+      for (int i = 0; i != 8; ++i)
 	{
 	  if (bitmap & 1 != 0)
 	    {
 	      ec->mem->putl(fc, ec->regs.a[reg] - 4,
-			    ec->regs.d[15 - i]);
+			    ec->regs.a[7 - i]);
+	      ec->regs.a[reg] -= 4;
+	    }
+	  bitmap >>= 1;
+	}
+      for (int i = 0; i != 8; ++i)
+	{
+	  if (bitmap & 1 != 0)
+	    {
+	      ec->mem->putl(fc, ec->regs.a[reg] - 4,
+			    ec->regs.d[7 - i]);
 	      ec->regs.a[reg] -= 4;
 	    }
 	  bitmap >>= 1;

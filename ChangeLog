@@ -1,5 +1,8 @@
 1999-03-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (moveml_r_predec): Divide a loop to two
+	register groups.
+
 	* include/vm68k/cpu.h (registers): Use array for general
 	registers.  Update all users.
 
