@@ -92,6 +92,26 @@ namespace
       ec->regs.pc += 2 + 2;
     }
 
+  template <class Source>
+    void addl(unsigned int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      Source ea1(op & 0x7, 2);
+      int reg2 = op >> 9 & 0x7;
+      VL((" addl %s", ea1.textl(ec)));
+      VL((",%%d%d", reg2));
+      VL(("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec->regs.pc));
+
+      int32 value1 = ea1.getl(ec);
+      int32 value2 = extsl(ec->regs.d[reg2]);
+      int32 value = extsl(value2 + value1);
+      ec->regs.d[reg2] = value;
+      ea1.finishl(ec);
+      ec->regs.sr.set_cc(value); // FIXME.
+
+      ec->regs.pc += 2 + ea1.isize(4);
+    }
+
   template <class Destination> void addal(unsigned int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -1364,11 +1384,20 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0xb0b9, 0x0e00, &cmpl<absolute_long>);
   eu->set_instruction(0xc0bc, 0x0e00, &andl_i_d);
   eu->set_instruction(0xd068, 0x0e07, &addw_off_d);
+  eu->set_instruction(0xd080, 0x0e07, &addl<data_register>);
+  eu->set_instruction(0xd088, 0x0e07, &addl<address_register>);
+  eu->set_instruction(0xd090, 0x0e07, &addl<indirect>);
+  eu->set_instruction(0xd098, 0x0e07, &addl<postinc_indirect>);
+  eu->set_instruction(0xd0a0, 0x0e07, &addl<predec_indirect>);
+  eu->set_instruction(0xd0a8, 0x0e07, &addl<disp_indirect>);
+  eu->set_instruction(0xd0b9, 0x0e00, &addl<absolute_long>);
+  eu->set_instruction(0xd0bc, 0x0e00, &addl<immediate>);
   eu->set_instruction(0xd1c0, 0x0e07, &addal<data_register>);
   eu->set_instruction(0xd1c8, 0x0e07, &addal<address_register>);
   eu->set_instruction(0xd1d0, 0x0e07, &addal<indirect>);
   eu->set_instruction(0xd1d8, 0x0e07, &addal<postincrement_indirect>);
   eu->set_instruction(0xd1e0, 0x0e07, &addal<predecrement_indirect>);
+  eu->set_instruction(0xd1e8, 0x0e07, &addal<disp_indirect>);
   eu->set_instruction(0xd1f9, 0x0e07, &addal<absolute_long>);
   eu->set_instruction(0xd1fc, 0x0e07, &addal<immediate>);
   eu->set_instruction(0xe048, 0x0e07, &lsrw_i_d);
