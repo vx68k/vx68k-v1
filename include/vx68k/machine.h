@@ -87,6 +87,10 @@ namespace vx68k
     void initialize(address_space &);
 
   public:
+    /* Sets an IOCS function.  */
+    void set_iocs_function(uint_type, const iocs_function_type &);
+
+    /* Dispatch to an IOCS function.  */
     void dispatch_iocs_function(context &);
 
   public:

@@ -89,6 +89,15 @@ system_rom::write(int, uint32_type, const void *, size_t)
 }
 
 void
+system_rom::set_iocs_function(uint_type funcno, const iocs_function_type &f)
+{
+  if (funcno < 0 || funcno >= iocs_functions.size())
+    throw range_error("system_rom");
+
+  iocs_functions[funcno] = f;
+}
+
+void
 system_rom::dispatch_iocs_function(context &c)
 {
   unsigned int funcno = c.regs.d[0] & 0xffu;
@@ -131,23 +140,52 @@ system_rom::attach(exec_unit *eu)
 void
 system_rom::detach(exec_unit *eu)
 {
-  if (attached_eu != NULL)
-    {
-#ifdef HAVE_NANA_H
-      L("system_rom: FIXME: `detach' not fully implemented\n");
-#endif
-      attached_eu = NULL;
-    }
+  if (eu != attached_eu)
+    throw invalid_argument("system_rom");
+
+  attached_eu = NULL;
 }
 
 void
-system_rom::initialize(address_space &)
+system_rom::initialize(address_space &as)
 {
 #ifdef HAVE_NANA_H
-  L("system_rom: FIXME: `initialize' not implemented\n");
+  L("system_rom: FIXME: `initialize' not fully implemented\n");
 #endif
+
+  uint32_type f = 0xfc0000;
+  for (uint32_type i = 0x400; i != 0x800; i += 4)
+    {
+      as.putl(SUPER_DATA, i, f);
+      f += 4;
+    }
 }
 
+namespace
+{
+  /* Handles a _B_LPEEK call.  */
+  void
+  iocs_b_lpeek(context &c, unsigned long data)
+  {
+    uint32_type address = c.regs.a[1];
+#ifdef L
+    L("| _B_LPEEK %%a1=%#10x\n", address);
+#endif
+
+    c.regs.d[0] = c.mem->getl(SUPER_DATA, address);
+    c.regs.a[1] = address + 4;
+  }
+
+  /* Initializes the IOCS functions.  */
+  void
+  initialize_iocs_functions(system_rom &rom)
+  {
+    typedef system_rom::iocs_function_type iocs_function_type;
+
+    rom.set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, NULL));
+  }
+} // namespace (unnamed)
+
 system_rom::~system_rom()
 {
   detach(attached_eu);
@@ -157,6 +195,7 @@ system_rom::system_rom()
   : iocs_functions(0x100, iocs_function_type(&invalid_iocs_function, 0)),
     attached_eu(NULL)
 {
+  initialize_iocs_functions(*this);
 }
 
 void
