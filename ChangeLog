@@ -1,5 +1,15 @@
 2000-06-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvm68k/execunit.cc (m68k_add_m): Renamed from m68k_add_r.
+	Also change all users.
+	(m68k_sub_m): Renamed from m68k_sub_r.  Also change all users.
+	(m68k_bclr_r): Modify diagnostic output.  Use variable value2.
+	(m68k_bclr_i, m68k_move_from_sr): New function template.
+	(bclrl_i): Disabled by #if-#endif.
+	(m68k_ori_to_ccr): Use byte_type.  Modify diagnostic output.
+	(m68k_ori_to_sr): New function.
+	(initialize_instructions): Add new handlers.
+
 	* libvx68k/systemrom.cc (iocs_b_readid): New function.
 	(initialize_iocs_functions): Use the new function.
 
