@@ -40,6 +40,16 @@ using namespace vx68k::human;
 using namespace vm68k;
 using namespace std;
 
+int
+dos_exec_context::fgetc(int fd)
+{
+  unsigned char data_buf[1];
+  ssize_t done = ::read(fd, data_buf, 1);
+  if (done == -1)
+    return -6;			// FIXME.
+  return data_buf[1];
+}
+
 /* Reads data from the file with a DOS file descriptor.  */
 int32
 dos_exec_context::read(int fd, uint32 data, uint32 size)
@@ -252,6 +262,19 @@ namespace
       throw quit_loop(ec->mem->getw(SUPER_DATA, ec->regs.a[7]));
     }
 
+  void dos_fgetc(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      VL((" DOS _FGETC\n"));
+
+      // FIXME.
+      uint32 sp = ec->regs.a[7];
+      int fd = extsw(ec->mem->getw(SUPER_DATA, sp));
+      ec->regs.d[0] = static_cast<dos_exec_context *>(ec)->fgetc(fd);
+
+      ec->regs.pc += 2;
+    }
+
   void dos_open(int op, execution_context *ec)
     {
       I(ec != NULL);
@@ -324,6 +347,7 @@ dos::dos(address_space *m, size_t)
   : mem(m)
 {
   main_cpu.set_instruction(0xff09, 0, &dos_print);
+  main_cpu.set_instruction(0xff1b, 0, &dos_fgetc);
   main_cpu.set_instruction(0xff3d, 0, &dos_open);
   main_cpu.set_instruction(0xff3e, 0, &dos_close);
   main_cpu.set_instruction(0xff3f, 0, &dos_read);

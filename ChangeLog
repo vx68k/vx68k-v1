@@ -1,5 +1,11 @@
 1999-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/human.h (class dos_exec_context): Add member
+	fgetc.
+
+	* lib/vx68k/dos.cc (fgetc, dos_fgetc): New functions.
+	(dos): Set instructions.
+
 	* lib/vm68k/execunit.cc (bcc, dbf_d, addqb_d, addql_d, andl_i_d,
 	movew_d_postinc, tstb_d, tstb_predec): New functions.
 	(install_instructions): Set instructions.
