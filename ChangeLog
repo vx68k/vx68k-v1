@@ -1,5 +1,7 @@
 1999-09-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vx68k/textvram.cc (draw_char): Call console::update_area.
+
 	* lib/vx68k/doscontext.cc (start): Use exec_unit::run.
 	(dos_exec_context): Initialize _eu.
 
