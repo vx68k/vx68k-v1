@@ -1,3 +1,25 @@
+1999-04-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (cmpl, lea, lsrl_i, subl): New functions.
+	(lea_absl_a): #if'd out
+	(cmpib): Change the log output.
+	(install_instructions): Updated with the new functions.
+
+	* include/vm68k/addressing.h (class data_register): Add members:
+	isize, textb, textw, and textl.
+	(class address_register): Likewise.
+	(class indirect): Change data members private from protected.
+	(class indirect): Add members: isize, address, textb, textw, and
+	textl.  Use address in get and put methods.
+	(class postincrement_indirect): Made non-derived.
+	(class postincrement_indirect): Add members: reg, isize, getb,
+	getw, getl, putb, putw, putl, textb, textw, and textl.
+	(class predecrement_indirect): Made non-derived.
+	(class predecrement_indirect): Add members: reg, isize, textb,
+	textw, and textl.
+	(class absolute_long): New class.
+	(class immediate): New class.
+
 1999-04-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* README: Modified.

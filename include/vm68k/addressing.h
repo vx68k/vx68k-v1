@@ -20,11 +20,14 @@
 #define _VM68K_ADDRESSING_H 1
 
 #include <vm68k/cpu.h>
+#include <cstdio>
 
 namespace vm68k
 {
   namespace addressing
   {
+    using std::sprintf;
+
     class data_register
     {
     private:
@@ -33,6 +36,9 @@ namespace vm68k
       data_register(int r, int)
 	: reg(r) {}
     public:
+      size_t isize(size_t) const
+	{return 0;}
+      // XXX: address is unimplemented.
       int getb(const execution_context *ec) const
 	{return extsl(ec->regs.d[reg]);}
       int getw(const execution_context *ec) const
@@ -54,6 +60,16 @@ namespace vm68k
       void finishb(execution_context *) const {}
       void finishw(execution_context *) const {}
       void finishl(execution_context *) const {}
+      const char *textb(const execution_context *ec) const
+	{return textw(ec);}
+      const char *textw(const execution_context *) const
+	{
+	  static char buf[8];
+	  sprintf(buf, "%%d%d", reg);
+	  return buf;
+	}
+      const char *textl(const execution_context *ec) const
+	{return textw(ec);}
     };
 
     class address_register
@@ -64,6 +80,9 @@ namespace vm68k
       address_register(int r, int)
 	: reg(r) {}
     public:
+      size_t isize(size_t) const
+	{return 0;}
+      // XXX: address is unimplemented.
       // XXX: getb, putb, and finishb are not available.
       int getw(const execution_context *ec) const
 	{return extsw(ec->regs.a[reg]);}
@@ -75,16 +94,68 @@ namespace vm68k
 	{ec->regs.a[reg] = value;}
       void finishw(execution_context *) const {}
       void finishl(execution_context *) const {}
+      const char *textb(const execution_context *ec) const
+	{return textw(ec);}
+      const char *textw(const execution_context *) const
+	{
+	  static char buf[8];
+	  sprintf(buf, "%%a%d", reg);
+	  return buf;
+	}
+      const char *textl(const execution_context *ec) const
+	{return textw(ec);}
     };
 
     class indirect
     {
-    protected:
+    private:
       int reg;
     public:
       indirect(int r, int)
 	: reg(r) {}
     public:
+      size_t isize(size_t) const
+	{return 0;}
+      uint32 address(const execution_context *ec) const
+	{return ec->regs.a[reg];}
+      int getb(const execution_context *ec) const
+	{return extsb(ec->mem->getb(ec->data_fc(), address(ec)));}
+      int getw(const execution_context *ec) const
+	{return extsw(ec->mem->getw(ec->data_fc(), address(ec)));}
+      int32 getl(const execution_context *ec) const
+	{return extsl(ec->mem->getl(ec->data_fc(), address(ec)));}
+      void putb(execution_context *ec, int value) const
+	{ec->mem->putb(ec->data_fc(), address(ec), value);}
+      void putw(execution_context *ec, int value) const
+	{ec->mem->putw(ec->data_fc(), address(ec), value);}
+      void putl(execution_context *ec, int32 value) const
+	{ec->mem->putl(ec->data_fc(), address(ec), value);}
+      void finishb(execution_context *) const {}
+      void finishw(execution_context *) const {}
+      void finishl(execution_context *) const {}
+      const char *textb(const execution_context *ec) const
+	{return textw(ec);}
+      const char *textw(const execution_context *) const
+	{
+	  static char buf[8];
+	  sprintf(buf, "%%a%d@", reg);
+	  return buf;
+	}
+      const char *textl(const execution_context *ec) const
+	{return textw(ec);}
+    };
+
+    class postincrement_indirect
+    {
+    private:
+      int reg;
+    public:
+      postincrement_indirect(int r, int)
+	: reg(r) {}
+    public:
+      size_t isize(size_t) const
+	{return 0;}
+      // XXX: address is unimplemented.
       int getb(const execution_context *ec) const
 	{return extsb(ec->mem->getb(ec->data_fc(), ec->regs.a[reg]));}
       int getw(const execution_context *ec) const
@@ -97,33 +168,35 @@ namespace vm68k
 	{ec->mem->putw(ec->data_fc(), ec->regs.a[reg], value);}
       void putl(execution_context *ec, int32 value) const
 	{ec->mem->putl(ec->data_fc(), ec->regs.a[reg], value);}
-      void finishb(execution_context *) const {}
-      void finishw(execution_context *) const {}
-      void finishl(execution_context *) const {}
-    };
-
-    class postincrement_indirect
-      : public indirect
-    {
-    public:
-      postincrement_indirect(int r, int off)
-	: indirect(r, off) {}
-    public:
       void finishb(execution_context *ec) const
 	{ec->regs.a[reg] += 1;}	// FIXME: %a7 is special.
       void finishw(execution_context *ec) const
 	{ec->regs.a[reg] += 2;}
       void finishl(execution_context *ec) const
 	{ec->regs.a[reg] += 4;}
+      const char *textb(const execution_context *ec) const
+	{return textw(ec);}
+      const char *textw(const execution_context *) const
+	{
+	  static char buf[8];
+	  sprintf(buf, "%%a%d@+", reg);
+	  return buf;
+	}
+      const char *textl(const execution_context *ec) const
+	{return textw(ec);}
     };
 
     class predecrement_indirect
-      : public indirect
     {
+    private:
+      int reg;
     public:
-      predecrement_indirect(int r, int off)
-	: indirect(r, off) {}
+      predecrement_indirect(int r, int)
+	: reg(r) {}
     public:
+      size_t isize(size_t) const
+	{return 0;}
+      // XXX: address is unimplemented.
       int getb(const execution_context *ec) const
 	{return extsb(ec->mem->getb(ec->data_fc(), ec->regs.a[reg] - 1));}
 				// FIXME: %a7 is special.
@@ -144,6 +217,96 @@ namespace vm68k
 	{ec->regs.a[reg] -= 2;}
       void finishl(execution_context *ec) const
 	{ec->regs.a[reg] -= 4;}
+      const char *textb(const execution_context *ec) const
+	{return textw(ec);}
+      const char *textw(const execution_context *) const
+	{
+	  static char buf[8];
+	  sprintf(buf, "%%a%d@-", reg);
+	  return buf;
+	}
+      const char *textl(const execution_context *ec) const
+	{return textw(ec);}
+    };
+
+    class absolute_long
+    {
+    protected:
+      int offset;
+    public:
+      absolute_long(int, int off)
+	: offset(off) {}
+    public:
+      size_t isize(size_t) const
+	{return 4;}
+      uint32 address(const execution_context *ec) const
+	{return ec->fetchl(offset);}
+      int getb(const execution_context *ec) const
+	{return extsb(ec->mem->getb(ec->data_fc(), address(ec)));}
+      int getw(const execution_context *ec) const
+	{return extsw(ec->mem->getw(ec->data_fc(), address(ec)));}
+      int32 getl(const execution_context *ec) const
+	{return extsl(ec->mem->getl(ec->data_fc(), address(ec)));}
+      void putb(execution_context *ec, int value) const
+	{ec->mem->putb(ec->data_fc(), address(ec), value);}
+      void putw(execution_context *ec, int value) const
+	{ec->mem->putw(ec->data_fc(), address(ec), value);}
+      void putl(execution_context *ec, int32 value) const
+	{ec->mem->putl(ec->data_fc(), address(ec), value);}
+      void finishb(execution_context *) const {}
+      void finishw(execution_context *) const {}
+      void finishl(execution_context *) const {}
+      const char *textb(const execution_context *ec) const
+	{return textw(ec);}
+      const char *textw(const execution_context *ec) const
+	{
+	  static char buf[32];
+	  sprintf(buf, "0x%lx", (unsigned long) address(ec));
+	  return buf;
+	}
+      const char *textl(const execution_context *ec) const
+	{return textw(ec);}
+    };
+
+    class immediate
+    {
+    protected:
+      int offset;
+    public:
+      immediate(int, int off)
+	: offset(off) {}
+    public:
+      size_t isize(size_t size) const
+	{return size;}
+      // XXX: address in unimplemented.
+      int getb(const execution_context *ec) const
+	{return extsb(ec->fetchw(offset));}
+      int getw(const execution_context *ec) const
+	{return extsw(ec->fetchw(offset));}
+      int32 getl(const execution_context *ec) const
+	{return extsl(ec->fetchl(offset));}
+      // XXX: putb, putw, and putl are unimplemented.
+      void finishb(execution_context *) const {}
+      void finishw(execution_context *) const {}
+      void finishl(execution_context *) const {}
+      const char *textb(const execution_context *ec) const
+	{
+	  static char buf[32];
+	  sprintf(buf, "#0x%x", (unsigned int) getb(ec));
+	  return buf;
+	}
+      const char *textw(const execution_context *ec) const
+	{
+	  static char buf[32];
+	  sprintf(buf, "#0x%x", (unsigned int) getw(ec));
+	  return buf;
+	}
+      const char *textl(const execution_context *ec) const
+	{
+	  static char buf[32];
+	  sprintf(buf, "#0x%lx", (unsigned long) getl(ec));
+	  return buf;
+	}
     };
   } // addressing
 } // vm68k
