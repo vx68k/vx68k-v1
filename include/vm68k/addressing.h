@@ -244,7 +244,8 @@ namespace vm68k
     public:
       size_t extension_size() const {return 2;}
       uint32_type address(const context &c) const
-	{return c.regs.a[reg] + word_size::svalue(c.fetchw(offset));}
+	{return (c.regs.a[reg]
+		 + word_size::svalue(c.fetch(word_size(), offset)));}
       svalue_type get(const context &c) const
 	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
       void put(context &c, svalue_type value) const
@@ -255,7 +256,8 @@ namespace vm68k
       const char *text(const context &c) const
 	{
 	  static char buf[32];
-	  sprintf(buf, "%%a%u@(%d)", reg, word_size::svalue(c.fetchw(offset)));
+	  sprintf(buf, "%%a%u@(%d)", reg,
+		  word_size::svalue(c.fetch(word_size(), offset)));
 	  return buf;
 	}
     };
@@ -284,7 +286,7 @@ namespace vm68k
       size_t extension_size() const {return 2;}
       uint32_type address(const context &c) const
 	{
-	  uint_type w = c.fetchw(offset);
+	  uint_type w = c.fetch(word_size(), offset);
 	  unsigned int r = w >> 12 & 0xf;
 	  uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
 	  if (w & 0x800 != 0)
@@ -305,7 +307,7 @@ namespace vm68k
     public:
       const char *text(const context &c) const
 	{
-	  uint_type w = c.fetchw(offset);
+	  uint_type w = c.fetch(word_size(), offset);
 	  unsigned int r = w >> 12 & 0xf;
 	  static char buf[32];
 	  if (r >= 8)
@@ -340,7 +342,7 @@ namespace vm68k
     public:
       size_t extension_size() const {return 2;}
       uint32_type address(const context &c) const
-	{return word_size::svalue(c.fetchw(offset));}
+	{return word_size::svalue(c.fetch(word_size(), offset));}
       svalue_type get(const context &c) const
 	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
       void put(context &c, svalue_type value) const
@@ -376,7 +378,7 @@ namespace vm68k
     public:
       size_t extension_size() const {return 4;}
       uint32_type address(const context &c) const
-	{return long_word_size::svalue(c.fetchl(offset));}
+	{return long_word_size::svalue(c.fetch(long_word_size(), offset));}
       svalue_type get(const context &c) const
 	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
       void put(context &c, svalue_type value) const
@@ -412,7 +414,8 @@ namespace vm68k
     public:
       size_t extension_size() const {return 2;}
       uint32_type address(const context &c) const
-	{return c.regs.pc + offset + word_size::svalue(c.fetchw(offset));}
+	{return (c.regs.pc + offset
+		 + word_size::svalue(c.fetch(word_size(), offset)));}
       svalue_type get(const context &c) const
 	{return Size::svalue(Size::get(*c.mem, c.data_fc(), address(c)));}
       // XXX put is left unimplemented.
@@ -422,7 +425,8 @@ namespace vm68k
       const char *text(const context &c) const
 	{
 	  static char buf[16];
-	  sprintf(buf, "%%pc@(%d)", word_size::svalue(c.fetchw(offset)));
+	  sprintf(buf, "%%pc@(%d)",
+		  word_size::svalue(c.fetch(word_size(), offset)));
 	  return buf;
 	}
     };
@@ -448,7 +452,7 @@ namespace vm68k
       size_t extension_size() const {return 2;}
       uint32_type address(const context &c) const
 	{
-	  uint_type w = c.fetchw(offset);
+	  uint_type w = c.fetch(word_size(), offset);
 	  unsigned int r = w >> 12 & 0xf;
 	  uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
 	  if (w & 0x800 != 0)
@@ -469,7 +473,7 @@ namespace vm68k
     public:
       const char *text(const context &c) const
 	{
-	  uint_type w = c.fetchw(offset);
+	  uint_type w = c.fetch(word_size(), offset);
 	  unsigned int r = w >> 12 & 0xf;
 	  static char buf[32];
 	  if (r >= 8)
@@ -486,7 +490,8 @@ namespace vm68k
 
     typedef basic_index_pc_indirect<byte_size> byte_index_pc_indirect;
     typedef basic_index_pc_indirect<word_size> word_index_pc_indirect;
-    typedef basic_index_pc_indirect<long_word_size> long_word_index_pc_indirect;
+    typedef basic_index_pc_indirect<long_word_size>
+      long_word_index_pc_indirect;
 
     template <class Size> class basic_immediate
     {
@@ -521,19 +526,19 @@ namespace vm68k
     template <> inline byte_size::svalue_type
     basic_immediate<byte_size>::get(const context &c) const
     {
-      return byte_size::svalue(byte_size::get(c.fetchw(offset)));
+      return byte_size::svalue(byte_size::get(c.fetch(word_size(), offset)));
     }
 
     template <> inline word_size::svalue_type
     basic_immediate<word_size>::get(const context &c) const
     {
-      return word_size::svalue(c.fetchw(offset));
+      return word_size::svalue(c.fetch(word_size(), offset));
     }
 
     template <> inline long_word_size::svalue_type
     basic_immediate<long_word_size>::get(const context &c) const
     {
-      return long_word_size::svalue(c.fetchl(offset));
+      return long_word_size::svalue(c.fetch(long_word_size(), offset));
     }
 
     typedef basic_immediate<byte_size> byte_immediate;
@@ -755,7 +760,7 @@ namespace vm68k
       size_t isize(size_t) const
 	{return 2;}
       uint32_type address(const context &ec) const
-	{return ec.regs.a[reg] + extsw(ec.fetchw(offset));}
+	{return ec.regs.a[reg] + extsw(ec.fetch(word_size(), offset));}
       int getb(const context &ec) const
 	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
       int getw(const context &ec) const
@@ -776,7 +781,8 @@ namespace vm68k
       const char *textw(const context &ec) const
 	{
 	  static char buf[32];
-	  sprintf(buf, "%%a%d@(%d)", reg, extsw(ec.fetchw(offset)));
+	  sprintf(buf, "%%a%d@(%d)", reg,
+		  extsw(ec.fetch(word_size(), offset)));
 	  return buf;
 	}
       const char *textl(const context &ec) const
@@ -796,7 +802,7 @@ namespace vm68k
 	{return 2;}
       uint32_type address(const context &ec) const
 	{
-	  uint_type w = ec.fetchw(offset);
+	  uint_type w = ec.fetch(word_size(), offset);
 	  unsigned int r = w >> 12 & 0xf;
 	  uint32_type x = r >= 8 ? ec.regs.a[r - 8] : ec.regs.d[r];
 	  return ec.regs.a[reg] + extsb(w) + (w & 0x800 ? extsl(x) : extsw(x));
@@ -820,7 +826,7 @@ namespace vm68k
 	{return textw(ec);}
       const char *textw(const context &ec) const
 	{
-	  uint_type w = ec.fetchw(offset);
+	  uint_type w = ec.fetch(word_size(), offset);
 	  unsigned int r = w >> 12 & 0xf;
 	  static char buf[32];
 	  if (r >= 8)
@@ -846,7 +852,7 @@ namespace vm68k
       size_t isize(size_t) const
 	{return 2;}
       uint32_type address(const context &ec) const
-	{return ec.fetchw(offset);}
+	{return ec.fetch(word_size(), offset);}
       int getb(const context &ec) const
 	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
       int getw(const context &ec) const
@@ -885,7 +891,7 @@ namespace vm68k
       size_t isize(size_t) const
 	{return 4;}
       uint32_type address(const context &ec) const
-	{return ec.fetchl(offset);}
+	{return ec.fetch(long_word_size(), offset);}
       int getb(const context &ec) const
 	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
       int getw(const context &ec) const
@@ -924,7 +930,7 @@ namespace vm68k
       size_t isize(size_t size) const
 	{return 2;}
       uint32_type address(const context &ec) const
-	{return ec.regs.pc + offset + extsw(ec.fetchw(offset));}
+	{return ec.regs.pc + offset + extsw(ec.fetch(word_size(), offset));}
       int getb(const context &ec) const
 	{return extsb(ec.mem->getb(ec.data_fc(), address(ec)));}
       int getw(const context &ec) const
@@ -940,7 +946,7 @@ namespace vm68k
       const char *textw(const context &ec) const
 	{
 	  static char buf[16];
-	  sprintf(buf, "%%pc@(%d)", extsw(ec.fetchw(offset)));
+	  sprintf(buf, "%%pc@(%d)", extsw(ec.fetch(word_size(), offset)));
 	  return buf;
 	}
       const char *textl(const context &ec) const
@@ -959,7 +965,7 @@ namespace vm68k
 	{return 2;}		// Size of an extention word.
       uint32_type address(const context &ec) const
 	{
-	  uint_type w = ec.fetchw(offset);
+	  uint_type w = ec.fetch(word_size(), offset);
 	  unsigned int r = w >> 12 & 0xf;
 	  uint32_type x = r >= 8 ? ec.regs.a[r - 8] : ec.regs.d[r];
 	  return ec.regs.pc + offset + extsb(w)
@@ -984,7 +990,7 @@ namespace vm68k
 	{return textw(ec);}
       const char *textw(const context &ec) const
 	{
-	  uint_type w = ec.fetchw(offset);
+	  uint_type w = ec.fetch(word_size(), offset);
 	  unsigned int r = w >> 12 & 0xf;
 	  static char buf[32];
 	  if (r >= 8)
@@ -1011,11 +1017,11 @@ namespace vm68k
 	{return size;}
       // XXX: address in unimplemented.
       int getb(const context &ec) const
-	{return extsb(ec.fetchw(offset));}
+	{return extsb(ec.fetch(word_size(), offset));}
       int getw(const context &ec) const
-	{return extsw(ec.fetchw(offset));}
+	{return extsw(ec.fetch(word_size(), offset));}
       sint32_type getl(const context &ec) const
-	{return extsl(ec.fetchl(offset));}
+	{return extsl(ec.fetch(long_word_size(), offset));}
       // XXX: putb, putw, and putl are unimplemented.
       void finishb(context &) const {}
       void finishw(context &) const {}

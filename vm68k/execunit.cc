@@ -54,7 +54,7 @@ exec_unit::run(context &c) const
 	    i, (unsigned long) c.regs.d[i], i, (unsigned long) c.regs.a[i]);
 	}
 # endif
-      L("| %#lx: %#06x\n", (unsigned long) c.regs.pc, c.fetchw(0));
+      L("| %#lx: %#06x\n", (unsigned long) c.regs.pc, c.fetch(word_size(), 0));
 #endif
       step(c);
     }
@@ -367,7 +367,7 @@ namespace
   void andl_i_d(unsigned int op, context &ec, instruction_data *data)
     {
       int reg1 = op >> 9 & 0x7;
-      uint32 val2 = ec.fetchl(2);
+      uint32 val2 = ec.fetch(long_word_size(), 2);
       VL((" andl #0x%lx,%%d%d\n", (unsigned long) val2, reg1));
 
       uint32 val = ec.regs.d[reg1] & val2;
@@ -382,7 +382,7 @@ namespace
   template <class Destination> void
   andib(uint_type op, context &c, instruction_data *data)
   {
-    sint_type value2 = extsb(c.fetchw(2));
+    sint_type value2 = extsb(c.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef TRACE_INSTRUCTIONS
     L(" andib #0x%x", uint_type(value2) & 0xffu);
@@ -401,7 +401,7 @@ namespace
   template <class Destination> void
   andiw(unsigned int op, context &ec, instruction_data *data)
   {
-    sint_type value2 = extsw(ec.fetchw(2));
+    sint_type value2 = extsw(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef TRACE_INSTRUCTIONS
     L(" andiw #0x%x", uint_type(value2));
@@ -420,7 +420,7 @@ namespace
   template <class Destination> void
   andil(unsigned int op, context &ec, instruction_data *data)
   {
-    sint32_type value2 = extsl(ec.fetchl(2));
+    sint32_type value2 = extsl(ec.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
 #ifdef TRACE_INSTRUCTIONS
     L(" andil #0x%lx", (unsigned long) value2);
@@ -522,7 +522,7 @@ namespace
     size_t len;
     if (disp == 0)
       {
-	disp = extsw(ec.fetchw(2));
+	disp = extsw(ec.fetch(word_size(), 2));
 	len = 2;
       }
     else
@@ -546,7 +546,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  disp = extsw(ec.fetchw(2));
+	  disp = extsw(ec.fetch(word_size(), 2));
 	}
       else
 	disp = extsb(disp);
@@ -564,7 +564,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  disp = extsw(ec.fetchw(2));
+	  disp = extsw(ec.fetch(word_size(), 2));
 	}
       else
 	disp = extsb(disp);
@@ -584,7 +584,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  disp = extsw(ec.fetchw(2));
+	  disp = extsw(ec.fetch(word_size(), 2));
 	}
       else
 	disp = extsb(disp);
@@ -604,7 +604,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  disp = extsw(ec.fetchw(2));
+	  disp = extsw(ec.fetch(word_size(), 2));
 	}
       else
 	disp = extsb(disp);
@@ -624,7 +624,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  disp = extsw(ec.fetchw(2));
+	  disp = extsw(ec.fetch(word_size(), 2));
 	}
       else
 	disp = extsb(disp);
@@ -640,7 +640,7 @@ namespace
   bclrl_i(unsigned int op, context &ec, instruction_data *data)
   {
     unsigned int reg1 = op & 0x7;
-    unsigned int bit = ec.fetchw(2) & 0x1f;
+    unsigned int bit = ec.fetch(word_size(), 2) & 0x1f;
 #ifdef TRACE_INSTRUCTIONS
     L(" bclrl #%u", bit);
     L(",%%d%u\n", reg1);
@@ -664,7 +664,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  disp = extsw(ec.fetchw(2));
+	  disp = extsw(ec.fetch(word_size(), 2));
 	}
       else
 	disp = extsb(disp);
@@ -680,7 +680,7 @@ namespace
   bsetl_i(uint_type op, context &ec, instruction_data *data)
   {
     unsigned int reg1 = op & 0x7;
-    unsigned int bit = ec.fetchw(2) & 0x1f;
+    unsigned int bit = ec.fetch(word_size(), 2) & 0x1f;
 #ifdef TRACE_INSTRUCTIONS
     L(" bsetl #%u", bit);
     L(",%%d%u\n", reg1);
@@ -704,7 +704,7 @@ namespace
       if (disp == 0)
 	{
 	  len = 4;
-	  disp = extsw(ec.fetchw(2));
+	  disp = extsw(ec.fetch(word_size(), 2));
 	}
       else
 	disp = extsb(disp);
@@ -722,7 +722,7 @@ namespace
   template <class Destination> void
   btstb_i(uint_type op, context &c, instruction_data *data)
   {
-    unsigned int bit = c.fetchw(2) & 0x7;
+    unsigned int bit = c.fetch(word_size(), 2) & 0x7;
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef TRACE_INSTRUCTIONS
     L(" btstb #%u", bit);
@@ -740,7 +740,7 @@ namespace
   btstl_i(unsigned int op, context &ec, instruction_data *data)
   {
     unsigned int reg1 = op & 0x7;
-    unsigned int bit = ec.fetchw(2) & 0x1f;
+    unsigned int bit = ec.fetch(word_size(), 2) & 0x1f;
 #ifdef TRACE_INSTRUCTIONS
     L(" btstl #%u", bit);
     L(",%%d%u\n", reg1);
@@ -901,7 +901,7 @@ namespace
   template <class Destination> void
   cmpib(unsigned int op, context &ec, instruction_data *data)
   {
-    sint_type value2 = extsb(ec.fetchw(2));
+    sint_type value2 = extsb(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef TRACE_INSTRUCTIONS
     L(" cmpib #0x%x", uint_type(value2));
@@ -919,7 +919,7 @@ namespace
   template <class Destination> void
   cmpiw(unsigned int op, context &ec, instruction_data *data)
   {
-    sint_type value2 = extsw(ec.fetchw(2));
+    sint_type value2 = extsw(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef TRACE_INSTRUCTIONS
     L(" cmpiw #0x%x", uint_type(value2));
@@ -937,7 +937,7 @@ namespace
   template <class Destination> void
   cmpil(uint_type op, context &c, instruction_data *data)
   {
-    sint32_type value2 = extsw(c.fetchl(2));
+    sint32_type value2 = extsw(c.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
 #ifdef TRACE_INSTRUCTIONS
     L(" cmpil #%#lx", (unsigned long) value2);
@@ -1057,7 +1057,7 @@ namespace
   template <class Destination> void
   eoriw(unsigned int op, context &ec, instruction_data *data)
   {
-    sint_type value2 = extsw(ec.fetchw(2));
+    sint_type value2 = extsw(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef TRACE_INSTRUCTIONS
     L(" eoriw #0x%x", uint_type(value2));
@@ -1077,7 +1077,7 @@ namespace
   dbf(unsigned int op, context &ec, instruction_data *data)
   {
     unsigned int reg1 = op & 0x7;
-    int disp = extsw(ec.fetchw(2));
+    int disp = extsw(ec.fetch(word_size(), 2));
 #ifdef TRACE_INSTRUCTIONS
     L(" dbf %%d%d", reg1);
     L(",0x%lx\n", (unsigned long) (ec.regs.pc + 2 + disp));
@@ -1193,7 +1193,7 @@ namespace
   link_a(unsigned int op, context &ec, instruction_data *data)
     {
       int reg = op & 0x0007;
-      int disp = extsw(ec.fetchw(2));
+      int disp = extsw(ec.fetch(word_size(), 2));
 #ifdef TRACE_INSTRUCTIONS
       VL((" link %%a%d,#%d\n", reg, disp));
 #endif
@@ -1507,7 +1507,7 @@ namespace
     {
       int d_reg = op >> 9 & 0x7;
       uint32_type d_addr = ec.regs.a[d_reg] - 2;
-      uint32_type s_addr = ec.fetchl(2);
+      uint32_type s_addr = ec.fetch(long_word_size(), 2);
       VL((" movew 0x%lx,%%a%x@- |*,0x%lx\n",
 	  (unsigned long) s_addr, d_reg, (unsigned long) d_addr));
 
@@ -1523,7 +1523,7 @@ namespace
   void movew_d_absl(unsigned int op, context &ec, instruction_data *data)
     {
       int reg = op & 0x7;
-      uint32_type address = ec.fetchl(2);
+      uint32_type address = ec.fetch(long_word_size(), 2);
       VL((" movew %%d%d,0x%x\n", reg, address));
 
       int fc = ec.data_fc();
@@ -1598,7 +1598,7 @@ namespace
   moveml_r_predec(unsigned int op, context &ec, instruction_data *data)
     {
       int reg = op & 0x0007;
-      unsigned int bitmap = ec.fetchw(2);
+      unsigned int bitmap = ec.fetch(word_size(), 2);
 #ifdef TRACE_INSTRUCTIONS
       VL((" moveml #0x%x,%%a%d@-\n", bitmap, reg));
 #endif
@@ -1634,7 +1634,7 @@ namespace
   moveml_mr(unsigned int op, context &ec, instruction_data *data)
     {
       Source ea1(op & 0x7, 4);
-      unsigned int bitmap = ec.fetchw(2);
+      unsigned int bitmap = ec.fetch(word_size(), 2);
 #ifdef TRACE_INSTRUCTIONS
       L(" moveml %s", ea1.textl(ec));
       L(",#0x%04x\n", bitmap);
@@ -1671,7 +1671,7 @@ namespace
 			      instruction_data *data)
     {
       int reg1 = op & 0x7;
-      unsigned int bitmap = ec.fetchw(2);
+      unsigned int bitmap = ec.fetch(word_size(), 2);
 #ifdef TRACE_INSTRUCTIONS
       L(" moveml %%a%d@+", reg1);
       L(",#0x%04x\n", bitmap);
@@ -1875,7 +1875,7 @@ namespace
   template <class Destination> void
   orib(unsigned int op, context &ec, instruction_data *data)
   {
-    sint_type value2 = extsb(ec.fetchw(2));
+    sint_type value2 = extsb(ec.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef TRACE_INSTRUCTIONS
     L(" orib #0x%x", uint_type(value2) & 0xff);
@@ -1894,7 +1894,7 @@ namespace
   template <class Destination> void
   oriw(uint_type op, context &c, instruction_data *data)
   {
-    sint_type value2 = extsw(c.fetchw(2));
+    sint_type value2 = extsw(c.fetch(word_size(), 2));
     Destination ea1(op & 0x7, 2 + 2);
 #ifdef TRACE_INSTRUCTIONS
     L(" oriw #0x%x", uint_type(value2) & 0xffffu);
@@ -1913,7 +1913,7 @@ namespace
   template <class Destination> void
   oril(uint_type op, context &c, instruction_data *data)
   {
-    sint32_type value2 = extsl(c.fetchl(2));
+    sint32_type value2 = extsl(c.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
 #ifdef TRACE_INSTRUCTIONS
     L(" oril #0x%lx", (unsigned long) value2);
@@ -2237,7 +2237,7 @@ namespace
   template <class Destination> void
   subib(unsigned int op, context &ec, instruction_data *data)
     {
-      int value2 = extsb(ec.fetchw(2));
+      int value2 = extsb(ec.fetch(word_size(), 2));
       Destination ea1(op & 0x7, 2 + 2);
 #ifdef TRACE_INSTRUCTIONS
       L(" subib #%d", value2);
@@ -2256,7 +2256,7 @@ namespace
   template <class Destination> void
   subil(unsigned int op, context &ec, instruction_data *data)
   {
-    sint32_type value2 = extsl(ec.fetchl(2));
+    sint32_type value2 = extsl(ec.fetch(long_word_size(), 2));
     Destination ea1(op & 0x7, 2 + 4);
 #ifdef TRACE_INSTRUCTIONS
     L(" subil #%ld", (long) value2);

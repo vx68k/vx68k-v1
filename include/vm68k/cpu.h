@@ -312,11 +312,6 @@ namespace vm68k
     template <class Size>
       typename Size::uvalue_type fetch(Size, size_t offset) const
       {return Size::get(*mem, program_fc(), regs.pc + offset);}
-
-    uint_type fetchw(int disp) const
-      {return mem->getw_aligned(program_fc(), regs.pc + disp);}
-    uint32_type fetchl(int disp) const
-      {return mem->getl(program_fc(), regs.pc + disp);}
   };
 
   template <> inline byte_size::uvalue_type
@@ -357,7 +352,7 @@ namespace vm68k
   public:
     /* Steps one instruction.  */
     void step(context &c) const
-      {dispatch(c.fetchw(0), c);}
+      {dispatch(c.fetch(word_size(), 0), c);}
 
     /* Starts the program.  */
     void run(context &c) const;

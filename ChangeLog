@@ -1,3 +1,10 @@
+1999-11-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/cpu.h (class context): Remove methods fetchw and
+ 	fetchl.
+	* vm68k/execunit.cc: Replace fetchw and fetchl using fetch.
+	* include/vm68k/addressing.h: Likewise.
+
 1999-11-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* TODO: Updated.
