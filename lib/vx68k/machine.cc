@@ -38,6 +38,43 @@ using namespace std;
 # define I assert
 #endif
 
+void
+machine::b_putc(uint_type code)
+{
+  /* FIXME.  This function must handle double-byte character.  */
+#if 1
+  unsigned char c[1];
+  c[0] = code;
+  write(STDOUT_FILENO, c, 1);
+#endif
+
+  if (0)
+    {
+    }
+  else
+    {
+      if ((code >= 0x81 && code <= 0x9f)
+	  || (code >= 0xe0 && code <= 0xff))
+	{
+	}
+      else
+	tvram.draw_char(code);
+    }
+}
+
+void
+machine::b_print(uint32_type strptr)
+{
+  const string str = as.gets(SUPER_DATA, strptr);
+
+  for (string::const_iterator i = str.begin();
+       i != str.end();
+       ++i)
+    {
+      b_putc((unsigned char) *i);
+    }
+}
+
 namespace
 {
   void

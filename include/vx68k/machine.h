@@ -161,6 +161,10 @@ namespace vx68k
   public:
     void set_iocs_function(unsigned int, iocs_function_handler,
 			   iocs_function_data *);
+
+  public:
+    void b_putc(uint_type);
+    void b_print(uint32_type);
   };
 } // vx68k
 
