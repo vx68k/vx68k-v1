@@ -2,6 +2,7 @@
 
 	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Replace addrspace.cc
 	to memory_map.cc.
+	(libvm68k_la_LDFLAGS): Modified.
 
 	* libvm68k/memory_map.cc: Renamed from addrspace.cc.
 
