@@ -178,6 +178,32 @@ namespace
     fprintf(stderr, "iocs_b_consol: FIXME: not implemented\n");
   }
 
+  /* Handles a _B_DRVCHK call.  */
+  void
+  iocs_b_drvchk(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _B_DRVCHK %%d1=%#010x %%d2=%#010x\n",
+      c.regs.d[1], c.regs.d[2]);
+#endif
+    fprintf(stderr, "iocs_b_drvchk: FIXME: not implemented\n");
+    if ((c.regs.d[2] & 0xffff) == 8)
+      long_word_size::put(c.regs.d[0], 1);
+    else
+      long_word_size::put(c.regs.d[0], 0x02);
+  }
+
+  /* Handles a _B_EJECT call.  */
+  void
+  iocs_b_eject(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _B_EJECT %%d1=%#010x\n", c.regs.d[1]);
+#endif
+    fprintf(stderr, "iocs_b_eject: FIXME: not implemented\n");
+    long_word_size::put(c.regs.d[0], 0);
+  }
+
   /* Handles a _B_LPEEK call.  */
   void
   iocs_b_lpeek(context &c, unsigned long data)
@@ -336,6 +362,8 @@ namespace
     rom->set_iocs_function(0x45, iocs_function_type(&iocs_b_write, 0));
     rom->set_iocs_function(0x46, iocs_function_type(&iocs_b_read, 0));
     rom->set_iocs_function(0x47, iocs_function_type(&iocs_b_recali, 0));
+    rom->set_iocs_function(0x4e, iocs_function_type(&iocs_b_drvchk, 0));
+    rom->set_iocs_function(0x4f, iocs_function_type(&iocs_b_eject, 0));
     rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));
     rom->set_iocs_function(0x8e, iocs_function_type(&iocs_bootinf, 0));
     rom->set_iocs_function(0xaf, iocs_function_type(&iocs_os_curof, 0));

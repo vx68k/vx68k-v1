@@ -1,5 +1,9 @@
 2000-05-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_b_drvchk, iocs_b_eject): New
+	function.
+	(initialize_iocs_functions): Use the new functions.
+
 	* libvm68k/execunit.cc (m68k_subq): New function template.
 	(initialize_instructions): Renamed from add_instructions.  Also
 	change all callers.
