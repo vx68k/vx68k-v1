@@ -1,7 +1,10 @@
 1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* bin/main.cc (run_machine): Remove pthread_exit, and add
-	try-catch block.
+	throw-spec and try-catch block.
+	(longopts): Add `--one-thread' option.
+	(main): Handle `--one-thread'.
+	(display_help): Describe the new option.
 
 	* TODO: Modified.
 

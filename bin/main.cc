@@ -42,16 +42,18 @@ using namespace vx68k;
 namespace
 {
   size_t opt_memory_size = 0;
-  int opt_debug = 0;
+  int opt_one_thread = false;
   int opt_help = false;
   int opt_version = false;
+  int opt_debug = 0;
 
   const struct option longopts[] =
   {
     {"memory-size", required_argument, NULL, 'm'},
-    {"debug", no_argument, &opt_debug, 1},
+    {"one-thread", no_argument, &opt_one_thread, true},
     {"help", no_argument, &opt_help, true},
     {"version", no_argument, &opt_version, true},
+    {"debug", no_argument, &opt_debug, 1},
     {NULL, 0, NULL, 0}
   };
 
@@ -95,10 +97,12 @@ namespace
   void
   display_help(const char *arg0)
   {
+    // XXX: `--debug' is undocumented
     printf(_("Usage: %s [OPTION]... [--] EXECUTABLE [ARGUMENT]...\n"), arg0);
     printf(_("Run X68000 EXECUTABLE with ARGUMENTs.\n"));
     printf("\n");
     printf(_("  -M, --memory-size=N   allocate N megabytes for main memory\n"));
+    printf(_("      --one-thread      run in one thread\n"));
     printf(_("      --help            display this help and exit\n"));
     printf(_("      --version         output version information and exit\n"));
     printf("\n");
@@ -125,8 +129,10 @@ namespace
 	  env.set_debug_level(1);
 
 	human::dos_exec_context *c = env.create_context();
-	human::shell p(c);
-	md->status = p.exec(md->argv[optind], md->argv + optind + 1, environ);
+	{
+	  human::shell p(c);
+	  md->status = p.exec(md->argv[optind], md->argv + optind + 1, environ);
+	}
 	delete c;
       }
     catch (exception &x)
@@ -171,27 +177,34 @@ main(int argc, char **argv)
       const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
       machine vm(opt_memory_size > 0 ? opt_memory_size : MEMSIZE);
 
-#ifdef USE_THREAD
-      machine_data *md = new machine_data;
-      md->vm = &vm;
-      md->argv = argv + optind;
+      int status;
+      if (opt_one_thread)
+	{
+	  human::dos env(&vm);
+	  if (opt_debug)
+	    env.set_debug_level(1);
 
-      pthread_t vm_thread;
-      pthread_create(&vm_thread, NULL, &run_machine, md);
+	  human::dos_exec_context *c = env.create_context();
+	  {
+	    human::shell p(c);
+	    status = p.exec(argv[optind], argv + optind + 1, environ);
+	  }
+	  delete c;
+	}
+      else
+	{
+	  machine_data *md = new machine_data;
+	  md->vm = &vm;
+	  md->argv = argv + optind;
 
-      pthread_join(vm_thread, NULL);
-      int status = md->status;
-      delete md;
-#else
-      human::dos env(&vm);
-      if (opt_debug)
-	env.set_debug_level(1);
+	  pthread_t vm_thread;
+	  pthread_create(&vm_thread, NULL, &run_machine, md);
 
-      human::dos_exec_context *c = env.create_context();
-      human::shell p(c);
-      int status = p.exec(argv[optind], argv + optind + 1, environ);
-      delete c;
-#endif
+	  pthread_join(vm_thread, NULL);
+	  status = md->status;
+	  delete md;
+	}
+
       return status;
     }
   catch (exception &x)
