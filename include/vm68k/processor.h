@@ -20,6 +20,7 @@
 #define _VM68K_PROCESSOR_H 1
 
 #include <vm68k/memory.h>
+#include <vm68k/except.h>
 
 #include <queue>
 #include <vector>

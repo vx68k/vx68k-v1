@@ -199,7 +199,7 @@ dos_exec_context::start(uint32_type address, const char *const *argv)
       fprintf(stderr, "vm68k illegal instruction (op = %#06x)\n", op);
       status = 0xff;
     }
-  catch (special_exception &x)
+  catch (memory_exception &x)
     {
       uint_type op = mem->get_16(regs.pc, memory::SUPER_DATA);
       if (x.vecno == 3u)

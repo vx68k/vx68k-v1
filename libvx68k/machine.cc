@@ -215,7 +215,7 @@ machine::boot(context &c)
 
       throw;
     }
-  catch (special_exception &e)
+  catch (memory_exception &e)
     {
       uint32_type vecaddr = e.vecno * 4u;
       uint32_type addr = c.mem->get_32(vecaddr, memory::SUPER_DATA);

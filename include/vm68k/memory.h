@@ -19,12 +19,12 @@
 #ifndef _VM68K_MEMORY_H
 #define _VM68K_MEMORY_H 1
 
-#include <vm68k/except.h>
 #include <vm68k/types.h>
 
 #include <vector>
 #include <iterator>
 #include <string>
+#include <exception>
 
 namespace vm68k
 {
@@ -290,6 +290,32 @@ namespace vm68k
     *uint32_iterator(p) = v;
   }
 
+  /* Bus error or address error.  */
+  struct memory_exception: exception
+  {
+    int vecno;
+    uint16_type status;
+    uint32_type address;
+    memory_exception(int v, bool read, int fc, uint32_type a)
+      : vecno(v), status(read ? fc | 0x10 : fc), address(a) {}
+  };
+
+  /* Bus error exception.  */
+  struct bus_error_exception: memory_exception
+  {
+    bus_error_exception(bool read, int fc, uint32_type a)
+      : memory_exception(2, read, fc, a) {}
+    const char *what() {return "bus_error_exception";}
+  };
+
+  /* Address error exception.  */
+  struct address_error_exception: memory_exception
+  {
+    address_error_exception(bool read, int fc, uint32_type a)
+      : memory_exception(3, read, fc, a) {}
+    const char *what() {return "address_error_exception";}
+  };
+
   /* Abstract memory class.  */
   class memory
   {

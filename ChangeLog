@@ -1,5 +1,21 @@
 2000-12-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/machine.cc (boot): Use memory_exception instead of
+	special_exception.
+	* libvx68k/doscontext.cc (start): Likewise.
+	* bin/main.cc (run_boot): Likewise.
+
+	* include/vm68k/processor.h: Add include of <vm68k/except.h>.
+
+	* include/vm68k/except.h (struct special_exception): Removed.
+	(struct bus_error_exception): Moved to memory.h.
+	(struct address_error_exception): Likewise.
+
+	* include/vm68k/memory.h (struct memory_exception): New class.
+	(struct bus_error_exception): Moved from except.h.  Change the
+	base class to memory_exception.
+	(struct address_error_exception): Likewise.
+
 	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Remove
 	defaultmem.cc.
 

@@ -26,30 +26,6 @@ namespace vm68k
 {
   using namespace std;
 
-  /* Bus error or address error.  */
-  struct special_exception: runtime_error
-  {
-    int vecno;
-    uint16_type status;
-    uint32_type address;
-    special_exception(int v, bool read, int fc, uint32_type a)
-      : vecno(v), status(read ? fc | 0x10 : fc), address(a) {}
-  };
-
-  /* Bus error exception.  */
-  struct bus_error_exception: special_exception
-  {
-    bus_error_exception(bool read, int fc, uint32_type a)
-      : special_exception(2, read, fc, a) {}
-  };
-
-  /* Address error exception.  */
-  struct address_error_exception: special_exception
-  {
-    address_error_exception(bool read, int fc, uint32_type a)
-      : special_exception(3, read, fc, a) {}
-  };
-
   /* Ordinary exception other than bus error and address error.  */
   struct ordinary_exception: runtime_error
   {
