@@ -1822,6 +1822,23 @@ namespace
     ec.regs.pc += 2 + ea1.isize(4);
   }
 
+  /* Handles an ORI-to-CCR instruction.  */
+  void
+  m68k_ori_to_ccr(uint_type op, context &c, unsigned long data)
+  {
+    uint_type value2 = c.fetch(byte_size(), 2);
+#ifdef TRACE_INSTRUCTIONS
+    L(" orib #%#x,", value2);
+    L("ccr\n");
+#endif
+
+    uint_type value1 = c.regs.sr & 0xffu;
+    uint_type value = value1 | value2;
+    c.regs.sr = c.regs.sr & ~0xffu | value & 0xffu;
+
+    c.regs.pc += 2 + 2;
+  }
+
   template <class Destination> void
   orib(uint_type op, context &ec, unsigned long data)
   {
@@ -2504,6 +2521,7 @@ namespace
     eu.set_instruction(0x0028, 0x0007, &orib<disp_indirect>);
     eu.set_instruction(0x0030, 0x0007, &orib<indexed_indirect>);
     eu.set_instruction(0x0039, 0x0000, &orib<absolute_long>);
+    eu.set_instruction(0x003c, 0x0000, &m68k_ori_to_ccr);
     eu.set_instruction(0x0040, 0x0007, &oriw<data_register>);
     eu.set_instruction(0x0050, 0x0007, &oriw<indirect>);
     eu.set_instruction(0x0058, 0x0007, &oriw<postinc_indirect>);
@@ -2911,6 +2929,7 @@ namespace
     eu.set_instruction(0x4258, 0x0007, &clrw<postinc_indirect>);
     eu.set_instruction(0x4260, 0x0007, &clrw<predec_indirect>);
     eu.set_instruction(0x4268, 0x0007, &clrw<disp_indirect>);
+    eu.set_instruction(0x4270, 0x0007, &clrw<indexed_indirect>);
     eu.set_instruction(0x4279, 0x0000, &clrw<absolute_long>);
     eu.set_instruction(0x4280, 0x0007, &clrl<data_register>);
     eu.set_instruction(0x4290, 0x0007, &clrl<indirect>);
@@ -2981,6 +3000,7 @@ namespace
     eu.set_instruction(0x4e75, 0x0000, &rts);
     eu.set_instruction(0x4e90, 0x0007, &jsr<indirect>);
     eu.set_instruction(0x4ea8, 0x0007, &jsr<disp_indirect>);
+    eu.set_instruction(0x4eb0, 0x0007, &jsr<indexed_indirect>);
     eu.set_instruction(0x4eb9, 0x0000, &jsr<absolute_long>);
     eu.set_instruction(0x4ed0, 0x0007, &jmp<indirect>);
     eu.set_instruction(0x4ee8, 0x0007, &jmp<disp_indirect>);
