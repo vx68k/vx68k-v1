@@ -329,7 +329,8 @@ dos_exec_context::getenv(uint32_type getname, uint32_type env,
   if (value != NULL)
     s = value;
 
-  s.erase(255);
+  if (s.size() > 255)
+    s.erase(255);
   mem->puts(SUPER_DATA, getbuf, s);
 
   return 0;
