@@ -79,9 +79,13 @@ namespace vx68k
     protected:
       virtual ~file() {}
     public:
+      virtual sint32_type seek(sint32_type, uint_type) {return -1;}
       virtual sint32_type read(address_space *, uint32_type, uint32_type) = 0;
       virtual sint32_type write(const address_space *,
 				uint32_type, uint32_type) = 0;
+      virtual sint_type fgetc() = 0;
+      virtual sint_type fputc(sint_type) = 0;
+      virtual sint32_type fputs(const address_space *, uint32_type) = 0;
     };
 
     /* Regular file that maps onto a POSIX file.  */
@@ -95,8 +99,12 @@ namespace vx68k
     protected:
       ~regular_file();
     public:
+      sint32_type seek(sint32_type, uint_type);
       sint32_type read(address_space *, uint32_type, uint32_type);
       sint32_type write(const address_space *, uint32_type, uint32_type);
+      sint_type fgetc();
+      sint_type fputc(sint_type);
+      sint32_type fputs(const address_space *, uint32_type);
     };
 
     const size_t NFILES = 96;
@@ -137,16 +145,16 @@ namespace vx68k
 	{return _allocator->resize(memptr, newlen);}
 
     public:
-      sint_type create(const char *name, sint_type attr);
-      sint_type open(const char *, sint_type);
-      sint_type close(sint_type);
-      sint32_type read(sint_type, uint32_type, uint32_type);
-      sint32_type write(sint_type, uint32_type, uint32_type);
-      int32 seek(int, int32, unsigned int);
+      sint_type create(uint32_type nameptr, uint_type attr);
+      sint_type open(uint32_type nameptr, uint_type);
+      sint_type close(uint_type);
+      sint32_type read(uint_type, uint32_type, uint32_type);
+      sint32_type write(uint_type, uint32_type, uint32_type);
+      sint32_type seek(uint_type, sint32_type, uint_type);
 
-      int fgetc(int);
-      sint32_type fputc(sint_type, sint_type);
-      sint32_type fputs(uint32_type, sint_type);
+      sint_type fgetc(uint_type);
+      sint_type fputc(sint_type, uint_type);
+      sint32_type fputs(uint32_type, uint_type);
 
     public:
       uint32 load_executable(const char *, uint32_type address);

@@ -85,6 +85,57 @@ regular_file::write(const address_space *as, uint32_type dataptr,
   return result;
 }
 
+sint_type
+regular_file::fgetc()
+{
+  unsigned char data[1];
+  ssize_t result = ::read(fd, data, 1);
+  if (result == -1)
+    return -6;			// FIXME.
+
+  return data[0];
+}
+
+sint_type
+regular_file::fputc(sint_type code)
+{
+  // FIXME.
+  unsigned char data[1];
+  data[0] = code;
+  ::write(fd, data, 1);
+
+  return 1;
+}
+
+sint32_type
+regular_file::fputs(const address_space *as, uint32_type mesptr)
+{
+  // FIXME.
+  uint32_type ptr = mesptr;
+  unsigned char data[1];
+  do
+    {
+      data[0] = as->getb(SUPER_DATA, ptr++);
+      if (data[0] != 0)
+	::write(fd, data, 1);
+    }
+  while (data[0] != 0);
+
+  --ptr;
+  return ptr - mesptr;
+}
+
+sint32_type
+regular_file::seek(sint32_type offset, uint_type mode)
+{
+  // FIXME.
+  sint32_type pos = lseek(fd, offset, mode);
+  if (pos == -1)
+    return -6;			// FIXME.
+
+  return pos;
+}
+
 regular_file::~regular_file()
 {
   close(fd);
@@ -131,7 +182,7 @@ void
 file_system::open(file *&ret, int fd)
 {
   regular_file *f = new regular_file(fd);
-  files.insert(make_pair(f, 0));
+  files.insert(make_pair(f, 1));
   ret = f;
 }
 

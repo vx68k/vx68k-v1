@@ -49,8 +49,9 @@ using namespace vm68k;
 using namespace std;
 
 sint32_type
-dos_exec_context::read(sint_type fd, uint32_type buf, uint32_type size)
+dos_exec_context::read(uint_type fd, uint32_type dataptr, uint32_type size)
 {
+#if 0
   // FIXME.
   unsigned char *data_buf = new unsigned char [size];
 
@@ -61,17 +62,23 @@ dos_exec_context::read(sint_type fd, uint32_type buf, uint32_type size)
       return -6;			// FIXME.
     }
 
-  mem->write(SUPER_DATA, buf, data_buf, done);
+  mem->write(SUPER_DATA, dataptr, data_buf, done);
   delete [] data_buf;
   return done;
+#endif
+  if (fd >= NFILES || files[fd] == NULL)
+    return -6;
+
+  return files[fd]->read(mem, dataptr, size);
 }
 
 sint32_type
-dos_exec_context::write(sint_type fd, uint32_type buf, uint32_type size)
+dos_exec_context::write(uint_type fd, uint32_type dataptr, uint32_type size)
 {
+#if 0
   // FIXME.
   unsigned char *data_buf = new unsigned char [size];
-  mem->read(SUPER_DATA, buf, data_buf, size);
+  mem->read(SUPER_DATA, dataptr, data_buf, size);
 
   ssize_t done = ::write(fd, data_buf, size);
   if (done == -1)
@@ -82,82 +89,50 @@ dos_exec_context::write(sint_type fd, uint32_type buf, uint32_type size)
 
   delete [] data_buf;
   return done;
+#endif
+  if (fd >= NFILES || files[fd] == NULL)
+    return -6;
+
+  return files[fd]->write(mem, dataptr, size);
 }
 
-int
-dos_exec_context::fgetc(int fd)
+sint_type
+dos_exec_context::fgetc(uint_type fd)
 {
+#if 0
   unsigned char data_buf[1];
   ssize_t done = ::read(fd, data_buf, 1);
   if (done == -1)
     return -6;			// FIXME.
   return data_buf[0];
+#endif
+  if (fd >= NFILES || files[fd] == NULL)
+    return -6;
+
+  return files[fd]->fgetc();
 }
 
-int32
-dos_exec_context::seek(int fd, int32 offset, unsigned int whence)
-{
-  // FIXME.
-  int32 pos = ::lseek(fd, offset, whence);
-  if (pos == -1)
-    return -6;			// FIXME.
-  return pos;
-}
-
-/* Closes a DOS file descriptor.  */
 sint_type
-dos_exec_context::close(sint_type fd)
+dos_exec_context::fputc(sint_type code, uint_type filno)
 {
-  // FIXME.
-  if (::close(fd) == -1)
-    return -6;			// FIXME.
-
-  return 0;
-}
-
-/* Opens a file.  */
-sint_type
-dos_exec_context::open(const char *name, sint_type flag)
-{
-  // FIXME.
-  static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
-
-  if ((flag & 0xf) > 2)
-    return -12;			// FIXME.
-
-  sint_type fd = ::open(name, uflag[flag & 0xf]);
-  if (fd == -1)
-    return -2;			// FIXME: errno test.
-
-  return fd;
-}
-
-/* Creates a file.  */
-sint_type
-dos_exec_context::create(const char *name, sint_type attr)
-{
-  // FIXME.
-  sint_type fd = ::open(name, O_RDWR | O_CREAT | O_TRUNC, 0666);
-  if (fd == -1)
-    return -2;			// FIXME: errno test.
-
-  return fd;
-}
-
-sint32_type
-dos_exec_context::fputc(sint_type code, sint_type filno)
-{
+#if 0
   // FIXME.
   unsigned char buf[1];
   buf[0] = code;
   ::write(filno, buf, 1);
 
   return 1;
+#endif
+  if (filno >= NFILES || files[filno] == NULL)
+    return -6;
+
+  return files[filno]->fputc(code);
 }
 
 sint32_type
-dos_exec_context::fputs(uint32_type mesptr, sint_type filno)
+dos_exec_context::fputs(uint32_type mesptr, uint_type filno)
 {
+#if 0
   // FIXME.
   uint32_type ptr = mesptr;
   unsigned char buf[1];
@@ -170,6 +145,88 @@ dos_exec_context::fputs(uint32_type mesptr, sint_type filno)
   while (buf[0] != 0);
 
   return ptr - 1 - mesptr;
+#endif
+  if (filno < 0 || filno >= NFILES || files[filno] == NULL)
+    return -6;
+
+  return files[filno]->fputs(mem, mesptr);
+}
+
+sint32_type
+dos_exec_context::seek(uint_type fd, sint32_type offset, uint_type mode)
+{
+#if 0
+  // FIXME.
+  int32 pos = ::lseek(fd, offset, mode);
+  if (pos == -1)
+    return -6;			// FIXME.
+#endif
+  if (fd >= NFILES || files[fd] == NULL)
+    return -6;
+
+  return files[fd]->seek(offset, mode);
+}
+
+/* Closes a DOS file descriptor.  */
+sint_type
+dos_exec_context::close(uint_type fd)
+{
+#if 0
+  // FIXME.
+  if (::close(fd) == -1)
+    return -6;			// FIXME.
+#endif
+  if (fd >= NFILES || files[fd] == NULL)
+    return -6;
+
+  _fs->unref(files[fd]);
+  files[fd] = NULL;
+  return 0;
+}
+
+/* Opens a file.  */
+sint_type
+dos_exec_context::open(uint32_type nameptr, uint_type mode)
+{
+#if 0
+  // FIXME.
+  static const int uflag[] = {O_RDONLY, O_WRONLY, O_RDWR};
+
+  if ((flag & 0xf) > 2)
+    return -12;			// FIXME.
+
+  sint_type fd = ::open(name, uflag[flag & 0xf]);
+  if (fd == -1)
+    return -2;			// FIXME: errno test.
+
+  return fd;
+#endif
+  file **found = find(files + 0, files + NFILES, (file *) 0);
+  if (found == files + NFILES)
+    return -4;
+
+  sint_type err = _fs->open(*found, mem, nameptr, mode);
+  return err < 0 ? err : found - (files + 0);
+}
+
+/* Creates a file.  */
+sint_type
+dos_exec_context::create(uint32_type nameptr, uint_type atr)
+{
+#if 0
+  // FIXME.
+  sint_type fd = ::open(name, O_RDWR | O_CREAT | O_TRUNC, 0666);
+  if (fd == -1)
+    return -2;			// FIXME: errno test.
+
+  return fd;
+#endif
+  file **found = find(files + 0, files + NFILES, (file *) 0);
+  if (found == files + NFILES)
+    return -4;
+
+  sint_type err = _fs->create(*found, mem, nameptr, atr);
+  return err < 0 ? err : found - (files + 0);
 }
 
 sint_type

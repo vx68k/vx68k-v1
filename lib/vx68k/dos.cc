@@ -78,23 +78,14 @@ namespace
   void
   dos_create(unsigned int op, context &ec, instruction_data *data)
   {
+    uint32_type sp = ec.regs.a[7];
+    uint32_type nameptr = ec.mem->getl(SUPER_DATA, sp + 0);
+    uint_type atr = ec.mem->getw(SUPER_DATA, sp + 4);
 #ifdef L
-    L(" DOS _CREATE");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+    L(" DOS _CREATE\n");
 #endif
 
-    uint32_type sp = ec.regs.a[7];
-    uint32_type name_address = ec.mem->getl(SUPER_DATA, sp + 0);
-    sint_type attr = extsw(ec.mem->getw(SUPER_DATA, sp + 4));
-
-    // FIXME.
-    char name[256];
-    ec.mem->read(SUPER_DATA, name_address, name, 256);
-    char *c = strpbrk(name, " "); // ???
-    if (c != NULL)
-      *c = '\0';
-
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).create(name, attr);
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).create(nameptr, atr);
 
     ec.regs.pc += 2;
   }
@@ -288,23 +279,14 @@ namespace
   void
   dos_open(unsigned int op, context &ec, instruction_data *data)
   {
+    uint32_type sp = ec.regs.a[7];
+    uint32_type nameptr = ec.mem->getl(SUPER_DATA, sp + 0);
+    uint_type mode = ec.mem->getw(SUPER_DATA, sp + 4);
 #ifdef L
     L(" DOS _OPEN\n");
-    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
 #endif
 
-    uint32_type sp = ec.regs.a[7];
-    uint32_type name_address = ec.mem->getl(SUPER_DATA, sp + 0);
-    sint_type flags = extsw(ec.mem->getw(SUPER_DATA, sp + 4));
-
-    // FIXME.
-    char name[256];
-    ec.mem->read(SUPER_DATA, name_address, name, 256);
-    char *c = strpbrk(name, " "); // ???
-    if (c != NULL)
-      *c = '\0';
-
-    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).open(name, flags);
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).open(nameptr, mode);
 
     ec.regs.pc += 2;
   }

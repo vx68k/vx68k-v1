@@ -1,4 +1,13 @@
+1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/doscontext.cc (read, write, fgetc, fputc, fputs, seek,
+	close, open, create): Change code to use files.
+
 1999-07-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/dos.cc (dos_create): Change code to use new
+	dos_exec_context method.
+	(dos_open): Likewise.
 
 	* lib/vx68k/doscontext.cc (mfree): Fix code to return a value.
 	(getenv): New function.
@@ -15,6 +24,8 @@
 	(class regular_file): New class.
 	(class dos_exec_context): Add members: _fs, std_files, files, and
 	getenv.  Also add destructor.
+	(class dos_exec_context): Modify members: create, open, close,
+	read, write, seek, fgetc, fputc, and fputs.
 	(class dos): Rename member fs to _fs, and add new member function
 	fs.
 
