@@ -1,5 +1,7 @@
 2000-08-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/main.cc (create_window): Modify menu structure.
+
 	* libvm68k/execunit.cc (m68k_move): New function template.
 	(moveb, movew, movel): Put in #if 0.
 	(initialize_instructions): Use new handlers.

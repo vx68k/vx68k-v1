@@ -452,17 +452,15 @@ gtk_app::create_window()
 	    = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<Window>", ag1);
 #define ITEM_FACTORY_CALLBACK(f) (reinterpret_cast<GtkItemFactoryCallback>(f))
 	  GtkItemFactoryEntry entries[]
-	    = {{_("/_File/_Run..."), NULL,
-		ITEM_FACTORY_CALLBACK(&handle_run_command), 0, "<Item>"},
-	       {_("/_File/"), NULL, NULL, 0, "<Separator>"},
-	       {_("/_File/FD _0/_Load..."), NULL,
+	    = {{_("/_File/_Load Floppy..."), NULL,
 		ITEM_FACTORY_CALLBACK(&handle_fd_load_command), 0, "<Item>"},
-	       {_("/_File/FD _0/_Eject"), NULL,
+	       {_("/_File/_Eject Floppy/_0"), NULL,
 		ITEM_FACTORY_CALLBACK(&handle_fd_eject_command), 0, "<Item>"},
-	       {_("/_File/FD _1/_Load..."), NULL,
-		ITEM_FACTORY_CALLBACK(&handle_fd_load_command), 1, "<Item>"},
-	       {_("/_File/FD _1/_Eject"), NULL,
+	       {_("/_File/_Eject Floppy/_1"), NULL,
 		ITEM_FACTORY_CALLBACK(&handle_fd_eject_command), 1, "<Item>"},
+	       {_("/_File/"), NULL, NULL, 0, "<Separator>"},
+	       {_("/_File/_Run..."), NULL,
+		ITEM_FACTORY_CALLBACK(&handle_run_command), 0, "<Item>"},
 	       {_("/_File/"), NULL, NULL, 0, "<Separator>"},
 	       {_("/_File/E_xit"), NULL,
 		ITEM_FACTORY_CALLBACK(&gtk_main_quit), 1, "<Item>"},
