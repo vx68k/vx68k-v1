@@ -1,5 +1,7 @@
 1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* Version 0.27.
+
 	* vx68k/Makefile.am (libvx68k_a_SOURCES): Remove loader.cc.
 	* vx68k/loader.cc: Removed.
 
