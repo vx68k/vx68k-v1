@@ -148,6 +148,7 @@ namespace vx68k
     public:
       sint_type create(uint32_type nameptr, uint_type attr);
       sint_type open(uint32_type nameptr, uint_type);
+      sint_type dup(uint_type);
       sint_type close(uint_type);
       sint32_type read(uint_type, uint32_type, uint32_type);
       sint32_type write(uint_type, uint32_type, uint32_type);

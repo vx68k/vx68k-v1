@@ -105,6 +105,20 @@ namespace
   }
 
   void
+  dos_dup(unsigned int op, context &ec, instruction_data *data)
+  {
+    uint32_type sp = ec.regs.a[7];
+    uint_type filno = ec.mem->getw(SUPER_DATA, sp);
+#ifdef L
+    L(" DOS _DUP\n");
+#endif
+
+    ec.regs.d[0] = static_cast<dos_exec_context &>(ec).dup(filno);
+
+    ec.regs.pc += 2;
+  }
+
+  void
   dos_exit2(unsigned int op, context &ec, instruction_data *data)
     {
       VL((" DOS _EXIT2\n"));
@@ -492,6 +506,7 @@ dos::dos(machine *m)
   eu->set_instruction(0xff42, 0, &dos_seek, this);
   eu->set_instruction(0xff43, 0, &dos_chmod, this);
   eu->set_instruction(0xff44, 0, &dos_ioctrl, this);
+  eu->set_instruction(0xff45, 0, &dos_dup, this);
   eu->set_instruction(0xff48, 0, &dos_malloc, this);
   eu->set_instruction(0xff4a, 0, &dos_setblock, this);
   eu->set_instruction(0xff4c, 0, &dos_exit2, this);

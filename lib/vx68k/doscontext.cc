@@ -184,6 +184,20 @@ dos_exec_context::close(uint_type fd)
   return 0;
 }
 
+sint_type
+dos_exec_context::dup(uint_type filno)
+{
+  if (filno >= NFILES || files[filno] == NULL)
+    return -6;
+
+  file **found = find(files + 0, files + NFILES, (file *) 0);
+  if (found == files + NFILES)
+    return -4;
+
+  *found = _fs->ref(files[filno]);
+  return found - (files + 0);
+}
+
 /* Opens a file.  */
 sint_type
 dos_exec_context::open(uint32_type nameptr, uint_type mode)
