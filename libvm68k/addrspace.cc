@@ -65,17 +65,22 @@ address_space::getw(int fc, uint32_type address) const
 uint32_type
 address_space::getl(int fc, uint32_type address) const
 {
-  if (address & 0x1)
+  if (address % 2 != 0)
     throw address_error_exception(true, fc, address);
 
-  address = canonical_address(address);
-  uint32_type address2 = canonical_address(address + 2);
-  const memory *p = find_page(address);
-  const memory *p2 = find_page(address2);
-  if (p2 != p)
-    return uint32_type(p->get_16(fc, address)) << 16 | p2->get_16(fc, address2);
+  if (address / 2 % 2 != 0)
+    {
+      uint32_type value =
+	getw_aligned(fc, address) << 16 | getw_aligned(fc, address + 2);
+      return value;
+    }
   else
-    return p->get_32(fc, address);
+    {
+      address = canonical_address(address);
+      const memory *p = find_page(address);
+      uint32_type value = p->get_32(fc, address);
+      return value;
+    }
 }
 
 string
@@ -118,20 +123,20 @@ address_space::putw(int fc, uint32_type address, uint_type value)
 void
 address_space::putl(int fc, uint32_type address, uint32_type value)
 {
-  if (address & 0x1)
+  if (address % 2 != 0)
     throw address_error_exception(false, fc, address);
 
-  address = canonical_address(address);
-  uint32_type address2 = canonical_address(address + 2);
-  memory *p = find_page(address);
-  memory *p2 = find_page(address2);
-  if (p2 != p)
+  if (address / 2 % 2 != 0)
     {
-      p->put_16(fc, address, value >> 16);
-      p2->put_16(fc, address2, value);
+      putw_aligned(fc, address, value >> 16);
+      putw_aligned(fc, address + 2, value);
     }
   else
-    p->put_32(fc, address, value);
+    {
+      address = canonical_address(address);
+      memory *p = find_page(address);
+      p->put_32(fc, address, value);
+    }
 }
 
 void
