@@ -36,7 +36,9 @@
 
 using vx68k::text_video_raster_iterator;
 using vx68k::text_video_memory;
+using vm68k::memory;
 using vm68k::bus_error_exception;
+using vm68k::uint16_iterator;
 using vm68k::mutex_lock;
 using namespace vm68k::types;
 using namespace std;
@@ -213,6 +215,67 @@ text_video_memory::draw_char(int x, int y, unsigned int c)
 }
 
 void
+text_video_memory::fill_plane(int left, int top, int right, int bottom,
+			      int plane, uint16_type pattern)
+{
+  unsigned char *plane_base = buf + plane * PLANE_SIZE;
+  unsigned char *row_first = plane_base + top * ROW_SIZE;
+  size_t area_size = (bottom - top) * ROW_SIZE;
+  unsigned char *first = row_first + (left >> 4) * 2;
+  unsigned char *last = row_first + (right >> 4) * 2;
+
+  if (first == last)
+    {
+      uint16_type m = 0xffff >> (left & 0xf) & ~(0xffff >> (right & 0xf));
+      uint16_type p = pattern & m;
+      for (unsigned char *j = first; j != first + area_size; j += ROW_SIZE)
+	{
+	  uint16_iterator k(j);
+	  *k = *k & ~m | p;
+	}
+    }
+  else
+    {
+      if ((left & 0xf) != 0)
+	{
+	  uint16_type m = 0xffff >> (left & 0xf);
+	  uint16_type p = pattern & m;
+	  for (unsigned char *j = first; j != first + area_size; j += ROW_SIZE)
+	    {
+	      uint16_iterator k(j);
+	      *k = *k & ~m | p;
+	    }
+
+	  first += 2;
+	}
+
+      while (first != last)
+	{
+	  for (unsigned char *j = first; j != first + area_size; j += ROW_SIZE)
+	    {
+	      uint16_iterator k(j);
+	      *k = pattern;
+	    }
+
+	  first += 2;
+	}
+
+      if ((right & 0xf) != 0)
+	{
+	  uint16_type m = ~(0xffff >> (right & 0xf));
+	  uint16_type p = pattern & m;
+	  for (unsigned char *j = first; j != first + area_size; j += ROW_SIZE)
+	    {
+	      uint16_iterator k(j);
+	      *k = *k & ~m | p;
+	    }
+	}
+    }
+
+  mark_update_area(left, top, right, bottom);
+}
+
+void
 text_video_memory::get_image(int x, int y, int width, int height,
 			     unsigned char *rgb_buf, size_t row_size)
 {
@@ -367,9 +430,22 @@ namespace
     LG(nana_iocs_call_trace, "IOCS _TXFILL; %%a1=0x%08lx\n",
        long_word_size::get(c.regs.a[1]) + 0UL);
 #endif
-    static bool once;
-    if (!once++)
-      fprintf(stderr, "iocs_txfill: FIXME: not implemented\n");
+    uint32_type param = long_word_size::uget(c.regs.a[1]);
+    word_size::value_type plane
+      = word_size::get(*c.mem, memory::SUPER_DATA, param);
+    word_size::value_type x
+      = word_size::get(*c.mem, memory::SUPER_DATA, param + 2);
+    word_size::value_type y
+      = word_size::get(*c.mem, memory::SUPER_DATA, param + 4);
+    word_size::uvalue_type width
+      = word_size::uget(*c.mem, memory::SUPER_DATA, param + 6);
+    word_size::uvalue_type height
+      = word_size::uget(*c.mem, memory::SUPER_DATA, param + 8);
+    word_size::uvalue_type pattern
+      = word_size::uget(*c.mem, memory::SUPER_DATA, param + 10);
+
+    text_video_memory *m = reinterpret_cast<text_video_memory *>(data);
+    m->fill_plane(x, y, x + width, y + height, plane, pattern);
   }
 }
 

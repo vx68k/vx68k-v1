@@ -1,3 +1,11 @@
+2000-12-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/textvram.cc (fill_plane): New function.
+	(iocs_txfill): Write code.
+
+	* include/vx68k/memory.h (class text_video_memory): Add member
+	fill_plane.
+
 2000-12-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* doc/vx68k.texi (Text Video Memory): New node.

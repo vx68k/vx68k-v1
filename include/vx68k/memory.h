@@ -221,6 +221,10 @@ namespace vx68k
     /* Scroll one line up.  */
     void scroll();
 
+    /* Fills a plane.  */
+    void fill_plane(int left, int top, int right, int bottom,
+		    int plane, uint16_type pattern);
+
   public:
     void connect(console *);
 
