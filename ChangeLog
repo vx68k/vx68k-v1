@@ -1,7 +1,7 @@
 1999-06-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/execunit.cc (bge): #if'd out.
-	(lslw_r, subb): New function.
+	(lslw_r, subb, addb, rolb_r): New functions.
 	(install_instructions): Add new handlers.
 
 	* lib/vm68k/statusreg.cc (struct common_cc_evaluator): Add member
