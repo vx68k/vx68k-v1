@@ -1,5 +1,9 @@
 1999-07-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (addaw, exgl, extw, lsrb_i, moveaw): New
+	functions.
+	(install_instructions): Add new handlers.
+
 	* lib/vx68k/shell.cc (create_env): Implemented.
 
 	* lib/vm68k/execunit.cc (cmpil, cmpmb, eorl_r, roll_i, rorw_i):
