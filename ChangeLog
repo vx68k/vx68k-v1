@@ -1,5 +1,10 @@
 2000-07-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_b_clr_st, iocs_b_locate,
+	iocs_dateasc, iocs_timeasc): New function.
+	(iocs_textput): Fix debug message.
+	(initialize_iocs_functions): Add new handlers.
+
 	* libvx68k/machine.cc (queue_key): Use class auto_lock.
 	(peek_key): Likewise.
 	(get_key): Likewise.

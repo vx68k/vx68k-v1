@@ -189,6 +189,16 @@ namespace
   using vm68k::word_size;
   using vm68k::long_word_size;
 
+  /* Handles a _B_CLR_ST call.  */
+  void
+  iocs_b_clr_st(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _B_CLR_ST: %%d1:b=%#04x\n", byte_size::get(c.regs.d[1]));
+#endif
+    fprintf(stderr, "iocs_b_clr_st: FIXME: not implemented\n");
+  }
+
   /* Handles a _B_COLOR call.  */
   void
   iocs_b_color(context &c, unsigned long data)
@@ -312,6 +322,17 @@ namespace
       long_word_size::put(c.regs.d[0], 0);
     else
       long_word_size::put(c.regs.d[0], 0x10000 | key);
+  }
+
+  /* Handles a _B_LOCATE call.  */
+  void
+  iocs_b_locate(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _B_LOCATE: %%d1:w=%#06x %%d2:w=%#06x\n",
+      word_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]));
+#endif
+    fprintf(stderr, "iocs_b_locate: FIXME: not implemented\n");
   }
 
   /* Handles a _B_LPEEK call.  */
@@ -453,6 +474,55 @@ namespace
 #endif
     fprintf(stderr, "iocs_crtmod: FIXME: not implemented\n");
     c.regs.d[0] = 16;
+  }
+
+  /* Handles a _DATEASC call.  */
+  void
+  iocs_dateasc(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _DATEASC: %%d1=%#010lx %%a1=%#010lx\n",
+      (unsigned long) long_word_size::get(c.regs.d[1]),
+      (unsigned long) long_word_size::get(c.regs.a[1]));
+#endif
+    long_word_size::uvalue_type value = long_word_size::get(c.regs.d[1]);
+    long_word_size::uvalue_type address = long_word_size::get(c.regs.a[1]);
+
+    unsigned int mday = value & 0xffu;
+    unsigned int mon = (value >>= 8) & 0xffu;
+    unsigned int year = (value >>= 8) & 0xfffu;
+    unsigned int format = (value >>= 12) & 0xfu;
+
+    char str[11];
+    switch (format % 4)
+      {
+      case 0:
+	sprintf(str, "%04u/%02u/%02u", year, mon, mday);
+	break;
+
+      case 1:
+	sprintf(str, "%04u-%02u-%02u", year, mon, mday);
+	break;
+
+      case 2:
+	sprintf(str, "%02u/%02u/%02u", year % 100, mon, mday);
+	break;
+
+      case 3:
+	sprintf(str, "%02u-%02u-%02u", year % 100, mon, mday);
+	break;
+      }
+
+    char *p = str + 0;
+    while (*p != '\0')
+      {
+	c.mem->putb(SUPER_DATA, address, *p++);
+	address = long_word_size::get(address + 1);
+      }
+
+    c.mem->putb(SUPER_DATA, address, *p);
+
+    long_word_size::put(c.regs.a[1], address);
   }
 
   /* Handles a _DATEBIN call.  */
@@ -649,10 +719,41 @@ namespace
   iocs_textput(context &c, unsigned long data)
   {
 #ifdef HAVE_NANA_H
-    L("system_rom: _B_TEXTPUT %%d1=%#010x %%d2=%#010x %%a1=%#010x\n",
+    L("IOCS _TEXTPUT: %%d1=%#010x %%d2=%#010x %%a1=%#010x\n",
       c.regs.d[1], c.regs.d[2], c.regs.a[1]);
 #endif
     fprintf(stderr, "iocs_textput: FIXME: not implemented\n");
+  }
+
+  /* Handles a _TIMEASC call.  */
+  void
+  iocs_timeasc(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("IOCS _TIMEASC: %%d1=%#010lx %%a1=%#010lx\n",
+      (unsigned long) long_word_size::get(c.regs.d[1]),
+      (unsigned long) long_word_size::get(c.regs.a[1]));
+#endif
+    long_word_size::uvalue_type value = long_word_size::get(c.regs.d[1]);
+    long_word_size::uvalue_type address = long_word_size::get(c.regs.a[1]);
+
+    unsigned int sec = value & 0xffu;
+    unsigned int min = (value >>= 8) & 0xffu;
+    unsigned int hour = (value >>= 8) & 0xffu;
+
+    char str[9];
+    sprintf(str, "%02u:%02u:%02u", hour, min, sec);
+
+    char *p = str + 0;
+    while (*p != '\0')
+      {
+	c.mem->putb(SUPER_DATA, address, *p++);
+	address = long_word_size::get(address + 1);
+      }
+
+    c.mem->putb(SUPER_DATA, address, *p);
+
+    long_word_size::put(c.regs.a[1], address);
   }
 
   /* Handles a _TIMEBIN call.  */
@@ -780,6 +881,8 @@ namespace
     rom->set_iocs_function(0x20, iocs_function_type(&iocs_b_putc, 0));
     rom->set_iocs_function(0x21, iocs_function_type(&iocs_b_print, 0));
     rom->set_iocs_function(0x22, iocs_function_type(&iocs_b_color, 0));
+    rom->set_iocs_function(0x23, iocs_function_type(&iocs_b_locate, 0));
+    rom->set_iocs_function(0x2a, iocs_function_type(&iocs_b_clr_st, 0));
     rom->set_iocs_function(0x2e, iocs_function_type(&iocs_b_consol, 0));
     rom->set_iocs_function(0x2f, iocs_function_type(&iocs_b_putmes, 0));
     rom->set_iocs_function(0x30, iocs_function_type(&iocs_set232c, 0));
@@ -798,6 +901,8 @@ namespace
     rom->set_iocs_function(0x55, iocs_function_type(&iocs_datebin, 0));
     rom->set_iocs_function(0x56, iocs_function_type(&iocs_timeget, 0));
     rom->set_iocs_function(0x57, iocs_function_type(&iocs_timebin, 0));
+    rom->set_iocs_function(0x5a, iocs_function_type(&iocs_dateasc, 0));
+    rom->set_iocs_function(0x5b, iocs_function_type(&iocs_timeasc, 0));
     rom->set_iocs_function(0x68, iocs_function_type(&iocs_opmset, 0));
     rom->set_iocs_function(0x6a, iocs_function_type(&iocs_opmintst, 0));
     rom->set_iocs_function(0x6b, iocs_function_type(&iocs_timerdst, 0));
