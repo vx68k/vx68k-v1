@@ -22,7 +22,7 @@
 #undef const
 #undef inline
 
-#include <vm68k/cpu.h>
+#include <vm68k/processor.h>
 
 using vm68k::condition_code;
 using vm68k::bitset_condition_tester;

@@ -21,7 +21,7 @@
 
 #include <vx68k/memory.h>
 #include <vx68k/iocs.h>
-#include <vm68k/cpu.h>
+#include <vm68k/processor.h>
 
 #include <pthread.h>
 

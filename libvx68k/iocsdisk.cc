@@ -22,7 +22,7 @@
 #undef inline
 
 #include <vx68k/iocs.h>
-#include <vm68k/cpu.h>
+#include <vm68k/processor.h>
 
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>

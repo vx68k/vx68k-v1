@@ -21,7 +21,7 @@
 #ifndef _VX68K_MEMORY_H
 #define _VX68K_MEMORY_H 1
 
-#include <vm68k/cpu.h>
+#include <vm68k/processor.h>
 #include <vm68k/memory.h>
 
 #include <pthread.h>

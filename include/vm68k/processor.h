@@ -16,8 +16,8 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef _VM68K_CPU_H
-#define _VM68K_CPU_H 1
+#ifndef _VM68K_PROCESSOR_H
+#define _VM68K_PROCESSOR_H 1
 
 #include <vm68k/memory.h>
 
@@ -620,5 +620,5 @@ namespace vm68k
   }
 } // vm68k
 
-#endif /* not _VM68K_CPU_H */
+#endif /* not _VM68K_PROCESSOR_H */
 

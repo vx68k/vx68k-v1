@@ -23,7 +23,7 @@
 #undef inline
 
 #include <vm68k/addressing.h>
-#include <vm68k/cpu.h>
+#include <vm68k/processor.h>
 
 #include <cstdio>
 
