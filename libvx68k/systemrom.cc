@@ -305,6 +305,48 @@ namespace
     c.regs.d[0] = 16;
   }
 
+  /* Handles a _DATEBIN call.  */
+  void
+  iocs_datebin(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _DATEBIN %%d1=%#010x\n", c.regs.d[1]);
+#endif
+    uint32_type bcd = long_word_size::get(c.regs.d[1]);
+    unsigned int mday = bcd & 0xffu;
+    unsigned int mon = (bcd >>= 8) & 0xffu;
+    unsigned int year = (bcd >>= 8) & 0xffu;
+    unsigned int wday = (bcd >>= 8) & 0xffu;
+
+    uint32_type bin = ((((wday << 8)
+			 + year - year / 16u * 6u << 8)
+			+ mon - mon / 16u * 6u << 8)
+		       + mday - mday / 16u * 6u);
+    long_word_size::put(c.regs.d[0], bin);
+  }
+
+  /* Handles a _DATEGET call.  */
+  void
+  iocs_dateget(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _DATEGET\n");
+#endif
+    time_t t = time(NULL);
+    struct tm *lt = localtime(&t);
+
+    unsigned int mday = lt->tm_mday;
+    unsigned int mon = lt->tm_mon + 1;
+    unsigned int year = lt->tm_year % 100;
+    unsigned int wday = lt->tm_wday;
+
+    uint32_type bcd = ((((wday << 8)
+			 + year + year / 10u * 6u << 8)
+			+ mon + mon / 10u * 6u << 8)
+		       + mday + mday / 10u * 6u);
+    long_word_size::put(c.regs.d[0], bcd);
+  }
+
   /* Handles a _INIT_PRN call.  */
   void
   iocs_init_prn(context &c, unsigned long data)
@@ -337,6 +379,24 @@ namespace
     c.regs.d[0] = 0;
   }
 
+  /* Handles a _TIMEBIN call.  */
+  void
+  iocs_timebin(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _TIMEBIN %%d1=%#010x\n", c.regs.d[1]);
+#endif
+    uint32_type bcd = long_word_size::get(c.regs.d[1]);
+    unsigned int sec = bcd & 0xffu;
+    unsigned int min = (bcd >>= 8) & 0xffu;
+    unsigned int hour = (bcd >>= 8) & 0xffu;
+
+    uint32_type bin = (((hour - hour / 16u * 6u << 8)
+			+ min - min / 16u * 6u << 8)
+		       + sec - sec / 16u * 6u);
+    long_word_size::put(c.regs.d[0], bin);
+  }
+
   /* Handles a _TIMEGET call.  */
   void
   iocs_timeget(context &c, unsigned long data)
@@ -347,9 +407,13 @@ namespace
     time_t t = time(NULL);
     struct tm *lt = localtime(&t);
 
-    uint32_type bcd = (((lt->tm_hour + lt->tm_hour / 10 * 6 << 8)
-			+ lt->tm_min + lt->tm_min / 10 * 6 << 8)
-		       + lt->tm_sec + lt->tm_sec / 10 * 6);
+    unsigned int sec = lt->tm_sec;
+    unsigned int min = lt->tm_min;
+    unsigned int hour = lt->tm_hour;
+
+    uint32_type bcd = (((hour + hour / 10u * 6u << 8)
+			+ min + min / 10u * 6u << 8)
+		       + sec + sec / 10u * 6u);
     long_word_size::put(c.regs.d[0], bcd);
   }
 
@@ -381,7 +445,10 @@ namespace
     rom->set_iocs_function(0x47, iocs_function_type(&iocs_b_recali, 0));
     rom->set_iocs_function(0x4e, iocs_function_type(&iocs_b_drvchk, 0));
     rom->set_iocs_function(0x4f, iocs_function_type(&iocs_b_eject, 0));
+    rom->set_iocs_function(0x54, iocs_function_type(&iocs_dateget, 0));
+    rom->set_iocs_function(0x55, iocs_function_type(&iocs_datebin, 0));
     rom->set_iocs_function(0x56, iocs_function_type(&iocs_timeget, 0));
+    rom->set_iocs_function(0x57, iocs_function_type(&iocs_timebin, 0));
     rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));
     rom->set_iocs_function(0x8e, iocs_function_type(&iocs_bootinf, 0));
     rom->set_iocs_function(0xaf, iocs_function_type(&iocs_os_curof, 0));

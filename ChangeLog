@@ -1,3 +1,10 @@
+2000-05-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_datebin, iocs_dateget,
+	iocs_timebin): New function.
+	(iocs_timeget): Rewrite using local variables.
+	(initialize_iocs_functions): Use the new functions.
+
 2000-05-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* libvx68k/systemrom.cc: Include <cstdio>.
