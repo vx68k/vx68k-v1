@@ -1,3 +1,18 @@
+1999-06-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/cpu.h (class context): Use getw_aligned in fetchw.
+
+	* lib/vm68k/addrspace.cc (getb): Move to the header as inline.
+	(getw): Use getw_aligned.
+	(getl): Use memory_page::getl in the case that address does not
+	cross page boundaries.
+
+	* include/vm68k/memory.h: Add comments.
+	(class address_space): Add canonical_address and getw_aligned.
+	(class address_space): Make getb inline.
+
+	* lib/vm68k/addrspace.cc: Expand "debug.h".
+
 1999-06-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/execunit.cc (bmi): #if'd out.

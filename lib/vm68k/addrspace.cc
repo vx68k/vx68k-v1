@@ -25,7 +25,13 @@
 
 #include <algorithm>
 
-#include "debug.h"
+#ifdef HAVE_NANA_H
+# include <nana.h>
+# include <cstdio>
+#else
+# include <cassert>
+# define I assert
+#endif
 
 using namespace vm68k;
 using namespace std;
@@ -47,29 +53,26 @@ address_space::read(int fc, uint32 address, void *data, size_t size) const
     }
 }
 
-unsigned int
-address_space::getb(int fc, uint32 address) const
+uint_type
+address_space::getw(int fc, uint32_type address) const
 {
-  address &= ((uint32) 1 << ADDRESS_BIT) - 1;
-  uint32 p = address >> PAGE_SHIFT;
-  return page_table[p]->getb(fc, address);
-}
-
-/* Get a word from memory.  */
-unsigned int
-address_space::getw (int fc, uint32 address) const
-{
-  address &= ((uint32) 1 << ADDRESS_BIT) - 1;
-  uint32 p = address >> PAGE_SHIFT;
-  return page_table[p]->getw (fc, address);
+  // FIXME: Unaligned address must be handled.
+  return getw_aligned(fc, address);
 }
 
 /* Returns the long word value.  */
 uint32
 address_space::getl(int fc, uint32 address) const
 {
-  // FIXME: memory_page::getl should be used.
-  return getw(fc, address + 0) << 16 | getw(fc, address + 2);
+  // FIXME: Unaligned address must be handled.
+  address = canonical_address(address);
+  uint32_type address2 = canonical_address(address + 2);
+  memory_page *p = page_table[address >> PAGE_SHIFT];
+  memory_page *p2 = page_table[address2 >> PAGE_SHIFT];
+  if (p2 != p)
+    return p->getw(fc, address) << 16 | p2->getw(fc, address2);
+  else
+    return p->getl(fc, address);
 }
 
 /* Write a block of data to memory.  */

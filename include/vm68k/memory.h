@@ -72,8 +72,14 @@ void putl (void *, uint32);
     virtual void putw (int, uint32, uint16) throw (bus_error);
   };
 
+  /* Address space.  */
   class address_space
   {
+  protected:
+    /* Returns the canonical address for ADDRESS.  */
+    static uint32_type canonical_address(uint32_type address)
+      {return address & (uint32_type(1) << ADDRESS_BIT) - 1;}
+
   public:
 #if 0
     struct iterator: bidirectional_iterator <uint16, int32>
@@ -82,11 +88,33 @@ void putl (void *, uint32);
 #endif
     address_space ();
     void set_pages (size_t begin, size_t end, memory_page *);
+
+  public:
+    /* Returns one byte at ADDRESS in this address space.  */
+    uint_type getb(int fc, uint32_type address) const
+      {
+	address = canonical_address(address);
+	memory_page *p = page_table[address >> PAGE_SHIFT];
+	return p->getb(fc, address);
+      }
+
+    /* Returns one word at ADDRESS in this address space.  ADDRESS
+       must be word-aligned.  */
+    uint_type getw_aligned(int fc, uint32_type address) const
+      {
+	address = canonical_address(address);
+	memory_page *p = page_table[address >> PAGE_SHIFT];
+	return p->getw(fc, address);
+      }
+
+    /* Returns one word at ADDRESS in this address space.  Unaligned
+       address will be handled.  */
+    uint_type getw(int fc, uint32_type address) const;
+
     void read (int, uint32, void *, size_t) const;
-    unsigned int getb (int, uint32) const;
-    unsigned int getw (int, uint32) const;
     uint32 getl (int, uint32) const;
     size_t gets(int, uint32, char *, size_t) const;
+
     void write (int, uint32, const void *, size_t);
     void putb (int, uint32, unsigned int);
     void putw (int, uint32, unsigned int);
