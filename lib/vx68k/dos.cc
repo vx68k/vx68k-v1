@@ -24,6 +24,10 @@
 
 #include <vx68k/human.h>
 
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+
 #include "debug.h"
 
 using namespace vx68k::human;
@@ -98,14 +102,15 @@ namespace
 
       uint32 address = ec->mem->getl(SUPER_DATA, ec->regs.a[7]);
 
-      int value;
+      // FIXME.
+      unsigned char buf[1];
       do
 	{
-	  value = ec->mem->getb(SUPER_DATA, address++);
-	  if (value != 0)
-	    putchar(value);
+	  buf[0] = ec->mem->getb(SUPER_DATA, address++);
+	  if (buf[0] != 0)
+	    write(STDOUT_FILENO, buf, 1);
 	}
-      while (value != 0);
+      while (buf[0] != 0);
 
       ec->regs.pc += 2;
     }

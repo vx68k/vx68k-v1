@@ -55,7 +55,7 @@ int32
 dos_exec_context::read(int fd, uint32 data, uint32 size)
 {
   // FIXME.
-  uint8 *data_buf = static_cast<uint8 *>(malloc(size));
+  unsigned char *data_buf = static_cast<unsigned char *>(malloc(size));
   ssize_t done = ::read(fd, data_buf, size);
   if (done == -1)
     return -6;			// FIXME.
@@ -119,7 +119,6 @@ dos_exec_context::start(uint32 address, const char *const *argv)
   regs.pc = address;
   regs.a[7] = 0x8000;		// FIXME.
   uint16 status = 0;
- restart:
   try
     {
       run();
