@@ -119,18 +119,7 @@ namespace vx68k
     void put_8(int, uint32_type, uint_type);
   };
 
-
   const size_t GRAPHICS_VRAM_SIZE = 2 * 1024 * 1024;
-  const size_t TEXT_VRAM_PLANE_SIZE = 128 * 1024;
-  const size_t TEXT_VRAM_SIZE = 4 * TEXT_VRAM_PLANE_SIZE;
-
-  /* Interface to console.  */
-  struct console
-  {
-    virtual void update_area(int x, int y, int width, int height) = 0;
-    virtual void get_b16_image(unsigned int, unsigned char *, size_t) const = 0;
-    virtual void get_k16_image(unsigned int, unsigned char *, size_t) const = 0;
-  };
 
   /* Graphics VRAM.  */
   class graphics_vram
@@ -158,95 +147,13 @@ namespace vx68k
     void connect(console *);
   };
 
-  /* Raster iterator for the text VRAM.  This class is used by the
-     video system to scan pixels on the text VRAM, and must be
-     efficient for a forward sequential access.
-
-     FIXME: this should be a random access iterator.  */
-  class text_vram_raster_iterator: public forward_iterator<uint_type, int>
-  {
-  private:
-    unsigned short *buf;
-    unsigned int pos;
-
-  public:
-    text_vram_raster_iterator()
-      : buf(NULL), pos(0) {}
-
-    text_vram_raster_iterator(unsigned short *b, unsigned int p)
-      : buf(b), pos(p) {}
-
-  public:
-    bool operator==(const text_vram_raster_iterator &another) const
-    {
-      /* BUF is not tested for speed.  */
-      return pos == another.pos;
-    }
-
-    bool operator!=(const text_vram_raster_iterator &another) const
-    {
-      return !(*this == another);
-    }
-
-  public:
-    uint_type operator*() const;
-
-  public:
-    text_vram_raster_iterator &operator++();
-
-    text_vram_raster_iterator operator++(int)
-    {
-      text_vram_raster_iterator tmp = *this;
-      ++(*this);
-      return tmp;
-    }
-  };
-
-  /* Text VRAM.  */
-  class text_vram: public memory
-  {
-  public:
-    typedef text_vram_raster_iterator raster_iterator;
-
-  private:
-    unsigned short *buf;
-    console *connected_console;
-
-  public:
-    text_vram();
-    ~text_vram();
-
-  public:
-    uint_type get_16(int, uint32_type) const;
-    uint_type get_8(int, uint32_type) const;
-
-    void put_16(int, uint32_type, uint_type);
-    void put_8(int, uint32_type, uint_type);
-
-  public:
-    /* Draw a character CODE at [X Y].  */
-    void draw_char(int x, int y, unsigned int code);
-
-    /* Scroll one line up.  */
-    void scroll();
-
-  public:
-    void connect(console *);
-
-    /* Get the visual image of this text VRAM.  Image is of size
-       [WIDTH HEIGHT] at position [X Y].  RGB_BUF is an array of
-       bytes.  ROW_SIZE is the row size of RGB_BUF.  */
-    void get_image(int x, int y, int width, int height,
-		   unsigned char *rgb_buf, size_t row_size);
-  };
-
   /* Machine of X68000.  */
   class machine
   {
   private:
     size_t _memory_size;
     main_memory mem;
-    text_vram tvram;
+    text_video_memory tvram;
     crtc_memory crtc;
     area_set _area_set;
     scc_memory scc;

@@ -1,4 +1,4 @@
-/* Virtual X68000 - Sharp X68000 emulator
+/* Virtual X68000 - X68000 virtual machine
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 #undef const
 #undef inline
 
-#include <vx68k/machine.h>
+#include <vx68k/memory.h>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
@@ -31,37 +31,41 @@
 # define I assert
 #endif
 
-using namespace vx68k;
+using vx68k::text_video_memory;
+using vm68k::SUPER_DATA;
+using namespace vm68k::types;
 using namespace std;
 
-const size_t ROW_SIZE = 128;
+const size_t TEXT_VIDEO_ROW_SIZE = 1024 / 8;
+const size_t TEXT_VIDEO_PLANE_SIZE = 1024 * TEXT_VIDEO_ROW_SIZE;
+const size_t TEXT_VIDEO_MEMORY_SIZE = 4 * TEXT_VIDEO_PLANE_SIZE;
 
 inline void
 advance_row(unsigned short *&ptr)
 {
-  ptr += ROW_SIZE >> 1;
+  ptr += TEXT_VIDEO_ROW_SIZE >> 1;
 }
 
 void
-text_vram::scroll()
+text_video_memory::scroll()
 {
   unsigned short *i = buf;
-  for (unsigned short *j = buf + 16 * (ROW_SIZE >> 1);
-       j != buf + 31 * 16 * (ROW_SIZE >> 1);
+  for (unsigned short *j = buf + 16 * (TEXT_VIDEO_ROW_SIZE >> 1);
+       j != buf + 31 * 16 * (TEXT_VIDEO_ROW_SIZE >> 1);
        ++j)
     {
       *i++ = *j;
     }
-  while (i != buf + 31 * 16 * (ROW_SIZE >> 1))
+  while (i != buf + 31 * 16 * (TEXT_VIDEO_ROW_SIZE >> 1))
     {
       *i++ = 0;
     }
 
-  connected_console->update_area(0, 0, ROW_SIZE * 8, 31 * 16);
+  connected_console->update_area(0, 0, TEXT_VIDEO_ROW_SIZE * 8, 31 * 16);
 }
 
 void
-text_vram::draw_char(int x, int y, unsigned int c)
+text_video_memory::draw_char(int x, int y, unsigned int c)
 {
   if (c > 0xff)
     {
@@ -94,10 +98,10 @@ text_vram::draw_char(int x, int y, unsigned int c)
       if (x % 2 != 0)
 	{
 	  for (unsigned short *plane = buf;
-	       plane != buf + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
-	       plane += TEXT_VRAM_PLANE_SIZE >> 1)
+	       plane != buf + 2 * (TEXT_VIDEO_PLANE_SIZE >> 1);
+	       plane += TEXT_VIDEO_PLANE_SIZE >> 1)
 	    {
-	      unsigned short *p = plane + (y * 16 * ROW_SIZE + x >> 1);
+	      unsigned short *p = plane + (y * 16 * TEXT_VIDEO_ROW_SIZE + x >> 1);
 	      for (unsigned char *i = img + 0; i != img + 16 * 2; i += 2)
 		{
 		  p[0] = p[0] & ~0xff | i[0] & 0xff;
@@ -109,10 +113,10 @@ text_vram::draw_char(int x, int y, unsigned int c)
       else
 	{
 	  for (unsigned short *plane = buf;
-	       plane != buf + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
-	       plane += TEXT_VRAM_PLANE_SIZE >> 1)
+	       plane != buf + 2 * (TEXT_VIDEO_PLANE_SIZE >> 1);
+	       plane += TEXT_VIDEO_PLANE_SIZE >> 1)
 	    {
-	      unsigned short *p = plane + (y * 16 * ROW_SIZE + x >> 1);
+	      unsigned short *p = plane + (y * 16 * TEXT_VIDEO_ROW_SIZE + x >> 1);
 	      for (unsigned char *i = img + 0; i != img + 16 * 2; i += 2)
 		{
 		  p[0] = i[0] << 8 | i[1] & 0xff;
@@ -131,10 +135,10 @@ text_vram::draw_char(int x, int y, unsigned int c)
       if (x % 2 != 0)
 	{
 	  for (unsigned short *plane = buf;
-	       plane != buf + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
-	       plane += TEXT_VRAM_PLANE_SIZE >> 1)
+	       plane != buf + 2 * (TEXT_VIDEO_PLANE_SIZE >> 1);
+	       plane += TEXT_VIDEO_PLANE_SIZE >> 1)
 	    {
-	      unsigned short *p = plane + (y * 16 * ROW_SIZE + x >> 1);
+	      unsigned short *p = plane + (y * 16 * TEXT_VIDEO_ROW_SIZE + x >> 1);
 	      for (unsigned char *i = img + 0; i != img + 16; ++i)
 		{
 		  *p = *p & ~0xff | i[0] & 0xff;
@@ -145,10 +149,10 @@ text_vram::draw_char(int x, int y, unsigned int c)
       else
 	{
 	  for (unsigned short *plane = buf;
-	       plane != buf + 2 * (TEXT_VRAM_PLANE_SIZE >> 1);
-	       plane += TEXT_VRAM_PLANE_SIZE >> 1)
+	       plane != buf + 2 * (TEXT_VIDEO_PLANE_SIZE >> 1);
+	       plane += TEXT_VIDEO_PLANE_SIZE >> 1)
 	    {
-	      unsigned short *p = plane + (y * 16 * ROW_SIZE + x >> 1);
+	      unsigned short *p = plane + (y * 16 * TEXT_VIDEO_ROW_SIZE + x >> 1);
 	      for (unsigned char *i = img + 0; i != img + 16; ++i)
 		{
 		  *p = i[0] << 8 | *p & 0xff;
@@ -162,11 +166,11 @@ text_vram::draw_char(int x, int y, unsigned int c)
 }
 
 void
-text_vram::get_image(int x, int y, int width, int height,
-		     unsigned char *rgb_buf, size_t row_size)
+text_video_memory::get_image(int x, int y, int width, int height,
+			     unsigned char *rgb_buf, size_t row_size)
 {
   // FIXME
-  unsigned short *p = buf + (y * ROW_SIZE >> 1);
+  unsigned short *p = buf + (y * TEXT_VIDEO_ROW_SIZE >> 1);
   for (int i = 0; i != height; ++i)
     {
       for (int j = 0; j != width; ++j)
@@ -185,7 +189,7 @@ text_vram::get_image(int x, int y, int width, int height,
 }
 
 uint_type
-text_vram::get_8(int fc, uint32_type address) const
+text_video_memory::get_8(int fc, uint32_type address) const
 {
   if (fc != SUPER_DATA)
     generate_bus_error(true, fc, address);
@@ -194,16 +198,16 @@ text_vram::get_8(int fc, uint32_type address) const
 }
 
 uint_type
-text_vram::get_16(int fc, uint32_type address) const
+text_video_memory::get_16(int fc, uint32_type address) const
 {
   if (fc != SUPER_DATA)
     generate_bus_error(true, fc, address);
 
-  return buf[(address & TEXT_VRAM_SIZE - 1) >> 1];
+  return buf[(address & TEXT_VIDEO_MEMORY_SIZE - 1) >> 1];
 }
 
 void
-text_vram::put_8(int fc, uint32_type address, uint_type value)
+text_video_memory::put_8(int fc, uint32_type address, uint_type value)
 {
   if (fc != SUPER_DATA)
     generate_bus_error(false, fc, address);
@@ -212,33 +216,32 @@ text_vram::put_8(int fc, uint32_type address, uint_type value)
 }
 
 void
-text_vram::put_16(int fc, uint32_type address, uint_type value)
+text_video_memory::put_16(int fc, uint32_type address, uint_type value)
 {
 #ifdef HAVE_NANA_H
-  L("class text_vram: put_16 fc=%d address=%#010lx\n",
+  L("class text_video_memory: put_16 fc=%d address=%#010lx\n",
     fc, (unsigned long) address);
 #endif
   if (fc != SUPER_DATA)
     generate_bus_error(false, fc, address);
 
-  buf[(address & TEXT_VRAM_SIZE - 1) >> 1] = value & 0xffffu;
+  buf[(address & TEXT_VIDEO_MEMORY_SIZE - 1) >> 1] = value & 0xffffu;
 }
 
 void
-text_vram::connect(console *con)
+text_video_memory::connect(console *con)
 {
   connected_console = con;
 }
 
-text_vram::~text_vram()
+text_video_memory::~text_video_memory()
 {
   delete [] buf;
 }
 
-text_vram::text_vram()
+text_video_memory::text_video_memory()
   : buf(NULL),
     connected_console(NULL)
 {
-  buf = new unsigned short [TEXT_VRAM_SIZE >> 1];
+  buf = new unsigned short [TEXT_VIDEO_MEMORY_SIZE >> 1];
 }
-

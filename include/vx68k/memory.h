@@ -29,6 +29,96 @@ namespace vx68k
 
   class main_memory;
 
+  /* Interface to console.  */
+  struct console
+  {
+    virtual void update_area(int x, int y, int width, int height) = 0;
+    virtual void get_b16_image(unsigned int, unsigned char *, size_t) const = 0;
+    virtual void get_k16_image(unsigned int, unsigned char *, size_t) const = 0;
+  };
+
+  /* Raster iterator for the text VRAM.  This class is used by the
+     video system to scan pixels on the text VRAM, and must be
+     efficient for a forward sequential access.
+
+     FIXME: this should be a random access iterator.  */
+  class text_video_raster_iterator: public forward_iterator<uint_type, int>
+  {
+  private:
+    unsigned short *buf;
+    unsigned int pos;
+
+  public:
+    text_video_raster_iterator()
+      : buf(NULL), pos(0) {}
+
+    text_video_raster_iterator(unsigned short *b, unsigned int p)
+      : buf(b), pos(p) {}
+
+  public:
+    bool operator==(const text_video_raster_iterator &another) const
+    {
+      /* BUF is not tested for speed.  */
+      return pos == another.pos;
+    }
+
+    bool operator!=(const text_video_raster_iterator &another) const
+    {
+      return !(*this == another);
+    }
+
+  public:
+    uint_type operator*() const;
+
+  public:
+    text_video_raster_iterator &operator++();
+
+    text_video_raster_iterator operator++(int)
+    {
+      text_video_raster_iterator tmp = *this;
+      ++(*this);
+      return tmp;
+    }
+  };
+
+  /* Text VRAM.  */
+  class text_video_memory: public memory
+  {
+  public:
+    typedef text_video_raster_iterator raster_iterator;
+
+  private:
+    unsigned short *buf;
+    console *connected_console;
+
+  public:
+    text_video_memory();
+    ~text_video_memory();
+
+  public:
+    uint_type get_16(int, uint32_type) const;
+    uint_type get_8(int, uint32_type) const;
+
+    void put_16(int, uint32_type, uint_type);
+    void put_8(int, uint32_type, uint_type);
+
+  public:
+    /* Draw a character CODE at [X Y].  */
+    void draw_char(int x, int y, unsigned int code);
+
+    /* Scroll one line up.  */
+    void scroll();
+
+  public:
+    void connect(console *);
+
+    /* Get the visual image of this text VRAM.  Image is of size
+       [WIDTH HEIGHT] at position [X Y].  RGB_BUF is an array of
+       bytes.  ROW_SIZE is the row size of RGB_BUF.  */
+    void get_image(int x, int y, int width, int height,
+		   unsigned char *rgb_buf, size_t row_size);
+  };
+
   /* CRTC registers memory.  */
   class crtc_memory: public memory
   {

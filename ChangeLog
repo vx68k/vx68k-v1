@@ -1,5 +1,19 @@
 2000-07-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/textvram.cc: Rename ROW_SIZE to TEXT_VIDEO_ROW_SIZE.
+	Add new constant TEXT_VIDEO_PLANE_SIZE and TEXT_VIDEO_MEMORY_SIZE.
+	(draw_char): Use TEXT_VIDEO_PLANE_SIZE.
+	(get_16, put_16, text_video_memory): Use TEXT_VIDEO_MEMORY_SIZE.
+
+	* include/vx68k/memory.h (struct console): Moved from machine.h.
+	(class text_video_raster_iterator): Likewise.
+	(class text_video_memory): Likewise.
+
+	* include/vx68k/machine.h (class text_video_memory): Renamed from
+	text_vram.  Also change all users.
+	(class text_video_raster_iterator): Renamed from
+	text_vram_raster_iterator.  Also change all users.
+
 	* libvm68k/addrspace.cc (namespace): Rename no_mem to null_memory.
 	Also change all users.
 
