@@ -21,7 +21,7 @@
 #undef const
 #undef inline
 
-#include <vx68k/memory.h>
+#include <vx68k/machine.h>
 
 using namespace vx68k;
 using namespace std;

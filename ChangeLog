@@ -1,3 +1,16 @@
+1999-07-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc: Remove include for vx68k/memory.h.
+
+	* lib/vx68k/mainmem.cc: Use <vx68k/machine.h> instead.
+
+	* include/vx68k/machine.h (class main_memory, class graphics_vram,
+	class text_vram): Moved from memory.h.
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Remove memory.h.
+
+	* include/vx68k/memory.h: Removed.
+
 1999-07-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
 	* lib/vm68k/execunit.cc (jmp, asrl_i): New functions.

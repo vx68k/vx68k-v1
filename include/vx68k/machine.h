@@ -19,13 +19,83 @@
 #ifndef _VX68K_MACHINE_H
 #define _VX68K_MACHINE_H 1
 
-#include <vx68k/memory.h>
 #include <vm68k/cpu.h>
 
 namespace vx68k
 {
   using namespace vm68k;
   using namespace std;
+
+  class main_memory
+    : public memory
+  {
+  private:
+    uint32_type end;
+    uint16 *array;
+
+  public:
+    explicit main_memory(size_t);
+    ~main_memory();
+
+  public:
+    size_t read(int, uint32_type, void *, size_t) const;
+    uint_type getb(int, uint32_type) const;
+    uint_type getw(int, uint32_type) const;
+    uint32_type getl(int fc, uint32_type address) const;
+
+  public:
+    size_t write(int, uint32_type, const void *, size_t);
+    void putb(int, uint32_type, uint_type);
+    void putw(int, uint32_type, uint_type);
+  };
+
+  const size_t GRAPHICS_VRAM_SIZE = 2 * 1024 * 1024;
+  const size_t TEXT_VRAM_PLANE_SIZE = 128 * 1024;
+  const size_t TEXT_VRAM_SIZE = 4 * TEXT_VRAM_PLANE_SIZE;
+
+  /* Graphics VRAM.  */
+  class graphics_vram
+    : public memory
+  {
+  private:
+    uint16 *base;
+
+  public:
+    graphics_vram();
+    ~graphics_vram();
+
+  public:
+    size_t read(int, uint32_type, void *, size_t) const;
+    uint_type getb(int, uint32_type) const;
+    uint_type getw(int, uint32_type) const;
+
+  public:
+    size_t write(int, uint32_type, const void *, size_t);
+    void putb(int, uint32_type, uint_type);
+    void putw(int, uint32_type, uint_type);
+  };
+
+  /* Text VRAM.  */
+  class text_vram
+    : public memory
+  {
+  private:
+    uint16 *base;
+
+  public:
+    text_vram();
+    ~text_vram();
+
+  public:
+    size_t read(int, uint32_type, void *, size_t) const;
+    uint_type getb(int, uint32_type) const;
+    uint_type getw(int, uint32_type) const;
+
+  public:
+    size_t write(int, uint32_type, const void *, size_t);
+    void putb(int, uint32_type, uint_type);
+    void putw(int, uint32_type, uint_type);
+  };
 
   class machine
   {

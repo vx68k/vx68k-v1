@@ -22,9 +22,8 @@
 #undef const
 #undef inline
 
-#include "vx68k/human.h"
-#include "vx68k/memory.h"
 #include "getopt.h"
+#include <vx68k/human.h>
 #include <gtk/gtk.h>
 #include <pthread.h>
 #ifdef HAVE_UNISTD_H
