@@ -22,6 +22,8 @@
 	(initialize_iocs_functions): Remove installation of the removed
 	handler.
 
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add dmacmem.cc.
+
 	* libvx68k/dmacmem.cc: New file.
 	(get_16, get_8, put_16, put_8, ~dmac_memory, dmac_memory): New
 	function.
