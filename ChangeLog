@@ -1,5 +1,12 @@
 2000-05-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (iocs_b_lpeek, invalid_iocs_function):
+	Modify the debug message.
+	(iocs_b_read, iocs_b_write): New functions.
+	(initialize_iocs_functions): Set for 0x45 and 0x46.
+	(initialize_iocs_functions): Change the argument to a pointer.
+	Also change all callers.
+
 	* include/vx68k/machine.h: Remove the forward declaration of class
 	machine.
 

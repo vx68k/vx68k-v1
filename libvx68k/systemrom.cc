@@ -166,20 +166,44 @@ namespace
   {
     uint32_type address = c.regs.a[1];
 #ifdef HAVE_NANA_H
-    L("| _B_LPEEK %%a1=%#010x\n", address);
+    L("system_rom: _B_LPEEK %%a1=%#010x\n", address);
 #endif
 
     c.regs.d[0] = c.mem->getl(SUPER_DATA, address);
     c.regs.a[1] = address + 4;
   }
 
+  /* Handles a _B_READ call.  */
+  void
+  iocs_b_read(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _B_READ %%d1=%#06x %%d2=%#010x %%d3=%#010x %%a1=%#010x\n",
+      c.regs.d[1] & 0xffffu, c.regs.d[2], c.regs.d[3], c.regs.a[1]);
+    L("system_rom: not implemented\n");
+#endif
+  }
+
+  /* Handles a _B_WRITE call.  */
+  void
+  iocs_b_write(context &c, unsigned long data)
+  {
+#ifdef HAVE_NANA_H
+    L("system_rom: _B_WRITE %%d1=%#06x %%d2=%#010x %%d3=%#010x %%a1=%#010x\n",
+      c.regs.d[1] & 0xffffu, c.regs.d[2], c.regs.d[3], c.regs.a[1]);
+    L("system_rom: not implemented\n");
+#endif
+  }
+
   /* Initializes the IOCS functions.  */
   void
-  initialize_iocs_functions(system_rom &rom)
+  initialize_iocs_functions(system_rom *rom)
   {
     typedef system_rom::iocs_function_type iocs_function_type;
 
-    rom.set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, NULL));
+    rom->set_iocs_function(0x45, iocs_function_type(&iocs_b_write, 0));
+    rom->set_iocs_function(0x46, iocs_function_type(&iocs_b_read, 0));
+    rom->set_iocs_function(0x84, iocs_function_type(&iocs_b_lpeek, 0));
   }
 } // namespace (unnamed)
 
@@ -192,14 +216,14 @@ system_rom::system_rom()
   : iocs_functions(0x100, iocs_function_type(&invalid_iocs_function, 0)),
     attached_eu(NULL)
 {
-  initialize_iocs_functions(*this);
+  initialize_iocs_functions(this);
 }
 
 void
 system_rom::invalid_iocs_function(context &c, unsigned long data)
 {
 #ifdef HAVE_NANA_H
-  L("| IOCS (%#04x)\n", c.regs.d[0] & 0xffu);
+  L("system_rom: IOCS %#04x\n", c.regs.d[0] & 0xffu);
 #endif
   throw runtime_error("invalid iocs function");	// FIXME
 }
