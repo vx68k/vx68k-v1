@@ -1,26 +1,36 @@
-List of user-visible changes in Virtual X68000.
+History of user-visible changes in Virtual X68000.  -*-Outline-*-
 
 * Version 1.1.7
 
-** Updates for Libvm68k 1.0.5
+** Updates for Libvm68k 1.0.4
 
 The removed types were substituted by the proper ones.  This broke
 binary compatibility of the libraries.
 
 * Version 1.1.6
 
-** Code was modified to fix errors detected by GCC 3.0.
+** Updates for GCC 3.0
 
-** The shared library is now disabled by default.  This was done to
-avoid incompatible shared library updates with Libvm68k.
+Code was modified to fix errors detected by GCC 3.0.
+
+** Shared Libraries
+
+The shared library is now disabled by default.  This was done to avoid
+incompatible shared library updates with Libvm68k.
 
 * Version 1.1.5
 
-** Libvm68k was separated into a new package.
+** Package Separation
 
-** Unused code was removed.
+Libvm68k was separated into a new package.
 
-** Library interface was modified.
+** Interface Changes
+
+Library interface was modified.
+
+** Code Clean-up
+
+Unused code was removed.
 
 * Version 1.1.4
 
