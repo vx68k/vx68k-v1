@@ -20,13 +20,6 @@ AM_PATH_GTK(1.2.0,,, gthread)
 AC_SEARCH_LIBS(glGetError, GL)
 AC_SEARCH_LIBS(gluErrorString, GLU)
 AC_CHECK_HEADERS(GL/gl.h GL/glu.h GL/glx.h fcntl.h unistd.h)
-AC_ARG_WITH(nana,
-[  --with-nana             use GNU Nana for debugging])
-if test "$with_nana" = yes; then
-  AC_CHECK_LIB(nana, _I_default_handler)
-  AC_CHECK_HEADERS(nana.h)
-fi
-
 AC_C_CONST
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T

@@ -3,6 +3,8 @@
 	* configure: Regenerated.
 	* Makefile.in: Regenerated.
 
+	* configure.in: Drop GNU Nana support.
+
 	* Makefile.am (SUBDIRS): Reorder directories.
 
 	* configure.in: Reorder AC_OUTPUT arguments.
