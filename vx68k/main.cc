@@ -23,13 +23,21 @@
 
 #include "vx68k/memory.h"
 #include "vx68k/human.h"
+#include <cstdio>
 
+using namespace std;
 using namespace vx68k;
 
 /* vx68k main.  */
 int
 main (int argc, char **argv)
 {
+  if (argc < 2)
+    {
+      fprintf(stderr, "Usage: %s FILE.X\n", argv[0]);
+      return 1;
+    }
+
   const size_t MEMSIZE = 4 * 1024 * 1024; // FIXME
   address_space mem (MEMSIZE);
 
