@@ -251,7 +251,7 @@ namespace
 
     if (vecno > 0x1ff)
       {
-	fprintf(stderr, "system_rom: _INTVCS vector number out of range\n");
+	fprintf(stderr, "system_rom: _B_INTVCS vector number out of range\n");
 	return;
       }
 
