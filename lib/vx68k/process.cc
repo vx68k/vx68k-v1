@@ -114,25 +114,6 @@ process::create(const char *name, sint_type attr)
   return fd;
 }
 
-sint32_type
-process::load(const char *name,
-	      uint32_type first, uint32_type last) const
-{
-  return -1;
-}
-
-sint32_type
-process::create_process(const char *name, process *&) const
-{
-  return -1;
-}
-
-sint32_type
-process::exec(uint32_type start, uint32_type args, uint32_type env)
-{
-  return -1;
-}
-
 process::~process()
 {
   if (block != 0)
