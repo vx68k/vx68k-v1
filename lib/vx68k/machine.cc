@@ -28,11 +28,11 @@ using namespace std;
 
 machine::machine(size_t memory_size)
   : _memory_size(memory_size),
-    main_memory(memory_size)
+    main_mem(memory_size)
 {
   using vm68k::PAGE_SHIFT;
 
-  as.set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &main_memory);
+  as.set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &main_mem);
 #if 0
   as.set_pages(0xc00000 >> PAGE_SHIFT, 0xe00000 >> PAGE_SHIFT, &graphic_vram);
   as.set_pages(0xe00000 >> PAGE_SHIFT, 0xe80000 >> PAGE_SHIFT, &text_vram);

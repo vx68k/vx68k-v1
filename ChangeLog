@@ -1,5 +1,8 @@
 1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* include/vx68k/machine.h (class machine): Rename main_memory to
+	main_mem.  Also change all referrers.
+
 	* include/vm68k/memory.h: Add using namespace std.
 
 	* include/vm68k/cpu.h: Prefix include-once macro with _, and use

@@ -31,7 +31,7 @@ namespace vx68k
   {
   private:
     size_t _memory_size;
-    main_memory_page main_memory;
+    main_memory main_mem;
     class address_space as;
     class exec_unit eu;
   public:
