@@ -351,19 +351,90 @@ namespace
       ec->regs.pc += 4;
     }
 
-  void lslw_i_d(int op, execution_context *ec)
+  void lsll_i_d(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int reg1 = op & 0x7;
+      int val2 = op >> 9 & 0x7;
+      if (val2 == 0)
+	val2 = 8;
+      VL((" lsll #%d,%%d%d\n", val2, reg1));
+
+      uint32 val = ec->regs.d[reg1] << val2;
+      ec->regs.d[reg1] = val;
+      ec->regs.sr.set_cc(val);	// FIXME.
+
+      ec->regs.pc += 2;
+    }
+
+  void lsrw_i_d(int op, execution_context *ec)
     {
       I(ec != NULL);
       int d_reg = op & 0x7;
       int count = op >> 9 & 0x7;
       if (count == 0)
 	count = 8;
-      VL((" lslw #%d,%%d%d\n", count, d_reg));
+      VL((" lsrw #%d,%%d%d\n", count, d_reg));
 
-      unsigned int value = ec->regs.d[d_reg] << count;
+      unsigned int value = ec->regs.d[d_reg] >> count;
       const uint32 MASK = ((uint32) 1u << 16) - 1;
       ec->regs.d[d_reg] = ec->regs.d[d_reg] & ~MASK | (uint32) value & MASK;
       ec->regs.sr.set_cc(value); // FIXME.
+
+      ec->regs.pc += 2;
+    }
+
+  void moveb_indir_d(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+      uint32 s_addr = ec->regs.a[s_reg];
+      VL((" moveb %%a%d@,%%d%d |0x%lx,*\n",
+	  s_reg, d_reg, (unsigned long) s_addr));
+
+      int fc = ec->data_fc();
+      int val = extsb(ec->mem->getb(fc, s_addr));
+      const uint32 MASK = ((uint32) 1u << 8) - 1;
+      ec->regs.d[d_reg] = ec->regs.d[d_reg] & ~MASK | (uint32) val & MASK;
+      ec->regs.sr.set_cc(val);
+
+      ec->regs.pc += 2;
+    }
+
+  void moveb_off_d(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+      int s_off = extsw(ec->fetchw(2));
+      uint32 s_addr = ec->regs.a[s_reg] + s_off;
+      VL((" moveb %%a%d@(%d),%%d%d |0x%lx,*\n",
+	  s_reg, s_off, d_reg, (unsigned long) s_addr));
+
+      int fc = ec->data_fc();
+      int val = extsb(ec->mem->getb(fc, s_addr));
+      const uint32 MASK = ((uint32) 1u << 8) - 1;
+      ec->regs.d[d_reg] = ec->regs.d[d_reg] & ~MASK | (uint32) val & MASK;
+      ec->regs.sr.set_cc(val);
+
+      ec->regs.pc += 2 + 2;
+    }
+
+  void moveb_d_postinc(int op, execution_context *ec)
+    {
+      I(ec != NULL);
+      int s_reg = op & 0x7;
+      int d_reg = op >> 9 & 0x7;
+      uint32 d_addr = ec->regs.a[d_reg];
+      VL((" moveb %%d%d,%%a%d@+ |*,0x%lx\n",
+	  s_reg, d_reg, (unsigned long) d_addr));
+
+      int fc = ec->data_fc();
+      int val = extsb(ec->regs.d[s_reg]);
+      ec->mem->putb(fc, d_addr, val);
+      ec->regs.a[d_reg] = d_addr + 1;
+      ec->regs.sr.set_cc(val);
 
       ec->regs.pc += 2;
     }
@@ -830,6 +901,9 @@ exec_unit::install_instructions(exec_unit *eu)
   I(eu != NULL);
 
   eu->set_instruction(0x0680, 0x0007, &addil_d);
+  eu->set_instruction(0x1010, 0x0e07, &moveb_indir_d);
+  eu->set_instruction(0x1028, 0x0e07, &moveb_off_d);
+  eu->set_instruction(0x10c0, 0x0e07, &moveb_d_postinc);
   eu->set_instruction(0x10d8, 0x0e07, &moveb_postinc_postinc);
   eu->set_instruction(0x2000, 0x0e07, &movel_d_d);
   eu->set_instruction(0x2008, 0x0e07, &movel_a_d);
@@ -873,6 +947,7 @@ exec_unit::install_instructions(exec_unit *eu)
   eu->set_instruction(0x7000, 0x0eff, &moveql_d);
   eu->set_instruction(0xc0bc, 0x0e00, &andl_i_d);
   eu->set_instruction(0xd068, 0x0e07, &addw_off_d);
-  eu->set_instruction(0xe048, 0x0e07, &lslw_i_d);
+  eu->set_instruction(0xe048, 0x0e07, &lsrw_i_d);
+  eu->set_instruction(0xe188, 0x0e07, &lsll_i_d);
 }
 

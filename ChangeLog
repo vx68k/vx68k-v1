@@ -1,5 +1,11 @@
 1999-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (moveb_off_d, moveb_d_postinc, lsll_i_d,
+	moveb_indir_d): New functions.
+	(install_instructions): Set instructions.
+	(lsrw_i_d): Renamed from lslw_i_d, and reverse the shift diection.
+	Update all users.
+
 	* include/vx68k/human.h (class dos_exec_context): Add member
 	fgetc.
 
