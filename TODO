@@ -1,5 +1,9 @@
 List of things to do in Virtual X68000.  -*-Outline-*-
 
+* Improving The Status Bar
+
+The status bar should be updated when the process exits.
+
 * Adding ~/.vx68k Support
 
 All per-user files should be stored in one place.

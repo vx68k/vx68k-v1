@@ -1,5 +1,9 @@
 2002-05-07  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* TODO.gtk: Removed.
+
+	* TODO: Copy entries from TODO.gtk.
+
 	* NEWS.gtk: Removed.
 
 	* NEWS: Copy entries from NEWS.gtk.
