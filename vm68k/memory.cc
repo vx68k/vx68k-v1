@@ -34,6 +34,36 @@ namespace vm68k
 };
 #endif
 
+uint16
+getw (const void *address)
+{
+  const uint8 *p = static_cast <const uint8 *> (address);
+  return p[0] << 8 | p[1];
+}
+
+uint32
+getl (const void *address)
+{
+  const uint8 *p = static_cast <const uint8 *> (address);
+  return uint32 (getw (p + 0)) << 16 | uint32 (getw (p + 2));
+}
+
+void
+putw (void *address, uint16 value)
+{
+  uint8 *p = static_cast <uint8 *> (address);
+  p[0] = value >> 8;
+  p[1] = value;
+}
+
+void
+putl (void *address, uint32 value)
+{
+  uint8 *p = static_cast <uint8 *> (address);
+  putw (p + 0, value >> 16);
+  putw (p + 2, value);
+}
+
 bus_error::bus_error (int s, uint32 a)
   : status (s),
     address (a)
@@ -44,15 +74,15 @@ uint32
 memory_page::getl (int fc, uint32 address) const
   throw (bus_error)
 {
-  return ((uint32) getw (fc, address) << 16
-	  | (uint32) getw (fc, address + 2));
+  return (uint32 (getw (fc, address + 0)) << 16
+	  | uint32 (getw (fc, address + 2)));
 }
 
 void
 memory_page::putl (int fc, uint32 address, uint32 value)
   throw (bus_error)
 {
-  putw (fc, address, value >> 16);
+  putw (fc, address + 0, value >> 16);
   putw (fc, address + 2, value);
 }
 

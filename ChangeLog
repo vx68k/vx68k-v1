@@ -1,7 +1,18 @@
 1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
-	* include/vm68k/except.h (exception): Rename member fc to status.
-	All refs changed.
+	* include/vm68k/except.h (struct illegal_instruction): New class.
+	(struct zero_divide): New class.
+	(struct privilege_violation): New class.
+
+	* vm68k/memory.cc (getw): New function.
+	(getl): New function.
+	(putw): New function.
+	(putl): New function.
+
+	* Version 0.26.
+
+	* include/vm68k/except.h (struct bus_error): Rename member fc to
+	status.  All refs changed.
 	(struct address_error): New class.
 
 	* vm68k/memory.cc (READ): Removed.  All uses replaced with

@@ -41,6 +41,11 @@ const size_t PAGE_SIZE = (size_t) 1 << PAGE_SHIFT;
 const int MEMORY_SHIFT = 24;
 const size_t NPAGES = (size_t) 1 << MEMORY_SHIFT - PAGE_SHIFT;
 
+uint16 getw (const void *);
+uint32 getl (const void *);
+void putw (void *, uint16);
+void putl (void *, uint32);
+
 struct memory_page
 {
   virtual ~memory_page () {}

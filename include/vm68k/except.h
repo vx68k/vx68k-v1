@@ -40,6 +40,21 @@ struct address_error
 {
 };
 
+struct illegal_instruction
+  : exception
+{
+};
+
+struct zero_divide
+  : exception
+{
+};
+
+struct privilege_violation
+  : exception
+{
+};
+
 };				// namespace vm68k
 
 #endif
