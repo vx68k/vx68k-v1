@@ -10,7 +10,7 @@ libmisc_a_SOURCES = getopt.c getopt1.c
 
 vx68k_SOURCES = main.cc
 vx68k_LDADD = libmisc.a ../libvx68kgtk/libvx68kgtk.a \
-../libvx68k/libvx68k.a ../libvm68k/libvm68k.la \
+../libvx68k/libvx68k.la ../libvm68k/libvm68k.la \
 ${GTK_LIBS}
 
 noinst_HEADERS = getopt.h

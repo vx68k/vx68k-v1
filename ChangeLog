@@ -1,5 +1,12 @@
 2000-05-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* bin/Makefile.am (vx68k_LDADD): Use libvx68k.la.
+
+	* libvx68k/Makefile.am (LIBS): Set to empty.
+	(lib_LTLIBRARIES): Changed from noinst_LIBRARIES.
+	(libvx68k_la_LDFLAGS): New macro.
+	(libvx68k_la_SOURCES): Changed from libvx68k_a_SOURCES.
+
 	* libvx68k/systemrom.cc (iocs_b_color, iocs_b_curoff,
 	iocs_b_curon, iocs_b_putmes, iocs_defchr, iocs_tcolor,
 	iocs_textput, iocs_tpalet, iocs_x38): New function.
