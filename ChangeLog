@@ -1,5 +1,18 @@
 2000-05-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc (dispatch_iocs_function): Remove the debug
+	message.
+	(iocs_b_lpeek): Change the debug message.
+	(invalid_iocs_function): Add new debug message.
+
+	* libvx68k/machine.cc (iocs_b_lpeek, set_iocs_functions,
+	invalid_iocs_function, iocs, set_iocs_function): Removed.
+	(machine): Remove the initialization of iocs_functions and eu.
+
+	* include/vx68k/machine.h (class machine): Remove members
+	iocs_function_handler, invalid_iocs_function, iocs,
+	iocs_functions, and set_iocs_function.
+
 	* libvx68k/systemrom.cc (set_iocs_function): New member function.
 	(detach): Rewrite code.
 	(initialize): Initialize the IOCS handler table.

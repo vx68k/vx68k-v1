@@ -233,13 +233,6 @@ namespace vx68k
   /* Virtual machine of X68000.  */
   class machine: public instruction_data
   {
-  public:
-    typedef void (*iocs_function_handler)(context &, machine &, unsigned long);
-
-  protected:
-    static void invalid_iocs_function(context &, machine &, unsigned long);
-    static void iocs(uint_type, context &, instruction_data *);
-
   private:
     size_t _memory_size;
     main_memory mem;
@@ -247,7 +240,6 @@ namespace vx68k
     system_rom rom;
     class address_space as;
     class exec_unit eu;
-    pair<iocs_function_handler, unsigned long> iocs_functions[0x100];
 
     /* Cursor position.  */
     unsigned int curx, cury;
@@ -284,9 +276,6 @@ namespace vx68k
       {tvram.connect(con);}
     void get_image(int x, int y, int width, int height,
 		   unsigned char *rgb_buf, size_t row_size);
-
-  public:
-    void set_iocs_function(unsigned int, iocs_function_handler, unsigned long);
 
   public:
     void b_putc(uint_type);

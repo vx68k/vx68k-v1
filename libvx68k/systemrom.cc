@@ -101,9 +101,6 @@ void
 system_rom::dispatch_iocs_function(context &c)
 {
   unsigned int funcno = c.regs.d[0] & 0xffu;
-#ifdef HAVE_NANA_H
-  L(" trap #15\t| IOCS %#4x\n", funcno);
-#endif
 
   iocs_function_handler handler = iocs_functions[funcno].first;
   I(handler != NULL);
@@ -168,8 +165,8 @@ namespace
   iocs_b_lpeek(context &c, unsigned long data)
   {
     uint32_type address = c.regs.a[1];
-#ifdef L
-    L("| _B_LPEEK %%a1=%#10x\n", address);
+#ifdef HAVE_NANA_H
+    L("| _B_LPEEK %%a1=%#010x\n", address);
 #endif
 
     c.regs.d[0] = c.mem->getl(SUPER_DATA, address);
@@ -201,5 +198,8 @@ system_rom::system_rom()
 void
 system_rom::invalid_iocs_function(context &c, unsigned long data)
 {
+#ifdef HAVE_NANA_H
+  L("| IOCS (%#04x)\n", c.regs.d[0] & 0xffu);
+#endif
   throw runtime_error("invalid iocs function");	// FIXME
 }

@@ -166,60 +166,6 @@ machine::get_key()
   return key;
 }
 
-/* IOCS functions.  */
-
-namespace
-{
-  void
-  iocs_b_lpeek(context &c, machine &m, unsigned long data)
-  {
-    uint32_type address = c.regs.a[1];
-#ifdef L
-    L("| address = %#10x\n", address);
-#endif
-
-    c.regs.d[0] = m.address_space()->getl(SUPER_DATA, address);
-    c.regs.a[1] = address + 4;
-  }
-
-  void
-  set_iocs_functions(machine &m)
-  {
-    m.set_iocs_function(0x84, &iocs_b_lpeek, 0);
-  }
-} // (unnamed namespace)
-
-void
-machine::invalid_iocs_function(context &c, machine &m, unsigned long data)
-{
-  throw runtime_error("invalid iocs function");	// FIXME
-}
-
-void
-machine::iocs(uint_type op, context &c, instruction_data *data)
-{
-  unsigned int funcno = c.regs.d[0] & 0xffu;
-#ifdef L
-  L(" trap #15\t| IOCS %#4x\n", funcno);
-#endif
-
-  machine *m = static_cast<machine *>(data);
-  I(m != NULL);
-  (*m->iocs_functions[funcno].first)(c, *m, m->iocs_functions[funcno].second);
-
-  c.regs.pc += 2;
-}
-
-void
-machine::set_iocs_function(unsigned int i, iocs_function_handler handler,
-			   unsigned long data)
-{
-  if (i > 0xffu)
-    throw range_error("iocs function must be between 0 and 0xff");
-
-  iocs_functions[i] = make_pair(handler, data);
-}
-
 void
 machine::get_image(int x, int y, int width, int height,
 		   unsigned char *rgb_buf, size_t row_size)
@@ -256,9 +202,6 @@ machine::machine(size_t memory_size)
   pthread_cond_init(&key_queue_not_empty, NULL);
   pthread_mutex_init(&key_queue_mutex, NULL);
 
-  fill(iocs_functions + 0, iocs_functions + 0x100,
-       make_pair(&invalid_iocs_function, 0));
-
   fill(fd + 0, fd + NFDS, (iocs::disk *) NULL);
 
   as.set_pages(0 >> PAGE_SHIFT, _memory_size >> PAGE_SHIFT, &mem);
@@ -271,7 +214,4 @@ machine::machine(size_t memory_size)
   rom.initialize(as);
 
   rom.attach(&eu);
-  eu.set_instruction(0x4e4f, 0, &iocs, this);
-
-  set_iocs_functions(*this);
 }
