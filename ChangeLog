@@ -1,5 +1,12 @@
 2001-06-24  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* Version 1.1.6.
+
+	* libvx68k/Makefile.am (libvx68k_la_LDFLAGS): Update the version
+	information.
+
+	* configure.in: Set VERSION to 1.1.6.
+
 	* bin/gtkabout.cc: Add #include <cstring>.
 
 	* libvx68k/iocsdisk.cc (disk_error::disk_error): Call the
