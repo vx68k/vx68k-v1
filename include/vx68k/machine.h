@@ -77,7 +77,7 @@ namespace vx68k
     sram _sram;
     font_rom font;
 
-    class exec_unit eu;
+    class processor eu;
 
     auto_ptr<memory_map> master_as;
     auto_ptr<context> _master_context;
@@ -114,7 +114,7 @@ namespace vx68k
   public:
     size_t memory_size() const
       {return _memory_size;}
-    class exec_unit *exec_unit()
+    class processor *processor()
       {return &eu;}
 
     context *master_context() const {return _master_context.get();}

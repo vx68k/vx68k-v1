@@ -499,7 +499,7 @@ namespace
 	  = dynamic_cast<vx68k::x68k_address_space *>(c.mem);
 	I(as != NULL);
 
-	as->machine()->exec_unit()->run(c);
+	as->machine()->processor()->run(c);
 
 	abort();
       }
@@ -543,9 +543,9 @@ namespace
     c.regs.pc += 2;
   }
 
-  /* Adds DOS-call instructions to exec_unit EU.  */
+  /* Adds DOS-call instructions to processor EU.  */
   void
-  add_instructions(exec_unit &eu, dos *d)
+  add_instructions(processor &eu, dos *d)
   {
     unsigned long data = reinterpret_cast<unsigned long>(d);
     eu.set_instruction(0xff02u, make_pair(&dos_putchar, data));
@@ -588,7 +588,7 @@ dos_exec_context *
 dos::create_context()
 {
   dos_exec_context *c
-    = new dos_exec_context(&as, as.machine()->exec_unit(), &allocator, &_fs);
+    = new dos_exec_context(&as, as.machine()->processor(), &allocator, &_fs);
   c->set_debug_level(debug_level);
 
   return c;
@@ -600,7 +600,7 @@ dos::dos(class machine *m)
     _fs(as.machine()),
     debug_level(0)
 {
-  add_instructions(*as.machine()->exec_unit(), this);
+  add_instructions(*as.machine()->processor(), this);
 
   // Dummy NUL device.  LHA scans this for TwentyOne?
   as.put_32(0x6900 +  0, 0x6a00, memory::SUPER_DATA);

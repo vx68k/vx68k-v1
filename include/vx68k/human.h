@@ -126,7 +126,7 @@ namespace vx68k
       : public context
     {
     private:
-      exec_unit *_eu;		// FIXME
+      processor *_eu;		// FIXME
       memory_allocator *_allocator;
       file_system *_fs;
       uint32_type current_pdb;
@@ -137,7 +137,7 @@ namespace vx68k
       int debug_level;
 
     public:
-      dos_exec_context(memory_map *, exec_unit *,
+      dos_exec_context(memory_map *, processor *,
 		       memory_allocator *, file_system *);
       ~dos_exec_context();
 

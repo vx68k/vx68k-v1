@@ -214,7 +214,7 @@ namespace
 } // namespace (unnamed)
 
 void
-system_rom::attach(exec_unit *eu)
+system_rom::attach(processor *eu)
 {
   if (attached_eu != NULL)
     throw logic_error("system_rom");
@@ -227,7 +227,7 @@ system_rom::attach(exec_unit *eu)
 }
 
 void
-system_rom::detach(exec_unit *eu)
+system_rom::detach(processor *eu)
 {
   if (eu != attached_eu)
     throw invalid_argument("system_rom");

@@ -33,7 +33,7 @@ namespace vx68k
   using vm68k::memory;
   using vm68k::memory_map;
   using vm68k::context;
-  using vm68k::exec_unit;
+  using vm68k::processor;
   using namespace vm68k::types;
   using namespace std;
 
@@ -62,7 +62,7 @@ namespace vx68k
     vector<iocs_call_type> iocs_calls;
 
     /* Attached execution unit.  */
-    exec_unit *attached_eu;
+    processor *attached_eu;
 
   public:
     system_rom();
@@ -79,8 +79,8 @@ namespace vx68k
 
   public:
     /* Attaches or detaches an execution unit.  */
-    void attach(exec_unit *);
-    void detach(exec_unit *);
+    void attach(processor *);
+    void detach(processor *);
 
     /* Initializes memory in an address space.  */
     void initialize(memory_map &);

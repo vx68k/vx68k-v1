@@ -1,3 +1,12 @@
+2001-11-30  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* include/vx68k/human.h: Replace exec_unit with processor.
+	* include/vx68k/machine.h: Likewise.
+	* include/vx68k/machine.h: Likewise.
+	* libvx68k/systemrom.cc: Likewise.
+	* libvx68kdos/dos.cc: Likewise.
+	* libvx68kdos/doscontext.cc: Likewise.
+
 2001-07-19  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* Version 1.1.10.
