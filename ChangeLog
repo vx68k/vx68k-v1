@@ -1,5 +1,7 @@
 2000-05-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* libvx68k/systemrom.cc: Rewrite using's.
+
 	* libvx68k/machine.cc (configure): Set pages for _sram.
 
 	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Add file sram.cc.

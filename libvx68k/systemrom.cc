@@ -25,9 +25,6 @@
 
 #include <stdexcept>
 
-using namespace vx68k;
-using namespace std;
-
 #ifdef HAVE_NANA_H
 # include <nana.h>
 # include <cstdio>
@@ -35,6 +32,14 @@ using namespace std;
 # include <cassert>
 # define I assert
 #endif
+
+using vx68k::x68k_address_space;
+using vx68k::system_rom;
+using vm68k::context;
+using vm68k::instruction_data;
+using vm68k::SUPER_DATA;
+using namespace vm68k::types;
+using namespace std;
 
 uint_type
 system_rom::getw(int, uint32_type) const
