@@ -853,21 +853,49 @@ namespace
       ec.regs.pc += 4;
     }
 
-  void lslw_i_d(unsigned int op, context &ec)
-    {
-      int reg1 = op & 0x7;
-      int val2 = op >> 9 & 0x7;
-      if (val2 == 0)
-	val2 = 8;
-      VL((" lslw #%d,%%d%d\n", val2, reg1));
+  void
+  lslb_i(unsigned int op, context &ec)
+  {
+    unsigned int reg1 = op & 0x7;
+    unsigned int count = op >> 9 & 0x7;
+    if (count == 0)
+      count = 8;
+#ifdef L
+    L(" lslb #%u", count);
+    L(",%%d%u", reg1);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
-      unsigned int val = ec.regs.d[reg1] << val2;
-      const uint32 MASK = ((uint32) 1u << 16) - 1;
-      ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | (uint32) val & MASK;
-      ec.regs.sr.set_cc(val);	// FIXME.
+    sint_type value1 = extsb(ec.regs.d[reg1]);
+    sint_type value = extsb(uint_type(value1) << count);
+    const uint32_type MASK = ((uint32) 1u << 8) - 1;
+    ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
+    ec.regs.sr.set_cc_lsl(value, value1, count + (32 - 8));
 
-      ec.regs.pc += 2;
-    }
+    ec.regs.pc += 2;
+  }
+
+  void
+  lslw_i(unsigned int op, context &ec)
+  {
+    unsigned int reg1 = op & 0x7;
+    unsigned int count = op >> 9 & 0x7;
+    if (count == 0)
+      count = 8;
+#ifdef L
+    L(" lslw #%u", count);
+    L(",%%d%u", reg1);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
+
+    sint_type value1 = extsw(ec.regs.d[reg1]);
+    sint_type value = extsw(uint_type(value1) << count);
+    const uint32_type MASK = ((uint32) 1u << 16) - 1;
+    ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
+    ec.regs.sr.set_cc_lsl(value, value1, count + (32 - 16));
+
+    ec.regs.pc += 2;
+  }
 
   void
   lslw_r(unsigned int op, context &ec)
@@ -885,25 +913,31 @@ namespace
     sint_type value = extsw(uint_type(value1) << count);
     const uint32_type MASK = ((uint32) 1u << 16) - 1;
     ec.regs.d[reg1] = ec.regs.d[reg1] & ~MASK | uint32_type(value) & MASK;
-    ec.regs.sr.set_cc(value);	// FIXME.
+    ec.regs.sr.set_cc_lsl(value, value1, count + (32 - 16));
 
     ec.regs.pc += 2;
   }
 
-  void lsll_i_d(unsigned int op, context &ec)
-    {
-      int reg1 = op & 0x7;
-      int val2 = op >> 9 & 0x7;
-      if (val2 == 0)
-	val2 = 8;
-      VL((" lsll #%d,%%d%d\n", val2, reg1));
+  void
+  lsll_i(unsigned int op, context &ec)
+  {
+    unsigned int reg1 = op & 0x7;
+    unsigned int count = op >> 9 & 0x7;
+    if (count == 0)
+      count = 8;
+#ifdef L
+    L(" lsll #%u", count);
+    L(",%%d%u", reg1);
+    L("\t| 0x%04x, %%pc = 0x%lx\n", op, (unsigned long) ec.regs.pc);
+#endif
 
-      uint32 val = ec.regs.d[reg1] << val2;
-      ec.regs.d[reg1] = val;
-      ec.regs.sr.set_cc(val);	// FIXME.
+    sint32_type value1 = extsl(ec.regs.d[reg1]);
+    sint32_type value = extsl(uint32_type(value1) << count);
+    ec.regs.d[reg1] = value;
+    ec.regs.sr.set_cc_lsl(value, value1, count);
 
-      ec.regs.pc += 2;
-    }
+    ec.regs.pc += 2;
+  }
 
   void
   lsll_r(unsigned int op, context &ec)
@@ -920,7 +954,7 @@ namespace
     sint32_type value1 = extsl(ec.regs.d[reg1]);
     sint32_type value = extsl(uint_type(value1) << count);
     ec.regs.d[reg1] = value;
-    ec.regs.sr.set_cc(value);	// FIXME.
+    ec.regs.sr.set_cc_lsl(value, value1, count);
 
     ec.regs.pc += 2;
   }
@@ -2010,10 +2044,11 @@ exec_unit::install_instructions(exec_unit &eu)
   eu.set_instruction(0xe088, 0x0e07, &lsrl_i);
   eu.set_instruction(0xe0a0, 0x0e07, &asrl_r);
   eu.set_instruction(0xe0a8, 0x0e07, &lsrl_r);
+  eu.set_instruction(0xe108, 0x0e07, &lslb_i);
   eu.set_instruction(0xe138, 0x0e07, &rolb_r);
-  eu.set_instruction(0xe148, 0x0e07, &lslw_i_d);
+  eu.set_instruction(0xe148, 0x0e07, &lslw_i);
   eu.set_instruction(0xe168, 0x0e07, &lslw_r);
-  eu.set_instruction(0xe188, 0x0e07, &lsll_i_d);
+  eu.set_instruction(0xe188, 0x0e07, &lsll_i);
   eu.set_instruction(0xe1a0, 0x0e07, &asll_r);
   eu.set_instruction(0xe1a8, 0x0e07, &lsll_r);
 }

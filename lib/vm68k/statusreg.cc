@@ -64,9 +64,20 @@ namespace
 	       && uint32_type(values[1]) & uint32_type(1) << values[2] - 1);}
   };
 
+  struct lsl_cc_evaluator
+    : common_cc_evaluator
+  {
+    bool ls(const sint32_type *values) const
+      {return eq(values) || cs(values);}
+    bool cs(const sint32_type *values) const
+      {return (values[2] >= 1
+	       && uint32_type(values[1]) & uint32_type(1) << 32 - values[2]);}
+  };
+
   const common_cc_evaluator common_cc_eval;
   const cmp_cc_evaluator cmp_cc_eval;
   const asr_cc_evaluator asr_cc_eval;
+  const lsl_cc_evaluator lsl_cc_eval;
 } // (unnamed namespace)
 
 /* Sets the condition codes by a result.  */
@@ -97,6 +108,15 @@ void
 status_register::set_cc_asr(sint32_type r, sint32_type d, uint_type s)
 {
   cc_eval = &asr_cc_eval;
+  cc_values[0] = r;
+  cc_values[1] = d;
+  cc_values[2] = s;
+}
+
+void
+status_register::set_cc_lsl(sint32_type r, sint32_type d, uint_type s)
+{
+  cc_eval = &lsl_cc_eval;
   cc_values[0] = r;
   cc_values[1] = d;
   cc_values[2] = s;

@@ -105,6 +105,7 @@ namespace vm68k
     void set_cc_asr(sint32_type, sint32_type, uint_type);
     void set_cc_lsr(sint32_type r, sint32_type d, uint_type s)
       {set_cc_asr(r, d, s);}
+    void set_cc_lsl(sint32_type, sint32_type, uint_type);
   public:
     bool supervisor_state() const
       {return (value & S) != 0;}

@@ -1,5 +1,14 @@
 1999-06-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
 
+	* lib/vm68k/execunit.cc (lslb_i): New function.
+	(lslw_i): Renamed from lslw_i_d.  Also change all user.
+	(lsll_i): Renamed from lsll_i_d.  Also change all user.
+	(lslw_i, lsll_i): Use set_cc_lsl.
+	(install_instructions): Add new handlers.
+
+	* lib/vm68k/statusreg.cc (struct lsl_cc_evaluator): New class.
+	(set_cc_lsl): New function.  Also change the class definition.
+
 	* lib/vm68k/execunit.cc (dbf): Renamed from dbf_d.
 	(dbf): Fix counter size to word.
 	(tstw): Fix debugging log message.
