@@ -128,7 +128,7 @@ main (int argc, char **argv)
       machine_data *md = new machine_data;
       md->vm = &vm;
       md->argv = argv;
-      pthread_create(&vm_thread, NULL, &run_machine, &md);
+      pthread_create(&vm_thread, NULL, &run_machine, md);
 
       pthread_join(vm_thread, NULL);
       int status = md->status;
