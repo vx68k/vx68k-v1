@@ -68,7 +68,7 @@ gtk_console::handle_key_press_event(GtkWidget *drawing_area,
     {
       // FIXME character code translation?
       uint16_type key = *i;
-#ifdef HAVE_NANA_H
+#ifdef L
       L("gtk_console: Key press %#x\n", key);
 #endif
       _m->queue_key(key);

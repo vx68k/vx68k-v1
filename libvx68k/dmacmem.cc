@@ -57,7 +57,7 @@ namespace
     uint32_type n = long_word_size::get(c.regs.d[2]);
     uint32_type i = long_word_size::get(c.regs.a[1]);
     uint32_type j = long_word_size::get(c.regs.a[2]);
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace,
        "IOCS _DMAMOVE; %%d1:b=0x%02x %%d2=0x%08lx %%a1=0x%08lx %%a2=0x%08lx\n",
        mode, n + 0UL, i + 0UL, j + 0UL);
@@ -105,7 +105,7 @@ dmac_memory::install_iocs_calls(system_rom &rom)
 uint16_type
 dmac_memory::get_16(uint32_type address, function_code fc) const
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class dmac_memory: get_16: fc=%d address=0x%08x\n", fc, address + 0UL);
 #endif
   static bool once;
@@ -117,7 +117,7 @@ dmac_memory::get_16(uint32_type address, function_code fc) const
 int
 dmac_memory::get_8(uint32_type address, function_code fc) const
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class dmac_memory: get_8: fc=%d address=0x%08x\n", fc, address + 0UL);
 #endif
   static bool once;
@@ -129,7 +129,7 @@ dmac_memory::get_8(uint32_type address, function_code fc) const
 void
 dmac_memory::put_16(uint32_type address, uint16_type value, function_code fc)
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class dmac_memory: put_16: fc=%d address=0x%08x value=0x%04x\n",
      fc, address + 0UL, value);
 #endif
@@ -141,7 +141,7 @@ dmac_memory::put_16(uint32_type address, uint16_type value, function_code fc)
 void
 dmac_memory::put_8(uint32_type address, int value, function_code fc)
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class dmac_memory: put_8: fc=%d address=0x%08x value=0x%02x\n",
      fc, address + 0UL, value);
 #endif

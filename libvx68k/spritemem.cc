@@ -40,7 +40,7 @@ using namespace std;
 uint16_type
 sprites_memory::get_16(uint32_type address, function_code fc) const
 {
-#ifdef HAVE_NANA_H
+#ifdef L
   L("class sprites_memory: get_16: fc=%d address=%#010lx\n",
     fc, (unsigned long) address);
 #endif
@@ -51,7 +51,7 @@ sprites_memory::get_16(uint32_type address, function_code fc) const
 int
 sprites_memory::get_8(uint32_type address, function_code fc) const
 {
-#ifdef HAVE_NANA_H
+#ifdef L
   L("class sprites_memory: get_8: fc=%d address=%#010lx\n",
     fc, (unsigned long) address);
 #endif
@@ -67,7 +67,7 @@ void
 sprites_memory::put_16(uint32_type address, uint16_type value,
 		       function_code fc)
 {
-#ifdef HAVE_NANA_H
+#ifdef L
   L("class sprites_memory: put_16: fc=%d address=%#010lx value=%#06x\n",
     fc, (unsigned long) address, value & 0xffffu);
 #endif
@@ -77,7 +77,7 @@ sprites_memory::put_16(uint32_type address, uint16_type value,
 void
 sprites_memory::put_8(uint32_type address, int value, function_code fc)
 {
-#ifdef HAVE_NANA_H
+#ifdef L
   L("class sprites_memory: put_8: fc=%d address=%#010lx value=%#04x\n",
     fc, (unsigned long) address, value & 0xffu);
 #endif

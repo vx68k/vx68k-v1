@@ -134,7 +134,7 @@ image_file_floppy_disk::write(uint16_type mode, uint32_type pos,
     {
       return e.value() | (mode >> 8 & 0x3) << 24;
     }
-#ifdef HAVE_NANA_H
+#ifdef L
   L("image_file_floppy_disk: `write' not implemented.\n");
 #endif
   return 0;
@@ -156,7 +156,7 @@ image_file_floppy_disk::verify(uint16_type mode, uint32_type pos,
     {
       return e.value() | (mode >> 8 & 0x3) << 24;
     }
-#ifdef HAVE_NANA_H
+#ifdef L
   L("image_file_floppy_disk: `verify' not implemented.\n");
 #endif
   return 0;

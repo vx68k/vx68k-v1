@@ -221,7 +221,7 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
   if (!is)
     throw runtime_error("open error");
   unsigned char head[64];
-  is.read (head, 64);
+  is.read (reinterpret_cast<char *>(head), 64);
   if (!is)
     throw runtime_error("read error");
   if (head[0] != 'H' || head[1] != 'U')
@@ -267,7 +267,7 @@ dos_exec_context::load_executable(const char *name, uint32_type address)
     = static_cast<unsigned char *>(::malloc(reloc_size));
   try
     {
-      is.read(fixup_buf, reloc_size);
+      is.read(reinterpret_cast<char *>(fixup_buf), reloc_size);
       if (!is)
 	throw runtime_error("read error");
 

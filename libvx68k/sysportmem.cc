@@ -39,7 +39,7 @@ using namespace std;
 uint16_type
 system_ports_memory::get_16(uint32_type address, function_code fc) const
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class system_ports_memory: get_16: fc=%d address=0x%08lx\n",
      fc, address + 0UL);
 #endif
@@ -54,7 +54,7 @@ system_ports_memory::get_16(uint32_type address, function_code fc) const
 int
 system_ports_memory::get_8(uint32_type address, function_code fc) const
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class system_ports_memory: get_8: fc=%d address=0x%08lx\n",
      fc, address + 0UL);
 #endif
@@ -70,7 +70,7 @@ void
 system_ports_memory::put_16(uint32_type address, uint16_type value,
 			    function_code fc)
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class opm_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
      fc, address + 0UL, value);
 #endif
@@ -84,7 +84,7 @@ system_ports_memory::put_16(uint32_type address, uint16_type value,
 void
 system_ports_memory::put_8(uint32_type address, int value, function_code fc)
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class opm_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",
      fc, address + 0UL, value);
 #endif

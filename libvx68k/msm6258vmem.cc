@@ -51,7 +51,7 @@ int
 msm6258v_memory::get_8(uint32_type address, function_code fc) const
 {
   address &= 0xffffffff;
-#ifdef HAVE_NANA_H
+#ifdef LG
   LG(trace_msm6258v_memory,
      "class msm6258v_memory: get_8: fc=%d address=0x%08lx\n", fc,
      address + 0L);
@@ -67,7 +67,7 @@ uint16_type
 msm6258v_memory::get_16(uint32_type address, function_code fc) const
 {
   address &= 0xffffffff & ~1;
-#ifdef HAVE_NANA_H
+#ifdef LG
   LG(trace_msm6258v_memory,
      "class msm6258v_memory: get_16: fc=%d address=0x%08lx\n", fc,
      address + 0L);
@@ -85,7 +85,7 @@ msm6258v_memory::put_8(uint32_type address, int value, function_code fc)
 {
   address &= 0xffffffff;
   value &= 0xff;
-#ifdef HAVE_NANA_H
+#ifdef LG
   LG(trace_msm6258v_memory,
      "class msm6258v_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n", fc,
      address + 0L, value);
@@ -102,7 +102,7 @@ msm6258v_memory::put_16(uint32_type address, uint16_type value,
 {
   address &= 0xffffffff & ~1;
   value &= 0xff;
-#ifdef HAVE_NANA_H
+#ifdef LG
   LG(trace_msm6258v_memory,
      "class msm6258v_memory: put_16: fc=%d address=0x%08lx value=0x%02x\n", fc,
      address + 0L, value);

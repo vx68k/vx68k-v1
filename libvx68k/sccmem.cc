@@ -146,7 +146,7 @@ namespace
   void
   iocs_ms_curgt(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _MS_CURGT\n");
 #endif
     scc_memory *m = reinterpret_cast<scc_memory *>(data);
@@ -163,7 +163,7 @@ namespace
   void
   iocs_ms_curof(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _MS_CUROF\n");
 #endif
     static bool once;
@@ -175,7 +175,7 @@ namespace
   void
   iocs_ms_curon(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _MS_CURON\n");
 #endif
     static bool once;
@@ -187,7 +187,7 @@ namespace
   void
   iocs_ms_curst(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace,
        "IOCS _MS_CURST; %%d1=0x%08lx\n",
        long_word_size::get(c.regs.d[1]) + 0UL);
@@ -202,7 +202,7 @@ namespace
   void
   iocs_ms_getdt(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _MS_GETDT\n");
 #endif
     scc_memory *m = reinterpret_cast<scc_memory *>(data);
@@ -231,7 +231,7 @@ namespace
   void
   iocs_ms_init(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _MS_INIT\n");
 #endif
     scc_memory *m = reinterpret_cast<scc_memory *>(data);
@@ -245,7 +245,7 @@ namespace
   {
     long_word_size::uvalue_type tl = long_word_size::get(c.regs.d[1]);
     long_word_size::uvalue_type br = long_word_size::get(c.regs.d[2]);
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _MS_LIMIT; %%d1=0x%08lx %%d2=0x%08lx\n",
        tl + 0UL, br + 0UL);
 #endif
@@ -258,7 +258,7 @@ namespace
   void
   iocs_ms_stat(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _MS_STAT\n");
 #endif
     static bool once;
@@ -272,7 +272,7 @@ namespace
   void
   iocs_set232c(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace,
        "IOCS _SET232C; %%d1:w=0x%04x\n", word_size::get(c.regs.d[1]));
 #endif
@@ -312,7 +312,7 @@ scc_memory::install_iocs_calls(system_rom &rom)
 uint16_type
 scc_memory::get_16(uint32_type address, function_code fc) const
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class scc_memory: get_16: fc=%d address=0x%08lx\n", fc, address + 0UL);
 #endif
   static bool once;
@@ -324,7 +324,7 @@ scc_memory::get_16(uint32_type address, function_code fc) const
 int
 scc_memory::get_8(uint32_type address, function_code fc) const
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class scc_memory: get_8: fc=%d address=0x%08lx\n", fc, address + 0UL);
 #endif
   static bool once;
@@ -340,7 +340,7 @@ scc_memory::get_8(uint32_type address, function_code fc) const
 void
 scc_memory::put_16(uint32_type address, uint16_type value, function_code fc)
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class scc_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
      fc, address + 0UL, value);
 #endif
@@ -352,7 +352,7 @@ scc_memory::put_16(uint32_type address, uint16_type value, function_code fc)
 void
 scc_memory::put_8(uint32_type address, int value, function_code fc)
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class scc_memory: put_8: fc=%d address=0x%08lx value=0x%02x\n",
      fc, address + 0UL, value);
 #endif

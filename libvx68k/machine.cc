@@ -149,7 +149,7 @@ machine::write_disk(const memory_map &as,
 {
   int u = mode >> 8 & 0xf;
 
-#ifdef HAVE_NANA_H
+#ifdef L
   L("machine: writing disk %#x %#x %#x %#x\n", mode, pos, buf, nbytes);
 #endif
   switch (mode >> 12)
@@ -173,7 +173,7 @@ machine::boot(context &c)
   sint32_type st = read_disk(*c.mem, 0x9070, 0x03000001, 0x2000, 1024);
   if (st >> 24 & 0xc0)
     {
-#ifdef HAVE_NANA_H
+#ifdef L
       L("machine: boot error %#x\n", st);
 #endif
       throw runtime_error("machine");
@@ -221,7 +221,7 @@ machine::boot(context &c)
       uint32_type addr = c.mem->get_32(vecaddr, memory::SUPER_DATA);
       if (addr != vecaddr + 0xfe0000)
 	{
-#ifdef HAVE_NANA_H
+#ifdef L
 	  L("machine: Installed bus/address error handler used\n");
 #endif
 	  uint16_type oldsr = c.sr();

@@ -50,7 +50,7 @@ using namespace std;
 uint16_type
 sram::get_16(uint32_type address, function_code fc) const
 {
-#ifdef HAVE_NANA_H
+#ifdef L
   L("class sram: get_16 fc=%d address=%#010x\n", fc, address);
 #endif
   address &= 0x3fff;
@@ -62,7 +62,7 @@ sram::get_16(uint32_type address, function_code fc) const
 int
 sram::get_8(uint32_type address, function_code fc) const
 {
-#ifdef HAVE_NANA_H
+#ifdef L
   L("class sram: get_8 fc=%d address=%#010x\n", fc, address);
 #endif
   address &= 0x3fff;
@@ -73,7 +73,7 @@ sram::get_8(uint32_type address, function_code fc) const
 void
 sram::put_16(uint32_type, uint16_type, function_code)
 {
-#ifdef HAVE_NANA_H
+#ifdef L
   L("class sram: FIXME: `put_16' not implemented\n");
 #endif
 }
@@ -81,7 +81,7 @@ sram::put_16(uint32_type, uint16_type, function_code)
 void
 sram::put_8(uint32_type, int, function_code)
 {
-#ifdef HAVE_NANA_H
+#ifdef L
   L("class sram: FIXME: `put_8' not implemented\n");
 #endif
 }

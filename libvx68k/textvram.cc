@@ -315,7 +315,7 @@ namespace
   void
   iocs_b_clr_st(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _B_CLR_ST; %%d1:b=0x%02x\n",
        byte_size::get(c.regs.d[1]));
 #endif
@@ -328,7 +328,7 @@ namespace
   void
   iocs_b_color(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _B_COLOR; %%d1:w=0x%04x\n",
        word_size::get(c.regs.d[1]));
 #endif
@@ -343,7 +343,7 @@ namespace
   void
   iocs_b_consol(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _B_CONSOL; %%d1=0x%08lx %%d2=0x%08lx\n",
        long_word_size::get(c.regs.d[1]) + 0UL,
        long_word_size::get(c.regs.d[2]) + 0UL);
@@ -357,7 +357,7 @@ namespace
   void
   iocs_b_curoff(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _B_CUROFF\n");
 #endif
     static bool once;
@@ -369,7 +369,7 @@ namespace
   void
   iocs_b_curon(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _B_CURON\n");
 #endif
     static bool once;
@@ -381,7 +381,7 @@ namespace
   void
   iocs_b_locate(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _B_LOCATE; %%d1:w=0x%04x %%d2:w=0x%04x\n",
       word_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]));
 #endif
@@ -394,7 +394,7 @@ namespace
   void
   iocs_b_putmes(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace,
        "IOCS _B_PUTMES; %%d1:b=0x%02x %%d2:w=0x%04x %%d3:w=0x%04x "
        "%%d4:w=0x%04x %%a1=0x%08lx\n",
@@ -411,7 +411,7 @@ namespace
   void
   iocs_textput(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace,
        "IOCS _TEXTPUT; %%d1:w=0x%04x %%d2:w=0x%04x %%a1=0x%08lx\n",
        word_size::get(c.regs.d[1]), word_size::get(c.regs.d[2]),
@@ -426,7 +426,7 @@ namespace
   void
   iocs_txfill(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _TXFILL; %%a1=0x%08lx\n",
        long_word_size::get(c.regs.a[1]) + 0UL);
 #endif

@@ -89,7 +89,7 @@ namespace
   void
   iocs_defchr(context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _DEFCHR; %%d1=0x%08lx %%a1=0x%08lx\n",
        long_word_size::get(c.regs.d[1]) + 0UL,
        long_word_size::get(c.regs.a[1]) + 0UL);
@@ -106,7 +106,7 @@ namespace
   {
     uint16_type ch = word_size::get(c.regs.d[1]);
     uint32_type size = long_word_size::get(c.regs.d[2]);
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _FNTADR; %%d1:w=0x%04x %%d2=0x%08lx\n",
        ch, size + 0UL);
 #endif
@@ -206,7 +206,7 @@ namespace
   {
     uint32_type size_ch = long_word_size::get(c.regs.d[1]);
     uint32_type i = long_word_size::get(c.regs.a[1]);
-#ifdef HAVE_NANA_H
+#ifdef LG
     LG(nana_iocs_call_trace, "IOCS _FNTGET; %%d1=0x%08lx %%a1=0x%08lx\n",
        size_ch + 0UL, i + 0UL);
 #endif
@@ -324,7 +324,7 @@ font_rom::copy_data(const console *c)
 uint16_type
 font_rom::get_16(uint32_type address, function_code fc) const
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class font_rom: get_16: fc=%d address=0x%08lx\n", fc, address + 0UL);
 #endif
   address &= 0xfffff;
@@ -342,7 +342,7 @@ font_rom::get_16(uint32_type address, function_code fc) const
 int
 font_rom::get_8(uint32_type address, function_code fc) const
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class font_rom: get_8: fc=%d address=0x%08lx\n", fc, address + 0UL);
 #endif
   address &= 0xfffff;
@@ -358,7 +358,7 @@ font_rom::get_8(uint32_type address, function_code fc) const
 void
 font_rom::put_16(uint32_type address, uint16_type value, function_code fc)
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class font_rom: put_16: fc=%d address=0x%08lx value=0x%04x\n",
      fc, address + 0UL, value);
 #endif
@@ -370,7 +370,7 @@ font_rom::put_16(uint32_type address, uint16_type value, function_code fc)
 void
 font_rom::put_8(uint32_type address, int value, function_code fc)
 {
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class font_rom: put_8: fc=%d address=0x%08lx value=0x%02x\n",
      fc, address + 0UL, value);
 #endif

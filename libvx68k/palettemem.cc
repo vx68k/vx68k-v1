@@ -94,7 +94,7 @@ uint16_type
 palettes_memory::get_16(uint32_type address, function_code fc) const
 {
   address &= 0xfffffffeu;
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class palettes_memory: get_16: fc=%d address=0x%08lx\n",
      fc, address + 0UL);
 #endif
@@ -136,7 +136,7 @@ int
 palettes_memory::get_8(uint32_type address, function_code fc) const
 {
   address &= 0xffffffffU;
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class palettes_memory: get_8: fc=%d address=0x%08lx\n",
      fc, address + 0UL);
 #endif
@@ -154,7 +154,7 @@ palettes_memory::put_16(uint32_type address, uint16_type value,
 {
   address &= 0xfffffffeu;
   value &= 0xffffu;
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class palettes_memory: put_16: fc=%d address=0x%08lx value=0x%04x\n",
      fc, address + 0UL, value);
 #endif
@@ -201,7 +201,7 @@ palettes_memory::put_8(uint32_type address, int value, function_code fc)
 {
   address &= 0xffffffffU;
   value &= 0xff;
-#ifdef HAVE_NANA_H
+#ifdef DL
   DL("class palettes_memory: put_16: fc=%d address=0x%08lx value=0x%02x\n",
      fc, address + 0UL, value);
 #endif

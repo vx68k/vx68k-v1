@@ -1,5 +1,10 @@
 2001-06-30  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* Modify tests for Nana macros.
+
+	* libvx68kdos/doscontext.cc (load_executable): Use
+	reinterpret_cast for ifstream::read.
+
 	* libvx68k/fontrom.cc: Avoid vm68k::getw.
 
 	* libvx68k/sram.cc: Avoid vm68k::getw and vm68k::putl.
