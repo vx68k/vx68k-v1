@@ -132,8 +132,32 @@
   <chapter>
     <title>General purpose components</title>
     <para>
-      General purpose components are provided by the libvm68k library.
+      General purpose components are provided by the library libvm68k.
+      These components are declared in the namespace vm68k.
     </para>
+    <sect1>
+      <title>Memory</title>
+      <para>
+	Memory is an object that can be mapped in an address space.
+	The class <classname>memory</classname> is the abstract base
+	class for all memory.
+      </para>
+      <sect2>
+	<title>class <classname>memory</classname></title>
+	<para>
+	  This class has methods <function>get_16</function>,
+	  <function>get_8</function>, <function>get_32</function>,
+	  <function>put_16</function>, <function>put_8</function>, and
+	  <function>put_32</function>.  The methods
+	  <function>get_16</function>, <function>get_8</function>,
+	  <function>put_16</function>, and <function>put_8</function>
+	  are pure virtual and must be overridden in derived classes.
+	  Default implementations for <function>get_32</function> and
+	  <function>put_32</function> are provided but a derived class
+	  can override those for better performance.
+	</para>
+      </sect2>
+    </sect1>
     <sect1>
       <title>Address space</title>
       <para>
